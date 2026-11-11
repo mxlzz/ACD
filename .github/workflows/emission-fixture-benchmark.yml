@@ -1,6 +1,11 @@
 name: ACD Controlled Emission Fixture — E0008
 
 on:
+  # One-time validation of the upgraded ROI/reference laboratory.
+  # Remove this pull_request trigger after the re-run is reviewed.
+  pull_request:
+    paths:
+      - ".github/workflows/emission-fixture-benchmark.yml"
   workflow_dispatch:
 
 permissions:
@@ -86,7 +91,20 @@ jobs:
           m = region["regions"].get("aov_emission")
           if m is None or m["pixels"] < 10:
               raise SystemExit("No useful emission ROI: check emitter placement/visibility")
-          print("ACD EMISSION VALIDATED ROI PIXELS", m["pixels"])
+          region_aggregate = json.loads((root / "emission_seed_aggregate.json").read_text())
+          if m["mask_sha256"] != region_aggregate["mask_sha256"]:
+              raise SystemExit("ACD invalid benchmark: ROI pixel fingerprint changed")
+          if region_aggregate["input_seed_count"] != 3:
+              raise SystemExit("ACD invalid benchmark: expected three noisy inputs")
+          print("ACD E0008 RERUN VALIDATED", json.dumps({
+              "mask_sha256": region_aggregate["mask_sha256"],
+              "roi_pixels": region_aggregate["pixel_count"],
+              "input_seed_count": region_aggregate["input_seed_count"],
+              "mean_standard_rmse": region_aggregate["mean_baseline_rmse"],
+              "mean_emission_preserved_rmse": region_aggregate["mean_candidate_rmse"],
+              "reference_discrepancy": json.loads((root / "metrics.json").read_text())[
+                  "reference_quality_diagnostic"]["reference_disagreement_over_raw_error"],
+          }))
           PY
       - name: Upload reproducible EXRs and measurements
         if: always()
