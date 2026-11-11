@@ -81,7 +81,7 @@ jobs:
           retention-days: 7
           path: ${{ runner.temp }}/acd_compare/
       - name: Architectural interior controlled comparison
-        if: matrix.version == '5.0.1'
+        if: matrix.version == '5.0.1' && github.event_name == 'workflow_dispatch'
         env:
           ACD_SCENE: interior
           ACD_WIDTH: "96"
@@ -101,7 +101,7 @@ jobs:
           done
           python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/seed_aggregate.json"
       - name: Upload architectural interior experiment
-        if: matrix.version == '5.0.1' && always()
+        if: matrix.version == '5.0.1' && github.event_name == 'workflow_dispatch' && always()
         uses: actions/upload-artifact@v4
         with:
           name: cycles-5.0.1-mini-interior
