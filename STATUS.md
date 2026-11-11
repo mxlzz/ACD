@@ -4,6 +4,14 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## Rectificación de prioridad: SID antes que optimización ACD
+
+- El objetivo original de replicación fiel de SID no se completó. El addon actual es un prototipo independiente inspirado en SID, **no** un port verificado ni una prueba contra el SID original.
+- Auditoría directa detectó diferencias concretas: Standard FAST frente a Accurate; emisión sin guías en SID vs con guías en ACD; alfa denoised en SID vs preservada por defecto en ACD; Noisy Image, Mixer y opciones de AOV requieren contraste.
+- Repositorio original público GPL-3.0 (commit b4186389cac386eff9d777bb681c0051f8bd9bd2) corresponde al SID histórico; versión comercial 5.3.0 no está publicada en ese código. **No se ha copiado fuente GPL ni modificado el addon estable.**
+- Nueva prioridad: **M3 primero (Issue #7)**, especificar grafo original y portar comportamiento en Blender 5.x; mantener M2 como infraestructura y M4/adaptativo en espera. Detalle: docs/sid_parity_gap.md.
+
+
 ## Auditoría Cycles v5.0.1: guías de hits especulares (11-11-2026)
 
 - El código de Cycles v5.0.1 **ya espera a rebotes posteriores cuando domina la contribución especular** antes de registrar características de denoising; no siempre utiliza el primer hit.
