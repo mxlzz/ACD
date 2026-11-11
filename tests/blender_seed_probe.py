@@ -9,11 +9,21 @@ from __future__ import annotations
 
 import json
 import os
+import importlib.util
 from pathlib import Path
 
 import bpy
 
 scene = bpy.context.scene
+scene_variant = os.environ.get("ACD_PROBE_SCENE", "external")
+if scene_variant == "interior":
+    fixture_path = Path(__file__).resolve().parent / "scene_factory.py"
+    fixture_spec = importlib.util.spec_from_file_location("acd_fixture", fixture_path)
+    fixture = importlib.util.module_from_spec(fixture_spec)
+    fixture_spec.loader.exec_module(fixture)
+    fixture.make_interior(scene)
+elif scene_variant != "external":
+    raise ValueError("Expected ACD_PROBE_SCENE=external or interior")
 seed = int(os.environ["ACD_PROBE_SEED"])
 offset = int(os.environ.get("ACD_PROBE_OFFSET", "0"))
 label = os.environ.get("ACD_PROBE_LABEL", str(seed))
@@ -68,6 +78,7 @@ metadata = {
     "active_scene": scene.name,
     "active_view_layer": bpy.context.view_layer.name,
     "requested_seed": seed,
+    "scene_variant": scene_variant,
     "sample_offset": offset,
     "sampling_pattern": scene.cycles.sampling_pattern,
     "output_label": label,

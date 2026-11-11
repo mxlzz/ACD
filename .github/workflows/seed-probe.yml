@@ -94,6 +94,36 @@ jobs:
             test "$code" -eq 0 -o "$code" -eq 2
           done
           printf 'Variation outcomes (0=passes, 2=near-duplicate): seed=%s offset=%s pattern=%s blue_noise_seeds=%s\n' "$seed_rc" "$offset_rc" "$pattern_rc" "$blue_seed_rc"
+      - name: Generate procedural interior seed 539
+        env:
+          ACD_PROBE_SCENE: interior
+          ACD_PROBE_DIR: /tmp/acd_seed_probe_interior
+          ACD_PROBE_SEED: "539"
+          ACD_PROBE_LABEL: "interior_seed539"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Generate procedural interior seed 911
+        env:
+          ACD_PROBE_SCENE: interior
+          ACD_PROBE_DIR: /tmp/acd_seed_probe_interior
+          ACD_PROBE_SEED: "911"
+          ACD_PROBE_LABEL: "interior_seed911"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Check procedural interior seed variation
+        run: |
+          set +e
+          python -m acd_lab.cli verify-sample-variation --input /tmp/acd_seed_probe_interior/interior_seed539.exr --comparison /tmp/acd_seed_probe_interior/interior_seed911.exr --output /tmp/acd_seed_probe_interior/seed_variation.json
+          code=$?
+          set -e
+          test "$code" -eq 0 -o "$code" -eq 2
+          echo "Procedural interior seed variation result: $code (0=varied, 2=near-duplicate)"
+      - name: Upload procedural interior evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycles-seed-probe-procedural-interior
+          retention-days: 7
+          if-no-files-found: warn
+          path: /tmp/acd_seed_probe_interior/
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@v4
