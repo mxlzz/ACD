@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      SID_UPSTREAM_ROOT: ${{ runner.temp }}/upstream/SuperImageDenoiser
-      ACD_LEGACY_MANIFEST: ${{ runner.temp }}/sid_legacy_contract.json
-      ACD_PORT_MANIFEST: ${{ runner.temp }}/sid_port_contract.json
+      SID_UPSTREAM_ROOT: /tmp/acd_sid_upstream/SuperImageDenoiser
+      ACD_LEGACY_MANIFEST: /tmp/acd_sid_legacy_contract.json
+      ACD_PORT_MANIFEST: /tmp/acd_sid_port_contract.json
       EGL_PLATFORM: surfaceless
       LIBGL_ALWAYS_SOFTWARE: "1"
     steps:

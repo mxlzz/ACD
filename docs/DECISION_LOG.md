@@ -72,3 +72,13 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Acción:** retirar los escapes literales, sin cambiar el test ni el algoritmo.
 - **Validación:** inspección de contenido final por API de GitHub; resultado real del workflow aún pendiente.
 - **Siguiente:** ejecutar Blender 3.6/5.0 y cotejar grafos.
+
+
+## 2026-11-11 — M3.4, corregir contexto de variables a nivel job
+
+- **Ruta:** M3 / Issue #7, prueba de grafos del SID histórico. No cambia el denoiser.
+- **Evidencia observada:** runs 43098302573 y 43098385953 terminaron con fallo y **cero jobs**, antes de ejecutar Blender.
+- **Causa de infraestructura:** el workflow situaba `runner.temp` en valores `jobs.<job>.env`; esa referencia no es válida al evaluar ese bloque.
+- **Acción:** emplear rutas constantes `/tmp/acd_sid_upstream`, `/tmp/acd_sid_legacy_contract.json` y `/tmp/acd_sid_port_contract.json` en job.env.
+- **Validación:** configuración corregida; nuevos jobs / resultados pendientes.
+- **Desviación:** ninguna. Continuar M3 sin extraer conclusiones de paridad hasta la verificación real.
