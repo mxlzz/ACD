@@ -25,7 +25,7 @@ jobs:
       ACD_METHODS: "STANDARD,HIGH,SUPER"
       ACD_CAPTURE_AOV: "1"
       ACD_PRESERVE_EMISSION: "1"
-      ACD_EXTRA_SEEDS: "911,1337,2026"
+      ACD_EXTRA_SEEDS: ""
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -70,12 +70,6 @@ jobs:
             --passes "$ACD_BENCH_DIR/raw_multilayer.exr" \
             --output "$ACD_BENCH_DIR/region_metrics.json" \
             --error-maps "$ACD_BENCH_DIR/error_maps.npz"
-          for seed_dir in "$ACD_BENCH_DIR"/seed_*; do
-            if [ -d "$seed_dir" ]; then
-              python -m acd_lab.cli compare-batch --directory "$seed_dir" --output "$seed_dir/metrics.json"
-            fi
-          done
-          python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/seed_aggregate.json"
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@v4

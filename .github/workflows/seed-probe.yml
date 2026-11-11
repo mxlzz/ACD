@@ -1,10 +1,6 @@
 name: ACD Cycles independent-seed diagnostic
 
 on:
-  pull_request:
-    paths:
-      - 'tests/blender_seed_probe.py'
-      - '.github/workflows/seed-probe.yml'
   workflow_dispatch:
 
 permissions:

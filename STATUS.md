@@ -10,6 +10,9 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - Classroom E0005/E0006 remain useful *single-input comparative ablations*; the allegedly independent seed-derived reference is not validated as independent sampling. The prior numeric improvements cannot yet be generalized.
 - See docs/experiments/E0007.md. Heavy Classroom and seed probes are manual-only after debugging.
 
+- E0007 controlled procedural interior: seeds 539 and 911 produce meaningfully different unfiltered 16-spp renders in independent Blender processes (pair RMSE / signal RMS 0.2655), unlike Classroom. Evidence: https://github.com/mxlzz/ACD/actions/runs/43071534950
+- Classroom workflow now intentionally uses one noisy input only, without invalid multi-seed averages. Heavy benchmark and seed-probe workflows are manual-only.
+
 ## Implemented and checked
 - Local runner: scripts/run_scene_benchmark.py. Loads an existing .blend without saving, supports chosen frame/resolution, noisy/reference spp and seeds, optional existing reference, and CPU/CUDA/OPTIX selection.
 - Experiment provenance: source scene SHA256, scene name, selected view layer, Blender version, color management settings, frame, samples, seed and device recorded.
