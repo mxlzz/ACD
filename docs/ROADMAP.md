@@ -26,6 +26,10 @@ Desarrollar un sistema de reconstrucción para Blender/Cycles capaz de comparar 
 
 **M3.5 Standard observado:** run [43104673773](https://github.com/mxlzz/ACD/actions/runs/43104673773) \`success\` con 3 entradas EXR exactamente idénticas en passthrough. Diferencia RGB Standard RMSE 0.03285426 (HDR RMSE 0.04103480); alfa RMSE 0, sin demostración de paridad píxel ni superioridad. Artifact conservado en el run.
 
+**M3.6 operadores sin OIDN validados:** [run 43106813982](https://github.com/mxlzz/ACD/actions/runs/43106813982) `success`. ADD/MULTIPLY/HDR idénticos en RGB/alfa, y recombinación alfa diferencia máxima ~5.96e-08. Se descarta una gran brecha de estas operaciones en el fixture de prueba, no en todas las combinaciones posibles.
+
+**M3.7 próximo control:** OIDN directo aislado, con prefilters Fast/Accurate, guías, emisión y alfa, inputs EXR congelados. Nuevo workflow `sid-oidn-numeric-parity.yml` candidato; CI pendiente al commit. Este experimento deberá determinar si las divergencias se manifiestan antes de ensamblar High/Super, pero no certifica causa exacta ni versión OIDN equivalente.
+
 **M3.5 High/Super medidos:** [CI #43106273482](https://github.com/mxlzz/ACD/actions/runs/43106273482) completada, artefacto EXR/NPZ [13894002202](https://github.com/mxlzz/ACD/actions/runs/43106273482/artifacts/13894002202). Passthrough de 15 AOV válido. High RGB RMSE 0.06531013, Super 0.06788146; región emisiva High 0.22305557 y Super 0.23223786; alfa global ambos ~0.0038727. **No es comparación contra ground truth** ni identifica causas de diferencias.
 
 **M3.6 objetivo inmediato:** descartar/medir diferencias de operaciones del compositor (MixRGB → ShaderNodeMix ADD/MULTIPLY/HDR; SepRGBA/CombRGBA → SetAlpha), sin OIDN, usando entradas EXR congeladas y salidas comparables. Implementación del workflow `sid-operator-numeric-parity.yml` como candidato, CI pendiente. Solo después aislar cambios de backend OIDN y realizar test con escenas reales.

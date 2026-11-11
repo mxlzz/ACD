@@ -4,6 +4,19 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.6 — Operadores sin OIDN: prueba real aprobada (2026-11-11)
+
+- [Run 43106813982](https://github.com/mxlzz/ACD/actions/runs/43106813982) **success**, [artifact 13893069815](https://github.com/mxlzz/ACD/actions/runs/43106813982/artifacts/13893069815). Entradas iguales (`source_inputs_equal=true`).
+- **Resultados aislados 3.6 vs 5:** ADD, MULTIPLY, ADD con emisión HDR idénticos píxel a píxel en RGB y alfa (RMSE=0). SepRGBA/CombRGBA frente a SetAlpha devuelve RGB idéntico, alfa RMSE=3.84746e-08 y máximo absoluto 5.96046e-08.
+- **Inferencia:** estas operaciones y el mapeo de alfa probado no explican las diferencias mucho mayores en High/Super (RGB RMSE 0.065–0.068 y alfa ~0.00387). Esto acota causas hacia OIDN/parametrización/otras ramas, pero no las identifica de manera exhaustiva.
+- **Siguiente:** aislar nodos OIDN individuales bajo exactamente las mismas entradas (Fast, Accurate guiado, emisión Accurate sin guías, alfa Accurate guiado).
+
+## M3.7 — Experimento candidato de OIDN aislado (2026-11-11)
+
+- Código agregado: `tests/blender_sid_oidn_numeric.py`, `scripts/compare_sid_oidn_numeric.py`, workflow `sid-oidn-numeric-parity.yml`. Cinco casos de nodos OIDN sobre los EXR congelados y sus guías, sin mixing de familias; compara RGB/HDR/alfa por filtro.
+- **Configuración registrada:** Blender3.6 usa solo `prefilter` como upstream; Blender5 usa socket Prefilter y opciones explícitas Quality=High, HDR=True. No se supone que backend ni controles coincidan.
+- **CI posterior al commit pendiente.** Conservar manifest, EXR y mapas firmados. No modificar port estable ni inferir bug por un delta entre backends.
+
 ## M3.5 High/Super — primera prueba numérica real aprobada (2026-11-11)
 
 - [Run 43106273482](https://github.com/mxlzz/ACD/actions/runs/43106273482): **success**; [artifact 13894002202](https://github.com/mxlzz/ACD/actions/runs/43106273482/artifacts/13894002202) con 15 AOV de entrada, outputs Blender 3.6 y 5.0, manifests y mapas firmados.

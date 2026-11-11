@@ -167,3 +167,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Experimento siguiente M3.6:** construir graph mínimo sin denoiser en Blender3.6 (MixRGB Add/Multiply, Sep/Comb RGBA) y Blender5.0 (ShaderNodeMix Add/Multiply, SetAlpha), misma entrada EXR/Alpha; exportar salidas y reportar diferencias por canal.
 - **Estado de M3.6:** candidato agregado, CI aún pendiente de inspección; no se afirma resultado anticipado.
 - **Protección:** no tocar addon estable, no incorporar código GPL ni adelantar M4.
+
+
+## 2026-11-11 — M3.6, descartar operaciones de mezcla como explicación principal y preparar M3.7
+
+- **Evidencia:** https://github.com/mxlzz/ACD/actions/runs/43106813982 `success`; artifact https://github.com/mxlzz/ACD/actions/runs/43106813982/artifacts/13893069815.
+- **Medido sin OIDN:** MixRGB ADD/MULTIPLY/HDR vs ShaderNodeMix producen exactamente mismos píxeles. Sep/CombRGBA vs SetAlpha entrega RGB igual y alfa con RMSE 3.84746e-08 / máximo 5.96046e-08. Los inputs passthrough también coinciden.
+- **Interpretación limitada:** estos nodos aislados no explican las diferencias de High/Super (alfa RMSE ~0.0038727, RGB/HDR más altos). No demuestra que todas las variantes de grafo sean iguales; OIDN/parametrización sigue sin aislarse.
+- **Decisión:** nuevo experimento M3.7 sobre OIDN individual, manteniendo entradas y guías congeladas y comparando Fast/Accurate, emisión sin guía, alfa guiada y difusión guiada. No aplicar correcciones a OIDN basadas solo en una métrica interversión.
+- **Estado:** scripts/workflow candidatos para Blender3.6 y 5.0; CI aún no ejecutada al commit. Revisión posterior exigida antes de nuevas hipótesis.
