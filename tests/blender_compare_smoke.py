@@ -84,14 +84,33 @@ try:
     for p in generated:
         print("ACD CANDIDATE", p, p.stat().st_size)
     assert len(generated) >= 4, "Expected RAW and 3 filtered EXR outputs"
+    # A separate, higher-sample unfiltered reference uses a different seed.
+    # This is still a low-resolution smoke reference, not a converged benchmark.
+    reference_spp = int(os.environ.get("ACD_REFERENCE_SPP", "256"))
+    reference_seed = 8819
+    scene.compositing_node_group = None
+    scene.render.use_compositing = False
+    scene.cycles.samples = reference_spp
+    scene.cycles.seed = reference_seed
+    scene.render.filepath = str(destination / "reference.exr")
+    scene.render.image_settings.media_type = "IMAGE"
+    scene.render.image_settings.file_format = "OPEN_EXR"
+    scene.render.image_settings.color_depth = "32"
+    ref_result = bpy.ops.render.render(write_still=True)
+    assert "FINISHED" in ref_result
+    assert (destination / "reference.exr").is_file()
+    print("ACD REFERENCE", destination / "reference.exr", "spp", reference_spp)
+
     (destination / "metadata.json").write_text(json.dumps({
         "blender": bpy.app.version_string,
         "scene": "factory startup",
-        "samples": scene.cycles.samples,
-        "seed": scene.cycles.seed,
+        "samples": 16,
+        "seed": 539,
+        "reference_samples": reference_spp,
+        "reference_seed": reference_seed,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "compositional_methods": ["Standard", "High", "Super"],
-        "comparison": "one shared Cycles render, no independent reference yet",
+        "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",
         "files": [p.name for p in generated],
     }, indent=2) + "\n")
     print("ACD SAME-SAMPLE COMPARISON SMOKE PASSED", len(generated))
