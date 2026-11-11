@@ -59,12 +59,24 @@ jobs:
           python -m acd_lab.cli compare-regions --directory "$ACD_BENCH_DIR" \
             --passes "$ACD_BENCH_DIR/raw_multilayer.exr" \
             --output "$ACD_BENCH_DIR/region_metrics.json"
+          LAYER=$(python - <<'PY'
+          import json, os
+          from pathlib import Path
+          print(json.loads((Path(os.environ["ACD_BENCH_DIR"]) / "metadata.json").read_text())["view_layer"])
+          PY
+          )
           for dir in "$ACD_BENCH_DIR"/seed_*; do
             if [ -d "$dir" ]; then
               python -m acd_lab.cli compare-batch --directory "$dir" --output "$dir/metrics.json"
+              python -m acd_lab.cli compare-regions --directory "$dir" \
+                --passes "$ACD_BENCH_DIR/raw_multilayer.exr" --passes-layer "$LAYER" \
+                --output "$dir/region_metrics.json"
             fi
           done
           python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/seed_aggregate.json"
+          python -m acd_lab.cli aggregate-regions --directory "$ACD_BENCH_DIR" \
+            --region aov_emission --baseline STANDARD --candidate STANDARD_emission_preserved \
+            --output "$ACD_BENCH_DIR/emission_seed_aggregate.json"
           python - <<'PY'
           import json, os
           from pathlib import Path
