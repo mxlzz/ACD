@@ -44,6 +44,14 @@ def main(argv: list[str] | None = None) -> int:
     aggregate = sub.add_parser("aggregate-seeds", help="Summarize multiple noisy seeds with common reference")
     aggregate.add_argument("--directory", required=True)
     aggregate.add_argument("--output")
+    region_cmd = sub.add_parser("compare-regions", help="Measure ACD methods within ROI and AOV contribution masks")
+    region_cmd.add_argument("--directory", required=True)
+    region_cmd.add_argument("--passes", help="Raw Cycles multilayer EXR with auxiliary light contributions")
+    region_cmd.add_argument("--regions", help="Optional JSON with named normalized rectangles")
+    region_cmd.add_argument("--energy-fraction", type=float, default=.35)
+    region_cmd.add_argument("--min-signal", type=float, default=.01)
+    region_cmd.add_argument("--error-maps", help="Write signed and absolute HDR differences as .npz")
+    region_cmd.add_argument("--output")
     args = parser.parse_args(argv)
     if args.command == "compare":
         ref_arrays = read_arrays(args.reference, layer=args.ref_layer)
@@ -66,9 +74,16 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "compare-batch":
         from .batch import evaluate_batch
         result = evaluate_batch(args.directory)
-    else:
+    elif args.command == "aggregate-seeds":
         from .aggregate import aggregate_seed_reports
         result = aggregate_seed_reports(args.directory)
+    else:
+        from .region_cli import compare_regions_from_files
+        result = compare_regions_from_files(
+            args.directory, passes_file=args.passes, regions_file=args.regions,
+            energy_fraction=args.energy_fraction, min_signal=args.min_signal,
+            error_maps=args.error_maps,
+        )
 
     if args.output:
         write_report(args.output, result)
