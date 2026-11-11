@@ -43,6 +43,7 @@ def parser() -> argparse.ArgumentParser:
     argp.add_argument("--methods", default="STANDARD,HIGH,SUPER", help="Comma-separated ACD methods")
     argp.add_argument("--regions", type=Path, help="JSON of normalized manual ROI rectangles")
     argp.add_argument("--no-aov", action="store_true", help="Don't export multilayer EXR of initial noisy render")
+    argp.add_argument("--preserve-emission", action="store_true", help="Experimentally preserve raw emission AOV")
     argp.add_argument("--dry-run", action="store_true", help="Print Blender command without running")
     return argp
 
@@ -104,6 +105,7 @@ def make_command(args) -> tuple[list[str], dict[str, str]]:
         "ACD_DEVICE": args.device,
         "ACD_METHODS": args.methods,
         "ACD_CAPTURE_AOV": "0" if args.no_aov else "1",
+        "ACD_PRESERVE_EMISSION": "1" if args.preserve_emission else "0",
     })
     if args.width:
         env["ACD_WIDTH"] = str(args.width)
