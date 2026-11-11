@@ -33,8 +33,12 @@ def evaluate_batch(directory: str | Path) -> dict:
     check_file = root / "reference_check.exr"
     ref_disagreement = None
     independent_ranking = None
+    reference_quality_diagnostic = None
     if check_file.is_file():
         second_reference = read_arrays(check_file)["image"]
+        from .reference_audit import audit_reference_pair
+        raw = read_arrays(root / "acd_compare_Raw.exr")["image"]
+        reference_quality_diagnostic = audit_reference_pair(raw, reference, second_reference)
         ref_disagreement = compare_images(reference, second_reference)
         independent_scores = {
             name: compare_images(second_reference, read_arrays(root / ("acd_compare_" + name + ".exr"))["image"])
@@ -49,13 +53,18 @@ def evaluate_batch(directory: str | Path) -> dict:
     }
     return {
         "reference": str(reference_file.name),
-        "note": "One small test scene; independent reference is not convergence-verified",
+        "note": "References are finite-spp and independent sampling/convergence are not verified by image comparison alone",
         "measurements": results,
         "rmse_reduction_vs_raw": relative_change,
         "rank_by_rmse": sorted(results, key=lambda name: results[name]["rmse_linear"]),
         "rank_by_mae": sorted(results, key=lambda name: results[name]["mae_linear"]),
         "rank_by_log1p_luminance": sorted(results, key=lambda name: results[name]["log1p_luminance_rmse"]),
         "independent_reference_difference": ref_disagreement,
+        "reference_quality_diagnostic": reference_quality_diagnostic,
+        "reference_ranking_consistent": (
+            sorted(results, key=lambda name: results[name]["rmse_linear"])
+            == independent_ranking if independent_ranking is not None else None
+        ),
         "rank_against_second_reference": independent_ranking,
         "raw_recomposition_vs_raw": (
             compare_images(read_arrays(root / "acd_compare_Raw.exr")["image"],
