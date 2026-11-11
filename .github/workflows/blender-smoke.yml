@@ -108,6 +108,36 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
           path: ${{ runner.temp }}/acd_interior/
+      - name: Save and benchmark an actual .blend input without modifying it
+        if: matrix.version == '5.0.1'
+        env:
+          ACD_FIXTURE_BLEND: ${{ runner.temp }}/external_fixture.blend
+          ACD_BENCH_DIR: ${{ runner.temp }}/external_bench
+          ACD_SCENE: external
+          ACD_INPUT_SPP: "4"
+          ACD_REFERENCE_SPP: "32"
+          ACD_METHODS: "STANDARD,HIGH,SUPER"
+          ACD_CAPTURE_AOV: "1"
+          ACD_EXTRA_SEEDS: ""
+        run: |
+          ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_save_external_fixture.py
+          sha256sum "$ACD_FIXTURE_BLEND" > "${{ runner.temp }}/source.sha256"
+          ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_FIXTURE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_compare_smoke.py
+          cd "${{ runner.temp }}"
+          sha256sum --check source.sha256
+          cd "$GITHUB_WORKSPACE"
+          test -f "$ACD_BENCH_DIR/raw_multilayer.exr"
+          python -m acd_lab.cli inspect-exr --input "$ACD_BENCH_DIR/raw_multilayer.exr"
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/metrics.json"
+          python -m acd_lab.cli compare-regions --directory "$ACD_BENCH_DIR" --passes "$ACD_BENCH_DIR/raw_multilayer.exr" --output "$ACD_BENCH_DIR/region_metrics.json" --error-maps "$ACD_BENCH_DIR/error_maps.npz"
+      - name: Upload external-.blend integration fixture results
+        if: matrix.version == '5.0.1' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blender-5.0.1-external-scene-test
+          if-no-files-found: warn
+          retention-days: 7
+          path: ${{ runner.temp }}/external_bench/
       - name: Upload raw EXR and diagnostic report
         if: matrix.version == '5.0.1' && always()
         uses: actions/upload-artifact@v4
