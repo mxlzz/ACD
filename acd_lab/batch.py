@@ -7,7 +7,14 @@ from .core import compare_images
 from .io import read_arrays
 
 NAMES = ("Raw", "STANDARD", "HIGH", "SUPER")
-OPTIONAL = ("RawRecomposed", "HIGH_no_final", "SUPER_no_final", "HIGH_no_guides", "SUPER_no_guides", "STANDARD_emission_preserved")
+OPTIONAL = (
+    "RawRecomposed", "HIGH_no_final", "SUPER_no_final",
+    "HIGH_no_guides", "SUPER_no_guides", "STANDARD_emission_preserved",
+    "STANDARD_no_guides",
+    "HIGH_component_no_guides", "SUPER_component_no_guides",
+    "HIGH_component_albedo", "SUPER_component_albedo",
+    "HIGH_component_normal", "SUPER_component_normal",
+)
 
 
 def evaluate_batch(directory: str | Path) -> dict:

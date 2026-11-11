@@ -25,8 +25,14 @@ def compare_regions_from_files(
     root = Path(directory)
     reference_file = root / "reference.exr"
     reference = read_arrays(reference_file)["image"]
-    methods = ("Raw", "STANDARD", "HIGH", "SUPER", "STANDARD_emission_preserved", "HIGH_no_final",
-               "SUPER_no_final", "HIGH_no_guides", "SUPER_no_guides")
+    methods = (
+        "Raw", "STANDARD", "HIGH", "SUPER", "STANDARD_emission_preserved",
+        "HIGH_no_final", "SUPER_no_final", "HIGH_no_guides", "SUPER_no_guides",
+        "STANDARD_no_guides",
+        "HIGH_component_no_guides", "SUPER_component_no_guides",
+        "HIGH_component_albedo", "SUPER_component_albedo",
+        "HIGH_component_normal", "SUPER_component_normal",
+    )
     candidates = {}
     for method in methods:
         candidate_path = root / ("acd_compare_" + method + ".exr")

@@ -150,13 +150,22 @@ try:
     tree.links.new(recomposed, fileout.inputs["RawRecomposed"])
 
     all_methods = (
-        ("STANDARD", True, "STANDARD", False),
-        ("HIGH", True, "HIGH", False),
-        ("SUPER", True, "SUPER", False),
-        ("HIGH", False, "HIGH_no_final", False),
-        ("SUPER", False, "SUPER_no_final", False),
-        ("HIGH", True, "HIGH_no_guides", True),
-        ("SUPER", True, "SUPER_no_guides", True),
+        ("STANDARD", True, "STANDARD", "full"),
+        ("HIGH", True, "HIGH", "full"),
+        ("SUPER", True, "SUPER", "full"),
+        ("HIGH", False, "HIGH_no_final", "full"),
+        ("SUPER", False, "SUPER_no_final", "full"),
+        # Legacy ablations remove guides from both intermediate and final OIDN.
+        ("HIGH", True, "HIGH_no_guides", "remove_all"),
+        ("SUPER", True, "SUPER_no_guides", "remove_all"),
+        # New controlled subpass ablations retain the final OIDN guidance.
+        ("STANDARD", True, "STANDARD_no_guides", "component_none"),
+        ("HIGH", True, "HIGH_component_no_guides", "component_none"),
+        ("SUPER", True, "SUPER_component_no_guides", "component_none"),
+        ("HIGH", True, "HIGH_component_albedo", "component_albedo"),
+        ("SUPER", True, "SUPER_component_albedo", "component_albedo"),
+        ("HIGH", True, "HIGH_component_normal", "component_normal"),
+        ("SUPER", True, "SUPER_component_normal", "component_normal"),
     )
     configured_names = [name.strip() for name in os.environ.get(
         "ACD_METHODS", "STANDARD,HIGH,SUPER,HIGH_no_final,SUPER_no_final,HIGH_no_guides,SUPER_no_guides"
@@ -167,17 +176,32 @@ try:
     if unknown or not configured_names:
         raise ValueError("Unsupported method selection: " + str(sorted(unknown)))
     methods = tuple(entry for entry in all_methods if entry[2] in configured_names)
-    for i, (mode, final_filter, output_name, strip_guides) in enumerate(methods):
+    for i, (mode, final_filter, output_name, guide_policy) in enumerate(methods):
         scene.acd_mode = mode
         scene.acd_final_filter = final_filter
         sub_tree = addon.make_tree(scene, view_layer)
-        if strip_guides:
-            # This is an ablation, NOT a recommended permanent addon setting.
+        if guide_policy != "full":
+            # Ablations change only guide *connections*, never the raw render.
+            # For component_* policies, retain guided post-composition OIDN so
+            # differences isolate intermediate pass filtering. Legacy remove_all
+            # deliberately strips both stages for comparison with E0001/E0002.
             for dn in sub_tree.nodes:
-                if dn.bl_idname == "CompositorNodeDenoise":
-                    for edge in tuple(sub_tree.links):
-                        if edge.to_node == dn and edge.to_socket.name in ("Albedo", "Normal"):
-                            sub_tree.links.remove(edge)
+                if dn.bl_idname != "CompositorNodeDenoise":
+                    continue
+                if (guide_policy.startswith("component_")
+                        and dn.label == "Post-composition OIDN"):
+                    continue
+                for edge in tuple(sub_tree.links):
+                    if edge.to_node != dn:
+                        continue
+                    guide = edge.to_socket.name
+                    drop = (
+                        guide_policy in ("remove_all", "component_none")
+                        or (guide_policy == "component_albedo" and guide == "Normal")
+                        or (guide_policy == "component_normal" and guide == "Albedo")
+                    )
+                    if guide in ("Albedo", "Normal") and drop:
+                        sub_tree.links.remove(edge)
         group = tree.nodes.new("CompositorNodeGroup")
         group.label = output_name
         group.node_tree = sub_tree
