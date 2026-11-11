@@ -35,6 +35,8 @@ Desarrollar un sistema de reconstrucción para Blender/Cycles capaz de comparar 
 
 ### M2 / M2.1: trabajo inmediato, en este orden
 
+**Seguimiento operativo:** [Issue #5 — Validez de muestreo, referencias y métricas](https://github.com/mxlzz/ACD/issues/5). El issue incluye los criterios de aceptación y evidencia que deben cerrarse antes de atribuir mejoras de calidad al algoritmo.
+
 1. **Cerrar las anomalías de muestreo de Classroom (E0007):** ninguna estadística multi-seed es válida por el solo hecho de cambiar un número. El laboratorio ya bloquea rankings cuando imágenes supuestamente distintas son casi idénticas. Investigar causa; no dar por demostrado el efecto con el chequeo heurístico de diversidad solamente.
 2. **Revalidar el agregador regional (E0008):** repetir el flujo completo después de corregir el bug `seed_aggregate.json` interpretado como carpeta; documentar la máscara fija y las diferencias de MAE/RMSE. Mantener sin activar por defecto la preservación de emisión.
 3. **Obtener una segunda escena arquitectónica exigente** (vidrio/especular/indirecta) con licencia y procedencia registradas, sin subir assets ajenos a Git. Repetir AOV closure, muestras verificadas y 2 referencias con distinta secuencia de muestreo.
