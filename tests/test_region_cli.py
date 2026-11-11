@@ -10,7 +10,7 @@ from acd_lab.cli import main
 
 
 def save_exr(path, values):
-    channels = {channel: np.asarray(values[..., index], dtype=np.float32)
+    channels = {channel: np.ascontiguousarray(values[..., index], dtype=np.float32)
                 for index, channel in enumerate("RGB")}
     with OpenEXR.File({}, channels) as image:
         image.write(str(path))
@@ -33,9 +33,6 @@ def test_regions_from_saved_exrs_and_roi_file(tmp_path, capsys):
     )
     left = result["regions"]["left"]["metrics"]
     right = result["regions"]["right"]["metrics"]
-    print("ACD_DEBUG left region", result["size"], result["regions"]["left"]["pixels"], left["STANDARD"]["rmse_linear"])
-    from acd_lab.io import read_arrays
-    print("ACD_DEBUG pixel values", read_arrays(tmp_path / "acd_compare_STANDARD.exr")["image"][:, :, 0].tolist())
     assert left["STANDARD"]["rmse_linear"] == pytest.approx(1)
     assert right["STANDARD"]["rmse_linear"] == pytest.approx(0)
     assert left["SUPER"]["rmse_linear"] == pytest.approx(0)
