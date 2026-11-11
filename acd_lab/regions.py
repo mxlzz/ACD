@@ -8,6 +8,7 @@ All calculations use scene-linear RGB. No tone mapping or automatic clipping.
 """
 from __future__ import annotations
 
+import hashlib
 import math
 from collections.abc import Mapping
 
@@ -102,6 +103,21 @@ def rectangle_mask(
     return mask
 
 
+def mask_fingerprint(mask: np.ndarray) -> str:
+    """Versioned SHA-256 of exact spatial ROI membership in row-major order.
+
+    The shape and ordered bits are included, so equal pixel counts or
+    geometrically shifted masks never count as the same region.
+    """
+    spatial = np.asarray(mask)
+    if spatial.ndim != 2 or spatial.dtype != np.bool_:
+        raise ValueError("Expected 2D boolean mask for fingerprint")
+    payload = (b"ACD_MASK_V1:" +
+               np.asarray(spatial.shape, dtype="<i8").tobytes() +
+               np.packbits(spatial.reshape(-1), bitorder="big").tobytes())
+    return hashlib.sha256(payload).hexdigest()
+
+
 def assess_regions(
     reference: np.ndarray,
     candidates: Mapping[str, np.ndarray],
@@ -131,7 +147,8 @@ def assess_regions(
             if count else None
         )
         results[name] = {
-            "pixels": count, "coverage": count / (width * height), "metrics": metrics
+            "pixels": count, "coverage": count / (width * height),
+            "mask_sha256": mask_fingerprint(mask), "metrics": metrics
         }
     return {"size": [width, height], "regions": results}
 

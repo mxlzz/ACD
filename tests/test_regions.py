@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from acd_lab.regions import aov_energy_masks, rectangle_mask, assess_regions, save_error_maps
+from acd_lab.regions import aov_energy_masks, rectangle_mask, assess_regions, save_error_maps, mask_fingerprint
 
 
 def image(value, h=3, w=5):
@@ -77,3 +77,25 @@ def test_error_map_preserves_signed_hdr(tmp_path):
     with np.load(outfile) as archive:
         assert np.all(archive["noise_signed"] == -3)
         assert np.all(archive["noise_absolute"] == 3)
+
+
+
+def test_region_fingerprint_distinguishes_equal_area_different_positions():
+    first = np.zeros((4, 6), dtype=bool)
+    other = first.copy()
+    first[:2, :2] = True
+    other[2:, 4:] = True
+    assert first.sum() == other.sum() == 4
+    assert mask_fingerprint(first) != mask_fingerprint(other)
+    assert mask_fingerprint(first) == mask_fingerprint(first.copy())
+    report = assess_regions(
+        np.zeros((4, 6, 3)), {"same": np.zeros((4, 6, 3))},
+        {"one": first, "two": other}
+    )
+    assert report["regions"]["one"]["mask_sha256"] == mask_fingerprint(first)
+    assert report["regions"]["two"]["mask_sha256"] == mask_fingerprint(other)
+
+
+def test_region_fingerprint_validates_mask_type():
+    with pytest.raises(ValueError, match="boolean mask"):
+        mask_fingerprint(np.ones((2, 2), dtype=np.uint8))

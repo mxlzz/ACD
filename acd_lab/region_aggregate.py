@@ -32,15 +32,20 @@ def aggregate_region_reports(
     if not first or not first["pixels"]:
         raise ValueError(f"Region {region!r} has no selected pixels")
     definition = reports[0]["region_definitions"][region]
-    # The *exact same* spatial mask must be used across the separate inputs.
-    # Equal mask sizes alone do not establish pixelwise equality; this feature
-    # is currently restricted to workflow-generated AOV masks sourced from the
-    # same fixed raw-multilayer EXR, recorded by the caller.
+    expected_mask_hash = first.get("mask_sha256")
+    if not isinstance(expected_mask_hash, str) or len(expected_mask_hash) != 64:
+        raise ValueError(
+            "Regional report lacks spatial mask fingerprint; regenerate "
+            "all region reports with current ACD Lab"
+        )
+    # Every report must agree on the *ordered pixel mask*, not only on
+    # coverage/count and human-readable definition; mask_sha256 enforces it.
     rows = []
     for path, report in zip(paths, reports):
         target = report["regions"].get(region)
         if (target is None or target["pixels"] != first["pixels"]
-                or report["region_definitions"].get(region) != definition):
+                or report["region_definitions"].get(region) != definition
+                or target.get("mask_sha256") != expected_mask_hash):
             raise ValueError("Regional definitions/counts differ across seed reports")
         available = target.get("metrics")
         if not available or baseline not in available or candidate not in available:
@@ -62,6 +67,7 @@ def aggregate_region_reports(
         "pixel_count": first["pixels"],
         "coverage": first["coverage"],
         "region_definition": definition,
+        "mask_sha256": expected_mask_hash,
         "mask_provenance": "Fixed AOV pass image reused by caller for every seed; inspect workflow",
         "baseline": baseline,
         "candidate": candidate,
