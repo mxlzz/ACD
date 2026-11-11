@@ -87,7 +87,17 @@ def compare_images(
         None if data_range is None or mse == 0
         else 20 * math.log10(data_range / rmse)
     )
+    # Diagnostic for exposure-compressed luminance error. Not HDR-FLIP, and
+    # not equivalent to a display-referred perceptual quality metric.
+    # Clamp only in this diagnostic transformation, never the main linear data.
+    weights = np.array([0.2126, 0.7152, 0.0722])
+    ref_luma = np.maximum(ref @ weights, 0.0)
+    cand_luma = np.maximum(cand @ weights, 0.0)
+    log_luma_delta = np.log1p(cand_luma) - np.log1p(ref_luma)
+    per_pixel_rmse = np.sqrt(np.mean(delta * delta, axis=-1))
     return {
+        "log1p_luminance_rmse": float(np.sqrt(np.mean(log_luma_delta ** 2))),
+        "pixel_rmse_p95": float(np.quantile(per_pixel_rmse, 0.95)),
         "mae_linear": float(np.mean(np.abs(delta))),
         "rmse_linear": rmse,
         "relative_rmse": rmse / max(reference_rms, 1e-12),

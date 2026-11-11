@@ -53,6 +53,8 @@ def evaluate_batch(directory: str | Path) -> dict:
         "measurements": results,
         "rmse_reduction_vs_raw": relative_change,
         "rank_by_rmse": sorted(results, key=lambda name: results[name]["rmse_linear"]),
+        "rank_by_mae": sorted(results, key=lambda name: results[name]["mae_linear"]),
+        "rank_by_log1p_luminance": sorted(results, key=lambda name: results[name]["log1p_luminance_rmse"]),
         "independent_reference_difference": ref_disagreement,
         "rank_against_second_reference": independent_ranking,
         "raw_recomposition_vs_raw": (
