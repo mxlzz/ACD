@@ -23,6 +23,9 @@ M1 development: PR #3, branch dev/acd-m1-exr-evaluation. Related issue #2.
 - E0003 (run 43051674524): 96x80, 32 spp, same noisy input, two 4096 spp independent references. Super RGB RMSE 0.085272, Standard 0.089322, High 0.090164. Super also improves MAE, log-luminance RMSE and p95 pixel RMSE relative to Standard in this trial. Unguided Super RGB RMSE 0.081339, but guided Super leads on MAE and log-luminance. The two references differ (RMSE 0.03941). More seeds/scenes required; see docs/experiments/E0003.md.
 - Note: comparison order changed from E0002 to E0003; image size and input spp changed together, so no single cause is established.
 
+- E0004: 96x80 interior repeated with four noisy seeds (539, 911, 1337, 2026) and shared two 4096-spp references (run 43052249917). Mean RGB RMSE: Standard 0.078680, Super 0.080243, High 0.082621. However Super has lower mean MAE (0.030957 vs Standard 0.033328) and lower p95 pixel error (0.105689 vs 0.114824). Unguided High and Super have lower mean RMSE (0.076094 and 0.077236). No universal winner. See docs/experiments/E0004.md.
+- The expensive architectural multi-seed battery is now manual workflow_dispatch, not a default PR check, to avoid wasteful repeated CPU render runs.
+
 ## Unverified, pending
 - Blender 5.3 actual composited render on machine with working graphics runtime.
 - Equivalence to released SID 5.3 and performance on practical interiors.
@@ -30,7 +33,7 @@ M1 development: PR #3, branch dev/acd-m1-exr-evaluation. Related issue #2.
 - Material-specific quality improvements, HDR perceptual metrics, and RTX performance.
 
 ## Immediate next gates
-1. Repeat E0003 with several input seeds; isolate effects of resolution and sample count with controlled one-variable changes.
+1. E0004 multi-seed experiment completed. Next: isolate resolution vs sample budget as single-variable changes, add scenes and reference convergence checks.
 2. Inspect per-pass residual maps to isolate where distortion is introduced.
 3. Benchmark three test scenes and several seeds/spp budgets.
 4. Move beyond generic OIDN stacking only when a measurable benefit appears.
