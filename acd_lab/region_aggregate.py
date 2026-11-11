@@ -68,7 +68,7 @@ def aggregate_region_reports(
         "coverage": first["coverage"],
         "region_definition": definition,
         "mask_sha256": expected_mask_hash,
-        "mask_provenance": "Fixed AOV pass image reused by caller for every seed; inspect workflow",
+        "mask_provenance": "Exact ordered pixel membership verified by SHA-256; AOV source declared by caller",
         "baseline": baseline,
         "candidate": candidate,
         "input_seed_count": len(rows),

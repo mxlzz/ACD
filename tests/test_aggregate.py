@@ -29,7 +29,7 @@ def test_aggregate_seed_metrics(tmp_path):
     aggregate = aggregate_seed_reports(tmp_path)
     assert aggregate["input_seed_count"] == 2
     assert aggregate["rank_by_mean_rmse"] is None
-    assert not aggregate["independent_seeds_verified"]
+    assert not aggregate["input_diversity_heuristic_passed"]
     assert aggregate["methods"]["SUPER"]["rmse_linear"]["mean"] == pytest.approx(.45)
     assert aggregate["methods"]["SUPER"]["rmse_linear"]["population_std"] == pytest.approx(.05)
     assert aggregate["seed_rmse_wins"] is None
@@ -64,6 +64,6 @@ def test_aggregate_verified_when_raw_inputs_distinct(tmp_path):
     save(folder / "acd_compare_Raw.exr", different)
     (folder / "metrics.json").write_text(json.dumps(report(2, .7, .5)))
     result = aggregate_seed_reports(tmp_path)
-    assert result["independent_seeds_verified"]
+    assert result["input_diversity_heuristic_passed"]
     assert result["rank_by_mean_rmse"][0] == "SUPER"
     assert result["seed_rmse_wins"]["SUPER"] == 2

@@ -47,11 +47,14 @@ def aggregate_seed_reports(directory: str | Path) -> dict:
 
     return {
         "seed_diversity_audit": diversity,
-        "independent_seeds_verified": diversity_validated,
+        "input_diversity_heuristic_passed": diversity_validated,
+        "sampling_independence_proven": False,
         "independence_warning": (
-            None if diversity_validated else
-            "NOT VALIDATED: input samples may be identical, missing or effectively deterministic. "
-            "Per-seed metrics below are descriptive only; no cross-seed winner is established."
+            "Distinct images pass the necessary image-diversity heuristic, "
+            "but statistical independence of underlying Monte Carlo samples remains unproven."
+            if diversity_validated else
+            "NOT VALIDATED: inputs may be identical, missing or effectively deterministic. "
+            "Per-seed metrics are descriptive only; no cross-seed winner is established."
         ),
         "input_seed_count": len(paths),
         "input_report_paths": [str(p.relative_to(root)) for p in paths],

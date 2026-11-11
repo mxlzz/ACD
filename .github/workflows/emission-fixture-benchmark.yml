@@ -79,7 +79,7 @@ jobs:
           from pathlib import Path
           root = Path(os.environ["ACD_BENCH_DIR"])
           agg = json.loads((root / "seed_aggregate.json").read_text())
-          if not agg["independent_seeds_verified"]:
+          if not agg["input_diversity_heuristic_passed"]:
               raise SystemExit("ACD invalid benchmark: raw noisy seed diversity not verified")
           region = json.loads((root / "region_metrics.json").read_text())
           # AOV mask is descriptive, not a physical material-ID segmentation.
