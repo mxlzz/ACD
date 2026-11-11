@@ -13,6 +13,13 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - E0007 controlled procedural interior: seeds 539 and 911 produce meaningfully different unfiltered 16-spp renders in independent Blender processes (pair RMSE / signal RMS 0.2655), unlike Classroom. Evidence: https://github.com/mxlzz/ACD/actions/runs/43071534950
 - Classroom workflow now intentionally uses one noisy input only, without invalid multi-seed averages. Heavy benchmark and seed-probe workflows are manual-only.
 
+## E0008 — emission preservation with verified diverse noisy inputs
+- Procedural emissive interior, 128x96, 24 spp, three distinguishable raw noisy seeds and two 1024-spp unfiltered references.
+- Baseline emission mask: 66 pixels (0.54% of image). Standard emission-region RMSE mean 0.275820 vs emission-preserved 0.271765 (~1.47% reduction), improvement only 2/3 seeds.
+- However, emission-region MAE mean worsens 0.185852 -> 0.206836 (~11.29%), and global RMSE mean worsens 0.091558 -> 0.091715. No default algorithm change justified.
+- Results and source runs: docs/experiments/E0008.md and E0008_metrics.json.
+- Fixed a glob bug where seed_aggregate.json was treated as a seed folder; numerical CI and Blender smoke tests passed after the correction. Heavy emission workflow is now manual-only.
+
 ## Implemented and checked
 - Local runner: scripts/run_scene_benchmark.py. Loads an existing .blend without saving, supports chosen frame/resolution, noisy/reference spp and seeds, optional existing reference, and CPU/CUDA/OPTIX selection.
 - Experiment provenance: source scene SHA256, scene name, selected view layer, Blender version, color management settings, frame, samples, seed and device recorded.
