@@ -85,3 +85,20 @@ def test_cli_roundtrip(tmp_path, capsys):
     ]) == 0
     assert json.loads(report.read_text())["mae_linear"] == 0.25
     assert "mae_linear" in capsys.readouterr().out
+
+
+def test_log_luminance_metric_handles_negative_hdr_without_clipping_linear_error():
+    reference = np.zeros((2, 2, 3), dtype=np.float32)
+    candidate = reference.copy()
+    candidate[0, 0, 0] = -2.0
+    result = compare_images(reference, candidate, data_range=1)
+    assert result["rmse_linear"] > 0
+    assert result["log1p_luminance_rmse"] == 0.0
+    assert result["pixel_rmse_p95"] > 0
+
+
+def test_log_luminance_and_p95_zero_for_equal_images():
+    reference = img(3.0)
+    report = compare_images(reference, reference)
+    assert report["log1p_luminance_rmse"] == 0.0
+    assert report["pixel_rmse_p95"] == 0.0
