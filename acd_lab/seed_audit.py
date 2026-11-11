@@ -27,6 +27,7 @@ def audit_noisy_seed_diversity(directory: str | Path, *, minimum_ratio: float = 
             "comparisons": [],
         }
     comparisons = []
+    raw_images = [("baseline", raw)]
     for folder in sorted(root.glob("seed_*")):
         path = folder / "acd_compare_Raw.exr"
         if not path.is_file():
@@ -34,14 +35,30 @@ def audit_noisy_seed_diversity(directory: str | Path, *, minimum_ratio: float = 
         candidate = read_arrays(path)["image"]
         diff = compare_images(raw, candidate)
         ratio = diff["rmse_linear"] / raw_vs_ref
+        raw_images.append((folder.name, candidate))
         comparisons.append({
             "seed_dir": folder.name,
             "raw_pair_rmse": diff["rmse_linear"],
             "raw_pair_vs_raw_reference_rmse_ratio": ratio,
             "passes_heuristic": bool(ratio >= minimum_ratio),
         })
+    # Base-only comparison cannot detect two extra seeds which are duplicates
+    # of each other. Check all pairs of submitted noisy inputs.
+    pairwise = []
+    for i, (name_a, data_a) in enumerate(raw_images):
+        for name_b, data_b in raw_images[i + 1:]:
+            delta = compare_images(data_a, data_b)["rmse_linear"]
+            ratio = delta / raw_vs_ref
+            pairwise.append({
+                "first": name_a,
+                "second": name_b,
+                "rmse": delta,
+                "ratio_to_input_reference_rmse": ratio,
+                "passes_heuristic": bool(ratio >= minimum_ratio),
+            })
     return {
-        "passes_diversity_check": bool(comparisons) and all(c["passes_heuristic"] for c in comparisons),
+        "passes_diversity_check": bool(pairwise) and all(p["passes_heuristic"] for p in pairwise),
+        "all_pairs": pairwise,
         "heuristic_min_ratio": minimum_ratio,
         "raw_reference_rmse": raw_vs_ref,
         "comparisons": comparisons,

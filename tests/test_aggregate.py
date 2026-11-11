@@ -28,7 +28,8 @@ def test_aggregate_seed_metrics(tmp_path):
     (child / "metrics.json").write_text(json.dumps(report(2, .7, .5)))
     aggregate = aggregate_seed_reports(tmp_path)
     assert aggregate["input_seed_count"] == 2
-    assert aggregate["rank_by_mean_rmse"][0] == "SUPER"
+    assert aggregate["rank_by_mean_rmse"] is None
+    assert not aggregate["independent_seeds_verified"]
     assert aggregate["methods"]["SUPER"]["rmse_linear"]["mean"] == pytest.approx(.45)
     assert aggregate["methods"]["SUPER"]["rmse_linear"]["population_std"] == pytest.approx(.05)
     assert aggregate["seed_rmse_wins"]["SUPER"] == 2
