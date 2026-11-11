@@ -133,3 +133,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Defecto técnico asociado:** el campo `pixels` en métricas globales usaba altura y no ancho×altura. Corregido y cubierto por test.
 - **Estado:** cambio anterior a la ejecución observada del piloto; resultado numérico aún pendiente y no se declara por anticipado. Se mantiene el mismo fixture congelado y ninguna modificación del port de producción.
 - **Siguiente:** ejecutar pipeline real, revisar tres controles y recién entonces interpretar diferencias HDR, RGB y alfa de SID.
+
+
+## 2026-11-11 — M3.5, corregir media type del compositor Blender 5
+
+- **Evidencia real:** run https://github.com/mxlzz/ACD/actions/runs/43104453238: generación de 3 EXR y tests Python OK; upstream Blender 3.6 produjo outputs. Blender 5 falló en `CompositorNodeOutputFile` con `TypeError: enum "OPEN_EXR" not found in ('OPEN_EXR_MULTILAYER')`.
+- **Causa localizada:** se intentó configurar file_format OPEN_EXR manteniendo media_type MULTI_LAYER_IMAGE por defecto. El pipeline existente del proyecto configura media_type IMAGE primero.
+- **Cambio:** fijar `node.format.media_type="IMAGE"` únicamente en el branch Blender 5 antes del formato EXR; no tocar el grafo SID ni la tolerancia de comparación.
+- **Aceptación:** rerun produce RGBA EXR de raw, albedo, normal y SID del port y reporte comparativo. **Resultado pendiente posterior al commit.**
+- **Siguiente:** revisar el próximo paso fallido, si lo hubiera, y nunca dar por validada paridad numérica hasta completar datos y controles.

@@ -4,6 +4,13 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.5 — CI real, primera falla corregida (2026-11-11)
+
+- [Run #43104453238](https://github.com/mxlzz/ACD/actions/runs/43104453238): generador de entradas/pytest OK; SID público real en Blender 3.6.23 produjo EXR y manifests; el **script del port en Blender 5.0.1** falló antes del render al fijar `node.format.file_format="OPEN_EXR"` con `media_type` por defecto `MULTI_LAYER_IMAGE`. Error concreto: `enum "OPEN_EXR" not found in ('OPEN_EXR_MULTILAYER')`.
+- **Diagnóstico:** configuración de OutputFile en harness, no evidencia de bug del SID Reference. El pipeline ya probado de ACD establece `format.media_type="IMAGE"` antes de `file_format="OPEN_EXR"`.
+- **Corrección localizada:** en el script M3.5, para Blender 5 se fija media_type IMAGE antes de OPEN_EXR. No se tocan nodos OIDN, entradas ni comparador.
+- **Aceptación:** rerun debe generar port/raw+guías/sid y un informe completo. Esta corrección no está verificada aún al commit; mantener M3.5 sin cerrar.
+
 ## M3.5 — Refinamiento de controles EXR (2026-11-11)
 
 - **Corrección metodológica antes de observar resultados:** el passthrough ahora se exporta para **los tres buffers** (imagen ruidosa, albedo y normal) en ambos Blenders, no solo para RGB/noisy. El comparador exige máximo error absoluto cross-version de 0.001 en cada buffer; también reporta diferencias respecto del EXR original, sin presuponer que la premultiplicación de alfa de compositor sea un error del denoiser.

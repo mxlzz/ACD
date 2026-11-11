@@ -94,6 +94,10 @@ def file_output(name, source):
     folder = DEST / name
     folder.mkdir(parents=True, exist_ok=True)
     node = nodes.new("CompositorNodeOutputFile")
+    # Blender 5 defaults to MULTI_LAYER_IMAGE, where OPEN_EXR is not an
+    # allowed file_format. Select single-image media before the EXR codec.
+    if FLAVOR == "port":
+        node.format.media_type = "IMAGE"
     node.format.file_format = "OPEN_EXR"
     node.format.color_depth = "32"
     node.format.exr_codec = "ZIP"
