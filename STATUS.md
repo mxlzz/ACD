@@ -4,6 +4,19 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.5 — Standard: primer resultado numérico ejecutado (2026-11-11)
+
+- [Run 43104673773](https://github.com/mxlzz/ACD/actions/runs/43104673773): **success**; [artifact 13893222574](https://github.com/mxlzz/ACD/actions/runs/43104673773/artifacts/13893222574) con archivos originales, portados y mapas de error.
+- SHA-256 y passthrough de noisy/albedo/normal idénticos en Blender 3.6.23 y 5.0.1: MAE=RMSE=max_abs=0 en los 6144 píxeles. El protocolo de comparación es válido en este fixture.
+- Salida Standard Blender 5 respecto a SID 3.6: RGB RMSE 0.03285426, MAE 0.01902902, máximo absoluto 0.46119857; en píxeles HDR RGB RMSE 0.04103480. Alfa RMSE=0 e igualdad exacta.
+- Las diferencias son **entre versiones de Blender/OIDN**, sin referencia ideal ni igualdad comprobada de versiones/ajustes del backend. No atribuir automáticamente a bug del port ni declarar calidad superior.
+
+## M3.5 — High/Super, piloto numérico candidate (2026-11-11)
+
+- Incorporado workflow separado \`sid-highsuper-numeric-parity.yml\`, inputs EXR congelados de 15 AOV, SHA-256 por entrada, ejecuciones del SID histórico Blender 3.6 y port Blender 5, controles passthrough en ambos, mapas de error RGB/HDR/alfa y manifests.
+- Fija transmisión/emisión/entorno activados, volumen desactivado; material sintético 96×64. No constituye benchmark de imágenes arquitectónicas.
+- **Estado:** aún no ejecutado al momento del commit. No inferir paridad High/Super del éxito Standard. Siguiente: ejecutar CI, verificar 15 controles y medir diferencias; documentar fallas reales.
+
 ## M3.5 — CI real, primera falla corregida (2026-11-11)
 
 - [Run #43104453238](https://github.com/mxlzz/ACD/actions/runs/43104453238): generador de entradas/pytest OK; SID público real en Blender 3.6.23 produjo EXR y manifests; el **script del port en Blender 5.0.1** falló antes del render al fijar `node.format.file_format="OPEN_EXR"` con `media_type` por defecto `MULTI_LAYER_IMAGE`. Error concreto: `enum "OPEN_EXR" not found in ('OPEN_EXR_MULTILAYER')`.

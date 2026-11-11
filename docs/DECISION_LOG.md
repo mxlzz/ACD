@@ -142,3 +142,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Cambio:** fijar `node.format.media_type="IMAGE"` únicamente en el branch Blender 5 antes del formato EXR; no tocar el grafo SID ni la tolerancia de comparación.
 - **Aceptación:** rerun produce RGBA EXR de raw, albedo, normal y SID del port y reporte comparativo. **Resultado pendiente posterior al commit.**
 - **Siguiente:** revisar el próximo paso fallido, si lo hubiera, y nunca dar por validada paridad numérica hasta completar datos y controles.
+
+## 2026-11-11 — M3.5 Standard medido; High/Super integrado como candidato
+
+- **Prueba real:** run 43104673773 y artifact 13893222574. Noisy, normal y albedo pasaron con identidad exacta entre Blender 3.6/5.0 y EXR original.
+- **Resultados numéricos:** Standard RGB RMSE 0.03285426, MAE 0.01902902, máximo 0.46119857; ROI HDR RMSE 0.04103480; alfa idéntica (RMSE 0). Son diferencias de salidas entre dos versiones/OIDN, no error respecto de convergencia.
+- **Decisión:** extender M3.5 a los grafos High y Super reales, con 15 AOV/guías congelados y verificación de passthrough por cada buffer; medir emisiones y alfa.
+- **Cambio:** scripts de fixture, driver y comparador, unit tests, workflow aislado que clona GPL original solo en runner. No modificar el addon estable ni afirmar superioridad.
+- **Estado del nuevo pipeline:** código candidato; pruebas reales High/Super pendientes. Siguiente etapa: verificar CI, corregir las incompatibilidades del harness sobre evidencia concreta y analizar diferencias por canal y región.
