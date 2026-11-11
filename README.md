@@ -1,34 +1,58 @@
 # ACD — Adaptive Compositional Denoiser
 
-Experimental image reconstruction and denoising research for Blender/Cycles.
+An **experimental** multi-pass denoising research system for Blender/Cycles, with an independent numerical evaluation lab. It is not a verified commercial SID 5.3 replica or a proven universal improvement over native OIDN.
 
-**Status: research prototype. No quality improvement over OIDN or SID has yet been demonstrated.**
+## Project layout
 
-## Repository
-- addon/acd_blender.py: Blender 5.x compositor addon (experimental).
-- acd_lab/: independent numerical evaluation utilities.
-- tests/: deterministic tests and an optional Blender headless smoke test.
-- docs/: algorithm specifications, sources and experiment protocol.
-- STATUS.md: persistent milestone and verification state.
+- addon/acd_blender.py — experimental Blender 5.x Standard/High/Super compositor.
+- acd_lab/ — OpenEXR ingest, raw-pass reconstruction, image-quality and regional diagnostics.
+- scripts/run_scene_benchmark.py — controlled local comparisons using an existing .blend.
+- docs/experiments/ — historical runs E0001–E0004, including negative findings.
+- docs/regions.md — ROI versus AOV contribution-mask interpretation.
+- docs/real_scenes.md — practical setup and scene provenance.
+- STATUS.md — persistent project status, gates and current validation evidence.
 
-## Laboratory setup
+## Evaluate a real Blender scene locally
 
 Python 3.11+:
 
-~~~sh
-python -m pip install -e ".[dev]"
-python -m pytest -q
-python -m acd_lab.cli compare --reference reference.npz --candidate candidate.npz
-python -m acd_lab.cli check-passes --input render_passes.npz
-~~~
+    python -m pip install -e ".[dev,exr]"
+    python -m pytest -q
 
-The initial laboratory accepts .npy/.npz files with linear-light RGB or RGBA arrays. Multilayer EXR ingestion is a **next milestone**, not implemented yet.
+Run from the ACD repository root, adjusting paths:
 
-## Blender
-Install addon/acd_blender.py with Edit > Preferences > Add-ons > Install from Disk. Select Cycles, then open Render Properties > ACD. Do not use the experimental addon for production until tested on Blender 5.x.
+    python scripts/run_scene_benchmark.py \
+      --blender "/path/to/blender" \
+      --blend "/path/to/classroom.blend" \
+      --output "./experiments/classroom_001" \
+      --samples 64 --reference-samples 2048 \
+      --device CPU
 
-## Third-party research
-ACD studies the publicly documented compositional methods in Pidgeon Tools Super Image Denoiser: https://github.com/PidgeonTools/SuperImageDenoiser . That project's source is GPL-3.0. The code in this repository is independently written and does not include its source files. No license has yet been granted to redistribute ACD's own code; review license obligations before importing external code.
+For NVIDIA GPUs, pass --device OPTIX (requires compatible drivers).
+The source .blend is loaded in memory and **not overwritten**. The runner
+writes scene-linear EXRs, per-method reports, raw AOVs and optional ROI
+error maps. A large reference at 1080p can be slow: see docs/real_scenes.md.
 
-## Scientific standard
-Compare exactly the same noisy input (resolution, sample count, seed, color management) against independent converged references. Visual smoothness by itself is not evidence of higher quality.
+To define meaningful spatial ROIs, adapt examples/regions.json and pass
+--regions examples/regions.json. Regional AOV masks describe how strongly
+a type of radiance contributes, **not** which object material appears.
+
+## Data and third-party code
+
+No third-party SID code has been copied into this repository. The historical
+public Super Image Denoiser implementation is GPL-3.0:
+https://github.com/PidgeonTools/SuperImageDenoiser
+
+The pipeline is inspired by public compositional denoising concepts, with
+independently written source. No ACD redistribution license has been selected.
+Public Blender demo scenes have their own licenses and are not bundled here.
+
+## Evidence standard
+
+All denoisers must process the *same noisy Cycles render*. Measure against
+independently seeded high-spp references, checking convergence; compare more
+than one scene, input seed, sample count and error metric, and inspect
+material-specific crops before making quality claims.
+
+The present research is preliminary. See STATUS.md before deciding which
+pipeline is superior.
