@@ -1,24 +1,31 @@
-# Persistent project state
+# Persistent project state — ACD
 
-Date: 2026-11-11
-Branch: dev/acd-core-lab-foundation
-Milestone M0: begin Core + Lab in parallel.
+Updated: 2026-11-11
+Base M0 merged to main by PR #1.
+M1 development: PR #3, branch dev/acd-m1-exr-evaluation. Related issue #2.
 
-Verified:
-- Repository mxlzz/ACD is available and public.
-- SID historical source is GPL-3.0, and uses family-level High and component-level Super denoising.
-- Core and laboratory architecture has been specified.
+## Verified
+- GitHub Actions Python core+lab checks passed.
+- Blender 5.0.1: addon nodes constructed; render test passed.
+- Blender 5.3: addon node construction passed; composited rendering remains unverified in the cloud runner because of missing EGL dependencies.
+- OpenEXR 3.3+ support: tests with synthetic EXR passes passed.
+- Blender-generated raw multi-layer EXR ingested successfully (run 43048580433).
+- For the 48×40, 8 spp factory scene: raw beauty vs AOV recomposition max absolute difference 8.26e-8.
+- Same Cycles noisy render successfully processed via Raw, Standard, High, Super branches (run 43048979372).
+- First reference run: 16 spp seed 539 against 256 spp seed 8819. Standard RMSE 0.002668, Raw 0.002796, High 0.006526, Super 0.018854. See docs/experiments/E0001.md.
+- Removing the final OIDN from High/Super barely changes RMSE; the raw compositing graph reproduces raw with RMSE ~1e-8.
 
-Pending verification:
-- Blender 5 compositor node creation and pass sockets, in an actual Blender 5 binary.
-- Lab tests from GitHub Actions and actual HDR scenes.
-- Numerical equivalence with original SID or any quality improvement.
-- EXR multilayer import, full Alpha handling and photographic/upscale modules.
+## Unverified, pending
+- Blender 5.3 actual composited render on machine with working graphics runtime.
+- Equivalence to released SID 5.3 and performance on practical interiors.
+- Consecutive high-sample reference convergence / multiple seeds.
+- Material-specific quality improvements, HDR perceptual metrics, and RTX performance.
 
-Next gates:
-1. Commit initial Blender adapter and numerical lab with tests.
-2. Run CI on the development branch and repair failures.
-3. Run headless Blender 5 smoke test with a tiny Cycles scene.
-4. Capture low-sample and independent reference EXR render sets.
-5. Measure native OIDN, experimental High/Super and ablations.
-6. Study uncertainty-driven blending, then upscale and photographic restoration.
+## Immediate next gates
+1. Run guidance ablation (normal/albedo inputs disconnected from per-component denoisers).
+2. Inspect per-pass residual maps to isolate where distortion is introduced.
+3. Benchmark three test scenes and several seeds/spp budgets.
+4. Move beyond generic OIDN stacking only when a measurable benefit appears.
+
+## Policy
+No merge of experimental M1 as a production denoiser unless empirical and API tests substantiate it. Keep the source research and licensing record in GitHub.
