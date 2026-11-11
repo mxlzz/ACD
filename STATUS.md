@@ -11,6 +11,9 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - Python/EXR test suite passed on this branch. Blender 5.3 node API smoke also passed, but Blender 5.3 composited rendering is unverified on cloud runners lacking EGL.
 - Fixed synthetic OpenEXR test fixtures requiring contiguous NumPy channel buffers.
 
+- E0005: first real official Classroom (CC0) rendered and analyzed. At 384x216 / 32 spp vs 256 spp reference: Standard RMSE 0.043961, High 0.044847, Super 0.052703, Raw 0.072410. AOV closure RMSE 3.55e-8. In the emission-dominated 1.4% subset, raw RMSE 0.035607 vs Standard 0.060156. See docs/experiments/E0005.md and CI run 43058679034.
+- E0006: controlled emission-preservation experiment added to the Classroom workflow; its quality result is not yet known.
+
 ## Remaining validation
 - Actual professional-sized scenes at 1080p+, multiple input seeds, convergence-tested reference.
 - RTX 4050 OPTIX run on Windows.
