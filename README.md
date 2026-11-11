@@ -8,6 +8,7 @@ An **experimental** multi-pass denoising research system for Blender/Cycles, wit
 - [Development roadmap](docs/ROADMAP.md): milestones M0–M8, dependencies, relative effort and testable exit gates.
 - [Experiment record](docs/experiments/): actual results, uncertainties and negative findings.
 - [Current state](STATUS.md): what has actually been implemented and verified.
+- [Required development protocol](docs/DEVELOPMENT_PROTOCOL.md) and [per-change decision log](docs/DECISION_LOG.md): mandatory M3 alignment check and traceability on every new commit.
 
 These documents separate scientific evidence, project hypotheses, the intended development plan, and observed execution results. Roadmap entries are **not** completed work.
 

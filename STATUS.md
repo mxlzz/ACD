@@ -4,6 +4,14 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## Control de rumbo y trazabilidad — M3 (2026-11-11)
+
+- **Hito activo confirmado:** M3 / Issue #7. No hay port SID Reference fiel verificado. La prioridad sigue siendo extraer especificación de nodos/enlaces/parámetros del SID público y después implementar paridad en Blender 5.
+- **Implementado en este commit:** protocolo obligatorio para revisar alineación antes/después de cada cambio; bitácora de decisiones; verificador por commit integrado a la CI Python. Exige ROADMAP.md, STATUS.md y DECISION_LOG.md modificados juntos en cada commit futuro; la propia introducción del protocolo y el historial anterior están exceptuados.
+- **Validación:** tests del verificador añadidos; resultado de CI real aún pendiente de observación.
+- **Limitación:** la CI comprueba la presencia de trazabilidad, no decide si la investigación es adecuada ni demuestra equivalencia con SID.
+- **Próximo paso:** especificación auditable de SID público, sin alterar el addon estable ni copiar código GPL antes de definir licencias.
+
 ## Rectificación de prioridad: SID antes que optimización ACD
 
 - El objetivo original de replicación fiel de SID no se completó. El addon actual es un prototipo independiente inspirado en SID, **no** un port verificado ni una prueba contra el SID original.

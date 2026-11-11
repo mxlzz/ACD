@@ -14,6 +14,12 @@ Desarrollar un sistema de reconstrucción para Blender/Cycles capaz de comparar 
 - Las referencias finitas de 1024/4096 spp no son automáticamente ground truth convergido.
 - Para la investigación fuente, evidencias e hipótesis véase [research_foundations.md](research_foundations.md).
 
+## Control de rumbo en cada cambio
+
+**Protocolo exigible:** [DEVELOPMENT_PROTOCOL.md](DEVELOPMENT_PROTOCOL.md). **Registro de decisiones por commit:** [DECISION_LOG.md](DECISION_LOG.md). La CI comprueba que cada nuevo commit actualice conjuntamente roadmap, estado y bitácora. Esta verificación **no reemplaza** el juicio técnico ni las pruebas de Blender.
+
+**Hito activo:** M3 / [Issue #7](https://github.com/mxlzz/ACD/issues/7), port fiel del SID público a Blender 5.x. **Primer requisito pendiente:** definir topología y configuración exactas de los grafos Standard/High/Super del SID público, incluidas ramas opcionales y licencias. **Siguiente puerta:** modo SID Reference probado con Blender 5, separado del ACD experimental.
+
 ## Prioridad rectificada: replicar SID antes de optimizar ACD
 
 La implementación actual `addon/acd_blender.py` está **inspirada en** SID, pero no es un port fiel. La [auditoría de diferencias](sid_parity_gap.md) detectó desajustes concretos (prefiltrado Standard, guías de emisión, alfa, lectura de Noisy Image y semántica de nodos). **La prioridad inmediata pasa a ser M3 (Issue #7)**: construir un modo de referencia SID 4.0 históricamente fiel en Blender 5.x y verificarlo, **antes** de declarar alguna mejora de ACD sobre SID. Los benchmarks M2 siguen disponibles como infraestructura y datos; los ensayos de optimización M4 quedan pospuestos hasta tener baseline de SID validado. El código actual no debe denominarse réplica fiel.

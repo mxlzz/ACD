@@ -11,11 +11,15 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Install
         run: python -m pip install -e ".[dev,exr]"
+      - name: Verify milestone alignment and per-commit traceability
+        run: python scripts/check_development_trace.py
       - name: Syntax
         run: python -m compileall -q acd_lab tests addon
       - name: Numerical and actual OpenEXR roundtrip tests
