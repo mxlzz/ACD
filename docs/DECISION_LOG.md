@@ -124,3 +124,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Estado al commit:** código candidato creado; **Actions aún no ejecutada/verificada**. Los resultados serán anexados en un nuevo registro; error de ejecución no será reinterpretado como disparidad numérica.
 - **Limitación:** fixture sintético 96×64 y Standard. No evalúa High/Super ni escena real, calidad perceptual ni rendimiento.
 - **Siguiente:** ejecutar CI y analizar resultados del upstream real; ampliar gradualmente a High/Super cuando el control de entrada pase.
+
+
+## 2026-11-11 — M3.5, controles separados para todas las entradas
+
+- **Hallazgo en auditoría previa a CI:** verificar solo la imagen ruidosa no verifica el albedo/normal; y exigir identidad entre EXR almacenado y passthrough interno puede señalar como fallo una transformación de premultiplicación legítima (idéntica entre ambas versiones).
+- **Decisión:** archivar tres pares de outputs passthrough (noisy, albedo, normal); validar igualdad entre versiones (máx absoluto 0.001), reportar también diferencia frente a archivo original sin imponerles el mismo umbral.
+- **Defecto técnico asociado:** el campo `pixels` en métricas globales usaba altura y no ancho×altura. Corregido y cubierto por test.
+- **Estado:** cambio anterior a la ejecución observada del piloto; resultado numérico aún pendiente y no se declara por anticipado. Se mantiene el mismo fixture congelado y ninguna modificación del port de producción.
+- **Siguiente:** ejecutar pipeline real, revisar tres controles y recién entonces interpretar diferencias HDR, RGB y alfa de SID.

@@ -4,6 +4,12 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.5 — Refinamiento de controles EXR (2026-11-11)
+
+- **Corrección metodológica antes de observar resultados:** el passthrough ahora se exporta para **los tres buffers** (imagen ruidosa, albedo y normal) en ambos Blenders, no solo para RGB/noisy. El comparador exige máximo error absoluto cross-version de 0.001 en cada buffer; también reporta diferencias respecto del EXR original, sin presuponer que la premultiplicación de alfa de compositor sea un error del denoiser.
+- **Error de informe corregido:** `pixels` contaba solamente la altura en comparaciones globales sin máscara. Ahora cuenta los píxeles reales, con regresión en pytest.
+- **Prueba posterior a la corrección:** CI numérica aún pendiente; no atribuir diferencias al filtro sin pasar las tres validaciones de entrada.
+
 ## M3.5 — Primer banco numérico cross-version, Standard (2026-11-11)
 
 - **Hipótesis comprobable:** medir diferencias entre el SID histórico 4.x (Blender 3.6.23) y la réplica independiente (Blender 5.0.1), sobre tres EXR congelados idénticos (imagen ruidosa HDR y alfa, albedo, normal). No se debe confundir una diferencia de lectura o compositor con un filtro distinto.

@@ -42,7 +42,6 @@ scene.render.image_settings.exr_codec = "ZIP"
 scene.render.filepath = str(DEST / "render_not_a_reference.exr")
 scene.render.use_compositing = True
 scene.view_settings.view_transform = "Standard"
-scene.display.shading.light = "STUDIO" if False else scene.display.shading.light
 
 if FLAVOR == "legacy":
     upstream = Path(os.environ["SID_UPSTREAM_ROOT"]).resolve()
@@ -111,11 +110,13 @@ def file_output(name, source):
         links.new(source, node.inputs["Image"])
 
 file_output("raw", inputs["noisy"].outputs["Image"])
+file_output("raw_albedo", inputs["albedo"].outputs["Image"])
+file_output("raw_normal", inputs["normal"].outputs["Image"])
 file_output("sid", group.outputs["Denoised Image"])
 
 result = bpy.ops.render.render()
 assert "FINISHED" in result, result
-for name in ("raw", "sid"):
+for name in ("raw", "raw_albedo", "raw_normal", "sid"):
     images = sorted((DEST / name).rglob("*.exr"))
     assert len(images) == 1, (name, [str(x) for x in images])
     shutil.copyfile(images[0], DEST / (name + ".exr"))
@@ -134,7 +135,7 @@ meta = {
     "prefilter": "FAST" if FLAVOR == "legacy" else "Fast",
     "blender5_adapter_settings": None if FLAVOR == "legacy" else {"Quality": "High", "HDR": True},
     "output_sha256": {name: hashlib.sha256((DEST / (name + ".exr")).read_bytes()).hexdigest()
-                      for name in ("raw", "sid")},
+                      for name in ("raw", "raw_albedo", "raw_normal", "sid")},
     "scope": "Synthetic 96x64 compositor comparison; not a natural-scene quality benchmark",
 }
 (DEST / "manifest.json").write_text(json.dumps(meta, indent=2) + "\n")

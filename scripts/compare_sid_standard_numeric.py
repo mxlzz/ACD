@@ -42,7 +42,7 @@ def metrics(reference, candidate, mask=None):
         return {"pixels": 0, "mae": None, "rmse": None, "max_abs": None}
     diff = candidate.astype(np.float64) - reference.astype(np.float64)
     return {
-        "pixels": int(reference.shape[0]),
+        "pixels": int(np.prod(reference.shape[:2])) if reference.ndim == 3 else int(reference.shape[0]),
         "mae": float(np.abs(diff).mean()),
         "rmse": float(np.sqrt(np.mean(diff * diff))),
         "max_abs": float(np.max(np.abs(diff))),
@@ -69,25 +69,36 @@ def compare(input_dir: Path, legacy_dir: Path, port_dir: Path, output_dir: Path)
             raise ValueError(f"Blenders did not read same bytes for: {name}")
 
     input_noisy = rgba(input_dir / "noisy.exr")
-    old_raw, new_raw = rgba(legacy_dir / "raw.exr"), rgba(port_dir / "raw.exr")
     old_sid, new_sid = rgba(legacy_dir / "sid.exr"), rgba(port_dir / "sid.exr")
-    if not (input_noisy.shape == old_raw.shape == new_raw.shape == old_sid.shape == new_sid.shape):
-        raise ValueError("All EXRs must have identical dimensions")
-    if input_noisy.shape != (64, 96, 4):
-        raise ValueError("Unexpected fixture size")
+    if input_noisy.shape != (64, 96, 4) or old_sid.shape != input_noisy.shape or new_sid.shape != input_noisy.shape:
+        raise ValueError("Unexpected or unequal output dimensions")
 
     mask_hdr = np.max(input_noisy[..., :3], axis=-1) > 1.0
     mask_alpha = input_noisy[..., 3] < 0.999
     if not mask_hdr.any() or not mask_alpha.any():
         raise ValueError("Fixture lost its HDR/transparency controls")
 
-    raw_old = metrics(input_noisy, old_raw)
-    raw_new = metrics(input_noisy, new_raw)
-    raw_pair = metrics(old_raw, new_raw)
-    # Raw passthrough correctness is a prerequisite for attributing SID differences
-    # to the filter rather than image IO, alpha premultiplication or compositor.
-    # Tolerances explicitly cover float32 roundtrip, not a denoiser ranking.
-    passthrough_ok = max(raw_old["max_abs"], raw_new["max_abs"], raw_pair["max_abs"]) <= 0.001
+    # The source EXR may be associated/premultiplied by the compositor even in
+    # raw passthrough; that transformation alone is not a SID port mismatch.
+    # Cross-version raw comparisons are the gate, separately for EVERY input
+    # (noisy beauty, albedo, normal), including alpha.
+    passthrough = {}
+    for raw_name, source_name in (("raw", "noisy"), ("raw_albedo", "albedo"),
+                                  ("raw_normal", "normal")):
+        original = rgba(input_dir / (source_name + ".exr"))
+        old = rgba(legacy_dir / (raw_name + ".exr"))
+        new = rgba(port_dir / (raw_name + ".exr"))
+        if not (original.shape == old.shape == new.shape == input_noisy.shape):
+            raise ValueError("Different dimensions for passthrough " + raw_name)
+        passthrough[source_name] = {
+            "legacy_vs_input": metrics(original, old),
+            "port_vs_input": metrics(original, new),
+            "legacy_vs_port": metrics(old, new),
+        }
+    # Float32 roundtrip tolerance. Source-vs-pass-through deviations are
+    # reported, not silently interpreted as OIDN differences.
+    passthrough_ok = all(control["legacy_vs_port"]["max_abs"] <= 0.001
+                         for control in passthrough.values())
     differences = {
         "rgb_full": metrics(old_sid[..., :3], new_sid[..., :3]),
         "alpha_full": metrics(old_sid[..., 3:4], new_sid[..., 3:4]),
@@ -101,8 +112,7 @@ def compare(input_dir: Path, legacy_dir: Path, port_dir: Path, output_dir: Path)
         "blender_port": port["version"],
         "input_sha256": legacy["input_sha256"],
         "roi": {"hdr_pixels": int(mask_hdr.sum()), "partial_alpha_pixels": int(mask_alpha.sum())},
-        "passthrough": {"valid": passthrough_ok, "legacy_vs_input": raw_old,
-                        "port_vs_input": raw_new, "legacy_vs_port": raw_pair},
+        "passthrough": {"valid": passthrough_ok, "controls": passthrough},
         "denoised_cross_version": differences,
         "warning": "Cross-version OIDN/backend and compositor settings differ; measured pixel difference is not necessarily a porting bug.",
         "not_proven": ["Pixel equivalence", "OIDN backend equivalence", "Quality ranking on real scenes", "High/Super numerical parity"],

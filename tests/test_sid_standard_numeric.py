@@ -21,10 +21,12 @@ def test_metrics_are_signed_and_region_scoped():
     b = a.copy()
     b[0, 1] = 2.0
     data = metrics(a, b)
+    assert data["pixels"] == 4
     assert data["rmse"] > 0
     assert data["max_abs"] == 2.0
     assert not data["exact_match"]
     roi = metrics(a, b, np.array([[True, False], [False, False]]))
+    assert roi["pixels"] == 1
     assert roi["rmse"] == 0.0
     assert metrics(a, a)["exact_match"]
 
