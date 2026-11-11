@@ -4,6 +4,14 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M2.1 — Validación de la integridad de las comparaciones (2026-11-11)
+
+- Incorporado `mask_sha256`: digest versionado del tamaño y la pertenencia exacta de cada píxel a la ROI. Los informes nuevos incluyen el hash; el agregador rechaza ROI con igual área/definición pero ubicación diferente y exige regenerar informes antiguos sin huella. Tests unitarios y OpenEXR de regresión agregados.
+- Incorporado `acd_lab/reference_audit.py`: mide la discrepancia entre dos referencias de muestras finitas respecto del error del render ruidoso, detecta referencias casi idénticas y alerta cuando su diferencia es considerable. **No** certifica independencia ni convergencia (ambas se informan como no demostradas). Incluido en `compare-batch`.
+- Corregida la semántica del diagnóstico multisemilla: `input_diversity_heuristic_passed` solo certifica el umbral heurístico de **diferencia entre imágenes**. `sampling_independence_proven` permanece `false`; ya no se usa el nombre engañoso `independent_seeds_verified`.
+- Las pruebas verifican también dos referencias EXR, normalización del diagnóstico y máscaras distintas con el mismo número de píxeles. Evidencia y limitaciones técnicas: `docs/experiments/E0009.md`.
+- Estado actual: verificaciones Python y Blender headless de la rama, pero **no** se ejecutó de nuevo el pipeline E0008 completo con el agregador actualizado ni una segunda escena profesional. M2.1 sigue abierto: https://github.com/mxlzz/ACD/issues/5
+
 ## Sampling-validity finding — E0007 (2026-11-11)
 - Official Classroom: in independent Blender processes at 96x54, 16 spp, Classic TABULATED_SOBOL, changing Cycles seed 539 -> 911 only changed 4/5184 pixels (RGB RMSE ~1.04e-6); setting sample_offset 0 -> 16 changed only 8/5184 pixels. Source: GitHub Actions 43069937939.
 - Switching Classic to BLUE_NOISE altered the image strongly (RGB RMSE 0.16825), but changing seed 539 -> 911 *within BLUE_NOISE* again produced virtually identical images (relative RMSE 1.32e-9). Source: run 43071018867.
