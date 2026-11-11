@@ -38,7 +38,12 @@ def aggregate_seed_reports(directory: str | Path) -> dict:
                 "per_seed": values,
             }
 
+    from .seed_audit import audit_noisy_seed_diversity
+    has_raw = (root / "acd_compare_Raw.exr").is_file()
+    diversity = audit_noisy_seed_diversity(root) if has_raw else None
+
     return {
+        "seed_diversity_audit": diversity,
         "input_seed_count": len(paths),
         "input_report_paths": [str(p.relative_to(root)) for p in paths],
         "warning": (
