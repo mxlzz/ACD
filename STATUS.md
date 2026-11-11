@@ -8,7 +8,7 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 
 - El código de Cycles v5.0.1 **ya espera a rebotes posteriores cuando domina la contribución especular** antes de registrar características de denoising; no siempre utiliza el primer hit.
 - E0012 prueba que cambiar conexiones de guías afecta la calidad, pero no identifica el mecanismo de degradación. No implementar ciegamente guías de «segundo hit» sin comprobar qué información ya registra el renderer.
-- Fuente técnica y próximos controles: docs/cycles_guide_source_audit.md. La hipótesis H-01 se acota a la **correspondencia entre cada subpase y las guías usadas**.
+- Fuente técnica y próximos controles: docs/cycles_guide_source_audit.md; tareas concretas [Issue #6](https://github.com/mxlzz/ACD/issues/6). La hipótesis H-01 se acota a la **correspondencia entre cada subpase y las guías usadas**.
 
 ## E0012 — Ablación de Albedo/Normal por subpase (11-11-2026)
 
