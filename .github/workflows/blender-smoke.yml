@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "addon/**"
+      - "tests/blender_sid_reference_smoke.py"
       - "tests/blender_smoke.py"
       - "tests/blender_export_smoke.py"
       - "acd_lab/exr.py"
@@ -46,6 +47,8 @@ jobs:
         run: "./blender-$BLENDER_VERSION-linux-x64/blender --version"
       - name: Test Cycles compositor and CPU render
         run: "./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_smoke.py"
+      - name: Check SID public-4.x reference topology and CPU compositor
+        run: "./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_reference_smoke.py"
       - name: Generate actual raw multilayer Cycles EXR
         if: matrix.version == '5.0.1'
         env:
