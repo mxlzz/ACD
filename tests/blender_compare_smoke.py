@@ -34,11 +34,16 @@ try:
         raise ValueError("Unknown ACD_SCENE: " + scene_variant)
     scene.render.engine = "CYCLES"
     scene.cycles.device = "CPU"
-    scene.cycles.samples = 16
-    scene.cycles.seed = 539
+    input_spp = int(os.environ.get("ACD_INPUT_SPP", "16"))
+    input_seed = int(os.environ.get("ACD_INPUT_SEED", "539"))
+    width = int(os.environ.get("ACD_WIDTH", "48"))
+    height = int(os.environ.get("ACD_HEIGHT", "40"))
+    assert input_spp > 0 and 8 <= width <= 4096 and 8 <= height <= 4096
+    scene.cycles.samples = input_spp
+    scene.cycles.seed = input_seed
     scene.cycles.use_denoising = False
-    scene.render.resolution_x = 48
-    scene.render.resolution_y = 40
+    scene.render.resolution_x = width
+    scene.render.resolution_y = height
     scene.render.resolution_percentage = 100
     scene.render.image_settings.media_type = "IMAGE"
     scene.render.image_settings.file_format = "OPEN_EXR"
@@ -154,8 +159,8 @@ try:
     (destination / "metadata.json").write_text(json.dumps({
         "blender": bpy.app.version_string,
         "scene": scene_variant,
-        "samples": 16,
-        "seed": 539,
+        "samples": input_spp,
+        "seed": input_seed,
         "reference_samples": reference_spp,
         "reference_seed": reference_seed,
         "second_reference": second_reference,

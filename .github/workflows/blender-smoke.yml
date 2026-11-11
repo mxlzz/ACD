@@ -84,6 +84,9 @@ jobs:
         if: matrix.version == '5.0.1'
         env:
           ACD_SCENE: interior
+          ACD_WIDTH: "96"
+          ACD_HEIGHT: "80"
+          ACD_INPUT_SPP: "32"
           ACD_REFERENCE_SPP: "4096"
           ACD_DOUBLE_REFERENCE: "1"
           ACD_BENCH_DIR: ${{ runner.temp }}/acd_interior
