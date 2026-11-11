@@ -150,3 +150,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Decisión:** extender M3.5 a los grafos High y Super reales, con 15 AOV/guías congelados y verificación de passthrough por cada buffer; medir emisiones y alfa.
 - **Cambio:** scripts de fixture, driver y comparador, unit tests, workflow aislado que clona GPL original solo en runner. No modificar el addon estable ni afirmar superioridad.
 - **Estado del nuevo pipeline:** código candidato; pruebas reales High/Super pendientes. Siguiente etapa: verificar CI, corregir las incompatibilidades del harness sobre evidencia concreta y analizar diferencias por canal y región.
+
+
+## 2026-11-11 — M3.5 High/Super, corregir ejecución de módulos Python
+
+- **Resultado real:** https://github.com/mxlzz/ACD/actions/runs/43106081661: unit test del generador `1 passed`, pero `python scripts/sid_highsuper_numeric_fixture.py` falló en `from scripts.sid_standard_numeric_fixture import make_arrays` (ModuleNotFoundError), porque la ejecución por ruta fija `sys.path[0]` en `scripts`.
+- **Decisión/cambio:** invocar generador y comparador como módulos Python mediante `python -m scripts.sid_highsuper_numeric_fixture` y `python -m scripts.compare_sid_highsuper_numeric`. No modificar algoritmos, datos, importadores Blender ni alterar resultados inexistentes.
+- **Estado:** nueva CI no ejecutada al momento de este commit. Seguir validando hasta que se creen los pares High/Super y queden registrados los errores RGBA/HDR.

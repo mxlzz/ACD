@@ -4,6 +4,12 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.5 High/Super — primer fallo de CI, ejecución modular (2026-11-11)
+
+- [Run 43106081661](https://github.com/mxlzz/ACD/actions/runs/43106081661): instalación y prueba unitaria de AOV `1 passed`; generador EXR falló con `ModuleNotFoundError: No module named 'scripts'` al invocar `python scripts/sid_highsuper_numeric_fixture.py`. No llegó a Blender ni mide diferencia de SID.
+- **Corrección mínima:** invocar generador y comparador con `python -m scripts.<módulo>`, que sitúa el root del repositorio en la ruta de importación. El generador, comparador y algoritmo de referencia se mantienen sin cambios.
+- **Estado:** pendiente CI posterior al commit; mantener High/Super sin evidencia numérica hasta que termine.
+
 ## M3.5 — Standard: primer resultado numérico ejecutado (2026-11-11)
 
 - [Run 43104673773](https://github.com/mxlzz/ACD/actions/runs/43104673773): **success**; [artifact 13893222574](https://github.com/mxlzz/ACD/actions/runs/43104673773/artifacts/13893222574) con archivos originales, portados y mapas de error.

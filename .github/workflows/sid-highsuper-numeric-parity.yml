@@ -32,7 +32,7 @@ jobs:
         run: |
           python -m pip install -e ".[dev,exr]"
           python -m pytest -q tests/test_sid_highsuper_numeric.py
-          python scripts/sid_highsuper_numeric_fixture.py --output "$ACD_NUMERIC_INPUT"
+          python -m scripts.sid_highsuper_numeric_fixture --output "$ACD_NUMERIC_INPUT"
       - name: Fetch pinned upstream SID code
         run: |
           git clone --quiet https://github.com/PidgeonTools/SuperImageDenoiser.git "$SID_UPSTREAM_ROOT"
@@ -77,7 +77,7 @@ jobs:
       - name: Analyze High and Super errors across frozen AOVs
         run: |
           for mode in high super; do
-            python scripts/compare_sid_highsuper_numeric.py --input /tmp/acd_sid_highsuper/input --legacy "/tmp/acd_sid_highsuper/$mode/legacy" --port "/tmp/acd_sid_highsuper/$mode/port" --output "/tmp/acd_sid_highsuper/$mode/report"
+            python -m scripts.compare_sid_highsuper_numeric --input /tmp/acd_sid_highsuper/input --legacy "/tmp/acd_sid_highsuper/$mode/legacy" --port "/tmp/acd_sid_highsuper/$mode/port" --output "/tmp/acd_sid_highsuper/$mode/report"
           done
       - name: Archive inputs and outputs, SHA and signed maps
         if: always()

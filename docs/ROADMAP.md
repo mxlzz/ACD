@@ -26,6 +26,8 @@ Desarrollar un sistema de reconstrucción para Blender/Cycles capaz de comparar 
 
 **M3.5 Standard observado:** run [43104673773](https://github.com/mxlzz/ACD/actions/runs/43104673773) \`success\` con 3 entradas EXR exactamente idénticas en passthrough. Diferencia RGB Standard RMSE 0.03285426 (HDR RMSE 0.04103480); alfa RMSE 0, sin demostración de paridad píxel ni superioridad. Artifact conservado en el run.
 
+**M3.5 fallo de orquestación observado:** en [run 43106081661](https://github.com/mxlzz/ACD/actions/runs/43106081661), pytest del fixture aprobó pero la invocación directa de script impidió importar el namespace `scripts`. Ajustar comando a `python -m scripts.sid_highsuper_numeric_fixture` y equivalente de comparador; no cambiar datos, grafo ni tolerancias. Nueva CI pendiente.
+
 **M3.5 High/Super siguiente prueba:** workflow \`sid-highsuper-numeric-parity.yml\` preparado con 15 AOV, datos congelados, controles de lectura por Blender y diferencias RGBA/ROI. **CI pendiente**. Si pasa el control de entradas y genera métricas, registrar el alcance; no cerrar M3 sin analizar el backend y escenas reales.
 
 **M3.5 observación real de CI:** [#43104453238](https://github.com/mxlzz/ACD/actions/runs/43104453238) ejecutó exitosamente upstream Standard en Blender 3.6, pero no el port Blender 5 porque OutputFile estaba por defecto en media MULTI_LAYER_IMAGE; `OPEN_EXR` solo se permite tras fijar `media_type="IMAGE"`. Corrección mínima en driver para Blender 5. **Reejecución pendiente; no interpretar todavía deltas del denoiser.**
