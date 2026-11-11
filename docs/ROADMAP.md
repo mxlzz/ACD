@@ -47,7 +47,7 @@ Desarrollar un sistema de reconstrucción para Blender/Cycles capaz de comparar 
 6. **Añadir métrica perceptual HDR** con condiciones de exposición declaradas, además de RMSE/MAE/p95, y revisar recortes a tamaño nativo.
 7. **Cerrar o descartar hipótesis fallidas:** las conclusiones negativas también quedan documentadas y no se incorporan al motor.
 
-**E0012:** [Ablación de guías Albedo/Normal](experiments/E0012.md): High mejora al quitar guías intermedias, Super no; Standard sigue siendo mejor globalmente en este lobby. Normal sin Albedo no es un modo válido del compositor OIDN de Blender. H-01 requiere guías de las señales correctas y auditoría de Cycles, no solo más filtros.
+**E0012:** [Ablación de guías Albedo/Normal](experiments/E0012.md): High mejora sin guías intermedias, Super no. Normal sin Albedo no es válido en OIDN de Blender. La [auditoría del código de Cycles v5.0.1](cycles_guide_source_audit.md) demuestra que el renderer ya sigue ciertos rebotes especulares; H-01 ahora investiga la correspondencia de guías por subpase en lugar de duplicar esa lógica.
 
 ### M3: normalizar la comparación con SID y los nativos
 

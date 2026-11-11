@@ -4,6 +4,12 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## Auditoría Cycles v5.0.1: guías de hits especulares (11-11-2026)
+
+- El código de Cycles v5.0.1 **ya espera a rebotes posteriores cuando domina la contribución especular** antes de registrar características de denoising; no siempre utiliza el primer hit.
+- E0012 prueba que cambiar conexiones de guías afecta la calidad, pero no identifica el mecanismo de degradación. No implementar ciegamente guías de «segundo hit» sin comprobar qué información ya registra el renderer.
+- Fuente técnica y próximos controles: docs/cycles_guide_source_audit.md. La hipótesis H-01 se acota a la **correspondencia entre cada subpase y las guías usadas**.
+
 ## E0012 — Ablación de Albedo/Normal por subpase (11-11-2026)
 
 - E0012 ejecutado y aprobado en Blender 5.0.1: 10 ramas de denoising sobre lobby de vidrio/metal, 128×96, 24 spp, 3 entradas y 2 referencias. Run https://github.com/mxlzz/ACD/actions/runs/43086458932.
