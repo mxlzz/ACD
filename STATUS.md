@@ -11,6 +11,16 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - **Inferencia:** estas operaciones y el mapeo de alfa probado no explican las diferencias mucho mayores en High/Super (RGB RMSE 0.065–0.068 y alfa ~0.00387). Esto acota causas hacia OIDN/parametrización/otras ramas, pero no las identifica de manera exhaustiva.
 - **Siguiente:** aislar nodos OIDN individuales bajo exactamente las mismas entradas (Fast, Accurate guiado, emisión Accurate sin guías, alfa Accurate guiado).
 
+## M3.7 — OIDN individual verificado entre Blender 3.6 y 5.0 (2026-11-11)
+
+- **Evidencia de ejecución:** [Actions #43107260820](https://github.com/mxlzz/ACD/actions/runs/43107260820) `success`; [artifact #13895310157](https://github.com/mxlzz/ACD/actions/runs/43107260820/artifacts/13895310157) con EXR, hash y diferencias firmadas. Se confirmó `input_passthrough_valid=true`.
+- **Resultados OIDN aislado, RGB RMSE port Blender 5 vs original Blender 3.6:** Fast guiado **0.0328542782**, Accurate guiado **0.0306021047**, emisión Accurate sin guías **0.0619173071**, alfa como imagen RGB Accurate guiado **0.0061814454**, Diffuse Direct Accurate guiado **0.0042534052**. Región emisiva del filtro de emisión: RGB RMSE **0.2157095979**.
+- **Contraste causal controlado:** el filtro Fast independiente produce prácticamente el mismo delta que Standard integral (**0.0328542603**); el filtro aislado de emisión explica plausiblemente buena parte del error localizado de High/Super (ROI emisiva **0.22305557 / 0.23223786**), sin constituir una descomposición aditiva exacta.
+- **Precisión sobre alfa:** el canal A de los EXR de OIDN aislado coincide (RMSE=0); para interpretar la rama alfa de High/Super debe compararse el RGB procesado de la imagen escalar de alfa que después se utiliza para recombinación. Su RGB aislado sí difiere (**RMSE 0.00618145**). El error alfa High/Super completo era ~**0.0038727**.
+- **Lo descartado en M3.6:** ADD/MULTIPLY y ADD HDR fueron idénticos, recombinación de alfa solo tuvo diferencias ~5.96e-8; la divergencia relevante se observa ya dentro de filtros OIDN individuales.
+- **Conclusión limitada:** backend OIDN y parámetros por versión son factores plausibles; todavía no se identificó la versión efectiva ni se ajustó la equivalencia de Quality/HDR. No llamar al port “pixel-identical” ni superior; no modificar el addon estable para perseguir métricas interversiones sin ground truth.
+- **Próxima prueba prioritaria M3.8:** establecer y consignar versiones de Blender/OIDN y parámetros/flags de prefiltrado, Quality y HDR; diseñar ablaciones por parámetros del Blender 5 manteniendo el mismo EXR y medir qué delta explica cada cambio. Posteriormente verificar en escenas Cycles reales, muestras y referencias independientes.
+
 ## M3.7 — Experimento candidato de OIDN aislado (2026-11-11)
 
 - Código agregado: `tests/blender_sid_oidn_numeric.py`, `scripts/compare_sid_oidn_numeric.py`, workflow `sid-oidn-numeric-parity.yml`. Cinco casos de nodos OIDN sobre los EXR congelados y sus guías, sin mixing de familias; compara RGB/HDR/alfa por filtro.

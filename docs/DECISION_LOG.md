@@ -176,3 +176,13 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Interpretación limitada:** estos nodos aislados no explican las diferencias de High/Super (alfa RMSE ~0.0038727, RGB/HDR más altos). No demuestra que todas las variantes de grafo sean iguales; OIDN/parametrización sigue sin aislarse.
 - **Decisión:** nuevo experimento M3.7 sobre OIDN individual, manteniendo entradas y guías congeladas y comparando Fast/Accurate, emisión sin guía, alfa guiada y difusión guiada. No aplicar correcciones a OIDN basadas solo en una métrica interversión.
 - **Estado:** scripts/workflow candidatos para Blender3.6 y 5.0; CI aún no ejecutada al commit. Revisión posterior exigida antes de nuevas hipótesis.
+
+
+## 2026-11-11 — M3.7, medición aislada de OIDN y próximo gate de versiones
+
+- **Resultado ejecutado:** [run 43107260820](https://github.com/mxlzz/ACD/actions/runs/43107260820) `success` con [artifact 13895310157](https://github.com/mxlzz/ACD/actions/runs/43107260820/artifacts/13895310157). Passthrough de entradas válido; ambos Blenders procesaron los mismos EXR, sin nodos de mezcla SID.
+- **Valores medidos de RGB RMSE entre versiones:** Fast guiado 0.0328542782, Accurate guiado 0.0306021047, emisión Accurate sin guías 0.0619173071 (ROI emisiva 0.2157095979), imagen alfa Accurate guiada 0.0061814454, Diffuse Direct Accurate guiado 0.0042534052.
+- **Correspondencia:** Fast aislado coincide dentro del redondeo con el Standard integral RMSE 0.0328542603. La emisión aislada produce un error de magnitud similar al observado en el ROI emisivo de High/Super; por tanto tiene prioridad como mecanismo a investigar. La contribución cuantitativa de cada filtro al resultado final aún no está calculada.
+- **Criterio de interpretación:** los canales A de los EXR OIDN aislados tienen RMSE=0, mientras el RGB de alfa como imagen filtrada sí cambia. La salida High/Super combina dicho RGB como alfa final. No inferir equivalencia de alfa solo por la igualdad del canal A en este experimento.
+- **Decisión de desarrollo:** no tocar `addon/sid_reference.py` ni introducir optimizaciones. M3.8 debe cotejar versiones OIDN y diferencias de `Quality/HDR/Prefilter` con ablaciones congeladas antes de corregir el port; las escenas arquitectónicas verdaderas y referencias convergidas siguen siendo el siguiente nivel de evidencia.
+- **Estado:** se registran datos de M3.7 comprobados en CI, sin paridad de píxeles, sin comparación con SID comercial y sin superioridad demostrada.
