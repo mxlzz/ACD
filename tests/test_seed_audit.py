@@ -97,3 +97,15 @@ def test_audit_checks_pairs_of_extra_seeds_not_just_baseline(tmp_path):
                  if {pair["first"], pair["second"]} == {"seed_911", "seed_1337"}]
     assert len(duplicate) == 1
     assert duplicate[0]["rmse"] == 0
+
+
+def test_seed_audit_ignores_seed_named_report_files(tmp_path):
+    raw = np.zeros((3, 4, 3), dtype=np.float32)
+    raw[:, 0, :] = 1
+    distinct = np.zeros_like(raw)
+    distinct[:, 1, :] = 1
+    layout(tmp_path, distinct)
+    (tmp_path / "seed_aggregate.json").write_text("{}")
+    result = audit_noisy_seed_diversity(tmp_path)
+    assert result["passes_diversity_check"]
+    assert len(result["comparisons"]) == 1

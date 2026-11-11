@@ -1,9 +1,6 @@
 name: ACD Controlled Emission Fixture — E0008
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/emission-fixture-benchmark.yml"
   workflow_dispatch:
 
 permissions:

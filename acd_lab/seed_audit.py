@@ -28,7 +28,7 @@ def audit_noisy_seed_diversity(directory: str | Path, *, minimum_ratio: float = 
         }
     comparisons = []
     raw_images = [("baseline", raw)]
-    for folder in sorted(root.glob("seed_*")):
+    for folder in sorted(p for p in root.glob("seed_*") if p.is_dir()):
         path = folder / "acd_compare_Raw.exr"
         if not path.is_file():
             raise FileNotFoundError(f"Missing raw noisy EXR for seed: {path}")
