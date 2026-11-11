@@ -33,6 +33,12 @@ scene.cycles.use_denoising = False
 scene.cycles.use_adaptive_sampling = False
 scene.cycles.samples = 16
 scene.cycles.seed = seed
+pattern = os.environ.get("ACD_PROBE_PATTERN")
+if pattern:
+    allowed = {item.identifier for item in scene.cycles.bl_rna.properties["sampling_pattern"].enum_items}
+    if pattern not in allowed:
+        raise ValueError(f"Sampling pattern {pattern} not in {sorted(allowed)}")
+    scene.cycles.sampling_pattern = pattern
 if not hasattr(scene.cycles, "sample_offset"):
     raise RuntimeError("Cycles sample_offset not supported by this Blender build")
 scene.cycles.sample_offset = offset
@@ -59,6 +65,7 @@ metadata = {
     "active_view_layer": bpy.context.view_layer.name,
     "requested_seed": seed,
     "sample_offset": offset,
+    "sampling_pattern": scene.cycles.sampling_pattern,
     "output_label": label,
     "settings_all_scenes": settings,
 }

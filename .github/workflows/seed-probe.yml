@@ -61,12 +61,31 @@ jobs:
           ACD_PROBE_OFFSET: "16"
           ACD_PROBE_LABEL: "seed539_offset16"
         run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Isolated raw render alternate sampling pattern
+        env:
+          ACD_PROBE_SEED: "911"
+          ACD_PROBE_PATTERN: "BLUE_NOISE"
+          ACD_PROBE_LABEL: "seed911_blue_noise"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
       - name: Measure independent seed and sample-offset effects
         run: |
           python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/seed539_offset0.exr" --candidate "$ACD_PROBE_DIR/seed911_offset0.exr" --output "$ACD_PROBE_DIR/seed_difference.json"
           python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/seed539_offset0.exr" --candidate "$ACD_PROBE_DIR/seed539_offset16.exr" --output "$ACD_PROBE_DIR/offset_difference.json"
+          # Codes: 0 = meaningful change; 2 = virtually identical. Both are
+          # legitimate research outcomes, so retain all JSON instead of
+          # stopping at the first invalid variation.
+          set +e
           python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed911_offset0.exr" --output "$ACD_PROBE_DIR/seed_variation.json"
+          seed_rc=$?
           python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed539_offset16.exr" --output "$ACD_PROBE_DIR/offset_variation.json"
+          offset_rc=$?
+          python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed911_blue_noise.exr" --output "$ACD_PROBE_DIR/pattern_variation.json"
+          pattern_rc=$?
+          set -e
+          for code in "$seed_rc" "$offset_rc" "$pattern_rc"; do
+            test "$code" -eq 0 -o "$code" -eq 2
+          done
+          printf 'Variation outcomes (0=passes, 2=near-duplicate): seed=%s offset=%s pattern=%s\n' "$seed_rc" "$offset_rc" "$pattern_rc"
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@v4
