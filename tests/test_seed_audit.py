@@ -78,3 +78,22 @@ def test_verify_sample_variation_accepts_distinct_noise_patterns():
 def test_verify_sample_variation_rejects_mismatched_dimensions():
     with pytest.raises(ValueError, match="different resolutions"):
         verify_sample_variation(np.ones((4, 5, 3)), np.ones((4, 6, 3)))
+
+
+def test_audit_checks_pairs_of_extra_seeds_not_just_baseline(tmp_path):
+    raw = np.zeros((4, 5, 3), dtype=np.float32)
+    raw[:, 0, :] = 1
+    save_exr(tmp_path / "acd_compare_Raw.exr", raw)
+    save_exr(tmp_path / "reference.exr", np.zeros_like(raw))
+    different = np.zeros_like(raw)
+    different[:, 1, :] = 2
+    for name in ("seed_911", "seed_1337"):
+        folder = tmp_path / name
+        folder.mkdir()
+        save_exr(folder / "acd_compare_Raw.exr", different)
+    report = audit_noisy_seed_diversity(tmp_path)
+    assert not report["passes_diversity_check"]
+    duplicate = [pair for pair in report["all_pairs"]
+                 if {pair["first"], pair["second"]} == {"seed_911", "seed_1337"}]
+    assert len(duplicate) == 1
+    assert duplicate[0]["rmse"] == 0
