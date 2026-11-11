@@ -29,7 +29,9 @@ Ver [ROADMAP.md](ROADMAP.md) para el orden de desarrollo; [STATUS.md](../STATUS.
 - El filtro de ray tracing admite belleza HDR y opcionalmente albedo y normal; hay prefiltrado de guías; está entrenado para ruido Monte Carlo.
 - Las guías ayudan en muchas escenas, pero el resultado puede depender de si corresponden a la señal filtrada.
 - **Restricción explícita:** el filtro `RT` no se ofrece como denoiser de fotografías normales.
-- **Uso ACD:** baseline Standard, comparación de calidad configurada y prueba con/sin guías por componente (M3/H-01).
+- **Restricción verificada de Blender:** [código compositor Denoise](https://projects.blender.org/blender/blender/src/branch/main/source/blender/nodes/composite/nodes/node_composite_denoise.cc) y [commit Blender sobre prioridad Albedo/Normal](https://projects.blender.org/blender/blender/commit/e873f6cb154a06018c545549a9993e26ba595e6e) documentan que **Normal no puede utilizarse de forma significativa sin Albedo** en este nodo. E0012 verificó que los resultados «Normal-only» fueron numéricamente idénticos a «sin guías»; esas configuraciones no son dos tratamientos científicos diferentes.
+- **Guías de hits posteriores:** la [documentación oficial de OIDN RT](https://www.openimagedenoise.org/documentation.html) explica que las guías del primer hit suelen ser poco útiles para reflejos y objetos vistos mediante superficies transparentes; almacenar información de hits posteriores puede mejorar el resultado. ACD aún no extrae estos buffers para cada subpase. **No asumir** que la guía almacenada en Cycles es necesariamente la del primer hit sin auditar su implementación exacta.
+- **Uso ACD:** baseline Standard, comparación de calidad configurada y prueba con/sin guías por componente (M3/H-01); la propuesta de guías de hits posteriores es todavía una hipótesis de integración.
 
 ### R03. NVIDIA OptiX denoiser SDK — comparador e implementación alternativa
 

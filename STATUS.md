@@ -4,6 +4,13 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## E0012 — Ablación de Albedo/Normal por subpase (11-11-2026)
+
+- E0012 ejecutado y aprobado en Blender 5.0.1: 10 ramas de denoising sobre lobby de vidrio/metal, 128×96, 24 spp, 3 entradas y 2 referencias. Run https://github.com/mxlzz/ACD/actions/runs/43086458932.
+- High sin guías intermedias bajó RMSE global 0,194924 → 0,180170, pero Standard guiado (0,174651) y Standard sin guías (0,173501) fueron mejores. High mejoró transmisión con guías retiradas; Super mostró un compromiso distinto y empeoró globalmente sin guías.
+- La «guía Normal sin Albedo» en el Denoise de Blender es **ignorada por diseño**: las salidas fueron idénticas a las variantes sin guías. Se prohibió producir estos duplicados; informes históricos todavía pueden leerse. Fuente oficial y cifras en docs/experiments/E0012.md.
+- **No se promovió ninguna variante** al addon. Próxima hipótesis H-01: auditar qué hits representan los AOV de Cycles, y evaluar guías de reflexión/refracción específicas en datasets de escenas no vistas.
+
 ## E0010 / E0011 — Ejecuciones completas (11-11-2026)
 
 - E0010: la repetición completa de E0008 PASÓ, con 3 entradas diferentes y máscara regional idéntica (SHA-256; 66 píxeles). El RMSE en la región emisiva se redujo 0,2758194 → 0,2717647, pero las regresiones de MAE y RMSE global impiden activarlo por defecto. Run 43085166506.

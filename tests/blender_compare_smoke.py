@@ -164,14 +164,23 @@ try:
         ("SUPER", True, "SUPER_component_no_guides", "component_none"),
         ("HIGH", True, "HIGH_component_albedo", "component_albedo"),
         ("SUPER", True, "SUPER_component_albedo", "component_albedo"),
-        ("HIGH", True, "HIGH_component_normal", "component_normal"),
-        ("SUPER", True, "SUPER_component_normal", "component_normal"),
+        # Normal-only is invalid in Blender's OIDN compositor: Normal cannot
+        # meaningfully be used unless Albedo is linked. E0012 observed outputs
+        # pixel-identical to the no-guide variants. Preserve historical EXR
+        # readers but do not generate these misleading duplicate variants.
     )
     configured_names = [name.strip() for name in os.environ.get(
         "ACD_METHODS", "STANDARD,HIGH,SUPER,HIGH_no_final,SUPER_no_final,HIGH_no_guides,SUPER_no_guides"
     ).split(",") if name.strip()]
     if len(configured_names) != len(set(configured_names)):
         raise ValueError("Duplicate method names in ACD_METHODS")
+    invalid = {"HIGH_component_normal", "SUPER_component_normal"} & set(configured_names)
+    if invalid:
+        raise ValueError(
+            "Normal-only OIDN is not a valid Blender denoising ablation. "
+            "The compositor ignores Normal if Albedo is unconnected. "
+            "See E0012 and Blender source."
+        )
     unknown = set(configured_names) - {entry[2] for entry in all_methods}
     if unknown or not configured_names:
         raise ValueError("Unsupported method selection: " + str(sorted(unknown)))
@@ -198,7 +207,6 @@ try:
                     drop = (
                         guide_policy in ("remove_all", "component_none")
                         or (guide_policy == "component_albedo" and guide == "Normal")
-                        or (guide_policy == "component_normal" and guide == "Albedo")
                     )
                     if guide in ("Albedo", "Normal") and drop:
                         sub_tree.links.remove(edge)
