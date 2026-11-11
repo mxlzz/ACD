@@ -45,6 +45,8 @@ try:
                     missing.append(filename)
         if missing:
             raise RuntimeError("Missing external image assets; pack files or fix paths: " + str(missing[:12]))
+        if os.environ.get("ACD_FRAME"):
+            scene.frame_set(int(os.environ["ACD_FRAME"]))
         print("ACD EXTERNAL BLEND LOADED", bpy.data.filepath, "scene", scene.name)
     else:
         raise ValueError("Unknown ACD_SCENE: " + scene_variant)
@@ -67,8 +69,8 @@ try:
     scene.cycles.device = "CPU" if device == "CPU" else "GPU"
     input_spp = int(os.environ.get("ACD_INPUT_SPP", "16"))
     input_seed = int(os.environ.get("ACD_INPUT_SEED", "539"))
-    width = int(os.environ.get("ACD_WIDTH", "48"))
-    height = int(os.environ.get("ACD_HEIGHT", "40"))
+    width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
+    height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
     assert input_spp > 0 and 8 <= width <= 4096 and 8 <= height <= 4096
     scene.cycles.samples = input_spp
     scene.cycles.seed = input_seed
