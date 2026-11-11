@@ -2,6 +2,14 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## Sampling-validity finding — E0007 (2026-11-11)
+- Official Classroom: in independent Blender processes at 96x54, 16 spp, Classic TABULATED_SOBOL, changing Cycles seed 539 -> 911 only changed 4/5184 pixels (RGB RMSE ~1.04e-6); setting sample_offset 0 -> 16 changed only 8/5184 pixels. Source: GitHub Actions 43069937939.
+- Switching Classic to BLUE_NOISE altered the image strongly (RGB RMSE 0.16825), but changing seed 539 -> 911 *within BLUE_NOISE* again produced virtually identical images (relative RMSE 1.32e-9). Source: run 43071018867.
+- **Interpretation:** In this specific Classroom/Blender 5.0.1 setup, nominal seed changes do not generate meaningfully distinct noisy images. Cause is not established. This is a methodological blocker; do not treat extra seed labels as independent samples.
+- Implemented automated per-pair diversity checks and prevented multi-seed mean rankings from being treated as validated unless raw samples pass image-diversity screening. This is a necessary check, not a proof of statistical independence.
+- Classroom E0005/E0006 remain useful *single-input comparative ablations*; the allegedly independent seed-derived reference is not validated as independent sampling. The prior numeric improvements cannot yet be generalized.
+- See docs/experiments/E0007.md. Heavy Classroom and seed probes are manual-only after debugging.
+
 ## Implemented and checked
 - Local runner: scripts/run_scene_benchmark.py. Loads an existing .blend without saving, supports chosen frame/resolution, noisy/reference spp and seeds, optional existing reference, and CPU/CUDA/OPTIX selection.
 - Experiment provenance: source scene SHA256, scene name, selected view layer, Blender version, color management settings, frame, samples, seed and device recorded.
