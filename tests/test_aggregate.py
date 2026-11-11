@@ -32,7 +32,7 @@ def test_aggregate_seed_metrics(tmp_path):
     assert not aggregate["independent_seeds_verified"]
     assert aggregate["methods"]["SUPER"]["rmse_linear"]["mean"] == pytest.approx(.45)
     assert aggregate["methods"]["SUPER"]["rmse_linear"]["population_std"] == pytest.approx(.05)
-    assert aggregate["seed_rmse_wins"]["SUPER"] == 2
+    assert aggregate["seed_rmse_wins"] is None
     assert main(["aggregate-seeds", "--directory", str(tmp_path)]) == 0
 
 
