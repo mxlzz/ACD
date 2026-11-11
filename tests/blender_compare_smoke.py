@@ -27,11 +27,14 @@ try:
     destination.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
     scene_variant = os.environ.get("ACD_SCENE", "factory")
-    if scene_variant == "interior":
+    if scene_variant in ("interior", "interior_emissive"):
         interior_spec = importlib.util.spec_from_file_location("acd_scene", root / "tests" / "scene_factory.py")
         interior = importlib.util.module_from_spec(interior_spec)
         interior_spec.loader.exec_module(interior)
-        interior.make_interior(scene)
+        if scene_variant == "interior_emissive":
+            interior.make_interior_emissive(scene)
+        else:
+            interior.make_interior(scene)
     elif scene_variant == "external":
         if not bpy.data.filepath:
             raise RuntimeError("ACD_SCENE=external requires Blender launched with a saved .blend")

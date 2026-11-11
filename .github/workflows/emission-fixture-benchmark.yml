@@ -1,0 +1,89 @@
+name: ACD Controlled Emission Fixture — E0008
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/emission-fixture-benchmark.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  emission:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BLENDER_VERSION: "5.0.1"
+      ACD_SCENE: interior_emissive
+      ACD_WIDTH: "128"
+      ACD_HEIGHT: "96"
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_EXTRA_SEEDS: "911,1337"
+      ACD_REFERENCE_SPP: "1024"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_METHODS: "STANDARD,HIGH,SUPER"
+      ACD_PRESERVE_EMISSION: "1"
+      ACD_CAPTURE_AOV: "1"
+      ACD_BENCH_DIR: "/tmp/acd_emission_fixture"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install numerical EXR laboratory
+        run: python -m pip install -e ".[dev,exr]"
+      - name: Cache Blender
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download official Blender
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 20 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz \
+            -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Run three noisy inputs and two separate references
+        run: |
+          ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio \
+            --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Evaluate linear HDR errors and AOV contribution regions
+        run: |
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/metrics.json"
+          python -m acd_lab.cli compare-regions --directory "$ACD_BENCH_DIR" \
+            --passes "$ACD_BENCH_DIR/raw_multilayer.exr" \
+            --output "$ACD_BENCH_DIR/region_metrics.json"
+          for dir in "$ACD_BENCH_DIR"/seed_*; do
+            if [ -d "$dir" ]; then
+              python -m acd_lab.cli compare-batch --directory "$dir" --output "$dir/metrics.json"
+            fi
+          done
+          python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/seed_aggregate.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ["ACD_BENCH_DIR"])
+          agg = json.loads((root / "seed_aggregate.json").read_text())
+          if not agg["independent_seeds_verified"]:
+              raise SystemExit("ACD invalid benchmark: raw noisy seed diversity not verified")
+          region = json.loads((root / "region_metrics.json").read_text())
+          # AOV mask is descriptive, not a physical material-ID segmentation.
+          m = region["regions"].get("aov_emission")
+          if m is None or m["pixels"] < 10:
+              raise SystemExit("No useful emission ROI: check emitter placement/visibility")
+          print("ACD EMISSION VALIDATED ROI PIXELS", m["pixels"])
+          PY
+      - name: Upload reproducible EXRs and measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0008-emissive-interior
+          if-no-files-found: warn
+          retention-days: 7
+          path: /tmp/acd_emission_fixture/
