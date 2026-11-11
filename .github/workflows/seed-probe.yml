@@ -67,6 +67,12 @@ jobs:
           ACD_PROBE_PATTERN: "BLUE_NOISE"
           ACD_PROBE_LABEL: "seed911_blue_noise"
         run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Isolated raw render alternate pattern second seed
+        env:
+          ACD_PROBE_SEED: "539"
+          ACD_PROBE_PATTERN: "BLUE_NOISE"
+          ACD_PROBE_LABEL: "seed539_blue_noise"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
       - name: Measure independent seed and sample-offset effects
         run: |
           python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/seed539_offset0.exr" --candidate "$ACD_PROBE_DIR/seed911_offset0.exr" --output "$ACD_PROBE_DIR/seed_difference.json"
@@ -81,11 +87,13 @@ jobs:
           offset_rc=$?
           python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed911_blue_noise.exr" --output "$ACD_PROBE_DIR/pattern_variation.json"
           pattern_rc=$?
+          python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_blue_noise.exr" --comparison "$ACD_PROBE_DIR/seed911_blue_noise.exr" --output "$ACD_PROBE_DIR/blue_noise_seed_variation.json"
+          blue_seed_rc=$?
           set -e
-          for code in "$seed_rc" "$offset_rc" "$pattern_rc"; do
+          for code in "$seed_rc" "$offset_rc" "$pattern_rc" "$blue_seed_rc"; do
             test "$code" -eq 0 -o "$code" -eq 2
           done
-          printf 'Variation outcomes (0=passes, 2=near-duplicate): seed=%s offset=%s pattern=%s\n' "$seed_rc" "$offset_rc" "$pattern_rc"
+          printf 'Variation outcomes (0=passes, 2=near-duplicate): seed=%s offset=%s pattern=%s blue_noise_seeds=%s\n' "$seed_rc" "$offset_rc" "$pattern_rc" "$blue_seed_rc"
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@v4
