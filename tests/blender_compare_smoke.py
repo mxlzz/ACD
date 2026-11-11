@@ -65,15 +65,40 @@ try:
     fileout.file_output_items.new("RGBA", "Raw")
     tree.links.new(layers.outputs["Image"], fileout.inputs["Raw"])
 
-    for i, mode in enumerate(("STANDARD", "HIGH", "SUPER")):
+    # Check the compositor's mathematical pass sum without any denoisers.
+    # If this disagrees with RAW, the processing graph itself is not trustworthy.
+    family_terms = []
+    for family in ("Diffuse", "Glossy", "Transmission"):
+        direct = addon.render_socket(layers, family + " Direct")
+        indirect = addon.render_socket(layers, family + " Indirect")
+        color = addon.render_socket(layers, family + " Color")
+        lighting = addon.combine(tree.nodes, tree.links, direct, indirect, "ADD", family + " raw sum", (-350, -1100))
+        family_terms.append(addon.combine(tree.nodes, tree.links, lighting, color, "MULTIPLY", family + " raw color", (-150, -1100)))
+    family_terms.append(addon.render_socket(layers, "Emission"))
+    family_terms.append(addon.render_socket(layers, "Environment"))
+    recomposed = family_terms[0]
+    for index, term in enumerate(family_terms[1:], 1):
+        recomposed = addon.combine(tree.nodes, tree.links, recomposed, term, "ADD", "Raw components " + str(index), (100 + 230 * index, -1400))
+    fileout.file_output_items.new("RGBA", "RawRecomposed")
+    tree.links.new(recomposed, fileout.inputs["RawRecomposed"])
+
+    methods = (
+        ("STANDARD", True, "STANDARD"),
+        ("HIGH", True, "HIGH"),
+        ("SUPER", True, "SUPER"),
+        ("HIGH", False, "HIGH_no_final"),
+        ("SUPER", False, "SUPER_no_final"),
+    )
+    for i, (mode, final_filter, output_name) in enumerate(methods):
         scene.acd_mode = mode
+        scene.acd_final_filter = final_filter
         sub_tree = addon.make_tree(scene, view_layer)
         group = tree.nodes.new("CompositorNodeGroup")
-        group.label = mode
+        group.label = output_name
         group.node_tree = sub_tree
         group.location = (150, 200 - 300 * i)
-        fileout.file_output_items.new("RGBA", mode)
-        tree.links.new(group.outputs["Image"], fileout.inputs[mode])
+        fileout.file_output_items.new("RGBA", output_name)
+        tree.links.new(group.outputs["Image"], fileout.inputs[output_name])
 
     scene.compositing_node_group = tree
     scene.render.use_compositing = True
@@ -109,7 +134,8 @@ try:
         "reference_samples": reference_spp,
         "reference_seed": reference_seed,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
-        "compositional_methods": ["Standard", "High", "Super"],
+        "compositional_methods": [name for _, _, name in methods],
+        "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
         "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",
         "files": [p.name for p in generated],
     }, indent=2) + "\n")
