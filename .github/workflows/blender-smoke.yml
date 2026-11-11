@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   blender:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -40,7 +40,7 @@ jobs:
           tar -xf blender.tar.xz
       - name: Headless graphics runtime (Blender 5.3)
         run: |
-          sudo timeout 120s apt-get install -y --no-install-recommends libegl1 libgl1 libopengl0 libgbm1 libgl1-mesa-dri mesa-vulkan-drivers libx11-6 libxi6 libxxf86vm1 libxrender1
+          sudo timeout 90s apt-get install -y --no-install-recommends libegl1 libgl1 libopengl0 libgbm1 libgl1-mesa-dri mesa-vulkan-drivers libx11-6 libxi6 libxxf86vm1 libxrender1
       - name: Blender version
         run: "./blender-$BLENDER_VERSION-linux-x64/blender --version"
       - name: Test Cycles compositor and CPU render
