@@ -49,6 +49,27 @@ jobs:
         run: "./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_smoke.py"
       - name: Check SID public-4.x reference topology and CPU compositor
         run: "./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_reference_smoke.py"
+      - name: Compare SID4 Reference and experimental ACD on exactly the same noisy render
+        if: matrix.version == '5.0.1'
+        env:
+          ACD_BENCH_DIR: ${{ runner.temp }}/acd_sid4_smoke
+          ACD_INPUT_SPP: "8"
+          ACD_REFERENCE_SPP: "64"
+          ACD_WIDTH: "32"
+          ACD_HEIGHT: "24"
+          ACD_METHODS: "STANDARD,HIGH,SUPER,SID4_STANDARD,SID4_HIGH,SID4_SUPER"
+        run: |
+          ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_compare_smoke.py
+          python -m pip install -e ".[exr]"
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/metrics.json"
+      - name: Archive SID4 vs ACD small same-render comparison
+        if: matrix.version == '5.0.1' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sid4-reference-vs-acd-5.0.1
+          if-no-files-found: warn
+          retention-days: 7
+          path: ${{ runner.temp }}/acd_sid4_smoke/
       - name: Generate actual raw multilayer Cycles EXR
         if: matrix.version == '5.0.1'
         env:

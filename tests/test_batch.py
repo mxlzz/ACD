@@ -49,3 +49,19 @@ def test_batch_without_second_reference_remains_explicitly_unverified(tmp_path):
     report = evaluate_batch(tmp_path)
     assert report["reference_quality_diagnostic"] is None
     assert report["reference_ranking_consistent"] is None
+
+
+
+def test_batch_reports_optional_sid4_reference_variants(tmp_path):
+    save(tmp_path / "reference.exr", 0.5)
+    for name, value in {
+        "Raw": 0.8, "STANDARD": 0.6, "HIGH": 0.65,
+        "SUPER": 0.7, "SID4_STANDARD": 0.58,
+        "SID4_HIGH": 0.57, "SID4_SUPER": 0.54,
+    }.items():
+        save(tmp_path / ("acd_compare_" + name + ".exr"), value)
+    result = evaluate_batch(tmp_path)
+    assert "SID4_STANDARD" in result["measurements"]
+    assert "SID4_HIGH" in result["measurements"]
+    assert "SID4_SUPER" in result["measurements"]
+    assert result["rank_by_rmse"][0] == "SID4_SUPER"

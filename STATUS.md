@@ -4,6 +4,15 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.3 — Comparador SID4 Reference vs ACD, mismo render (2026-11-11)
+
+- Ruta: M3 / Issue #7, paridad antes de optimización. Sin modificaciones del addon de producción.
+- El runner experimental acepta `SID4_STANDARD`, `SID4_HIGH` y `SID4_SUPER`, construye el grafo separado y conecta los mismos buffers raw de Cycles usados para Standard/High/Super de ACD.
+- `acd_lab/batch.py` incorpora esos EXR de modo opcional (ningún resultado histórico obligatorio cambia) y agrega test OpenEXR sintético.
+- Pipeline CI Blender 5.0.1 genera un render pequeño con las seis variantes y una referencia finita. Su salida será un *test de funcionalidad/comparación*, **no una prueba SID 4.0 de paridad interversión**.
+- **Verificación real pendiente:** las últimas acciones de GitHub siguen en cola. No se reclaman rendimientos ni equivalencia todavía.
+- Próximo paso: usar el EXR de salida para confirmar que los grafos Blender 5 ejecutan de punta a punta y comparar contra SID upstream en Blender compatible.
+
 ## M3.2 — Primer port de comportamiento SID a Blender 5 (2026-11-11)
 
 - Objetivo validado antes del cambio: Issue #7 / M3, sin desviación. Implementación independiente, sin copiar código GPL ni modificar ACD estable.

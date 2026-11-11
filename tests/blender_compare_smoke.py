@@ -181,7 +181,8 @@ try:
             "The compositor ignores Normal if Albedo is unconnected. "
             "See E0012 and Blender source."
         )
-    unknown = set(configured_names) - {entry[2] for entry in all_methods}
+    sid_reference_names = {"SID4_STANDARD", "SID4_HIGH", "SID4_SUPER"}
+    unknown = set(configured_names) - {entry[2] for entry in all_methods} - sid_reference_names
     if unknown or not configured_names:
         raise ValueError("Unsupported method selection: " + str(sorted(unknown)))
     methods = tuple(entry for entry in all_methods if entry[2] in configured_names)
@@ -216,6 +217,35 @@ try:
         group.location = (150, 200 - 300 * i)
         fileout.file_output_items.new("RGBA", output_name)
         tree.links.new(group.outputs["Image"], fileout.inputs[output_name])
+
+    # M3 SID Reference: separate independent behavioral port, sharing the
+    # exact same Cycles RenderLayer as every ACD/Raw candidate in this render.
+    sid_selected = [name for name in configured_names if name in sid_reference_names]
+    if sid_selected:
+        ref_spec = importlib.util.spec_from_file_location(
+            "sid_reference", root / "addon" / "sid_reference.py"
+        )
+        sid_ref = importlib.util.module_from_spec(ref_spec)
+        ref_spec.loader.exec_module(sid_ref)
+        for index, name in enumerate(sid_selected):
+            variant = name.removeprefix("SID4_")
+            subgroup = sid_ref.build_reference_group(
+                variant,
+                transmission=scene.acd_transmission,
+                volume=scene.acd_volumes,
+                emission=scene.acd_emission,
+                environment=scene.acd_environment,
+            )
+            candidate_node = tree.nodes.new("CompositorNodeGroup")
+            candidate_node.node_tree = subgroup
+            candidate_node.label = name
+            candidate_node.location = (300, -2400 - index * 420)
+            for inp in candidate_node.inputs:
+                pass_socket = sid_ref._lookup(layers.outputs, inp.name)
+                tree.links.new(pass_socket, inp)
+            fileout.file_output_items.new("RGBA", name)
+            tree.links.new(candidate_node.outputs["Denoised Image"], fileout.inputs[name])
+        print("SID REFERENCE GRAPH CONSTRUCTED", sid_selected, "source", sid_ref.SOURCE_COMMIT)
 
     # Research ablation E0006: preserve raw emission instead of filtering it.
     # Directly visible emissive regions can be nearly deterministic even at
@@ -350,6 +380,11 @@ try:
         "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "compositional_methods": [name for _, _, name, _ in methods],
+        "sid_reference_methods": sid_selected,
+        "sid_reference_source_commit": (
+            "b4186389cac386eff9d777bb681c0051f8bd9bd2" if sid_selected else None
+        ),
+        "sid_reference_equivalence_verified": False,
         "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
         "emission_ablation": emission_ablation,
         "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",

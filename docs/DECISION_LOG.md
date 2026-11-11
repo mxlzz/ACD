@@ -43,3 +43,13 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Acción:** corregir aserciones; fuente del recuento: número de filtros del grafo congelado, no una suposición del runner.
 - **Estado:** tests de Blender pendientes de CI; no declarar aprobados hasta observar el workflow.
 - **Próximo:** validar constructor real y reparar incompatibilidades documentadas.
+
+
+## 2026-11-11 — M3.3, comparar SID Reference y ACD sin sesgos de ruido
+
+- **Objetivo:** compatibilidad funcional del port SID y estudio de diferencias respecto de ACD experimental bajo la misma entrada.
+- **Cambio:** se agregan variantes SID4_* opcionales a tests/blender_compare_smoke.py, al lector de batches y a CI Blender 5.0.1. No hay cambios en el addon ACD de uso real.
+- **Control:** RenderLayer compartido entre todas las ramas de un mismo render; sin aumentar muestras ni usar referencias para seleccionar parámetros.
+- **Resultado actual:** código y tests añadidos; CI física de Blender aún pendiente. La referencia 64 spp de este smoke es para comprobar ejecución, no validar calidad.
+- **Ruta:** M3 / Issue #7 respetado, sin avanzar a filtros adaptativos.
+- **Siguiente:** revisar fallas de CI, corregir y medir contra la implementación upstream en Blender 3.6.
