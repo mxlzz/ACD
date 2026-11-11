@@ -25,6 +25,8 @@ scene.render.use_compositing = False
 scene.render.resolution_x = 48
 scene.render.resolution_y = 40
 scene.render.resolution_percentage = 100
+# Blender 5 groups formats by media type: select multilayer first.
+scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
 scene.render.image_settings.file_format = "OPEN_EXR_MULTILAYER"
 scene.render.image_settings.color_depth = "32"
 scene.render.image_settings.exr_codec = "ZIP"
