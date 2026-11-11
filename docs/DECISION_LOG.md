@@ -103,3 +103,13 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Criterio de aceptación:** una nueva ejecución de paridad debe terminar en verde **y** publicar un artifact legible con los tres JSON. **Resultado posterior al commit todavía no verificado.**
 - **Limitaciones:** queda sin demostrar equivalencia OIDN, tratamiento alfa y salida HDR entre Blender 3.6 y 5.0. Los runs previos sin jobs no identifican por sí mismos la causa de la cola.
 - **Siguiente:** validar artifacts, después diseñar prueba comparativa numérica del SID público y el port con la misma entrada EXR.
+
+
+## 2026-11-11 — M3.4, comprobación posterior del artifact y cierre del bloqueo operativo
+
+- **Hito revisado:** M3 / Issue #7. Mantener paridad SID pública antes de cualquier mejora experimental.
+- **Evidencia posterior, mismo código de comparación:** run 43101708644 `success`, informe `passed=true` y `errors=[]`. El upload registró tres archivos y publicó artifact 13890459701; run 43101708666 comprobó tests Python y trazabilidad; run 43101708862 finalizó `success` en Blender 5.0.1 y 5.3.
+- **Resultado:** la corrección de rutas en e529c6b está verificada físicamente. Se preservan contratos y artifacts, con retención temporal; la evidencia de CI en logs permanece referenciada por identificador.
+- **Limitaciones:** las discrepancias numéricas Blender 3.6/5.0 siguen sin analizar; la causa de las colas sin jobs antiguos es desconocida. Éxito del workflow no implica SID idéntico ni superior.
+- **Decisión:** cerrar el bloqueo operativo de Issue #8, mantener abierto M3 / Issue #7 y PR #4 como draft. No fusionar.
+- **Próximo experimento M3.5:** input EXR idéntico + hashes y ambos motores, probar Standard primero y High/Super después; comparar HDR, alfa y error por región con versiones del backend consignadas.

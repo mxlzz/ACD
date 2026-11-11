@@ -4,6 +4,15 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.4 — Validación posterior al commit e529c6b (2026-11-11)
+
+- [SID upstream graph #43101708644](https://github.com/mxlzz/ACD/actions/runs/43101708644): **success**, `passed=true`, `errors=[]` para el contrato estructural delimitado. Log `With the provided path, there will be 3 files uploaded`; artifact [sid-upstream-3.6-vs-port-5.0-graph-contracts](https://github.com/mxlzz/ACD/actions/runs/43101708644/artifacts/13890459701) creado correctamente (tres JSON, vencimiento previsto 2026-11-25).
+- [Quality gate #43101708666](https://github.com/mxlzz/ACD/actions/runs/43101708666): **success**, incluida comprobación de trazabilidad por commit y test OpenEXR.
+- [Blender smoke #43101708862](https://github.com/mxlzz/ACD/actions/runs/43101708862): **success** en Blender 5.0.1 y 5.3.0; en 5.0.1 están los artifacts comparativos SID4 vs ACD, EXR y fixture externo. En 5.3 solo smoke/topología, por condiciones del workflow.
+- **Issue #8 deja de bloquear pruebas nuevas.** La causa de la cola anterior no fue identificada; algunas ejecuciones antiguas permanecían `queued` al verificar. No equivale a un incidente de GitHub confirmado.
+- **Alcance:** paridad estructural parcial, ejecución del port y generación de muestras, no igualdad de píxeles contra el SID original. Los resultados con 32×24/pequeñas referencias finitas no acreditan calidad superior.
+- **Próxima tarea prioritaria M3.5:** comparar SID original en Blender 3.6 frente a SID Reference en Blender 5 bajo mismos buffers EXR, registrando versión/OIDN, mezclas HDR, salida alfa, diferencias numéricas y error residual. Mantener PR #4 en draft.
+
 ## M3.4 — CI reanudada; corregida la captura de manifests (2026-11-11)
 
 - **Verificación real anterior al cambio:** [quality gate #43098851163](https://github.com/mxlzz/ACD/actions/runs/43098851163) OK; [Blender smoke #43098851162](https://github.com/mxlzz/ACD/actions/runs/43098851162) OK en 5.0.1/5.3, con comparadores EXR y tests de render de variantes en 5.0.1 (pasos pesados omitidos en 5.3); [upstream SID graph parity #43098851161](https://github.com/mxlzz/ACD/actions/runs/43098851161) OK con `passed=true`, `errors=[]`.
