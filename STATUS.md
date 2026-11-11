@@ -11,6 +11,11 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - **Inferencia:** estas operaciones y el mapeo de alfa probado no explican las diferencias mucho mayores en High/Super (RGB RMSE 0.065–0.068 y alfa ~0.00387). Esto acota causas hacia OIDN/parametrización/otras ramas, pero no las identifica de manera exhaustiva.
 - **Siguiente:** aislar nodos OIDN individuales bajo exactamente las mismas entradas (Fast, Accurate guiado, emisión Accurate sin guías, alfa Accurate guiado).
 
+## M3.8 — Corrección de YAML inválido detectado en Actions (2026-11-11)
+
+- [Run #43111531413](https://github.com/mxlzz/ACD/actions/runs/43111531413) falló **antes de crear jobs**: nombre de workflow mostrado como ruta `.github/workflows/sid-oidn-parameter-matrix.yml`. Motivo identificado en fuente: label del paso `Archive matrix: EXRs...` tenía dos puntos seguidos de espacio sin comillas, invalidando la sintaxis YAML.
+- **Cambio:** se entrecomilló el nombre del paso. No se modificaron experimento OIDN, inputs, métricas ni variables de calidad. **CI posterior pendiente**; no atribuir este error a GitHub runner ni al algoritmo.
+
 ## M3.8 — Matriz experimental de parámetros OIDN (2026-11-11)
 
 - **Hipótesis activa:** la diferencia RGB entre SID 3.6 y adaptador Blender 5 está presente en nodos OIDN individuales. El estudio M3.7 registró Fast RMSE=0.0328542782, emisión sin guías ROI RMSE=0.2157095979; no se puede atribuir aún a una versión de backend ni a un parámetro particular.

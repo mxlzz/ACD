@@ -75,7 +75,7 @@ jobs:
             --legacy /tmp/acd_m38/legacy \
             --port /tmp/acd_m38/port \
             --output /tmp/acd_m38/report
-      - name: Archive matrix: EXRs, input SHA, per-setting errors, signed maps
+      - name: "Archive matrix: EXRs, input SHA, per-setting errors, signed maps"
         if: always()
         uses: actions/upload-artifact@v4
         with:

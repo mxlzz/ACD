@@ -195,3 +195,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Implementación candidata:** drivers `tests/blender_sid_oidn_matrix.py`, comparador `scripts/compare_sid_oidn_matrix.py`, contrato de regresión `tests/test_sid_oidn_matrix.py`, workflow `.github/workflows/sid-oidn-parameter-matrix.yml`.
 - **Criterio:** validar hashes y raw passthrough, 8 legacy + 24 port outputs, métricas y mapas firmados con distinciones inter/intraversión. No minimizar RMSE respecto al histórico como si fuera un ground truth convergido.
 - **Estado:** CI aún sin ejecutar al commit. No alterar `addon/sid_reference.py` ni el addon estable hasta establecer causa y mejorar resultados sobre escenas reales.
+
+
+## 2026-11-11 — M3.8, corregir sintaxis YAML previa a creación de jobs
+
+- **Observado:** run 43111531413 `failure`, `jobs=[]`, workflow identificado por ruta. Inspección de fuente encontró un paso con `- name: Archive matrix: EXRs, ...` (dos puntos no citados dentro del scalar).
+- **Corrección:** entrecomillar completamente el nombre del paso, dejando toda la lógica experimental intacta.
+- **Estado:** la próxima ejecución definirá si queda corregida la validación YAML y si corren las pruebas; no se presume validación de OIDN.
