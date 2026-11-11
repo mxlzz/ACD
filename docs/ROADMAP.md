@@ -18,7 +18,7 @@ Desarrollar un sistema de reconstrucción para Blender/Cycles capaz de comparar 
 
 **Protocolo exigible:** [DEVELOPMENT_PROTOCOL.md](DEVELOPMENT_PROTOCOL.md). **Registro de decisiones por commit:** [DECISION_LOG.md](DECISION_LOG.md). La CI comprueba que cada nuevo commit actualice conjuntamente roadmap, estado y bitácora. Esta verificación **no reemplaza** el juicio técnico ni las pruebas de Blender.
 
-**Hito activo:** M3 / [Issue #7](https://github.com/mxlzz/ACD/issues/7), port fiel del SID público a Blender 5.x. **Primer requisito pendiente:** definir topología y configuración exactas de los grafos Standard/High/Super del SID público, incluidas ramas opcionales y licencias. **Siguiente puerta:** modo SID Reference probado con Blender 5, separado del ACD experimental.
+**Hito activo:** M3 / [Issue #7](https://github.com/mxlzz/ACD/issues/7). Se cerró el relevamiento funcional de grafos, parámetros y ramas opcionales, documentado en [M3_SID_REFERENCE_SPEC.md](M3_SID_REFERENCE_SPEC.md). **Próxima puerta:** implementar modo SID Reference independiente, testear topología en Blender 5.0.1/5.3 y render mínimo. No está demostrado todavía ningún resultado visual equivalente a SID.
 
 ## Prioridad rectificada: replicar SID antes de optimizar ACD
 

@@ -4,6 +4,14 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.1 — Especificación de SID público (2026-11-11)
+
+- Alineación previa: hito M3 / Issue #7, sin desvío; la tarea consiste en congelar comportamiento upstream antes de escribir el port.
+- Implementado: [docs/M3_SID_REFERENCE_SPEC.md](docs/M3_SID_REFERENCE_SPEC.md) fija Standard FAST, High/Super Accurate, guías por familia, emisión sin guías, alfa filtrada, volumen, entorno, entradas RenderLayers y factor MixRGB = 1.
+- Política: implementar un adaptador nuevo sin copiar código GPL; no se modificó el addon estable, ni se fusionó ninguna rama.
+- Verificación: especificación cotejada con archivos Python del SID público y documentación Blender; **no es una prueba Blender ni certifica paridad**.
+- Próximo paso M3.2: construir módulo separado y tests de nodos/render con Blender 5.0.1/5.3.
+
 ## Control de rumbo y trazabilidad — M3 (2026-11-11)
 
 - **Hito activo confirmado:** M3 / Issue #7. No hay port SID Reference fiel verificado. La prioridad sigue siendo extraer especificación de nodos/enlaces/parámetros del SID público y después implementar paridad en Blender 5.
