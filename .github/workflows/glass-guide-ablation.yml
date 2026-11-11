@@ -1,10 +1,6 @@
 name: ACD E0012 — Component Guide Ablation (glass lobby)
 
 on:
-  # Initial validation via PR. Remove this trigger after the first run.
-  pull_request:
-    paths:
-      - ".github/workflows/glass-guide-ablation.yml"
   workflow_dispatch:
 
 permissions:
