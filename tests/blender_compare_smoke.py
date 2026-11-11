@@ -182,7 +182,7 @@ try:
             "See E0012 and Blender source."
         )
     sid_reference_names = {"SID4_STANDARD", "SID4_HIGH", "SID4_SUPER"}
-    unknown = set(configured_names) - {entry[2] for entry in all_methods} - sid_reference_names
+    unknown = set(configured_names) - {entry[2] for entry in all_methods} - sid_reference_names - {'NATIVE_COMP_OIDN'}
     if unknown or not configured_names:
         raise ValueError("Unsupported method selection: " + str(sorted(unknown)))
     methods = tuple(entry for entry in all_methods if entry[2] in configured_names)
@@ -246,6 +246,23 @@ try:
             fileout.file_output_items.new("RGBA", name)
             tree.links.new(candidate_node.outputs["Denoised Image"], fileout.inputs[name])
         print("SID REFERENCE GRAPH CONSTRUCTED", sid_selected, "source", sid_ref.SOURCE_COMMIT)
+
+    # Native single-node Blender compositor OIDN baseline (not Cycles-internal denoiser).
+    native_comp_selected = "NATIVE_COMP_OIDN" in configured_names
+    if native_comp_selected:
+        dn = tree.nodes.new("CompositorNodeDenoise")
+        dn.label = "Native compositor OIDN | Accurate High HDR"
+        dn.inputs["Prefilter"].default_value = "Accurate"
+        dn.inputs["Quality"].default_value = "High"
+        dn.inputs["HDR"].default_value = True
+        raw = addon.render_socket(layers, "Noisy Image", required=False)
+        if raw is None:
+            raw = addon.render_socket(layers, "Image")
+        tree.links.new(raw, dn.inputs["Image"])
+        tree.links.new(addon.render_socket(layers, "Denoising Albedo"), dn.inputs["Albedo"])
+        tree.links.new(addon.render_socket(layers, "Denoising Normal"), dn.inputs["Normal"])
+        fileout.file_output_items.new("RGBA", "NATIVE_COMP_OIDN")
+        tree.links.new(dn.outputs["Image"], fileout.inputs["NATIVE_COMP_OIDN"])
 
     # Research ablation E0006: preserve raw emission instead of filtering it.
     # Directly visible emissive regions can be nearly deterministic even at
@@ -385,6 +402,11 @@ try:
             "b4186389cac386eff9d777bb681c0051f8bd9bd2" if sid_selected else None
         ),
         "sid_reference_equivalence_verified": False,
+        "native_compositor_oidn": (
+            {"prefilter": "Accurate", "quality": "High", "hdr": True,
+             "not_equated_to_cycles_internal_denoiser": True}
+            if native_comp_selected else None
+        ),
         "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
         "emission_ablation": emission_ablation,
         "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",

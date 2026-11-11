@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 OpenEXR = pytest.importorskip("OpenEXR")
-from acd_lab.batch import evaluate_batch
+from acd_lab.batch import evaluate_batch, OPTIONAL
 
 
 def save(path, value):
@@ -65,3 +65,7 @@ def test_batch_reports_optional_sid4_reference_variants(tmp_path):
     assert "SID4_HIGH" in result["measurements"]
     assert "SID4_SUPER" in result["measurements"]
     assert result["rank_by_rmse"][0] == "SID4_SUPER"
+
+
+def test_native_compositor_is_optional_candidate():
+    assert "NATIVE_COMP_OIDN" in OPTIONAL

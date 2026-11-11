@@ -1,0 +1,98 @@
+name: ACD M3.9 Cycles Classroom Glass Lobby SID4 ACD Native comparison
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/sid-architectural-pilot.yml"
+      - "tests/blender_compare_smoke.py"
+      - "acd_lab/batch.py"
+      - "scripts/summarize_sid_realbench.py"
+      - "tests/test_sid_realbench_summary.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-scene-pilot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        scene: [glass_lobby, classroom]
+    env:
+      BLENDER_VERSION: "5.0.1"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      ACD_DEVICE: CPU
+      ACD_SCENE: ${{ matrix.scene == 'classroom' && 'external' || matrix.scene }}
+      ACD_BENCH_DIR: /tmp/acd_m39_${{ matrix.scene }}
+      ACD_WIDTH: "160"
+      ACD_HEIGHT: "120"
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_EXTRA_SEEDS: "911"
+      ACD_REFERENCE_SPP: "384"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_METHODS: "STANDARD,HIGH,SUPER,SID4_STANDARD,SID4_HIGH,SID4_SUPER,NATIVE_COMP_OIDN"
+      ACD_CAPTURE_AOV: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR and test candidate contracts
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_batch.py tests/test_sid_realbench_summary.py
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - if: steps.blender-cache.outputs.cache-hit != 'true'
+        name: Download Blender 5.0.1
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - if: matrix.scene == 'classroom'
+        name: Download public CC0 Classroom blend
+        run: |
+          mkdir -p "$RUNNER_TEMP/m39_classroom"
+          curl -fL --retry 3 --connect-timeout 30 --max-time 300 \
+            https://download.blender.org/demo/test/classroom.zip -o "$RUNNER_TEMP/classroom.zip"
+          unzip -q "$RUNNER_TEMP/classroom.zip" -d "$RUNNER_TEMP/m39_classroom"
+          SCENE=$(find "$RUNNER_TEMP/m39_classroom" -type f -name 'classroom.blend' -print -quit)
+          test -n "$SCENE"
+          echo "ACD_SOURCE_BLEND=$SCENE" >> "$GITHUB_ENV"
+          sha256sum "$RUNNER_TEMP/classroom.zip" "$SCENE"
+      - name: Render all methods from identical low spp render
+        run: |
+          if [ "$ACD_SCENE" = "external" ]; then
+            ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio \
+              --python-exit-code 1 --python tests/blender_compare_smoke.py
+          else
+            ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio \
+              --python-exit-code 1 --python tests/blender_compare_smoke.py
+          fi
+      - name: Evaluate both references and aggregate two noisy seeds
+        run: |
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/metrics.json"
+          for seed_dir in "$ACD_BENCH_DIR"/seed_*; do
+            if [ -d "$seed_dir" ]; then
+              python -m acd_lab.cli compare-batch --directory "$seed_dir" --output "$seed_dir/metrics.json"
+            fi
+          done
+          python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/seed_aggregate.json"
+          python -m scripts.summarize_sid_realbench --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/summary.json"
+      - name: Archive reproducible EXRs and metric reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m3-9-cycles-${{ matrix.scene }}-sid4-acd-native
+          if-no-files-found: warn
+          retention-days: 14
+          path: /tmp/acd_m39_${{ matrix.scene }}/

@@ -202,3 +202,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Observado:** run 43111531413 `failure`, `jobs=[]`, workflow identificado por ruta. Inspección de fuente encontró un paso con `- name: Archive matrix: EXRs, ...` (dos puntos no citados dentro del scalar).
 - **Corrección:** entrecomillar completamente el nombre del paso, dejando toda la lógica experimental intacta.
 - **Estado:** la próxima ejecución definirá si queda corregida la validación YAML y si corren las pruebas; no se presume validación de OIDN.
+
+
+## 2026-11-11 — M3.8 medido y M3.9 preparado con escena Cycles de referencia
+
+- **Hecho verificado:** run 43111684409 `success`, 8 legacy+24 port. OIDN Blender5.0.1 2.3.3 instalado; origen legacy no resuelto. HDR off cambia mucho el resultado y no es una alternativa justificable por reducción de diferencia histórica.
+- **Cambio en banco:** añadir `NATIVE_COMP_OIDN` (CompositorNodeDenoise Accurate/High/HDR) como baseline individual, identificado expresamente como *nodo compositor* y no denoiser interno de Cycles; incluirlo en comparador y prueba.
+- **M3.9 candidato:** workflow en matriz glass_lobby (procedimental) y Classroom CC0 (escena externa real), low24 spp (2 seeds) y dos ref384 spp, 160×120. Reportar RMSE/MAE/luminancia log, incertidumbre de referencia y estabilidad entre semillas, sin concluir convergencia.
+- **Estado:** CI posterior al commit pendiente; `addon/sid_reference.py` y addon estable no se modifican; no fusionar PR #4 hasta ver resultados.

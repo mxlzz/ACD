@@ -14,7 +14,7 @@ OPTIONAL = (
     "HIGH_component_no_guides", "SUPER_component_no_guides",
     "HIGH_component_albedo", "SUPER_component_albedo",
     "HIGH_component_normal", "SUPER_component_normal",
-    "SID4_STANDARD", "SID4_HIGH", "SID4_SUPER",
+    "SID4_STANDARD", "SID4_HIGH", "SID4_SUPER", "NATIVE_COMP_OIDN",
 )
 
 

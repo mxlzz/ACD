@@ -11,6 +11,19 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - **Inferencia:** estas operaciones y el mapeo de alfa probado no explican las diferencias mucho mayores en High/Super (RGB RMSE 0.065–0.068 y alfa ~0.00387). Esto acota causas hacia OIDN/parametrización/otras ramas, pero no las identifica de manera exhaustiva.
 - **Siguiente:** aislar nodos OIDN individuales bajo exactamente las mismas entradas (Fast, Accurate guiado, emisión Accurate sin guías, alfa Accurate guiado).
 
+## M3.8 — Resultado verificado de parámetros OIDN (2026-11-11)
+
+- [Run #43111684409](https://github.com/mxlzz/ACD/actions/runs/43111684409) `success` y [artifact #13896511879](https://github.com/mxlzz/ACD/actions/runs/43111684409/artifacts/13896511879): 8 filtros Blender3.6 y 24 variantes Blender5 con los mismos EXR. Passthrough de entradas validado.
+- Blender 5.0.1 incluye Open Image Denoise `libOpenImageDenoise.so.2.3.3`. No se conoce aún el identificador exacto de biblioteca en Blender3.6.23, por lo que no puede atribuirse toda divergencia a una versión concreta.
+- HDR=true, RMSE RGB entre versiones: Fast guiado High/Balanced 0.0328543, Quality Fast 0.0427344; Accurate guiado High 0.0306022, Balanced 0.0333146, Fast 0.0443925; emisión sin guías High/Balanced 0.0619173; alfa High 0.0061815.
+- Apagar HDR reduce diferencia histórica de emisión a ~0.0021 cuando ambos están HDR=false; **no indica mejor fidelidad**. En Blender5, cambiar HDR true→false altera emisión con RMSE ~0.9046. Mantener HDR para preservar radiancia fuera de 0..1.
+
+## M3.9 — Banco sobre escenas Cycles, pendiente de ejecutar (2026-11-11)
+
+- Nuevo workflow `sid-architectural-pilot.yml` para `glass_lobby` procedimental y Classroom CC0 externo. Render 160×120, 24 spp, dos seeds 539/911 y dos referencias 384 spp (8819 y 8922), todos los candidatos procesan el mismo render.
+- Incorpora `NATIVE_COMP_OIDN`, nodo nativo del compositor con Accurate/High/HDR, **no confundir con Cycles denoise interno**. Se compara con ACD y SID4 Reference en el mismo EXR y se archivan métricas, referencias, informes de semillas y outputs.
+- **CI aún no verificada.** Las referencias finitas son diagnóstico de calidad relativa, no prueba de convergencia o superioridad. Falta escala de producción y escenas aportadas por usuario.
+
 ## M3.8 — Corrección de YAML inválido detectado en Actions (2026-11-11)
 
 - [Run #43111531413](https://github.com/mxlzz/ACD/actions/runs/43111531413) falló **antes de crear jobs**: nombre de workflow mostrado como ruta `.github/workflows/sid-oidn-parameter-matrix.yml`. Motivo identificado en fuente: label del paso `Archive matrix: EXRs...` tenía dos puntos seguidos de espacio sin comillas, invalidando la sintaxis YAML.
