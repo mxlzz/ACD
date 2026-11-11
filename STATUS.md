@@ -1,3 +1,31 @@
+# M2 — External .blend scene benchmark and regional analysis
+
+Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
+
+## Implemented and checked
+- Local runner: scripts/run_scene_benchmark.py. Loads an existing .blend without saving, supports chosen frame/resolution, noisy/reference spp and seeds, optional existing reference, and CPU/CUDA/OPTIX selection.
+- Experiment provenance: source scene SHA256, scene name, selected view layer, Blender version, color management settings, frame, samples, seed and device recorded.
+- Raw multilayer EXR exported from the same noisy render as Standard/High/Super; it contains Composite and ViewLayer parts. Region analysis selects the actual ViewLayer stored in metadata.
+- Explicit spatial ROI and relative AOV radiance-contribution masks, HDR regional metrics, signed error maps (not material ID segmentation).
+- Real headless Blender 5.0.1 external .blend integration test PASSED, including byte-identical .blend checksum, AOV parsing and ROI report. Evidence: https://github.com/mxlzz/ACD/actions/runs/43057833000
+- Python/EXR test suite passed on this branch. Blender 5.3 node API smoke also passed, but Blender 5.3 composited rendering is unverified on cloud runners lacking EGL.
+- Fixed synthetic OpenEXR test fixtures requiring contiguous NumPy channel buffers.
+
+## Remaining validation
+- Actual professional-sized scenes at 1080p+, multiple input seeds, convergence-tested reference.
+- RTX 4050 OPTIX run on Windows.
+- Material-specific quality in reflections/transmission, HDR-FLIP or reviewed crops.
+- Full pass closure and alpha behavior with complex Blender shaders.
+- No universal superiority or verified commercial SID 5.3 equivalence.
+
+## Next gates
+1. Evaluate official Classroom (CC0), Barcelona Pavilion (CC-BY), or a licensed production .blend outside Git. Keep scene assets out of the repository.
+2. Inspect reflected/transmitted ROIs and compare 3+ noisy seeds to two high-spp references when practical.
+3. Test guided versus unguided denoising only where the region metrics justify it.
+4. Leave expensive renders manual/local; preserve stable addon apart from experiments.
+
+## Earlier project state
+
 # Persistent project state — ACD
 
 Updated: 2026-11-11
