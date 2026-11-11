@@ -4,6 +4,15 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## Bloqueo externo de CI — M3 / Issue #8 (2026-11-11)
+
+- **Hecho observado:** 19 de 25 ejecuciones recientes de GitHub Actions están `queued` sin jobs creados (`total_count=0`), algunas desde las 20:27 UTC, inclusive Python quality gate y Blender smoke conocidos. El control de trazabilidad nuevo y el port SID aún no tienen pruebas físicas aprobadas.
+- Runs representativos: quality gate 43096932831; Blender 5 43098499754; comparación SID3.6/port5 43098499807.
+- Dos workflows nuevos fallaron sin jobs por expresiones inválidas en `jobs.env`; se corrigió y la ejecución nueva ahora se encuentra en cola. **La causa general de la cola NO está establecida.**
+- **Decisión:** no fusionar ni declarar paridad. Mantener el código candidato, los manifests y las pruebas escritos, mientras el usuario revisa Actions/Settings/avisos según [Issue #8](https://github.com/mxlzz/ACD/issues/8).
+- Este commit corrige además un bug lógico del comparador: si ambos conteos de Standard eran iguales pero erróneos, la comparación anterior podía no detectarlo. Agregado test regresivo.
+- **Próximo paso:** resolver Actions, observar CI real y recién entonces avanzar a comparación SID histórico frente a port Blender 5. No hay justificación para añadir filtros nuevos.
+
 ## M3.4 — Comparación estructural con el SID original en Blender 3.6 (2026-11-11)
 
 - **Objetivo:** verificar que la topología y los parámetros de SID Reference coincidan con el addon histórico real, no con una interpretación del código.

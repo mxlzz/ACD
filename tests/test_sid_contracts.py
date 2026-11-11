@@ -53,3 +53,11 @@ def test_contract_fails_mismatched_oidn_count():
     old, new = baseline()
     new["modes"]["high"]["denoisers"] = 7
     assert any("OIDN nodes" in e for e in contract(old, new))
+
+
+
+def test_contract_detects_both_old_and_new_wrong_same_count():
+    old, new = baseline()
+    old["standard"]["denoisers"] = 2
+    new["modes"]["standard"]["denoisers"] = 2
+    assert any("Standard" in e for e in contract(old, new))

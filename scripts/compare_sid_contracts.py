@@ -45,7 +45,7 @@ def contract(legacy, adapter):
 
     old_standard = legacy["standard"]
     new_standard = adapter["modes"]["standard"]
-    if old_standard["denoisers"] != new_standard["denoisers"] != 1:
+    if old_standard["denoisers"] != 1 or new_standard["denoisers"] != 1:
         problems.append("Standard OIDN node count mismatch")
     if old_standard["prefilters"] != ["FAST"] or new_standard["prefilters"] != ["Fast"]:
         problems.append("Standard FAST prefilter mismatch")
