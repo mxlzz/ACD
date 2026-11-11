@@ -1,0 +1,89 @@
+name: ACD M3.5 original SID 3.6 vs Blender 5 same-EXR Standard
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/sid-numeric-parity.yml"
+      - "scripts/sid_standard_numeric_fixture.py"
+      - "scripts/compare_sid_standard_numeric.py"
+      - "tests/blender_sid_standard_numeric.py"
+      - "tests/test_sid_standard_numeric.py"
+      - "addon/sid_reference.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  standard-numeric:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      SID_UPSTREAM_ROOT: /tmp/acd_sid_upstream/SuperImageDenoiser
+      ACD_NUMERIC_INPUT: /tmp/acd_sid_numeric/input
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Python EXR support and fixture/unit tests
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_sid_standard_numeric.py
+          python scripts/sid_standard_numeric_fixture.py --output "$ACD_NUMERIC_INPUT"
+      - name: Clone pinned upstream SID (temporary GPL reference)
+        run: |
+          git clone --quiet https://github.com/PidgeonTools/SuperImageDenoiser.git "$SID_UPSTREAM_ROOT"
+          git -C "$SID_UPSTREAM_ROOT" checkout --quiet b4186389cac386eff9d777bb681c0051f8bd9bd2
+          test "$(git -C "$SID_UPSTREAM_ROOT" rev-parse HEAD)" = "b4186389cac386eff9d777bb681c0051f8bd9bd2"
+      - name: Cache official Blender 3.6.23
+        id: old-cache
+        uses: actions/cache@v4
+        with:
+          path: blender-3.6.23-linux-x64
+          key: official-blender-3.6.23-linux-x64-v1
+      - name: Download Blender 3.6.23
+        if: steps.old-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender3.6/blender-3.6.23-linux-x64.tar.xz -o blender36.tar.xz
+          tar -xf blender36.tar.xz
+      - name: Run actual SID Standard in Blender 3.6
+        env:
+          ACD_NUMERIC_FLAVOR: legacy
+          ACD_NUMERIC_OUTPUT: /tmp/acd_sid_numeric/legacy
+        run: ./blender-3.6.23-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_standard_numeric.py
+      - name: Cache official Blender 5.0.1
+        id: new-cache
+        uses: actions/cache@v4
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download Blender 5.0.1
+        if: steps.new-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender50.tar.xz
+          tar -xf blender50.tar.xz
+      - name: Run SID Reference Standard in Blender 5.0.1
+        env:
+          ACD_NUMERIC_FLAVOR: port
+          ACD_NUMERIC_OUTPUT: /tmp/acd_sid_numeric/port
+        run: ./blender-5.0.1-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_standard_numeric.py
+      - name: Compare passthrough, linear HDR and alpha differences
+        run: |
+          python scripts/compare_sid_standard_numeric.py \
+            --input /tmp/acd_sid_numeric/input \
+            --legacy /tmp/acd_sid_numeric/legacy \
+            --port /tmp/acd_sid_numeric/port \
+            --output /tmp/acd_sid_numeric/report
+      - name: Archive frozen inputs, outputs, hashes and signed differences
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m3-5-standard-same-exr-original-vs-port
+          if-no-files-found: warn
+          retention-days: 14
+          path: /tmp/acd_sid_numeric/

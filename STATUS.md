@@ -4,6 +4,14 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.5 — Primer banco numérico cross-version, Standard (2026-11-11)
+
+- **Hipótesis comprobable:** medir diferencias entre el SID histórico 4.x (Blender 3.6.23) y la réplica independiente (Blender 5.0.1), sobre tres EXR congelados idénticos (imagen ruidosa HDR y alfa, albedo, normal). No se debe confundir una diferencia de lectura o compositor con un filtro distinto.
+- **Implementación candidata:** generador determinista Python/OpenEXR con hashes SHA-256; ejecutor Blender para Standard real/port, control de passthrough sin denoise en ambas versiones, outputs EXR 32-bit y manifiestos; comparador de RGB, HDR, alfa y regiones de transparencia con mapas firmados NPZ. Workflow `sid-numeric-parity.yml` clona upstream temporalmente.
+- **Criterios de aceptación previos:** que ambas ejecuciones procesen los mismos bytes, que la comparación de passthrough difiera como máximo 0.001 en valor absoluto, que los outputs sean finitos y que se archiven los EXR y los deltas. **Resultados CI pendientes**; no afirmar aún equivalencia ni error específico de OIDN.
+- **Alcance intencional:** Standard únicamente y fixture sintético pequeño 96×64 para depurar el circuito. High/Super, material AOV y escenas reales se abordarán después de inspeccionar resultados, no como parte de una supuesta certificación visual.
+- **Siguiente paso:** revisar workflow, corregir fallos observados sin bajar umbrales a ciegas y registrar si el passthrough es confiable antes de interpretar deltas de SID.
+
 ## M3.4 — Validación posterior al commit e529c6b (2026-11-11)
 
 - [SID upstream graph #43101708644](https://github.com/mxlzz/ACD/actions/runs/43101708644): **success**, `passed=true`, `errors=[]` para el contrato estructural delimitado. Log `With the provided path, there will be 3 files uploaded`; artifact [sid-upstream-3.6-vs-port-5.0-graph-contracts](https://github.com/mxlzz/ACD/actions/runs/43101708644/artifacts/13890459701) creado correctamente (tres JSON, vencimiento previsto 2026-11-25).

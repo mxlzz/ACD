@@ -113,3 +113,14 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Limitaciones:** las discrepancias numéricas Blender 3.6/5.0 siguen sin analizar; la causa de las colas sin jobs antiguos es desconocida. Éxito del workflow no implica SID idéntico ni superior.
 - **Decisión:** cerrar el bloqueo operativo de Issue #8, mantener abierto M3 / Issue #7 y PR #4 como draft. No fusionar.
 - **Próximo experimento M3.5:** input EXR idéntico + hashes y ambos motores, probar Standard primero y High/Super después; comparar HDR, alfa y error por región con versiones del backend consignadas.
+
+
+## 2026-11-11 — M3.5, primer experimento de paridad numérica real (Standard)
+
+- **Hito verificado:** M3 / Issue #7. Se mantiene separada la versión comercial no pública; comparar upstream GPL histórico con adaptador sin copiar fuentes.
+- **Decisión:** congelar una única batería sintética EXR con hashes, ejecutar Standard en Blender 3.6 y 5.0 con misma entrada y registrar passthrough RGB/A. Este control es requisito para atribuir diferencias a la cadena de denoising.
+- **Implementación:** fixture Python/OpenEXR reproducible, driver compositor cross-version, comparación numérica con ROI HDR/transparencia y artefactos EXR/NPZ/JSON. Workflow aislado bajo PR trigger y despacho manual, sin nuevos filtros de ACD.
+- **Aceptación:** los dos Blenders cargan SHA idénticos; el passthrough cumple tolerancia 0.001; outputs RGBA finitos, mapas firmados y manifiestos exportados. El informe cuantifica diferencias, no exige igualdad píxel ni inventa backend OIDN.
+- **Estado al commit:** código candidato creado; **Actions aún no ejecutada/verificada**. Los resultados serán anexados en un nuevo registro; error de ejecución no será reinterpretado como disparidad numérica.
+- **Limitación:** fixture sintético 96×64 y Standard. No evalúa High/Super ni escena real, calidad perceptual ni rendimiento.
+- **Siguiente:** ejecutar CI y analizar resultados del upstream real; ampliar gradualmente a High/Super cuando el control de entrada pase.
