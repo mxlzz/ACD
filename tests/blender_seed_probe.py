@@ -15,6 +15,10 @@ import bpy
 
 scene = bpy.context.scene
 seed = int(os.environ["ACD_PROBE_SEED"])
+offset = int(os.environ.get("ACD_PROBE_OFFSET", "0"))
+label = os.environ.get("ACD_PROBE_LABEL", str(seed))
+if not label.replace("_", "").isalnum():
+    raise ValueError("ACD_PROBE_LABEL must be alphanumeric/underscore")
 directory = Path(os.environ["ACD_PROBE_DIR"])
 directory.mkdir(parents=True, exist_ok=True)
 
@@ -29,10 +33,13 @@ scene.cycles.use_denoising = False
 scene.cycles.use_adaptive_sampling = False
 scene.cycles.samples = 16
 scene.cycles.seed = seed
+if not hasattr(scene.cycles, "sample_offset"):
+    raise RuntimeError("Cycles sample_offset not supported by this Blender build")
+scene.cycles.sample_offset = offset
 scene.render.image_settings.media_type = "IMAGE"
 scene.render.image_settings.file_format = "OPEN_EXR"
 scene.render.image_settings.color_depth = "32"
-scene.render.filepath = str(directory / (str(seed) + ".exr"))
+scene.render.filepath = str(directory / (label + ".exr"))
 settings = []
 for s in bpy.data.scenes:
     settings.append({
@@ -51,11 +58,13 @@ metadata = {
     "active_scene": scene.name,
     "active_view_layer": bpy.context.view_layer.name,
     "requested_seed": seed,
+    "sample_offset": offset,
+    "output_label": label,
     "settings_all_scenes": settings,
 }
 print("ACD_SEED_PROBE_SETTINGS", json.dumps(metadata, sort_keys=True))
 result = bpy.ops.render.render(write_still=True)
 assert "FINISHED" in result
 assert Path(scene.render.filepath).is_file()
-(directory / (str(seed) + ".json")).write_text(json.dumps(metadata, indent=2) + "\n")
+(directory / (label + ".json")).write_text(json.dumps(metadata, indent=2) + "\n")
 print("ACD_SEED_PROBE_COMPLETE", seed, scene.render.filepath)

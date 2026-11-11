@@ -45,17 +45,28 @@ jobs:
           SCENE=$(find "$RUNNER_TEMP/scene" -name 'classroom.blend' -type f -print -quit)
           test -n "$SCENE"
           echo "ACD_SOURCE_BLEND=$SCENE" >> "$GITHUB_ENV"
-      - name: Isolated raw render seed 539
+      - name: Isolated raw render seed 539 offset 0
         env:
           ACD_PROBE_SEED: "539"
+          ACD_PROBE_LABEL: "seed539_offset0"
         run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
-      - name: Isolated raw render seed 911
+      - name: Isolated raw render seed 911 offset 0
         env:
           ACD_PROBE_SEED: "911"
+          ACD_PROBE_LABEL: "seed911_offset0"
         run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
-      - name: Measure seed effect in independent processes
+      - name: Isolated raw render seed 539 offset 16
+        env:
+          ACD_PROBE_SEED: "539"
+          ACD_PROBE_OFFSET: "16"
+          ACD_PROBE_LABEL: "seed539_offset16"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Measure independent seed and sample-offset effects
         run: |
-          python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/539.exr" --candidate "$ACD_PROBE_DIR/911.exr" --output "$ACD_PROBE_DIR/seed_difference.json"
+          python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/seed539_offset0.exr" --candidate "$ACD_PROBE_DIR/seed911_offset0.exr" --output "$ACD_PROBE_DIR/seed_difference.json"
+          python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/seed539_offset0.exr" --candidate "$ACD_PROBE_DIR/seed539_offset16.exr" --output "$ACD_PROBE_DIR/offset_difference.json"
+          python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed911_offset0.exr" --output "$ACD_PROBE_DIR/seed_variation.json"
+          python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed539_offset16.exr" --output "$ACD_PROBE_DIR/offset_variation.json"
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@v4
