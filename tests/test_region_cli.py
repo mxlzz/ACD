@@ -33,6 +33,9 @@ def test_regions_from_saved_exrs_and_roi_file(tmp_path, capsys):
     )
     left = result["regions"]["left"]["metrics"]
     right = result["regions"]["right"]["metrics"]
+    print("ACD_DEBUG left region", result["size"], result["regions"]["left"]["pixels"], left["STANDARD"]["rmse_linear"])
+    from acd_lab.io import read_arrays
+    print("ACD_DEBUG pixel values", read_arrays(tmp_path / "acd_compare_STANDARD.exr")["image"][:, :, 0].tolist())
     assert left["STANDARD"]["rmse_linear"] == pytest.approx(1)
     assert right["STANDARD"]["rmse_linear"] == pytest.approx(0)
     assert left["SUPER"]["rmse_linear"] == pytest.approx(0)
