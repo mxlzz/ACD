@@ -66,9 +66,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sid-upstream-3.6-vs-port-5.0-graph-contracts
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
+          # These are the exact absolute paths used by the probes and comparator.
           path: |
-            ${{ runner.temp }}/sid_legacy_contract.json
-            ${{ runner.temp }}/sid_port_contract.json
-            ${{ runner.temp }}/sid_contract_comparison.json
+            /tmp/acd_sid_legacy_contract.json
+            /tmp/acd_sid_port_contract.json
+            /tmp/sid_contract_comparison.json

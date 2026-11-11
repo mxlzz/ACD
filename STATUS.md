@@ -4,6 +4,15 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.4 — CI reanudada; corregida la captura de manifests (2026-11-11)
+
+- **Verificación real anterior al cambio:** [quality gate #43098851163](https://github.com/mxlzz/ACD/actions/runs/43098851163) OK; [Blender smoke #43098851162](https://github.com/mxlzz/ACD/actions/runs/43098851162) OK en 5.0.1/5.3, con comparadores EXR y tests de render de variantes en 5.0.1 (pasos pesados omitidos en 5.3); [upstream SID graph parity #43098851161](https://github.com/mxlzz/ACD/actions/runs/43098851161) OK con `passed=true`, `errors=[]`.
+- **Alcance comprobado:** conteos de denoisers y mezclas, factores, prefilters, guías de emisión y alfa en topologías comparadas. No se ha certificado igualdad píxel, equivalencia de backend OIDN ni fidelidad numérica de alfa entre Blender 3.6/5.0.
+- **Defecto nuevo de reproducibilidad detectado en logs:** el workflow escribió manifiestos de contrato en `/tmp/acd_sid_legacy_contract.json`, `/tmp/acd_sid_port_contract.json` y `/tmp/sid_contract_comparison.json`, pero el upload buscó rutas diferentes (runner.temp). Avisó `No files were found` y no publicó artifacts, aun con job verde.
+- **Corrección en este commit:** cargar los tres archivos desde sus rutas exactas; `if-no-files-found: error` para que futuras pérdidas de evidencia no parezcan CI aprobada. **La nueva ejecución y sus artifacts aún requieren verificación posterior al commit**.
+- **Bloqueo previo (Issue #8):** varios runs antiguos siguen `queued` sin jobs; no hay causa confirmada. Al menos tres runs posteriores ya se ejecutaron. No modificar permisos ni afirmar que el incidente esté diagnosticado.
+- **Siguiente puerta:** confirmar que el artifact contiene los tres manifiestos; después diseñar y ejecutar una comparación interversión sobre el mismo EXR de entrada, con foco en emisión, alfa, HDR y OIDN, antes de juzgar calidad o fusionar PR #4.
+
 ## Bloqueo externo de CI — M3 / Issue #8 (2026-11-11)
 
 - **Hecho observado:** 19 de 25 ejecuciones recientes de GitHub Actions están `queued` sin jobs creados (`total_count=0`), algunas desde las 20:27 UTC, inclusive Python quality gate y Blender smoke conocidos. El control de trazabilidad nuevo y el port SID aún no tienen pruebas físicas aprobadas.

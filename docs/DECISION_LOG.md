@@ -92,3 +92,14 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Incertidumbre:** causa real de la cola desconocida. No inferir cuota, billing ni runner incapaz sin mensaje explícito de GitHub.
 - **Decisión de prioridad:** no avanzar a optimizaciones, UI de distribución ni renders de calidad cuando la verificación básica del port aún está bloqueada.
 - **Próximo paso:** inspeccionar Actions/Settings/avisos, destrabar CI, ejecutar los tests y analizar los manifests. Ese es el primer punto que requiere intervención del propietario del repo.
+
+
+## 2026-11-11 — M3.4, reparar artifacts y registrar CI física recuperada
+
+- **Alineación:** M3 / Issue #7. La reproducibilidad del cotejo upstream y del port es prerrequisito de paridad, sin introducir un denoiser nuevo.
+- **Evidencia anterior:** runs 43098851163 (quality gate) y 43098851162 (Blender 5 smoke) `success`; run 43098851161 ejecutó realmente el SID original en Blender 3.6.23 y el port en 5.0.1 y devolvió `passed=true` para un contrato estructural limitado.
+- **Defecto observado:** el step de artifact en el run 43098851161 informó `No files were found`: los probes escriben en `/tmp/acd_sid_{legacy,port}_contract.json`, el comparador escribe `/tmp/sid_contract_comparison.json`, pero el upload usaba `runner.temp`. Un run verde sin evidencia descargable incumple trazabilidad.
+- **Decisión/cambio:** corregir exactamente los tres paths de `upload-artifact` y cambiar `if-no-files-found` a `error`. No alterar el grafo ni afirmar paridad de imágenes.
+- **Criterio de aceptación:** una nueva ejecución de paridad debe terminar en verde **y** publicar un artifact legible con los tres JSON. **Resultado posterior al commit todavía no verificado.**
+- **Limitaciones:** queda sin demostrar equivalencia OIDN, tratamiento alfa y salida HDR entre Blender 3.6 y 5.0. Los runs previos sin jobs no identifican por sí mismos la causa de la cola.
+- **Siguiente:** validar artifacts, después diseñar prueba comparativa numérica del SID público y el port con la misma entrada EXR.
