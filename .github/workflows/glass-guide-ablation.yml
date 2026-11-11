@@ -1,0 +1,127 @@
+name: ACD E0012 — Component Guide Ablation (glass lobby)
+
+on:
+  # Initial validation via PR. Remove this trigger after the first run.
+  pull_request:
+    paths:
+      - ".github/workflows/glass-guide-ablation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guide-ablation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BLENDER_VERSION: "5.0.1"
+      ACD_SCENE: "glass_lobby"
+      ACD_WIDTH: "128"
+      ACD_HEIGHT: "96"
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_EXTRA_SEEDS: "911,1337"
+      ACD_REFERENCE_SPP: "1024"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_METHODS: "STANDARD,HIGH,SUPER,STANDARD_no_guides,HIGH_component_no_guides,SUPER_component_no_guides,HIGH_component_albedo,SUPER_component_albedo,HIGH_component_normal,SUPER_component_normal"
+      ACD_CAPTURE_AOV: "1"
+      ACD_BENCH_DIR: "/tmp/acd_e0012"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install numerical OpenEXR lab
+        run: python -m pip install -e ".[dev,exr]"
+      - name: Cache official Blender
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download official Blender
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz \
+            -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Render same-sample Standard/High/Super, isolate each guide
+        run: |
+          ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup \
+            -noaudio --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Compare global and fixed glossy/transmission ROIs
+        run: |
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/metrics.json"
+          python -m acd_lab.cli compare-regions --directory "$ACD_BENCH_DIR" \
+            --passes "$ACD_BENCH_DIR/raw_multilayer.exr" --output "$ACD_BENCH_DIR/region_metrics.json"
+          LAYER=$(python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ["ACD_BENCH_DIR"])
+          print(json.loads((root/"metadata.json").read_text())["view_layer"])
+          PY
+          )
+          for dir in "$ACD_BENCH_DIR"/seed_*; do
+            if [ -d "$dir" ]; then
+              python -m acd_lab.cli compare-batch --directory "$dir" --output "$dir/metrics.json"
+              python -m acd_lab.cli compare-regions --directory "$dir" \
+                --passes "$ACD_BENCH_DIR/raw_multilayer.exr" --passes-layer "$LAYER" \
+                --output "$dir/region_metrics.json"
+            fi
+          done
+          python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" \
+            --output "$ACD_BENCH_DIR/seed_aggregate.json"
+          python - <<'PY'
+          import json, os, subprocess, sys
+          from pathlib import Path
+          root = Path(os.environ["ACD_BENCH_DIR"])
+          agg = json.loads((root/"seed_aggregate.json").read_text())
+          if not agg["input_diversity_heuristic_passed"]:
+              raise SystemExit("Noisy inputs are not measurably distinct")
+          methods = json.loads((root/"region_metrics.json").read_text())["regions"]
+          requested = [
+              "STANDARD_no_guides",
+              "HIGH", "SUPER",
+              "HIGH_component_no_guides", "SUPER_component_no_guides",
+              "HIGH_component_albedo", "SUPER_component_albedo",
+              "HIGH_component_normal", "SUPER_component_normal"
+          ]
+          summary = {"scope": "E0012", "mean_rmse": {
+              n: value["rmse_linear"]["mean"] for n, value in agg["methods"].items()
+          }, "regions": {}}
+          for roi in ("aov_glossy", "aov_transmission"):
+              entry = methods.get(roi)
+              if entry is None or entry["pixels"] < 10:
+                  raise SystemExit("Missing significant AOV region: " + roi)
+              roi_result = {"pixels": entry["pixels"], "mask_sha256": entry["mask_sha256"],
+                            "variants": {}}
+              for candidate in requested:
+                  out = root / ("region_" + roi + "_" + candidate + ".json")
+                  subprocess.check_call([
+                      sys.executable, "-m", "acd_lab.cli", "aggregate-regions",
+                      "--directory", str(root), "--region", roi,
+                      "--baseline", "STANDARD", "--candidate", candidate,
+                      "--output", str(out)
+                  ], stdout=subprocess.DEVNULL)
+                  val = json.loads(out.read_text())
+                  roi_result["variants"][candidate] = {
+                      "mean_rmse": val["mean_candidate_rmse"],
+                      "standard_rmse": val["mean_baseline_rmse"],
+                      "improved_inputs": val["candidate_improves_count"]
+                  }
+              summary["regions"][roi] = roi_result
+          (root/"E0012_summary.json").write_text(json.dumps(summary,indent=2)+"\n")
+          print("E0012 GUIDE ABLATION COMPLETE",json.dumps(summary))
+          PY
+      - name: Upload complete experiment dataset
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0012-glass-guides
+          if-no-files-found: warn
+          retention-days: 7
+          path: /tmp/acd_e0012/
