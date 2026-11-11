@@ -55,7 +55,7 @@ jobs:
             https://download.blender.org/demo/test/classroom.zip \
             -o "$RUNNER_TEMP/classroom.zip"
           unzip -q "$RUNNER_TEMP/classroom.zip" -d "$RUNNER_TEMP/acd_classroom"
-          SCENE=$(find "$RUNNER_TEMP/acd_classroom" -type f -name '*.blend' | head -n 1)
+          SCENE=$(find "$RUNNER_TEMP/acd_classroom" -type f -name 'classroom.blend' -print -quit)
           test -n "$SCENE"
           echo "ACD_SOURCE_BLEND=$SCENE" >> "$GITHUB_ENV"
           echo "ACD_BENCH_DIR=$RUNNER_TEMP/acd_classroom_results" >> "$GITHUB_ENV"
