@@ -22,7 +22,7 @@ jobs:
       ACD_EXTRA_SEEDS: "911,1337"
       ACD_REFERENCE_SPP: "1024"
       ACD_DOUBLE_REFERENCE: "1"
-      ACD_METHODS: "STANDARD,HIGH,SUPER,STANDARD_no_guides,HIGH_component_no_guides,SUPER_component_no_guides,HIGH_component_albedo,SUPER_component_albedo,HIGH_component_normal,SUPER_component_normal"
+      ACD_METHODS: "STANDARD,HIGH,SUPER,STANDARD_no_guides,HIGH_component_no_guides,SUPER_component_no_guides,HIGH_component_albedo,SUPER_component_albedo"
       ACD_CAPTURE_AOV: "1"
       ACD_BENCH_DIR: "/tmp/acd_e0012"
     steps:
@@ -84,7 +84,6 @@ jobs:
               "HIGH", "SUPER",
               "HIGH_component_no_guides", "SUPER_component_no_guides",
               "HIGH_component_albedo", "SUPER_component_albedo",
-              "HIGH_component_normal", "SUPER_component_normal"
           ]
           summary = {"scope": "E0012", "mean_rmse": {
               n: value["rmse_linear"]["mean"] for n, value in agg["methods"].items()
