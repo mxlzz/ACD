@@ -16,14 +16,18 @@ M1 development: PR #3, branch dev/acd-m1-exr-evaluation. Related issue #2.
 - Removing the final OIDN from High/Super barely changes RMSE; the raw compositing graph reproduces raw with RMSE ~1e-8.
 - Blender 5.0.1 guided AOV denoising ablation: High RMSE 0.005879 without guides vs 0.006526 with; Super 0.008978 vs 0.018854. Neither beats Standard 0.002668 (run 43050200840).
 
+- E0002: 48x40 architectural interior, 16 spp vs two 4096 spp references: High RGB RMSE 0.150261, Standard 0.154318, Super 0.158825, Raw 0.302980. High ranks first against both, but MAE and log-luminance metrics favor other methods. The reference-to-reference RMSE is 0.041418: not converged. Full details: docs/experiments/E0002.md.
+- Added automated log1p luminance RMSE, per-pixel p95 error and metric-specific rankings to avoid relying on global linear RMSE alone.
+- Follow-up 96x80 at 32 spp and two 4096 spp references configured as an evaluation job.
+
 ## Unverified, pending
 - Blender 5.3 actual composited render on machine with working graphics runtime.
 - Equivalence to released SID 5.3 and performance on practical interiors.
-- Consecutive high-sample reference convergence / multiple seeds.
+- Convergence-checked reference and multiple independent input seeds.
 - Material-specific quality improvements, HDR perceptual metrics, and RTX performance.
 
 ## Immediate next gates
-1. Run guidance ablation (normal/albedo inputs disconnected from per-component denoisers).
+1. Compare spatial errors at higher resolution; E0001/E0002 guidance ablations completed.
 2. Inspect per-pass residual maps to isolate where distortion is introduced.
 3. Benchmark three test scenes and several seeds/spp budgets.
 4. Move beyond generic OIDN stacking only when a measurable benefit appears.
