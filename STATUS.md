@@ -11,6 +11,14 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - **Inferencia:** estas operaciones y el mapeo de alfa probado no explican las diferencias mucho mayores en High/Super (RGB RMSE 0.065–0.068 y alfa ~0.00387). Esto acota causas hacia OIDN/parametrización/otras ramas, pero no las identifica de manera exhaustiva.
 - **Siguiente:** aislar nodos OIDN individuales bajo exactamente las mismas entradas (Fast, Accurate guiado, emisión Accurate sin guías, alfa Accurate guiado).
 
+## M3.8 — Matriz experimental de parámetros OIDN (2026-11-11)
+
+- **Hipótesis activa:** la diferencia RGB entre SID 3.6 y adaptador Blender 5 está presente en nodos OIDN individuales. El estudio M3.7 registró Fast RMSE=0.0328542782, emisión sin guías ROI RMSE=0.2157095979; no se puede atribuir aún a una versión de backend ni a un parámetro particular.
+- **Implementación candidata:** `tests/blender_sid_oidn_matrix.py` procesa el mismo fixture EXR con 4 entradas/tipos de filtro. Blender3.6 ejecuta 8 casos (Fast/Accurate, emisión y alfa × HDR true/false); Blender5 ejecuta 24 casos equivalentes (Quality High/Balanced/Fast × HDR true/false), fijando prefilter por caso. Ningún algoritmo ACD se modifica.
+- **Control:** SHA y raw passthrough de noisy/normal/albedo/alpha/emission, EXR RGBA 32-bit, métricas RGB y ROI emisiva, cambio intraversión de Quality/HDR, logs de build y archivos OIDN distribuidos con cada Blender. Compara cercanía a salida histórica **sin equipararla a calidad**.
+- **Fuentes oficiales de los controles:** manual Blender 3.6 `docs.blender.org/manual/en/3.6/compositing/types/filter/denoise.html`, Blender 5.0 `docs.blender.org/manual/en/5.0/compositing/types/filter/denoise.html`; versión exacta OIDN solo se anotará si es verificable.
+- **CI nueva pendiente** al commit; no cerrar M3.8 sin resultados. Próximo paso posterior: integrar SID4 Reference y ACD en comparativa de escenas arquitectónicas procedurales con muestreo controlado y referencias independientes; idealmente después cargar un .blend real facilitado por usuario.
+
 ## M3.7 — OIDN individual verificado entre Blender 3.6 y 5.0 (2026-11-11)
 
 - **Evidencia de ejecución:** [Actions #43107260820](https://github.com/mxlzz/ACD/actions/runs/43107260820) `success`; [artifact #13895310157](https://github.com/mxlzz/ACD/actions/runs/43107260820/artifacts/13895310157) con EXR, hash y diferencias firmadas. Se confirmó `input_passthrough_valid=true`.

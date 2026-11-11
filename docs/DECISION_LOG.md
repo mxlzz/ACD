@@ -186,3 +186,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Criterio de interpretación:** los canales A de los EXR OIDN aislados tienen RMSE=0, mientras el RGB de alfa como imagen filtrada sí cambia. La salida High/Super combina dicho RGB como alfa final. No inferir equivalencia de alfa solo por la igualdad del canal A en este experimento.
 - **Decisión de desarrollo:** no tocar `addon/sid_reference.py` ni introducir optimizaciones. M3.8 debe cotejar versiones OIDN y diferencias de `Quality/HDR/Prefilter` con ablaciones congeladas antes de corregir el port; las escenas arquitectónicas verdaderas y referencias convergidas siguen siendo el siguiente nivel de evidencia.
 - **Estado:** se registran datos de M3.7 comprobados en CI, sin paridad de píxeles, sin comparación con SID comercial y sin superioridad demostrada.
+
+
+## 2026-11-11 — M3.8, aislar parámetros OIDN antes de modificar el addon
+
+- **Motivación empírica:** M3.6 descartó diferencias relevantes de ADD/MULTIPLY/SetAlpha aisladas; M3.7 detectó diferencias numéricas ya en filtros OIDN individuales.
+- **Decisión:** ejecutar la misma entrada EXR en Blender 3.6 con HDR true/false (y prefilter de SID), y en Blender 5 con Quality High/Balanced/Fast × HDR true/false, manteniendo prefilter/guías. Examinar versiones de build y bibliotecas OIDN distribuidas, sin inventar una versión efectiva del backend.
+- **Implementación candidata:** drivers `tests/blender_sid_oidn_matrix.py`, comparador `scripts/compare_sid_oidn_matrix.py`, contrato de regresión `tests/test_sid_oidn_matrix.py`, workflow `.github/workflows/sid-oidn-parameter-matrix.yml`.
+- **Criterio:** validar hashes y raw passthrough, 8 legacy + 24 port outputs, métricas y mapas firmados con distinciones inter/intraversión. No minimizar RMSE respecto al histórico como si fuera un ground truth convergido.
+- **Estado:** CI aún sin ejecutar al commit. No alterar `addon/sid_reference.py` ni el addon estable hasta establecer causa y mejorar resultados sobre escenas reales.
