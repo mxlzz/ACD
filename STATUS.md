@@ -1,5 +1,7 @@
 # M2 — External .blend scene benchmark and regional analysis
 
+**Project plan:** [docs/ROADMAP.md](docs/ROADMAP.md). **Scientific foundations and hypotheses:** [docs/research_foundations.md](docs/research_foundations.md). These are reference documents; the status below records actual implementation and evidence.
+
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
 ## Sampling-validity finding — E0007 (2026-11-11)
@@ -30,7 +32,7 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - Fixed synthetic OpenEXR test fixtures requiring contiguous NumPy channel buffers.
 
 - E0005: first real official Classroom (CC0) rendered and analyzed. At 384x216 / 32 spp vs 256 spp reference: Standard RMSE 0.043961, High 0.044847, Super 0.052703, Raw 0.072410. AOV closure RMSE 3.55e-8. In the emission-dominated 1.4% subset, raw RMSE 0.035607 vs Standard 0.060156. See docs/experiments/E0005.md and CI run 43058679034.
-- E0006: controlled emission-preservation experiment added to the Classroom workflow; its quality result is not yet known.
+- E0006: Classroom emission-preservation results were recorded, but the independence of the reference/input sampling was not validated; see docs/experiments/E0006.md and E0007.md.
 
 ## Remaining validation
 - Actual professional-sized scenes at 1080p+, multiple input seeds, convergence-tested reference.

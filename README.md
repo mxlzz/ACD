@@ -2,12 +2,21 @@
 
 An **experimental** multi-pass denoising research system for Blender/Cycles, with an independent numerical evaluation lab. It is not a verified commercial SID 5.3 replica or a proven universal improvement over native OIDN.
 
+## Research and persistent plan
+
+- [Research foundations and source-to-hypothesis matrix](docs/research_foundations.md): original papers/source code, assumptions, licensing and ACD H-01 to H-06.
+- [Development roadmap](docs/ROADMAP.md): milestones M0–M8, dependencies, relative effort and testable exit gates.
+- [Experiment record](docs/experiments/): actual results, uncertainties and negative findings.
+- [Current state](STATUS.md): what has actually been implemented and verified.
+
+These documents separate scientific evidence, project hypotheses, the intended development plan, and observed execution results. Roadmap entries are **not** completed work.
+
 ## Project layout
 
 - addon/acd_blender.py — experimental Blender 5.x Standard/High/Super compositor.
 - acd_lab/ — OpenEXR ingest, raw-pass reconstruction, image-quality and regional diagnostics.
 - scripts/run_scene_benchmark.py — controlled local comparisons using an existing .blend.
-- docs/experiments/ — historical runs E0001–E0004, including negative findings.
+- docs/experiments/ — historical and current runs E0001–E0008, including negative findings.
 - docs/regions.md — ROI versus AOV contribution-mask interpretation.
 - docs/real_scenes.md — practical setup and scene provenance.
 - STATUS.md — persistent project status, gates and current validation evidence.

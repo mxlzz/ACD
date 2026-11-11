@@ -1,5 +1,7 @@
 # ACD experiment protocol — M0
 
+This is the original baseline protocol, retained for provenance. Updated gate priorities and the sampling-diversity blocker found in E0007 are in [ROADMAP.md](ROADMAP.md), [research_foundations.md](research_foundations.md), and [experiments/E0007.md](experiments/E0007.md).
+
 No numerical or perceptual superiority is asserted until this protocol has been executed.
 
 ## Scenes
