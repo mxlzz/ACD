@@ -53,6 +53,11 @@ def main(argv: list[str] | None = None) -> int:
     region_cmd.add_argument("--min-signal", type=float, default=.01)
     region_cmd.add_argument("--error-maps", help="Write signed and absolute HDR differences as .npz")
     region_cmd.add_argument("--output")
+    variation = sub.add_parser("verify-sample-variation", help="Detect indistinguishable sampled EXRs")
+    variation.add_argument("--input", required=True)
+    variation.add_argument("--comparison", required=True)
+    variation.add_argument("--output")
+    variation.add_argument("--minimum-relative-rmse", type=float, default=1e-4)
     args = parser.parse_args(argv)
     if args.command == "compare":
         ref_arrays = read_arrays(args.reference, layer=args.ref_layer)
@@ -78,6 +83,13 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "aggregate-seeds":
         from .aggregate import aggregate_seed_reports
         result = aggregate_seed_reports(args.directory)
+    elif args.command == "verify-sample-variation":
+        from .seed_audit import verify_sample_variation
+        result = verify_sample_variation(
+            read_arrays(args.input)["image"],
+            read_arrays(args.comparison)["image"],
+            minimum_relative_rmse=args.minimum_relative_rmse,
+        )
     else:
         from .region_cli import compare_regions_from_files
         result = compare_regions_from_files(
@@ -89,6 +101,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.output:
         write_report(args.output, result)
     print(json.dumps(result, indent=2, allow_nan=False))
+    if args.command == "verify-sample-variation" and not result["meaningfully_different"]:
+        return 2
     return 0
 
 

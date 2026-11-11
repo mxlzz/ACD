@@ -50,3 +50,37 @@ def audit_noisy_seed_diversity(directory: str | Path, *, minimum_ratio: float = 
             "If false, averaging metrics as independent noise seeds is invalid."
         ),
     }
+
+
+def verify_sample_variation(
+    first, second, *, minimum_relative_rmse: float = 1e-4
+) -> dict:
+    """Guard against nominally different seeds yielding almost equal sample images.
+
+    Computes RGB RMSE relative to RMS signal. This is deliberately a minimal
+    practical smoke threshold, NOT an independence test or a quality measure.
+    """
+    import numpy as np
+    from .core import rgb
+
+    if not (0 < minimum_relative_rmse < 1):
+        raise ValueError("minimum_relative_rmse must be between 0 and 1")
+    a = rgb(first, "first")
+    b = rgb(second, "second")
+    if a.shape != b.shape:
+        raise ValueError("Sample images have different resolutions")
+    difference = a - b
+    pair_rmse = float(np.sqrt(np.mean(difference ** 2)))
+    scale = float(np.sqrt(np.mean(a ** 2)))
+    relative = pair_rmse / max(scale, 1e-12)
+    return {
+        "meaningfully_different": bool(relative >= minimum_relative_rmse),
+        "pair_rmse": pair_rmse,
+        "signal_rms": scale,
+        "pair_rmse_over_signal_rms": relative,
+        "minimum_relative_rmse": minimum_relative_rmse,
+        "caveat": (
+            "Difference above threshold shows variation, not independent noise. "
+            "Almost identical images cannot be treated as independent samples."
+        ),
+    }

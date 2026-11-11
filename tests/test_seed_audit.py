@@ -54,3 +54,27 @@ def test_identical_reference_returns_indeterminate(tmp_path):
         save_exr(tmp_path / name, data)
     save_exr(folder / "acd_compare_Raw.exr", raw)
     assert audit_noisy_seed_diversity(tmp_path)["passes_diversity_check"] is None
+
+
+from acd_lab.seed_audit import verify_sample_variation
+
+
+def test_verify_sample_variation_rejects_near_identical_samples():
+    one = np.ones((4, 5, 3), dtype=np.float32)
+    two = one + 1e-7
+    result = verify_sample_variation(one, two)
+    assert not result["meaningfully_different"]
+
+
+def test_verify_sample_variation_accepts_distinct_noise_patterns():
+    rng = np.random.default_rng(123)
+    one = np.ones((8, 9, 3), dtype=np.float32)
+    two = one + rng.normal(0, .05, one.shape).astype(np.float32)
+    result = verify_sample_variation(one, two)
+    assert result["meaningfully_different"]
+    assert result["pair_rmse_over_signal_rms"] > .01
+
+
+def test_verify_sample_variation_rejects_mismatched_dimensions():
+    with pytest.raises(ValueError, match="different resolutions"):
+        verify_sample_variation(np.ones((4, 5, 3)), np.ones((4, 6, 3)))
