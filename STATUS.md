@@ -11,6 +11,21 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - **Inferencia:** estas operaciones y el mapeo de alfa probado no explican las diferencias mucho mayores en High/Super (RGB RMSE 0.065–0.068 y alfa ~0.00387). Esto acota causas hacia OIDN/parametrización/otras ramas, pero no las identifica de manera exhaustiva.
 - **Siguiente:** aislar nodos OIDN individuales bajo exactamente las mismas entradas (Fast, Accurate guiado, emisión Accurate sin guías, alfa Accurate guiado).
 
+## M3.9 — Primeras escenas: resultados y control de validez (2026-11-11)
+
+- [Run #43112553045](https://github.com/mxlzz/ACD/actions/runs/43112553045): ambos jobs `success`, pero un job verde significa que produjo medidas, **no** que el conjunto tenga validez estadística. EXR y reportes en [Glass Lobby artifact 13897341205](https://github.com/mxlzz/ACD/actions/runs/43112553045/artifacts/13897341205) y [Classroom artifact 13896727821](https://github.com/mxlzz/ACD/actions/runs/43112553045/artifacts/13896727821).
+- **Glass Lobby 160×120, 24 spp contra 384 spp:** Raw RMSE 0.32117; ACD Standard y OIDN nativo compositor **ambos 0.14789017**; SID4 Standard 0.16367653; ACD High y SID4 High ~0.1713718; ACD Super y SID4 Super ~0.1836906. Ambos rankings de referencias coinciden, pero las referencias discrepaban RMSE 0.093295 y `reference_disagreement_over_raw_error=0.31496` (alerta relevante). La diversidad de noisy seeds pasa heurística, independencia no demostrada.
+- **Classroom CC0 160×120, 24 spp contra 384 spp:** raw/reference RMSE 0.093205; las dos referencias difieren solo RMSE ~1.65e-6 y noisy seeds 539 vs 911 difieren solo RMSE ~8.43e-7. `input_diversity_heuristic_passed=false` y `almost_identical_reference_images=true`; **benchmark multisemilla inválido para concluir calidad o estabilidad de ranking**. Causa sin identificar; no contabilizar ranking como evidencia de superioridad.
+- **Hallazgo de baseline:** ACD Standard y OIDN compositor registran métricas exactamente iguales en ambos casos; eso NO implica mejora frente a nativo. High/Super ACD y SID4 Reference prácticamente coinciden en Glass Lobby. Una comparación directa de pixels para cuantificar redundancia se agrega al siguiente piloto.
+- **Siguiente decisión:** descartar Classroom del conjunto con pretensión multisemilla hasta diagnosticar por qué las seeds no cambian la salida. Repetir `glass_lobby` e `interior_emissive` con 1024 spp ×2 referencias, 3 noisy seeds, incluir alternativa `STANDARD_emission_preserved` y diferenciar métricas entre métodos del error relativo a ground truth.
+- **Nota:** ni siquiera el siguiente piloto garantiza convergencia o superioridad. No modificar `sid_reference.py` ni producción basándose en rankings de baja resolución.
+
+## M3.9 — Método mejorado y segunda corrida pendiente (2026-11-11)
+
+- El resumen incorpora banderas `input_seed_diversity_passed`, `references_almost_identical`, `large_reference_discrepancy` y `suitable_for_exploratory_quality_ranking`, y diferencias directas de métodos `STANDARD/NATIVE_COMP_OIDN`, `HIGH/SID4_HIGH`, `SUPER/SID4_SUPER`, `STANDARD_emission_preserved/STANDARD`.
+- En CI, matriz `glass_lobby` + `interior_emissive`; 160×120, 24 spp, seeds 539/911/1337; referencias 1024 spp, seeds 8819/8922. `ACD_PRESERVE_EMISSION=1` solo como ablación controlada, sin reclamar su ventaja.
+- Estado al commit: **CI nueva pendiente**. El experimento Classroom se conserva como evidencia negativa, no se borra ni se oculta.
+
 ## M3.8 — Resultado verificado de parámetros OIDN (2026-11-11)
 
 - [Run #43111684409](https://github.com/mxlzz/ACD/actions/runs/43111684409) `success` y [artifact #13896511879](https://github.com/mxlzz/ACD/actions/runs/43111684409/artifacts/13896511879): 8 filtros Blender3.6 y 24 variantes Blender5 con los mismos EXR. Passthrough de entradas validado.

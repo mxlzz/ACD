@@ -20,24 +20,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scene: [glass_lobby, classroom]
+        scene: [glass_lobby, interior_emissive]
     env:
       BLENDER_VERSION: "5.0.1"
       EGL_PLATFORM: surfaceless
       LIBGL_ALWAYS_SOFTWARE: "1"
       ACD_DEVICE: CPU
-      ACD_SCENE: ${{ matrix.scene == 'classroom' && 'external' || matrix.scene }}
+      ACD_SCENE: ${{ matrix.scene }}
       ACD_BENCH_DIR: /tmp/acd_m39_${{ matrix.scene }}
       ACD_WIDTH: "160"
       ACD_HEIGHT: "120"
       ACD_INPUT_SPP: "24"
       ACD_INPUT_SEED: "539"
-      ACD_EXTRA_SEEDS: "911"
-      ACD_REFERENCE_SPP: "384"
+      ACD_EXTRA_SEEDS: "911,1337"
+      ACD_REFERENCE_SPP: "1024"
       ACD_REFERENCE_SEED: "8819"
       ACD_DOUBLE_REFERENCE: "1"
       ACD_METHODS: "STANDARD,HIGH,SUPER,SID4_STANDARD,SID4_HIGH,SID4_SUPER,NATIVE_COMP_OIDN"
       ACD_CAPTURE_AOV: "1"
+      ACD_PRESERVE_EMISSION: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -58,17 +59,6 @@ jobs:
           curl -fL --retry 3 --connect-timeout 30 \
             https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
           tar -xf blender.tar.xz
-      - if: matrix.scene == 'classroom'
-        name: Download public CC0 Classroom blend
-        run: |
-          mkdir -p "$RUNNER_TEMP/m39_classroom"
-          curl -fL --retry 3 --connect-timeout 30 --max-time 300 \
-            https://download.blender.org/demo/test/classroom.zip -o "$RUNNER_TEMP/classroom.zip"
-          unzip -q "$RUNNER_TEMP/classroom.zip" -d "$RUNNER_TEMP/m39_classroom"
-          SCENE=$(find "$RUNNER_TEMP/m39_classroom" -type f -name 'classroom.blend' -print -quit)
-          test -n "$SCENE"
-          echo "ACD_SOURCE_BLEND=$SCENE" >> "$GITHUB_ENV"
-          sha256sum "$RUNNER_TEMP/classroom.zip" "$SCENE"
       - name: Render all methods from identical low spp render
         run: |
           if [ "$ACD_SCENE" = "external" ]; then

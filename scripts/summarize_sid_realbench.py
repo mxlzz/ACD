@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from acd_lab.core import compare_images
+from acd_lab.io import read_arrays
 
 NAMES=("Raw","STANDARD","HIGH","SUPER","SID4_STANDARD","SID4_HIGH",
        "SID4_SUPER","NATIVE_COMP_OIDN")
@@ -16,8 +18,32 @@ def summarize(path):
     if audit is None: raise ValueError("Need second reference for uncertainty")
     seed=path/"seed_aggregate.json"
     if not seed.is_file(): raise ValueError("Missing seed aggregation")
+    seed_report=json.loads(seed.read_text())
+    pairings=(("STANDARD","NATIVE_COMP_OIDN"),("HIGH","SID4_HIGH"),
+              ("SUPER","SID4_SUPER"),("STANDARD_emission_preserved","STANDARD"))
+    direct_pair_differences={}
+    for a,b in pairings:
+        left=path/("acd_compare_"+a+".exr")
+        right=path/("acd_compare_"+b+".exr")
+        if left.is_file() and right.is_file():
+            direct_pair_differences[a+"_vs_"+b]=compare_images(
+                read_arrays(left)["image"],read_arrays(right)["image"])
+    validity={
+        "input_seed_diversity_passed":bool(seed_report["input_diversity_heuristic_passed"]),
+        "references_almost_identical":bool(audit["almost_identical_reference_images"]),
+        "large_reference_discrepancy":bool(audit["large_reference_discrepancy_alert"]),
+        "suitable_for_exploratory_quality_ranking":bool(
+            seed_report["input_diversity_heuristic_passed"]
+            and not audit["almost_identical_reference_images"]
+            and not audit["large_reference_discrepancy_alert"]),
+        "convergence_proven":False,
+    }
     result={
-        "scene":metadata["scene"],"resolution":metadata["resolution"],
+        "scene":metadata["scene"],
+        "source_blend_sha256":metadata.get("source_blend_sha256"),
+        "color_management":metadata.get("color_management"),
+        "validity":validity,
+        "direct_method_pair_differences":direct_pair_differences,"resolution":metadata["resolution"],
         "low_spp":metadata["samples"],"reference_spp_each":metadata["reference_samples"],
         "noisy_seeds":[metadata["seed"]]+metadata["extra_input_seeds"],
         "reference_seeds":[metadata["reference_seed"],metadata["second_reference_seed"]],
@@ -32,7 +58,7 @@ def summarize(path):
             "mae":metrics["measurements"][key]["mae_linear"],
             "log_luma_rmse":metrics["measurements"][key]["log1p_luminance_rmse"],
         } for key in NAMES},
-        "seed_aggregate":json.loads(seed.read_text()),
+        "seed_aggregate":seed_report,
         "scope":"Pilot only; this cannot prove reference convergence or universal quality",
     }
     return result
@@ -46,6 +72,6 @@ def main():
     args.output.write_text(json.dumps(result,indent=2)+"\n")
     print("M3.9 REAL SCENE SUMMARY",json.dumps({
         k:result[k] for k in ("scene","ranking_ref1","ranking_ref2",
-                              "reference_disagreement_over_raw_error")},indent=2))
+                              "reference_disagreement_over_raw_error","validity")},indent=2))
 
 if __name__=="__main__": main()

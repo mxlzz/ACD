@@ -210,3 +210,13 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Cambio en banco:** añadir `NATIVE_COMP_OIDN` (CompositorNodeDenoise Accurate/High/HDR) como baseline individual, identificado expresamente como *nodo compositor* y no denoiser interno de Cycles; incluirlo en comparador y prueba.
 - **M3.9 candidato:** workflow en matriz glass_lobby (procedimental) y Classroom CC0 (escena externa real), low24 spp (2 seeds) y dos ref384 spp, 160×120. Reportar RMSE/MAE/luminancia log, incertidumbre de referencia y estabilidad entre semillas, sin concluir convergencia.
 - **Estado:** CI posterior al commit pendiente; `addon/sid_reference.py` y addon estable no se modifican; no fusionar PR #4 hasta ver resultados.
+
+
+## 2026-11-11 — M3.9, primera corrida real; bloquear comparaciones estadísticas inválidas
+
+- **Evidencia:** run 43112553045 `success` para glass_lobby y Classroom CC0. Artifacts 13897341205 y 13896727821.
+- **Glass Lobby:** Raw RMSE 0.32117, ACD Standard y OIDN compositor RMSE 0.14789017, ACD/SID4 High ~0.17137 y Super ~0.18369. Aunque rank por dos referencias coincide, `reference_disagreement_over_raw_error=0.31496` activa alerta de spread. No certificar ranking.
+- **Classroom:** noisy seeds 539/911 casi idénticas (RMSE ~8.43e-7) y referencias separadas RMSE ~1.65e-6. `input_diversity_heuristic_passed=false` y `almost_identical_reference_images=true`. **Rechazar inferencias multisemilla** y conservar el run como evidencia de problema de muestreo no diagnosticado.
+- **Cambio de evaluación:** incluir flags explícitos de validez y métricas directas entre candidatos; evita confundir igualdad de errores respecto de referencia con identidad de píxeles.
+- **Diseño segunda corrida:** glass_lobby + interior_emissive, 1024 spp ×2 refs, 24 spp ×3 noisy seeds, comparar también `STANDARD_emission_preserved`. No modificar denoiser ni promover ninguna variante con los datos actuales.
+- **Estado:** nuevo workflow por verificar y debilidad de Classroom sin causa comprobada.
