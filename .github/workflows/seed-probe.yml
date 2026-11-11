@@ -18,7 +18,7 @@ jobs:
       EGL_PLATFORM: surfaceless
       LIBGL_ALWAYS_SOFTWARE: "1"
       BLENDER_VERSION: "5.0.1"
-      ACD_PROBE_DIR: "${{ runner.temp }}/seed_probe"
+      ACD_PROBE_DIR: "/tmp/acd_seed_probe"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -63,4 +63,4 @@ jobs:
           name: cycles-seed-probe-classroom-539-911
           retention-days: 7
           if-no-files-found: warn
-          path: ${{ runner.temp }}/seed_probe/
+          path: /tmp/acd_seed_probe/
