@@ -83,16 +83,25 @@ try:
     tree.links.new(recomposed, fileout.inputs["RawRecomposed"])
 
     methods = (
-        ("STANDARD", True, "STANDARD"),
-        ("HIGH", True, "HIGH"),
-        ("SUPER", True, "SUPER"),
-        ("HIGH", False, "HIGH_no_final"),
-        ("SUPER", False, "SUPER_no_final"),
+        ("STANDARD", True, "STANDARD", False),
+        ("HIGH", True, "HIGH", False),
+        ("SUPER", True, "SUPER", False),
+        ("HIGH", False, "HIGH_no_final", False),
+        ("SUPER", False, "SUPER_no_final", False),
+        ("HIGH", True, "HIGH_no_guides", True),
+        ("SUPER", True, "SUPER_no_guides", True),
     )
-    for i, (mode, final_filter, output_name) in enumerate(methods):
+    for i, (mode, final_filter, output_name, strip_guides) in enumerate(methods):
         scene.acd_mode = mode
         scene.acd_final_filter = final_filter
         sub_tree = addon.make_tree(scene, view_layer)
+        if strip_guides:
+            # This is an ablation, NOT a recommended permanent addon setting.
+            for dn in sub_tree.nodes:
+                if dn.bl_idname == "CompositorNodeDenoise":
+                    for edge in tuple(sub_tree.links):
+                        if edge.to_node == dn and edge.to_socket.name in ("Albedo", "Normal"):
+                            sub_tree.links.remove(edge)
         group = tree.nodes.new("CompositorNodeGroup")
         group.label = output_name
         group.node_tree = sub_tree
@@ -134,7 +143,7 @@ try:
         "reference_samples": reference_spp,
         "reference_seed": reference_seed,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
-        "compositional_methods": [name for _, _, name in methods],
+        "compositional_methods": [name for _, _, name, _ in methods],
         "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
         "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",
         "files": [p.name for p in generated],
