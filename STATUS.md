@@ -14,6 +14,7 @@ M1 development: PR #3, branch dev/acd-m1-exr-evaluation. Related issue #2.
 - Same Cycles noisy render successfully processed via Raw, Standard, High, Super branches (run 43048979372).
 - First reference run: 16 spp seed 539 against 256 spp seed 8819. Standard RMSE 0.002668, Raw 0.002796, High 0.006526, Super 0.018854. See docs/experiments/E0001.md.
 - Removing the final OIDN from High/Super barely changes RMSE; the raw compositing graph reproduces raw with RMSE ~1e-8.
+- Blender 5.0.1 guided AOV denoising ablation: High RMSE 0.005879 without guides vs 0.006526 with; Super 0.008978 vs 0.018854. Neither beats Standard 0.002668 (run 43050200840).
 
 ## Unverified, pending
 - Blender 5.3 actual composited render on machine with working graphics runtime.
