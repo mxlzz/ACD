@@ -1,9 +1,6 @@
 name: ACD Classroom CC0 real-scene pilot
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/classroom-benchmark.yml"
   workflow_dispatch:
 
 permissions:
