@@ -1,0 +1,66 @@
+name: ACD Cycles independent-seed diagnostic
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/seed-probe.yml"
+      - "tests/blender_seed_probe.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BLENDER_VERSION: "5.0.1"
+      ACD_PROBE_DIR: "${{ runner.temp }}/seed_probe"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install OpenEXR lab
+        run: python -m pip install -e ".[exr]"
+      - name: Cache official Blender
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download Blender
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Get Classroom CC0 primary scene
+        run: |
+          mkdir -p "$RUNNER_TEMP/scene"
+          curl -fL --retry 3 --max-time 300 https://download.blender.org/demo/test/classroom.zip -o "$RUNNER_TEMP/classroom.zip"
+          unzip -q "$RUNNER_TEMP/classroom.zip" -d "$RUNNER_TEMP/scene"
+          SCENE=$(find "$RUNNER_TEMP/scene" -name 'classroom.blend' -type f -print -quit)
+          test -n "$SCENE"
+          echo "ACD_SOURCE_BLEND=$SCENE" >> "$GITHUB_ENV"
+      - name: Isolated raw render seed 539
+        env:
+          ACD_PROBE_SEED: "539"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Isolated raw render seed 911
+        env:
+          ACD_PROBE_SEED: "911"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Measure seed effect in independent processes
+        run: |
+          python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/539.exr" --candidate "$ACD_PROBE_DIR/911.exr" --output "$ACD_PROBE_DIR/seed_difference.json"
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycles-seed-probe-classroom-539-911
+          retention-days: 7
+          if-no-files-found: warn
+          path: ${{ runner.temp }}/seed_probe/
