@@ -58,6 +58,14 @@ def main(argv: list[str] | None = None) -> int:
     variation.add_argument("--comparison", required=True)
     variation.add_argument("--output")
     variation.add_argument("--minimum-relative-rmse", type=float, default=1e-4)
+    region_aggregate = sub.add_parser(
+        "aggregate-regions", help="Compare a fixed spatial region across validated noisy inputs"
+    )
+    region_aggregate.add_argument("--directory", required=True)
+    region_aggregate.add_argument("--region", default="aov_emission")
+    region_aggregate.add_argument("--baseline", default="STANDARD")
+    region_aggregate.add_argument("--candidate", default="STANDARD_emission_preserved")
+    region_aggregate.add_argument("--output")
     args = parser.parse_args(argv)
     if args.command == "compare":
         ref_arrays = read_arrays(args.reference, layer=args.ref_layer)
@@ -83,6 +91,12 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "aggregate-seeds":
         from .aggregate import aggregate_seed_reports
         result = aggregate_seed_reports(args.directory)
+    elif args.command == "aggregate-regions":
+        from .region_aggregate import aggregate_region_reports
+        result = aggregate_region_reports(
+            args.directory, region=args.region,
+            baseline=args.baseline, candidate=args.candidate,
+        )
     elif args.command == "verify-sample-variation":
         from .seed_audit import verify_sample_variation
         result = verify_sample_variation(
