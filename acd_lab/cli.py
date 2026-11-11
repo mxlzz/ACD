@@ -41,6 +41,9 @@ def main(argv: list[str] | None = None) -> int:
     batch = sub.add_parser("compare-batch", help="Compare same-input results against a separate reference EXR")
     batch.add_argument("--directory", required=True)
     batch.add_argument("--output")
+    aggregate = sub.add_parser("aggregate-seeds", help="Summarize multiple noisy seeds with common reference")
+    aggregate.add_argument("--directory", required=True)
+    aggregate.add_argument("--output")
     args = parser.parse_args(argv)
     if args.command == "compare":
         ref_arrays = read_arrays(args.reference, layer=args.ref_layer)
@@ -60,9 +63,12 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "inspect-exr":
         from .exr import describe_exr
         result = describe_exr(args.input)
-    else:
+    elif args.command == "compare-batch":
         from .batch import evaluate_batch
         result = evaluate_batch(args.directory)
+    else:
+        from .aggregate import aggregate_seed_reports
+        result = aggregate_seed_reports(args.directory)
 
     if args.output:
         write_report(args.output, result)
