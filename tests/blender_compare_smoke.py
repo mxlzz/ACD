@@ -24,6 +24,14 @@ try:
     destination = Path(os.environ.get("ACD_BENCH_DIR", "/tmp/acd_bench")).resolve()
     destination.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
+    scene_variant = os.environ.get("ACD_SCENE", "factory")
+    if scene_variant == "interior":
+        interior_spec = importlib.util.spec_from_file_location("acd_scene", root / "tests" / "scene_factory.py")
+        interior = importlib.util.module_from_spec(interior_spec)
+        interior_spec.loader.exec_module(interior)
+        interior.make_interior(scene)
+    elif scene_variant != "factory":
+        raise ValueError("Unknown ACD_SCENE: " + scene_variant)
     scene.render.engine = "CYCLES"
     scene.cycles.device = "CPU"
     scene.cycles.samples = 16
@@ -137,7 +145,7 @@ try:
 
     (destination / "metadata.json").write_text(json.dumps({
         "blender": bpy.app.version_string,
-        "scene": "factory startup",
+        "scene": scene_variant,
         "samples": 16,
         "seed": 539,
         "reference_samples": reference_spp,
