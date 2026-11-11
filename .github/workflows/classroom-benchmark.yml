@@ -27,6 +27,7 @@ jobs:
       ACD_REFERENCE_SEED: "8819"
       ACD_METHODS: "STANDARD,HIGH,SUPER"
       ACD_CAPTURE_AOV: "1"
+      ACD_PRESERVE_EMISSION: "1"
       ACD_EXTRA_SEEDS: ""
     steps:
       - uses: actions/checkout@v4

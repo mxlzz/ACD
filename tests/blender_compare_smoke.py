@@ -170,6 +170,30 @@ try:
         fileout.file_output_items.new("RGBA", output_name)
         tree.links.new(group.outputs["Image"], fileout.inputs[output_name])
 
+    # Research ablation E0006: preserve raw emission instead of filtering it.
+    # Directly visible emissive regions can be nearly deterministic even at
+    # low spp. Compare numerically; do not assume this is always superior.
+    emission_ablation = os.environ.get("ACD_PRESERVE_EMISSION", "0") == "1"
+    if emission_ablation:
+        raw_emission = addon.render_socket(layers, "Emission")
+        raw_beauty = addon.render_socket(layers, "Image")
+        normal = addon.render_socket(layers, "Denoising Normal")
+        albedo = addon.render_socket(layers, "Denoising Albedo")
+        indirect_beauty = addon.combine(
+            tree.nodes, tree.links, raw_beauty, raw_emission, "SUBTRACT",
+            "Beauty minus raw emission", (-800, -2100)
+        )
+        filtered_nonemissive = addon.denoise(
+            tree.nodes, tree.links, indirect_beauty, normal, albedo,
+            "OIDN excluding emission AOV", (-400, -2100)
+        )
+        emission_protected = addon.combine(
+            tree.nodes, tree.links, filtered_nonemissive, raw_emission,
+            "ADD", "Restore original emission", (100, -2100)
+        )
+        fileout.file_output_items.new("RGBA", "STANDARD_emission_preserved")
+        tree.links.new(emission_protected, fileout.inputs["STANDARD_emission_preserved"])
+
     scene.compositing_node_group = tree
     scene.render.use_compositing = True
     result = bpy.ops.render.render(write_still=True)
@@ -280,6 +304,7 @@ try:
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "compositional_methods": [name for _, _, name, _ in methods],
         "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
+        "emission_ablation": emission_ablation,
         "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",
         "files": [p.name for p in generated],
     }, indent=2) + "\n")

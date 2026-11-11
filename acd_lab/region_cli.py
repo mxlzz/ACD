@@ -25,7 +25,7 @@ def compare_regions_from_files(
     root = Path(directory)
     reference_file = root / "reference.exr"
     reference = read_arrays(reference_file)["image"]
-    methods = ("Raw", "STANDARD", "HIGH", "SUPER", "HIGH_no_final",
+    methods = ("Raw", "STANDARD", "HIGH", "SUPER", "STANDARD_emission_preserved", "HIGH_no_final",
                "SUPER_no_final", "HIGH_no_guides", "SUPER_no_guides")
     candidates = {}
     for method in methods:
