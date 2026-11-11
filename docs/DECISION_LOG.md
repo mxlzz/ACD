@@ -5,7 +5,7 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-11 — Institución de control de rumbo (M3 / Issue #7)
 
 - **Objetivo original revisado:** reproducir SID público fielmente en Blender 5.x, y usarlo como baseline antes de intentar mejoras.
-- **Motivo:** la auditoría \`docs/sid_parity_gap.md\` mostró diferencias concretas entre el SID histórico y el prototipo (prefiltrado, emisión, alfa, entradas), mientras que M1/M2 habían avanzado con un algoritmo inspirado en SID sin equivalencia verificada.
+- **Motivo:** la auditoría `docs/sid_parity_gap.md` mostró diferencias concretas entre el SID histórico y el prototipo (prefiltrado, emisión, alfa, entradas), mientras que M1/M2 habían avanzado con un algoritmo inspirado en SID sin equivalencia verificada.
 - **Decisión:** M3 tiene prioridad absoluta. M2 y el laboratorio permanecen como herramientas; M4/adaptativo en espera. Cada cambio tendrá trazabilidad en ROADMAP, STATUS y esta bitácora.
 - **Cambio implementado:** protocolo explícito, comprobador de coherencia documental de commits y tests del comprobador; integración a CI Python.
 - **Validación:** pruebas del verificador incorporadas. El resultado real de GitHub Actions debe leerse en el run correspondiente; no se declara aprobado anticipadamente.
@@ -17,7 +17,7 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-11 — M3.1, especificación de paridad SID antes de escribir código
 
 - **Hito revisado:** M3 / Issue #7. Conforme al protocolo, no se inició optimización de ACD.
-- **Decisión:** congelar comportamiento de SID público v4.0 en \`docs/M3_SID_REFERENCE_SPEC.md\`.
+- **Decisión:** congelar comportamiento de SID público v4.0 en `docs/M3_SID_REFERENCE_SPEC.md`.
 - **Hechos auditados:** Standard usa prefilter FAST; High/Super ACCURATE; emisión sin guías, Alfa con denoiser independiente; Volume sin guías. MixRGB no cambia a factor 0.5: el default histórico de mezcla ADD/MULTIPLY era 1.0 (fuente oficial Blender).
 - **Método de implementación:** adaptador original de comportamiento equivalente, independiente de un fork/copia literal GPL. Se mantendrán referencias y atribución de inspiración.
 - **Verificación:** lectura directa de código upstream y documentación Blender, sin ejecutar aún la referencia. CI para este commit pendiente.
@@ -63,3 +63,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Validación añadida:** tests sintéticos Python del comparador y workflow con manifests JSON de ambos Blenders. **CI real en cola**, no verificada.
 - **Límite:** igualdad estructural no prueba mismo motor OIDN ni igualdad de píxeles. La rama estable permanece intacta.
 - **Siguiente:** estudiar comparación real del SID original y SID Reference sobre EXR comunes y corregir cualquier desigualdad medida.
+
+
+## 2026-11-11 — M3.4, corrección de serialización de documentos/workflow
+
+- **Alineación:** M3 / Issue #7; cambio de infraestructura de pruebas de fuente histórica.
+- **Hallazgo:** el generador del archivo de GitHub Actions dejó barras inversas antes de expresiones `${{ runner.temp }}`, por lo que los paths dinámicos no se resolverían correctamente. La especificación también tenía backticks escapados.
+- **Acción:** retirar los escapes literales, sin cambiar el test ni el algoritmo.
+- **Validación:** inspección de contenido final por API de GitHub; resultado real del workflow aún pendiente.
+- **Siguiente:** ejecutar Blender 3.6/5.0 y cotejar grafos.

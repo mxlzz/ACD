@@ -9,7 +9,7 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - **Objetivo:** verificar que la topología y los parámetros de SID Reference coincidan con el addon histórico real, no con una interpretación del código.
 - Implementado workflow `sid-upstream-parity.yml`: clona GPL SID commit fijo en runner efímero, lo carga (sin UI/updater) en Blender 3.6.23, inspecciona grupos de nodos y compara contra constructor de Blender 5.0.1.
 - Nuevos scripts: `blender_sid_legacy_probe.py`, `blender_sid_reference_snapshot.py`, `compare_sid_contracts.py`; pruebas puras para detección de discrepancia.
-- **Estado:** workflow creado pero resultados de ejecución todavía pendientes. No demuestra paridad pixel a pixel ni backend OIDN.
+- **Estado:** workflow creado; se corrigieron las expresiones `${{ runner.temp }}` indebidamente escapadas y el formato de Markdown en la especificación. Resultado de ejecución **pendiente**. No demuestra paridad pixel a pixel ni backend OIDN.
 - **Protección de ruta:** se limita a M3. Ninguna implementación experimental nueva ni modificación del addon de producción.
 
 ## M3.3 — Comparador SID4 Reference vs ACD, mismo render (2026-11-11)

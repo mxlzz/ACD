@@ -15,16 +15,16 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      SID_UPSTREAM_ROOT: \${{ runner.temp }}/upstream/SuperImageDenoiser
-      ACD_LEGACY_MANIFEST: \${{ runner.temp }}/sid_legacy_contract.json
-      ACD_PORT_MANIFEST: \${{ runner.temp }}/sid_port_contract.json
+      SID_UPSTREAM_ROOT: ${{ runner.temp }}/upstream/SuperImageDenoiser
+      ACD_LEGACY_MANIFEST: ${{ runner.temp }}/sid_legacy_contract.json
+      ACD_PORT_MANIFEST: ${{ runner.temp }}/sid_port_contract.json
       EGL_PLATFORM: surfaceless
       LIBGL_ALWAYS_SOFTWARE: "1"
     steps:
       - uses: actions/checkout@v4
       - name: Install supported legacy SID source (temporary GPL clone)
         run: |
-          mkdir -p "\${{ runner.temp }}/upstream"
+          mkdir -p "${{ runner.temp }}/upstream"
           git clone --quiet https://github.com/PidgeonTools/SuperImageDenoiser.git "$SID_UPSTREAM_ROOT"
           git -C "$SID_UPSTREAM_ROOT" checkout --quiet b4186389cac386eff9d777bb681c0051f8bd9bd2
           test "$(git -C "$SID_UPSTREAM_ROOT" rev-parse HEAD)" = "b4186389cac386eff9d777bb681c0051f8bd9bd2"
@@ -69,6 +69,6 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
           path: |
-            \${{ runner.temp }}/sid_legacy_contract.json
-            \${{ runner.temp }}/sid_port_contract.json
-            \${{ runner.temp }}/sid_contract_comparison.json
+            ${{ runner.temp }}/sid_legacy_contract.json
+            ${{ runner.temp }}/sid_port_contract.json
+            ${{ runner.temp }}/sid_contract_comparison.json
