@@ -1,11 +1,6 @@
 name: ACD Controlled Emission Fixture — E0008
 
 on:
-  # One-time validation of the upgraded ROI/reference laboratory.
-  # Remove this pull_request trigger after the re-run is reviewed.
-  pull_request:
-    paths:
-      - ".github/workflows/emission-fixture-benchmark.yml"
   workflow_dispatch:
 
 permissions:

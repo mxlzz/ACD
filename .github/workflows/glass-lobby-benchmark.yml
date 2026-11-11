@@ -1,10 +1,6 @@
 name: ACD Glass Lobby — M2 second controlled fixture
 
 on:
-  # One verification run on the PR; keep heavy follow-ups manual.
-  pull_request:
-    paths:
-      - ".github/workflows/glass-lobby-benchmark.yml"
   workflow_dispatch:
 
 permissions:
