@@ -31,3 +31,26 @@ M1: EXR ingest and accurate AOV pass mapping + scene fixtures.
 M2: objective baseline tests on the three scenes.
 M3: adaptive fusion experiments with out-of-scene validation.
 M4+: upscale, photo, optional trained selection model.
+
+
+## M2.1 laboratory checks (2026-11-11 addendum)
+
+- EXR candidate comparisons now include a **reference-pair diagnostic**:
+  per-reference RMSE, pairwise reference disagreement, and disagreement
+  normalized by the noisy baseline's error.
+- A pair of numerically different references does **not** certify
+  independent Monte Carlo sampling. Two near-identical references may
+  indicate a converged scene *or* correlated/identical sampling. The
+  diagnostic explicitly refuses to certify either convergence or independence.
+- A reference pair with difference comparable to the denoising improvement
+  requires more reference samples or a different test configuration. Relative
+  warning threshold 0.25 is a *heuristic*, not a scientific hard threshold.
+- Regional comparisons may be aggregated only when mask fingerprints
+  (position-by-position membership) match. Same name, ROI definition,
+  area, and coverage are insufficient.
+- Distinct noisy EXRs are evidence of variation, not proof of sampling
+  independence; the lab uses \`input_diversity_heuristic_passed\` and
+  \`sampling_independence_proven: false\` to avoid overstating certainty.
+- Existing E0001–E0008 reports are historic snapshots. Their original
+  filenames and computed metrics are kept, but files without the new
+  fingerprint cannot be safely aggregated by the new code.

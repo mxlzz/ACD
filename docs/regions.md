@@ -19,6 +19,13 @@ energy from each contribution. The user specifies a fraction threshold and
 minimum total signal. Masks overlap; empty masks yield null metrics.
 
 ROIs are normalized 0–1 rectangles [x0,y0,x1,y1] with a top-left origin.
+The laboratory now attaches `mask_sha256` to every region report. It is
+a SHA-256 fingerprint of the **exact Boolean pixel membership** (including
+image shape and ordered raster positions), not just region area. The regional
+aggregate rejects reports with missing or mismatched fingerprints; equal
+pixel counts do **not** establish that the same pixels were measured.
+Legacy reports must be regenerated before aggregation.
+
 Maps are stored in .npz with both signed and absolute per-channel residuals.
 This pipeline never tone maps or clips the base RGB data.
 
