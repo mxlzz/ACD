@@ -27,12 +27,24 @@ try:
     destination.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
     scene_variant = os.environ.get("ACD_SCENE", "factory")
-    if scene_variant in ("interior", "interior_emissive"):
+    if scene_variant in ("interior", "interior_emissive", "glass_lobby"):
         interior_spec = importlib.util.spec_from_file_location("acd_scene", root / "tests" / "scene_factory.py")
         interior = importlib.util.module_from_spec(interior_spec)
         interior_spec.loader.exec_module(interior)
         if scene_variant == "interior_emissive":
             interior.make_interior_emissive(scene)
+        elif scene_variant == "glass_lobby":
+            lobby_spec = importlib.util.spec_from_file_location(
+                "acd_lobby", root / "tests" / "scene_glass_lobby.py"
+            )
+            lobby = importlib.util.module_from_spec(lobby_spec)
+            import sys
+            sys.path.insert(0, str(root / "tests"))
+            try:
+                lobby_spec.loader.exec_module(lobby)
+            finally:
+                sys.path.pop(0)
+            lobby.make_glass_lobby(scene)
         else:
             interior.make_interior(scene)
     elif scene_variant == "external":
