@@ -11,6 +11,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import shutil
 from pathlib import Path
 
 import bpy
@@ -156,6 +157,31 @@ try:
         assert (destination / "reference_check.exr").is_file()
         print("ACD SECOND INDEPENDENT REFERENCE", destination / "reference_check.exr")
 
+    # Repeat the same compositor with different *noisy* render seeds.
+    # The independent, higher-spp references above are reused unchanged.
+    extra_seeds = [
+        int(token) for token in os.environ.get("ACD_EXTRA_SEEDS", "").split(",")
+        if token.strip()
+    ]
+    if input_seed in extra_seeds or len(extra_seeds) != len(set(extra_seeds)):
+        raise ValueError("Extra seeds must be unique and distinct from the original")
+    for extra_seed in extra_seeds:
+        extra_dir = destination / ("seed_" + str(extra_seed))
+        extra_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(destination / "reference.exr", extra_dir / "reference.exr")
+        if second_reference:
+            shutil.copy2(destination / "reference_check.exr", extra_dir / "reference_check.exr")
+        scene.compositing_node_group = tree
+        scene.render.use_compositing = True
+        scene.cycles.samples = input_spp
+        scene.cycles.seed = extra_seed
+        scene.render.filepath = str(extra_dir / "composite.exr")
+        fileout.directory = str(extra_dir)
+        repeated_result = bpy.ops.render.render(write_still=True)
+        assert "FINISHED" in repeated_result
+        assert (extra_dir / "acd_compare_Raw.exr").exists()
+        print("ACD EXTRA INPUT SEED COMPLETE", extra_seed)
+
     (destination / "metadata.json").write_text(json.dumps({
         "blender": bpy.app.version_string,
         "scene": scene_variant,
@@ -165,6 +191,7 @@ try:
         "reference_seed": reference_seed,
         "second_reference": second_reference,
         "second_reference_seed": reference_seed + 103 if second_reference else None,
+        "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "compositional_methods": [name for _, _, name, _ in methods],
         "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
