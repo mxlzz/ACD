@@ -34,3 +34,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Evidencia real:** resultados GitHub Actions pendientes. No se declara equivalencia con SID real.
 - **Desvío:** ninguno. Continúa la separación entre los prototipos y la referencia.
 - **Siguiente paso:** evaluar CI, corregir casos fallidos, comenzar paridad entre versiones con mismo EXR.
+
+
+## 2026-11-11 — M3.2, corrección previa de contrato opcional
+
+- **Ruta revisada:** M3, prueba de nodos para variantes optativas del SID público.
+- **Hallazgo:** al desactivar transmisión/emisión y activar volumen, la cuenta esperada de denoisers es 5 High y 8 Super, no 6/9 como la variante predeterminada.
+- **Acción:** corregir aserciones; fuente del recuento: número de filtros del grafo congelado, no una suposición del runner.
+- **Estado:** tests de Blender pendientes de CI; no declarar aprobados hasta observar el workflow.
+- **Próximo:** validar constructor real y reparar incompatibilidades documentadas.

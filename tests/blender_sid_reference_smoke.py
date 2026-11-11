@@ -63,7 +63,7 @@ try:
             assert any(n.bl_idname == "CompositorNodeSetAlpha" for n in t.nodes)
         assert scene.compositing_node_group == original
 
-    for mode, count in (("HIGH", 6), ("SUPER", 9)):
+    for mode, count in (("HIGH", 5), ("SUPER", 8)):
         # Volume adds 1 OIDN for High, 2 for Super; transmission disabled
         # removes 1 for High, 2 for Super.
         t = ref.build_reference_group(mode, volume=True, transmission=False,

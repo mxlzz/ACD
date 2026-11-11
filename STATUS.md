@@ -10,7 +10,8 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - Nuevos archivos: `addon/sid_reference.py` para grupos de referencia Standard/High/Super y `tests/blender_sid_reference_smoke.py` para comprobar nodos, conexiones, prefilter, guiado de emisión, alfa separado, volumétricos y render.
 - El grupo se construye sin asignarlo al compositor del usuario; `prepare_reference_passes` modifica los ajustes de view layer **solo si el llamador lo invoca explícitamente**.
 - `ShaderNodeMix` factor 1, sin clamp, para emular `MixRGB` ADD/MULTIPLY histórico. Blender 5 usa `CompositorNodeSetAlpha` en lugar de Separate/Combine RGBA: equivalencia de canal pendiente.
-- CI de Blender 5.0.1/5.3 actualizada; **resultados aún pendientes**. Esta implementación no certifica paridad visual ni OIDN cross-version.
+- CI de Blender 5.0.1/5.3 actualizada; **resultados aún pendientes**. La revisión de tests detectó una expectativa numérica errónea en el conteo opcional: High=5 y Super=8 sin transmisión/emisión y con volumen. Corregida antes de interpretar CI.
+- Esta implementación no certifica paridad visual ni OIDN cross-version.
 - Próximo paso: revisar CI, reparar incompatibilidades documentando cada commit y probar frente al SID histórico.
 
 ## M3.1 — Especificación de SID público (2026-11-11)
