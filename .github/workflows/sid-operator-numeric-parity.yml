@@ -1,0 +1,69 @@
+name: ACD M3.6 no OIDN MixRGB ShaderNodeMix Alpha parity
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/sid-operator-numeric-parity.yml"
+      - "tests/blender_sid_operator_numeric.py"
+      - "scripts/compare_sid_operators.py"
+      - "scripts/sid_highsuper_numeric_fixture.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  no-oidn-mixer-alpha:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      ACD_OP_INPUT: /tmp/acd_sid_ops/input
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install numerical deps and write same frozen EXRs
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m scripts.sid_highsuper_numeric_fixture --output "$ACD_OP_INPUT"
+      - uses: actions/cache@v4
+        id: old-cache
+        with:
+          path: blender-3.6.23-linux-x64
+          key: official-blender-3.6.23-linux-x64-v1
+      - if: steps.old-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 https://download.blender.org/release/Blender3.6/blender-3.6.23-linux-x64.tar.xz -o blender36.tar.xz
+          tar -xf blender36.tar.xz
+      - name: Run original Blender 3.6 math and alpha nodes
+        env:
+          ACD_OP_FLAVOR: legacy
+          ACD_OP_OUTPUT: /tmp/acd_sid_ops/legacy
+        run: ./blender-3.6.23-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_operator_numeric.py
+      - uses: actions/cache@v4
+        id: port-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - if: steps.port-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender50.tar.xz
+          tar -xf blender50.tar.xz
+      - name: Run Blender 5.0 independent math and alpha nodes
+        env:
+          ACD_OP_FLAVOR: port
+          ACD_OP_OUTPUT: /tmp/acd_sid_ops/port
+        run: ./blender-5.0.1-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_operator_numeric.py
+      - name: Quantify non-OIDN differences
+        run: python -m scripts.compare_sid_operators --input "$ACD_OP_INPUT" --legacy /tmp/acd_sid_ops/legacy --port /tmp/acd_sid_ops/port --output /tmp/acd_sid_ops/report
+      - name: Archive frozen EXRs and signed compositor differences
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m3-6-mix-alpha-operators-no-oidn
+          if-no-files-found: warn
+          retention-days: 14
+          path: /tmp/acd_sid_ops/

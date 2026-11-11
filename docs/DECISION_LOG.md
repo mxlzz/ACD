@@ -157,3 +157,13 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Resultado real:** https://github.com/mxlzz/ACD/actions/runs/43106081661: unit test del generador `1 passed`, pero `python scripts/sid_highsuper_numeric_fixture.py` falló en `from scripts.sid_standard_numeric_fixture import make_arrays` (ModuleNotFoundError), porque la ejecución por ruta fija `sys.path[0]` en `scripts`.
 - **Decisión/cambio:** invocar generador y comparador como módulos Python mediante `python -m scripts.sid_highsuper_numeric_fixture` y `python -m scripts.compare_sid_highsuper_numeric`. No modificar algoritmos, datos, importadores Blender ni alterar resultados inexistentes.
 - **Estado:** nueva CI no ejecutada al momento de este commit. Seguir validando hasta que se creen los pares High/Super y queden registrados los errores RGBA/HDR.
+
+
+## 2026-11-11 — M3.5 High/Super medidos y priorizar experimento M3.6
+
+- **Evidencia real:** https://github.com/mxlzz/ACD/actions/runs/43106273482 `success`; artifact https://github.com/mxlzz/ACD/actions/runs/43106273482/artifacts/13894002202. Quince AOV con SHA y controles de passthrough válidos en ambos Blenders.
+- **Diferencias observadas:** High RGB RMSE=0.06531013, max=2.04866791; Super RGB RMSE=0.06788146, max=1.89871454; región emisiva High RMSE=0.22305557, Super=0.23223786. Alfa RMSE ~0.0038727 para ambos.
+- **Conclusión acotada:** no es identidad de imágenes. Los controles descartan drift aparente de entrada, pero no diferencian cambios OIDN de semántica de operadores RGB/alfa. No alterar aún SID Reference ni anunciar un bug concreto en él.
+- **Experimento siguiente M3.6:** construir graph mínimo sin denoiser en Blender3.6 (MixRGB Add/Multiply, Sep/Comb RGBA) y Blender5.0 (ShaderNodeMix Add/Multiply, SetAlpha), misma entrada EXR/Alpha; exportar salidas y reportar diferencias por canal.
+- **Estado de M3.6:** candidato agregado, CI aún pendiente de inspección; no se afirma resultado anticipado.
+- **Protección:** no tocar addon estable, no incorporar código GPL ni adelantar M4.

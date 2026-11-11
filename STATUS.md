@@ -4,6 +4,21 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## M3.5 High/Super — primera prueba numérica real aprobada (2026-11-11)
+
+- [Run 43106273482](https://github.com/mxlzz/ACD/actions/runs/43106273482): **success**; [artifact 13894002202](https://github.com/mxlzz/ACD/actions/runs/43106273482/artifacts/13894002202) con 15 AOV de entrada, outputs Blender 3.6 y 5.0, manifests y mapas firmados.
+- **Control:** `input_passthrough_valid: true` tanto High como Super; las entradas congeladas se leyeron equivalentes entre versiones (tolerancia máxima absoluta 0.001). No se trata de renders Cycles independientes.
+- **Diferencia numérica SID5 port frente a SID3.6 histórico (no ground truth):** High RGB RMSE=0.06531013, MAE=0.01516130, max_abs=2.04866791; Super RGB RMSE=0.06788146, MAE=0.01596297, max_abs=1.89871454.
+- **Región emisiva (más sensible):** High RGB RMSE=0.22305557 y Super RGB RMSE=0.23223786. **Alfa global:** High RMSE=0.003872700 y Super RMSE=0.003872709. Todas son diferencias entre implementaciones/versiones, no calidad frente a referencia convergida.
+- **Limitación:** los nodos MixRGB históricos y ShaderNodeMix, SepRGBA/CombRGBA y SetAlpha, y las diferentes versiones/controles OIDN todavía pueden explicar parte de la diferencia. La topología estructural previa aprobada no certifica equivalencia de operaciones HDR.
+- **Siguiente prueba M3.6:** aislar los operadores compositores **sin ningún OIDN**, bajo los mismos EXR, antes de intentar ajustar el denoiser.
+
+## M3.6 — Comparador de operadores sin OIDN (2026-11-11)
+
+- **Código candidato:** `tests/blender_sid_operator_numeric.py`, `scripts/compare_sid_operators.py`, y workflow `sid-operator-numeric-parity.yml` comparan ADD, MULTIPLY, ADD con emisión HDR y alfa recombinada (MixRGB + Separate/Combine de Blender 3.6 vs ShaderNodeMix + SetAlpha de Blender 5).
+- **Prueba de aceptación:** entradas con SHA idénticos, passthrough comparable, salidas EXR finitas y métricas por operador separando RGB y alfa, con mapas firmados. Una diferencia **no** constituye por sí sola fallo de OIDN.
+- **Estado:** nueva ejecución no observada aún al commit; no atribuir causas antes de inspeccionar el reporte. El addon SID Reference queda intacto.
+
 ## M3.5 High/Super — primer fallo de CI, ejecución modular (2026-11-11)
 
 - [Run 43106081661](https://github.com/mxlzz/ACD/actions/runs/43106081661): instalación y prueba unitaria de AOV `1 passed`; generador EXR falló con `ModuleNotFoundError: No module named 'scripts'` al invocar `python scripts/sid_highsuper_numeric_fixture.py`. No llegó a Blender ni mide diferencia de SID.
