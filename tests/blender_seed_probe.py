@@ -35,10 +35,14 @@ scene.cycles.samples = 16
 scene.cycles.seed = seed
 pattern = os.environ.get("ACD_PROBE_PATTERN")
 if pattern:
-    allowed = {item.identifier for item in scene.cycles.bl_rna.properties["sampling_pattern"].enum_items}
-    if pattern not in allowed:
-        raise ValueError(f"Sampling pattern {pattern} not in {sorted(allowed)}")
-    scene.cycles.sampling_pattern = pattern
+    # Cycles registers a dynamically defined enum: introspection may expose
+    # zero enum_items even though assignment through Blender RNA is supported.
+    try:
+        scene.cycles.sampling_pattern = pattern
+    except TypeError as error:
+        raise RuntimeError(f"Sampling pattern {pattern} rejected by Cycles: {error}") from error
+    if scene.cycles.sampling_pattern != pattern:
+        raise RuntimeError(f"Cycles ignored sampling pattern request: {pattern}")
 if not hasattr(scene.cycles, "sample_offset"):
     raise RuntimeError("Cycles sample_offset not supported by this Blender build")
 scene.cycles.sample_offset = offset
