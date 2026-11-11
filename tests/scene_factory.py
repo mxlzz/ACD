@@ -80,3 +80,26 @@ def make_interior(scene):
     background.inputs["Strength"].default_value = .25
     scene.camera.data.dof.use_dof = False
     print("ACD FIXTURE BUILT: interior")
+
+
+
+def make_interior_emissive(scene):
+    """Variant of the same controlled room with visible emissive light strips.
+
+    The emission is a separate directly visible AOV contribution. Adds a
+    difficult thin highlight without replacing the indirect-light fixture.
+    All procedural assets and light settings are deterministic.
+    """
+    make_interior(scene)
+    luminous = bpy.data.materials.new("ACD emissive strip warm")
+    luminous.use_nodes = True
+    graph = luminous.node_tree
+    graph.nodes.clear()
+    output = graph.nodes.new("ShaderNodeOutputMaterial")
+    emission = graph.nodes.new("ShaderNodeEmission")
+    emission.inputs["Color"].default_value = (1.0, 0.67, 0.30, 1.0)
+    emission.inputs["Strength"].default_value = 12.0
+    graph.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+    box("Emissive strip main", (-0.55, 2.715, 2.17), (1.55, .065, .050), luminous)
+    box("Emissive accent", (1.65, 2.715, 1.25), (.07, .065, .80), luminous)
+    print("ACD FIXTURE BUILT: interior_emissive")

@@ -1,0 +1,49 @@
+{
+  "experiment": "E0011",
+  "actions_run": 43085451268,
+  "blender": "5.0.1",
+  "scene": "glass_lobby_procedural",
+  "image_size": [
+    128,
+    96
+  ],
+  "noisy_spp": 24,
+  "noisy_seed_labels": [
+    539,
+    911,
+    1337
+  ],
+  "reference_spp": 1024,
+  "reference_seed_labels": [
+    8819,
+    8922
+  ],
+  "input_diversity_heuristic_passed": true,
+  "independent_sampling_proven": false,
+  "reference_convergence_proven": false,
+  "reference_pair_rmse": 0.05700912898537828,
+  "reference_discrepancy_vs_raw": 0.18846552128540014,
+  "raw_recomposition_rmse": 2.3651301596333425e-7,
+  "whole_image_mean_rmse": {
+    "STANDARD": 0.17465153456465898,
+    "HIGH": 0.1949241945040713,
+    "SUPER": 0.20143475343367812,
+    "Raw": 0.31796945067224064
+  },
+  "regions": {
+    "aov_glossy": {
+      "pixels": 2567,
+      "mask_sha256": "af64ff83d97b94da72d365afe4f55750b6b97692b336213c465a63f56d3c3bbd",
+      "standard_rmse": 0.3546349714970874,
+      "super_rmse": 0.4109171038544392,
+      "super_rmse_wins": 0
+    },
+    "aov_transmission": {
+      "pixels": 1418,
+      "mask_sha256": "e214f311522f18bfd6025dc273a39ea1a84976a2d07faa4005f0551e419f664b",
+      "standard_rmse": 0.1386506682973818,
+      "super_rmse": 0.17557502774176045,
+      "super_rmse_wins": 0
+    }
+  }
+}

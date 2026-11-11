@@ -1,0 +1,130 @@
+name: ACD Cycles independent-seed diagnostic
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BLENDER_VERSION: "5.0.1"
+      ACD_PROBE_DIR: "/tmp/acd_seed_probe"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install OpenEXR lab
+        run: python -m pip install -e ".[exr]"
+      - name: Cache official Blender
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download Blender
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Get Classroom CC0 primary scene
+        run: |
+          mkdir -p "$RUNNER_TEMP/scene"
+          curl -fL --retry 3 --max-time 300 https://download.blender.org/demo/test/classroom.zip -o "$RUNNER_TEMP/classroom.zip"
+          unzip -q "$RUNNER_TEMP/classroom.zip" -d "$RUNNER_TEMP/scene"
+          SCENE=$(find "$RUNNER_TEMP/scene" -name 'classroom.blend' -type f -print -quit)
+          test -n "$SCENE"
+          echo "ACD_SOURCE_BLEND=$SCENE" >> "$GITHUB_ENV"
+      - name: Isolated raw render seed 539 offset 0
+        env:
+          ACD_PROBE_SEED: "539"
+          ACD_PROBE_LABEL: "seed539_offset0"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Isolated raw render seed 911 offset 0
+        env:
+          ACD_PROBE_SEED: "911"
+          ACD_PROBE_LABEL: "seed911_offset0"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Isolated raw render seed 539 offset 16
+        env:
+          ACD_PROBE_SEED: "539"
+          ACD_PROBE_OFFSET: "16"
+          ACD_PROBE_LABEL: "seed539_offset16"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Isolated raw render alternate sampling pattern
+        env:
+          ACD_PROBE_SEED: "911"
+          ACD_PROBE_PATTERN: "BLUE_NOISE"
+          ACD_PROBE_LABEL: "seed911_blue_noise"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Isolated raw render alternate pattern second seed
+        env:
+          ACD_PROBE_SEED: "539"
+          ACD_PROBE_PATTERN: "BLUE_NOISE"
+          ACD_PROBE_LABEL: "seed539_blue_noise"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Measure independent seed and sample-offset effects
+        run: |
+          python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/seed539_offset0.exr" --candidate "$ACD_PROBE_DIR/seed911_offset0.exr" --output "$ACD_PROBE_DIR/seed_difference.json"
+          python -m acd_lab.cli compare --reference "$ACD_PROBE_DIR/seed539_offset0.exr" --candidate "$ACD_PROBE_DIR/seed539_offset16.exr" --output "$ACD_PROBE_DIR/offset_difference.json"
+          # Codes: 0 = meaningful change; 2 = virtually identical. Both are
+          # legitimate research outcomes, so retain all JSON instead of
+          # stopping at the first invalid variation.
+          set +e
+          python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed911_offset0.exr" --output "$ACD_PROBE_DIR/seed_variation.json"
+          seed_rc=$?
+          python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed539_offset16.exr" --output "$ACD_PROBE_DIR/offset_variation.json"
+          offset_rc=$?
+          python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_offset0.exr" --comparison "$ACD_PROBE_DIR/seed911_blue_noise.exr" --output "$ACD_PROBE_DIR/pattern_variation.json"
+          pattern_rc=$?
+          python -m acd_lab.cli verify-sample-variation --input "$ACD_PROBE_DIR/seed539_blue_noise.exr" --comparison "$ACD_PROBE_DIR/seed911_blue_noise.exr" --output "$ACD_PROBE_DIR/blue_noise_seed_variation.json"
+          blue_seed_rc=$?
+          set -e
+          for code in "$seed_rc" "$offset_rc" "$pattern_rc" "$blue_seed_rc"; do
+            test "$code" -eq 0 -o "$code" -eq 2
+          done
+          printf 'Variation outcomes (0=passes, 2=near-duplicate): seed=%s offset=%s pattern=%s blue_noise_seeds=%s\n' "$seed_rc" "$offset_rc" "$pattern_rc" "$blue_seed_rc"
+      - name: Generate procedural interior seed 539
+        env:
+          ACD_PROBE_SCENE: interior
+          ACD_PROBE_DIR: /tmp/acd_seed_probe_interior
+          ACD_PROBE_SEED: "539"
+          ACD_PROBE_LABEL: "interior_seed539"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Generate procedural interior seed 911
+        env:
+          ACD_PROBE_SCENE: interior
+          ACD_PROBE_DIR: /tmp/acd_seed_probe_interior
+          ACD_PROBE_SEED: "911"
+          ACD_PROBE_LABEL: "interior_seed911"
+        run: ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Check procedural interior seed variation
+        run: |
+          set +e
+          python -m acd_lab.cli verify-sample-variation --input /tmp/acd_seed_probe_interior/interior_seed539.exr --comparison /tmp/acd_seed_probe_interior/interior_seed911.exr --output /tmp/acd_seed_probe_interior/seed_variation.json
+          code=$?
+          set -e
+          test "$code" -eq 0 -o "$code" -eq 2
+          echo "Procedural interior seed variation result: $code (0=varied, 2=near-duplicate)"
+      - name: Upload procedural interior evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycles-seed-probe-procedural-interior
+          retention-days: 7
+          if-no-files-found: warn
+          path: /tmp/acd_seed_probe_interior/
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycles-seed-probe-classroom-539-911
+          retention-days: 7
+          if-no-files-found: warn
+          path: /tmp/acd_seed_probe/

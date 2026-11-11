@@ -1,0 +1,106 @@
+name: ACD Glass Lobby — M2 second controlled fixture
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  glass:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BLENDER_VERSION: "5.0.1"
+      ACD_SCENE: "glass_lobby"
+      ACD_WIDTH: "128"
+      ACD_HEIGHT: "96"
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_EXTRA_SEEDS: "911,1337"
+      ACD_REFERENCE_SPP: "1024"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_METHODS: "STANDARD,HIGH,SUPER"
+      ACD_CAPTURE_AOV: "1"
+      ACD_BENCH_DIR: "/tmp/acd_glass_lobby"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install OpenEXR and lab
+        run: python -m pip install -e ".[dev,exr]"
+      - name: Cache official Blender
+        id: blender-cache
+        uses: actions/cache@v4
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download official Blender
+        if: steps.blender-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz \
+            -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Three same-input denoisers, three seeds and two references
+        run: |
+          ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup \
+            -noaudio --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Evaluate radiance contribution regions and uncertainty
+        run: |
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" \
+            --output "$ACD_BENCH_DIR/metrics.json"
+          python -m acd_lab.cli compare-regions --directory "$ACD_BENCH_DIR" \
+            --passes "$ACD_BENCH_DIR/raw_multilayer.exr" \
+            --output "$ACD_BENCH_DIR/region_metrics.json"
+          LAYER=$(python - <<'PY'
+          import json, os
+          from pathlib import Path
+          print(json.loads((Path(os.environ["ACD_BENCH_DIR"]) / "metadata.json").read_text())["view_layer"])
+          PY
+          )
+          for dir in "$ACD_BENCH_DIR"/seed_*; do
+            if [ -d "$dir" ]; then
+              python -m acd_lab.cli compare-batch --directory "$dir" --output "$dir/metrics.json"
+              python -m acd_lab.cli compare-regions --directory "$dir" \
+                --passes "$ACD_BENCH_DIR/raw_multilayer.exr" --passes-layer "$LAYER" \
+                --output "$dir/region_metrics.json"
+            fi
+          done
+          python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" \
+            --output "$ACD_BENCH_DIR/seed_aggregate.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ["ACD_BENCH_DIR"])
+          agg = json.loads((root / "seed_aggregate.json").read_text())
+          if not agg["input_diversity_heuristic_passed"]:
+              raise SystemExit("Invalid benchmark: noisy inputs are not measurably different")
+          regions = json.loads((root / "region_metrics.json").read_text())["regions"]
+          for region in ("aov_glossy", "aov_transmission"):
+              pixel_count = regions.get(region, {}).get("pixels", 0)
+              if pixel_count < 10:
+                  print("ACD REGION INSUFFICIENT", region, pixel_count)
+                  continue
+              import subprocess, sys
+              subprocess.check_call([
+                  sys.executable, "-m", "acd_lab.cli", "aggregate-regions",
+                  "--directory", str(root), "--region", region, "--baseline", "STANDARD",
+                  "--candidate", "SUPER",
+                  "--output", str(root / ("aggregate_" + region + ".json"))
+              ])
+              print("ACD VALIDATED REGION", region, pixel_count)
+          if regions.get("aov_glossy", {}).get("pixels", 0) < 10:
+              raise SystemExit("No usable glossy AOV region in the glass-lobby fixture")
+          PY
+      - name: Upload reproducibility dataset and metric JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-m2-glass-lobby
+          if-no-files-found: warn
+          retention-days: 7
+          path: /tmp/acd_glass_lobby/

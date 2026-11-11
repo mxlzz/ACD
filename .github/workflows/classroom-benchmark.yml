@@ -1,0 +1,80 @@
+name: ACD Classroom CC0 real-scene pilot
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  classroom:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BLENDER_VERSION: "5.0.1"
+      ACD_SCENE: external
+      ACD_DEVICE: CPU
+      ACD_WIDTH: "384"
+      ACD_HEIGHT: "216"
+      ACD_INPUT_SPP: "32"
+      ACD_INPUT_SEED: "539"
+      ACD_REFERENCE_SPP: "256"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_METHODS: "STANDARD,HIGH,SUPER"
+      ACD_CAPTURE_AOV: "1"
+      ACD_PRESERVE_EMISSION: "1"
+      ACD_EXTRA_SEEDS: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR lab
+        run: python -m pip install -e ".[exr]"
+      - name: Cache Blender 5.0.1
+        id: blender-cache
+        uses: actions/cache@v4
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download official Blender binary
+        if: steps.blender-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 20 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz \
+            -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Download Classroom (Christophe Seux, CC0)
+        run: |
+          mkdir -p "$RUNNER_TEMP/acd_classroom"
+          curl -fL --retry 3 --connect-timeout 20 --max-time 300 \
+            https://download.blender.org/demo/test/classroom.zip \
+            -o "$RUNNER_TEMP/classroom.zip"
+          unzip -q "$RUNNER_TEMP/classroom.zip" -d "$RUNNER_TEMP/acd_classroom"
+          SCENE=$(find "$RUNNER_TEMP/acd_classroom" -type f -name 'classroom.blend' -print -quit)
+          test -n "$SCENE"
+          echo "ACD_SOURCE_BLEND=$SCENE" >> "$GITHUB_ENV"
+          echo "ACD_BENCH_DIR=$RUNNER_TEMP/acd_classroom_results" >> "$GITHUB_ENV"
+          sha256sum "$RUNNER_TEMP/classroom.zip"
+      - name: Real Classroom same-input ACD benchmark
+        run: |
+          ./blender-$BLENDER_VERSION-linux-x64/blender -b "$ACD_SOURCE_BLEND" -noaudio \
+            --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Quantify reference and radiance-region errors
+        run: |
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" \
+            --output "$ACD_BENCH_DIR/metrics.json"
+          python -m acd_lab.cli compare-regions --directory "$ACD_BENCH_DIR" \
+            --passes "$ACD_BENCH_DIR/raw_multilayer.exr" \
+            --output "$ACD_BENCH_DIR/region_metrics.json" \
+            --error-maps "$ACD_BENCH_DIR/error_maps.npz"
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: classroom-cc0-acd-384x216
+          if-no-files-found: warn
+          retention-days: 7
+          path: ${{ runner.temp }}/acd_classroom_results/

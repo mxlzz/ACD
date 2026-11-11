@@ -1,5 +1,7 @@
 # ACD technical architecture — draft
 
+Scientific evidence, assumptions and traceability: [research_foundations.md](research_foundations.md). Development priorities and exit gates: [ROADMAP.md](ROADMAP.md).
+
 Core is a Blender adapter that creates a separate compositor node group with Standard, High and Super pipelines. It must preserve the previous compositor and avoid copying third-party code.
 
 The independent Lab accepts explicit, linear-light arrays and measures differences to raw beauty and converged references. Its outputs are data and JSON reports, not subjective quality claims.

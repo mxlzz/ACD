@@ -1,0 +1,62 @@
+{
+  "experiment": "E0008",
+  "scene": "procedural_interior_emissive",
+  "blender": "5.0.1",
+  "resolution": [
+    128,
+    96
+  ],
+  "noisy_spp": 24,
+  "input_seeds": [
+    539,
+    911,
+    1337
+  ],
+  "reference_spp": 1024,
+  "reference_seeds": [
+    8819,
+    8922
+  ],
+  "reference_pair_rmse": 0.05269762445501576,
+  "input_seed_diversity_heuristic_passed": true,
+  "emission_mask_pixels": 66,
+  "emission_mask_coverage": 0.00537109375,
+  "global_mean_linear_rgb_rmse": {
+    "Raw": 0.25460226028756744,
+    "STANDARD": 0.09155802026819086,
+    "STANDARD_emission_preserved": 0.09171458922003384,
+    "HIGH": 0.09990075184360701,
+    "SUPER": 0.09734980762375772
+  },
+  "global_mean_linear_rgb_mae": {
+    "Raw": 0.14380863964566337,
+    "STANDARD": 0.04050724147364909,
+    "STANDARD_emission_preserved": 0.04080626384949129,
+    "HIGH": 0.042641621187250935,
+    "SUPER": 0.03918520989269483
+  },
+  "emission_roi": [
+    {
+      "seed": 539,
+      "standard_rmse": 0.3061604792180556,
+      "preserved_rmse": 0.28059117052630744,
+      "standard_mae": 0.19364212829657276,
+      "preserved_mae": 0.2149048402453914
+    },
+    {
+      "seed": 911,
+      "standard_rmse": 0.2701433183847613,
+      "preserved_rmse": 0.2673363517598479,
+      "standard_mae": 0.1845994099523082,
+      "preserved_mae": 0.20500795174427708
+    },
+    {
+      "seed": 1337,
+      "standard_rmse": 0.25115514240624215,
+      "preserved_rmse": 0.2673669143135524,
+      "standard_mae": 0.17931480679397632,
+      "preserved_mae": 0.20059610199597147
+    }
+  ],
+  "caveat": "Finite references, single small synthetic scene, radiance mask fixed from noisy base. Independence screening is a heuristic; region summaries were computed from CI JSON reports after runner aggregation bug."
+}

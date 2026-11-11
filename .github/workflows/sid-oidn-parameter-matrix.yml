@@ -1,0 +1,85 @@
+name: ACD M3.8 OIDN Quality HDR Prefilter cross Blender matrix
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/sid-oidn-parameter-matrix.yml"
+      - "tests/blender_sid_oidn_matrix.py"
+      - "scripts/compare_sid_oidn_matrix.py"
+      - "tests/test_sid_oidn_matrix.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-exr-oidn-matrix:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      ACD_M38_INPUT: /tmp/acd_m38/input
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build frozen AOV fixture and test the matrix contract
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_sid_oidn_matrix.py
+          python -m scripts.sid_highsuper_numeric_fixture --output "$ACD_M38_INPUT"
+      - uses: actions/cache@v4
+        id: old-cache
+        with:
+          path: blender-3.6.23-linux-x64
+          key: official-blender-3.6.23-linux-x64-v1
+      - if: steps.old-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender3.6/blender-3.6.23-linux-x64.tar.xz -o blender36.tar.xz
+          tar -xf blender36.tar.xz
+      - name: Log official Blender 3.6 build and bundled OIDN lib names
+        run: |
+          ./blender-3.6.23-linux-x64/blender --version | head -n 18
+          find blender-3.6.23-linux-x64 -maxdepth 4 -iname '*openimagedenoise*' -print || true
+      - name: Evaluate 3.6 OIDN historical defaults and HDR toggles
+        env:
+          ACD_M38_FLAVOR: legacy
+          ACD_M38_OUTPUT: /tmp/acd_m38/legacy
+        run: ./blender-3.6.23-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_oidn_matrix.py
+      - uses: actions/cache@v4
+        id: new-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - if: steps.new-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender50.tar.xz
+          tar -xf blender50.tar.xz
+      - name: Log official Blender 5 build and bundled OIDN lib names
+        run: |
+          ./blender-5.0.1-linux-x64/blender --version | head -n 18
+          find blender-5.0.1-linux-x64 -maxdepth 4 -iname '*openimagedenoise*' -print || true
+      - name: Evaluate Blender 5 quality and HDR matrix
+        env:
+          ACD_M38_FLAVOR: port
+          ACD_M38_OUTPUT: /tmp/acd_m38/port
+        run: ./blender-5.0.1-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_oidn_matrix.py
+      - name: Compare OIDN quality and HDR effects without changing source EXR
+        run: |
+          python -m scripts.compare_sid_oidn_matrix \
+            --input /tmp/acd_m38/input \
+            --legacy /tmp/acd_m38/legacy \
+            --port /tmp/acd_m38/port \
+            --output /tmp/acd_m38/report
+      - name: "Archive matrix: EXRs, input SHA, per-setting errors, signed maps"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m3-8-oidn-quality-hdr-matrix
+          if-no-files-found: warn
+          retention-days: 14
+          path: /tmp/acd_m38/

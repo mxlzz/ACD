@@ -1,0 +1,89 @@
+name: ACD M3.5 upstream SID High Super vs Blender 5 frozen AOVs
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/sid-highsuper-numeric-parity.yml"
+      - "scripts/sid_highsuper_numeric_fixture.py"
+      - "tests/blender_sid_highsuper_numeric.py"
+      - "scripts/compare_sid_highsuper_numeric.py"
+      - "tests/test_sid_highsuper_numeric.py"
+      - "addon/sid_reference.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  high-super-numeric:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      SID_UPSTREAM_ROOT: /tmp/acd_sid_upstream/SuperImageDenoiser
+      ACD_NUMERIC_INPUT: /tmp/acd_sid_highsuper/input
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR tools and generate frozen AOV inputs
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_sid_highsuper_numeric.py
+          python -m scripts.sid_highsuper_numeric_fixture --output "$ACD_NUMERIC_INPUT"
+      - name: Fetch pinned upstream SID code
+        run: |
+          git clone --quiet https://github.com/PidgeonTools/SuperImageDenoiser.git "$SID_UPSTREAM_ROOT"
+          git -C "$SID_UPSTREAM_ROOT" checkout --quiet b4186389cac386eff9d777bb681c0051f8bd9bd2
+          test "$(git -C "$SID_UPSTREAM_ROOT" rev-parse HEAD)" = "b4186389cac386eff9d777bb681c0051f8bd9bd2"
+      - uses: actions/cache@v4
+        id: old-cache
+        with:
+          path: blender-3.6.23-linux-x64
+          key: official-blender-3.6.23-linux-x64-v1
+      - if: steps.old-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 https://download.blender.org/release/Blender3.6/blender-3.6.23-linux-x64.tar.xz -o old.tar.xz
+          tar -xf old.tar.xz
+      - name: SID original 3.6 High and Super
+        run: |
+          for mode in HIGH SUPER; do
+            export ACD_NUMERIC_MODE="$mode"
+            export ACD_NUMERIC_FLAVOR=legacy
+            folder="$(printf '%s' "$mode" | tr '[:upper:]' '[:lower:]')"
+            export ACD_NUMERIC_OUTPUT="/tmp/acd_sid_highsuper/$folder/legacy"
+            ./blender-3.6.23-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_highsuper_numeric.py
+          done
+      - uses: actions/cache@v4
+        id: port-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - if: steps.port-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o port.tar.xz
+          tar -xf port.tar.xz
+      - name: SID port 5.0 High and Super
+        run: |
+          for mode in HIGH SUPER; do
+            export ACD_NUMERIC_MODE="$mode"
+            export ACD_NUMERIC_FLAVOR=port
+            folder="$(printf '%s' "$mode" | tr '[:upper:]' '[:lower:]')"
+            export ACD_NUMERIC_OUTPUT="/tmp/acd_sid_highsuper/$folder/port"
+            ./blender-5.0.1-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_highsuper_numeric.py
+          done
+      - name: Analyze High and Super errors across frozen AOVs
+        run: |
+          for mode in high super; do
+            python -m scripts.compare_sid_highsuper_numeric --input /tmp/acd_sid_highsuper/input --legacy "/tmp/acd_sid_highsuper/$mode/legacy" --port "/tmp/acd_sid_highsuper/$mode/port" --output "/tmp/acd_sid_highsuper/$mode/report"
+          done
+      - name: Archive inputs and outputs, SHA and signed maps
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m3-5-high-super-upstream-port-same-aov
+          if-no-files-found: warn
+          retention-days: 14
+          path: /tmp/acd_sid_highsuper/

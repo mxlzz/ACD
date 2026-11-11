@@ -1,0 +1,59 @@
+{
+  "experiment": "E0012",
+  "run_id": 43086458932,
+  "blender": "5.0.1",
+  "scene": "glass_lobby",
+  "resolution": [
+    128,
+    96
+  ],
+  "spp": 24,
+  "noisy_seed_labels": [
+    539,
+    911,
+    1337
+  ],
+  "reference_spp": 1024,
+  "reference_count": 2,
+  "verified_input_diversity": true,
+  "convergence_proven": false,
+  "independence_proven": false,
+  "mean_rmse": {
+    "STANDARD": 0.17465141566355966,
+    "STANDARD_no_guides": 0.17350131077308928,
+    "HIGH": 0.1949241929571854,
+    "HIGH_component_no_guides": 0.18016984866591038,
+    "HIGH_component_albedo": 0.19191498468941307,
+    "SUPER": 0.20143483984739494,
+    "SUPER_component_no_guides": 0.2047009433319479,
+    "SUPER_component_albedo": 0.20199949878299464
+  },
+  "regions": {
+    "aov_glossy": {
+      "pixels": 2567,
+      "STANDARD": 0.35463468556602323,
+      "STANDARD_no_guides": 0.3510759615801106,
+      "HIGH": 0.39701089461367517,
+      "HIGH_component_no_guides": 0.3651179698218506,
+      "HIGH_component_albedo": 0.3879248207724722,
+      "SUPER": 0.41091727551900475,
+      "SUPER_component_no_guides": 0.4230759071359522,
+      "SUPER_component_albedo": 0.4087537732292658
+    },
+    "aov_transmission": {
+      "pixels": 1418,
+      "STANDARD": 0.13865074734484079,
+      "STANDARD_no_guides": 0.13319263367136394,
+      "HIGH": 0.1603873073579112,
+      "HIGH_component_no_guides": 0.13394132463095698,
+      "HIGH_component_albedo": 0.14277728096762496,
+      "SUPER": 0.17557507166824313,
+      "SUPER_component_no_guides": 0.14822479366478117,
+      "SUPER_component_albedo": 0.16616166195326967
+    }
+  },
+  "excluded_historical_variants": {
+    "HIGH_component_normal": "Identical output to HIGH_component_no_guides; unsupported without Albedo",
+    "SUPER_component_normal": "Identical output to SUPER_component_no_guides; unsupported without Albedo"
+  }
+}

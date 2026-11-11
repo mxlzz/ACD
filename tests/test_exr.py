@@ -10,7 +10,7 @@ from acd_lab.core import check_recomposition
 
 def ch(base, rgb, destination):
     for i, name in enumerate("RGB"):
-        destination[f"ViewLayer.{base}.{name}"] = np.asarray(rgb[..., i], dtype=np.float32)
+        destination[f"ViewLayer.{base}.{name}"] = np.ascontiguousarray(rgb[..., i], dtype=np.float32)
 
 
 def make_fixture(tmp_path):

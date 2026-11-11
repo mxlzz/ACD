@@ -218,3 +218,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# ACD: never accidentally publish user scenes or experimental render outputs
+experiments/
+*.blend
+*.blend1
+*.blend2
+*.exr
+*.npy
+*.npz
+*.hdr
+*.tx

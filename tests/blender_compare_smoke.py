@@ -9,6 +9,7 @@ Run: ACD_BENCH_DIR=/tmp/acd_bench blender -b --factory-startup -noaudio \
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 import os
 import shutil
@@ -26,19 +27,65 @@ try:
     destination.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
     scene_variant = os.environ.get("ACD_SCENE", "factory")
-    if scene_variant == "interior":
+    if scene_variant in ("interior", "interior_emissive", "glass_lobby"):
         interior_spec = importlib.util.spec_from_file_location("acd_scene", root / "tests" / "scene_factory.py")
         interior = importlib.util.module_from_spec(interior_spec)
         interior_spec.loader.exec_module(interior)
-        interior.make_interior(scene)
+        if scene_variant == "interior_emissive":
+            interior.make_interior_emissive(scene)
+        elif scene_variant == "glass_lobby":
+            lobby_spec = importlib.util.spec_from_file_location(
+                "acd_lobby", root / "tests" / "scene_glass_lobby.py"
+            )
+            lobby = importlib.util.module_from_spec(lobby_spec)
+            import sys
+            sys.path.insert(0, str(root / "tests"))
+            try:
+                lobby_spec.loader.exec_module(lobby)
+            finally:
+                sys.path.pop(0)
+            lobby.make_glass_lobby(scene)
+        else:
+            interior.make_interior(scene)
+    elif scene_variant == "external":
+        if not bpy.data.filepath:
+            raise RuntimeError("ACD_SCENE=external requires Blender launched with a saved .blend")
+        if scene.camera is None:
+            raise RuntimeError("Selected Blender scene has no active camera")
+        missing = []
+        for img in bpy.data.images:
+            if img.source == "FILE" and img.packed_file is None and img.filepath:
+                filename = bpy.path.abspath(img.filepath, library=img.library)
+                if "<UDIM>" not in filename and not Path(filename).is_file():
+                    missing.append(filename)
+        if missing:
+            raise RuntimeError("Missing external image assets; pack files or fix paths: " + str(missing[:12]))
+        if os.environ.get("ACD_FRAME"):
+            scene.frame_set(int(os.environ["ACD_FRAME"]))
+        print("ACD EXTERNAL BLEND LOADED", bpy.data.filepath, "scene", scene.name)
     elif scene_variant != "factory":
         raise ValueError("Unknown ACD_SCENE: " + scene_variant)
     scene.render.engine = "CYCLES"
-    scene.cycles.device = "CPU"
+    device = os.environ.get("ACD_DEVICE", "CPU").upper()
+    if device not in {"CPU", "CUDA", "OPTIX"}:
+        raise ValueError("ACD_DEVICE must be CPU, CUDA or OPTIX")
+    if device != "CPU":
+        addon_preferences = bpy.context.preferences.addons.get("cycles")
+        if addon_preferences is None:
+            raise RuntimeError("Cycles addon preferences unavailable; cannot select GPU")
+        prefs = addon_preferences.preferences
+        prefs.compute_device_type = device
+        prefs.get_devices()
+        devices = [d for d in prefs.devices if d.type == device]
+        if not devices:
+            raise RuntimeError("No available " + device + " device detected")
+        for d in prefs.devices:
+            d.use = (d.type == device)
+    scene.cycles.device = "CPU" if device == "CPU" else "GPU"
     input_spp = int(os.environ.get("ACD_INPUT_SPP", "16"))
     input_seed = int(os.environ.get("ACD_INPUT_SEED", "539"))
-    width = int(os.environ.get("ACD_WIDTH", "48"))
-    height = int(os.environ.get("ACD_HEIGHT", "40"))
+    width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
+    height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
     assert input_spp > 0 and 8 <= width <= 4096 and 8 <= height <= 4096
     scene.cycles.samples = input_spp
     scene.cycles.seed = input_seed
@@ -46,13 +93,19 @@ try:
     scene.render.resolution_x = width
     scene.render.resolution_y = height
     scene.render.resolution_percentage = 100
-    scene.render.image_settings.media_type = "IMAGE"
-    scene.render.image_settings.file_format = "OPEN_EXR"
+    capture_aov = os.environ.get("ACD_CAPTURE_AOV", "0") == "1"
+    if capture_aov:
+        scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
+        scene.render.image_settings.file_format = "OPEN_EXR_MULTILAYER"
+    else:
+        scene.render.image_settings.media_type = "IMAGE"
+        scene.render.image_settings.file_format = "OPEN_EXR"
     scene.render.image_settings.color_depth = "32"
     scene.render.image_settings.exr_codec = "ZIP"
-    scene.render.filepath = str(destination / "composite.exr")
+    scene.render.filepath = str(destination / "raw_multilayer.exr" if capture_aov else destination / "composite.exr")
     view_layer = bpy.context.view_layer
     view_layer.cycles.use_denoising = False
+    scene.acd_volumes = True if scene_variant == "external" else scene.acd_volumes
     addon.enable_passes(view_layer, scene)
 
     tree = bpy.data.node_groups.new("ACD comparison (same noisy input)", "CompositorNodeTree")
@@ -96,32 +149,144 @@ try:
     fileout.file_output_items.new("RGBA", "RawRecomposed")
     tree.links.new(recomposed, fileout.inputs["RawRecomposed"])
 
-    methods = (
-        ("STANDARD", True, "STANDARD", False),
-        ("HIGH", True, "HIGH", False),
-        ("SUPER", True, "SUPER", False),
-        ("HIGH", False, "HIGH_no_final", False),
-        ("SUPER", False, "SUPER_no_final", False),
-        ("HIGH", True, "HIGH_no_guides", True),
-        ("SUPER", True, "SUPER_no_guides", True),
+    all_methods = (
+        ("STANDARD", True, "STANDARD", "full"),
+        ("HIGH", True, "HIGH", "full"),
+        ("SUPER", True, "SUPER", "full"),
+        ("HIGH", False, "HIGH_no_final", "full"),
+        ("SUPER", False, "SUPER_no_final", "full"),
+        # Legacy ablations remove guides from both intermediate and final OIDN.
+        ("HIGH", True, "HIGH_no_guides", "remove_all"),
+        ("SUPER", True, "SUPER_no_guides", "remove_all"),
+        # New controlled subpass ablations retain the final OIDN guidance.
+        ("STANDARD", True, "STANDARD_no_guides", "component_none"),
+        ("HIGH", True, "HIGH_component_no_guides", "component_none"),
+        ("SUPER", True, "SUPER_component_no_guides", "component_none"),
+        ("HIGH", True, "HIGH_component_albedo", "component_albedo"),
+        ("SUPER", True, "SUPER_component_albedo", "component_albedo"),
+        # Normal-only is invalid in Blender's OIDN compositor: Normal cannot
+        # meaningfully be used unless Albedo is linked. E0012 observed outputs
+        # pixel-identical to the no-guide variants. Preserve historical EXR
+        # readers but do not generate these misleading duplicate variants.
     )
-    for i, (mode, final_filter, output_name, strip_guides) in enumerate(methods):
+    configured_names = [name.strip() for name in os.environ.get(
+        "ACD_METHODS", "STANDARD,HIGH,SUPER,HIGH_no_final,SUPER_no_final,HIGH_no_guides,SUPER_no_guides"
+    ).split(",") if name.strip()]
+    if len(configured_names) != len(set(configured_names)):
+        raise ValueError("Duplicate method names in ACD_METHODS")
+    invalid = {"HIGH_component_normal", "SUPER_component_normal"} & set(configured_names)
+    if invalid:
+        raise ValueError(
+            "Normal-only OIDN is not a valid Blender denoising ablation. "
+            "The compositor ignores Normal if Albedo is unconnected. "
+            "See E0012 and Blender source."
+        )
+    sid_reference_names = {"SID4_STANDARD", "SID4_HIGH", "SID4_SUPER"}
+    unknown = set(configured_names) - {entry[2] for entry in all_methods} - sid_reference_names - {'NATIVE_COMP_OIDN'}
+    if unknown or not configured_names:
+        raise ValueError("Unsupported method selection: " + str(sorted(unknown)))
+    methods = tuple(entry for entry in all_methods if entry[2] in configured_names)
+    for i, (mode, final_filter, output_name, guide_policy) in enumerate(methods):
         scene.acd_mode = mode
         scene.acd_final_filter = final_filter
         sub_tree = addon.make_tree(scene, view_layer)
-        if strip_guides:
-            # This is an ablation, NOT a recommended permanent addon setting.
+        if guide_policy != "full":
+            # Ablations change only guide *connections*, never the raw render.
+            # For component_* policies, retain guided post-composition OIDN so
+            # differences isolate intermediate pass filtering. Legacy remove_all
+            # deliberately strips both stages for comparison with E0001/E0002.
             for dn in sub_tree.nodes:
-                if dn.bl_idname == "CompositorNodeDenoise":
-                    for edge in tuple(sub_tree.links):
-                        if edge.to_node == dn and edge.to_socket.name in ("Albedo", "Normal"):
-                            sub_tree.links.remove(edge)
+                if dn.bl_idname != "CompositorNodeDenoise":
+                    continue
+                if (guide_policy.startswith("component_")
+                        and dn.label == "Post-composition OIDN"):
+                    continue
+                for edge in tuple(sub_tree.links):
+                    if edge.to_node != dn:
+                        continue
+                    guide = edge.to_socket.name
+                    drop = (
+                        guide_policy in ("remove_all", "component_none")
+                        or (guide_policy == "component_albedo" and guide == "Normal")
+                    )
+                    if guide in ("Albedo", "Normal") and drop:
+                        sub_tree.links.remove(edge)
         group = tree.nodes.new("CompositorNodeGroup")
         group.label = output_name
         group.node_tree = sub_tree
         group.location = (150, 200 - 300 * i)
         fileout.file_output_items.new("RGBA", output_name)
         tree.links.new(group.outputs["Image"], fileout.inputs[output_name])
+
+    # M3 SID Reference: separate independent behavioral port, sharing the
+    # exact same Cycles RenderLayer as every ACD/Raw candidate in this render.
+    sid_selected = [name for name in configured_names if name in sid_reference_names]
+    if sid_selected:
+        ref_spec = importlib.util.spec_from_file_location(
+            "sid_reference", root / "addon" / "sid_reference.py"
+        )
+        sid_ref = importlib.util.module_from_spec(ref_spec)
+        ref_spec.loader.exec_module(sid_ref)
+        for index, name in enumerate(sid_selected):
+            variant = name.removeprefix("SID4_")
+            subgroup = sid_ref.build_reference_group(
+                variant,
+                transmission=scene.acd_transmission,
+                volume=scene.acd_volumes,
+                emission=scene.acd_emission,
+                environment=scene.acd_environment,
+            )
+            candidate_node = tree.nodes.new("CompositorNodeGroup")
+            candidate_node.node_tree = subgroup
+            candidate_node.label = name
+            candidate_node.location = (300, -2400 - index * 420)
+            for inp in candidate_node.inputs:
+                pass_socket = sid_ref._lookup(layers.outputs, inp.name)
+                tree.links.new(pass_socket, inp)
+            fileout.file_output_items.new("RGBA", name)
+            tree.links.new(candidate_node.outputs["Denoised Image"], fileout.inputs[name])
+        print("SID REFERENCE GRAPH CONSTRUCTED", sid_selected, "source", sid_ref.SOURCE_COMMIT)
+
+    # Native single-node Blender compositor OIDN baseline (not Cycles-internal denoiser).
+    native_comp_selected = "NATIVE_COMP_OIDN" in configured_names
+    if native_comp_selected:
+        dn = tree.nodes.new("CompositorNodeDenoise")
+        dn.label = "Native compositor OIDN | Accurate High HDR"
+        dn.inputs["Prefilter"].default_value = "Accurate"
+        dn.inputs["Quality"].default_value = "High"
+        dn.inputs["HDR"].default_value = True
+        raw = addon.render_socket(layers, "Noisy Image", required=False)
+        if raw is None:
+            raw = addon.render_socket(layers, "Image")
+        tree.links.new(raw, dn.inputs["Image"])
+        tree.links.new(addon.render_socket(layers, "Denoising Albedo"), dn.inputs["Albedo"])
+        tree.links.new(addon.render_socket(layers, "Denoising Normal"), dn.inputs["Normal"])
+        fileout.file_output_items.new("RGBA", "NATIVE_COMP_OIDN")
+        tree.links.new(dn.outputs["Image"], fileout.inputs["NATIVE_COMP_OIDN"])
+
+    # Research ablation E0006: preserve raw emission instead of filtering it.
+    # Directly visible emissive regions can be nearly deterministic even at
+    # low spp. Compare numerically; do not assume this is always superior.
+    emission_ablation = os.environ.get("ACD_PRESERVE_EMISSION", "0") == "1"
+    if emission_ablation:
+        raw_emission = addon.render_socket(layers, "Emission")
+        raw_beauty = addon.render_socket(layers, "Image")
+        normal = addon.render_socket(layers, "Denoising Normal")
+        albedo = addon.render_socket(layers, "Denoising Albedo")
+        indirect_beauty = addon.combine(
+            tree.nodes, tree.links, raw_beauty, raw_emission, "SUBTRACT",
+            "Beauty minus raw emission", (-800, -2100)
+        )
+        filtered_nonemissive = addon.denoise(
+            tree.nodes, tree.links, indirect_beauty, normal, albedo,
+            "OIDN excluding emission AOV", (-400, -2100)
+        )
+        emission_protected = addon.combine(
+            tree.nodes, tree.links, filtered_nonemissive, raw_emission,
+            "ADD", "Restore original emission", (100, -2100)
+        )
+        fileout.file_output_items.new("RGBA", "STANDARD_emission_preserved")
+        tree.links.new(emission_protected, fileout.inputs["STANDARD_emission_preserved"])
 
     scene.compositing_node_group = tree
     scene.render.use_compositing = True
@@ -135,20 +300,29 @@ try:
     # A separate, higher-sample unfiltered reference uses a different seed.
     # This is still a low-resolution smoke reference, not a converged benchmark.
     reference_spp = int(os.environ.get("ACD_REFERENCE_SPP", "256"))
-    reference_seed = 8819
+    reference_seed = int(os.environ.get("ACD_REFERENCE_SEED", "8819"))
+    external_reference = os.environ.get("ACD_REFERENCE_FILE", "")
     scene.compositing_node_group = None
     scene.render.use_compositing = False
-    scene.cycles.samples = reference_spp
-    scene.cycles.seed = reference_seed
     scene.render.filepath = str(destination / "reference.exr")
     scene.render.image_settings.media_type = "IMAGE"
     scene.render.image_settings.file_format = "OPEN_EXR"
     scene.render.image_settings.color_depth = "32"
-    ref_result = bpy.ops.render.render(write_still=True)
-    assert "FINISHED" in ref_result
-    assert (destination / "reference.exr").is_file()
-    print("ACD REFERENCE", destination / "reference.exr", "spp", reference_spp)
-    second_reference = os.environ.get("ACD_DOUBLE_REFERENCE") == "1"
+    if external_reference:
+        ref_source = Path(external_reference).resolve()
+        if not ref_source.is_file() or ref_source.suffix.lower() != ".exr":
+            raise RuntimeError("ACD_REFERENCE_FILE must point to an existing .exr")
+        if ref_source != (destination / "reference.exr").resolve():
+            shutil.copy2(ref_source, destination / "reference.exr")
+        print("ACD EXISTING REFERENCE", ref_source)
+    else:
+        scene.cycles.samples = reference_spp
+        scene.cycles.seed = reference_seed
+        ref_result = bpy.ops.render.render(write_still=True)
+        assert "FINISHED" in ref_result
+        assert (destination / "reference.exr").is_file()
+        print("ACD REFERENCE", destination / "reference.exr", "spp", reference_spp)
+    second_reference = os.environ.get("ACD_DOUBLE_REFERENCE") == "1" and not external_reference
     if second_reference:
         scene.cycles.seed = reference_seed + 103
         scene.render.filepath = str(destination / "reference_check.exr")
@@ -182,9 +356,38 @@ try:
         assert (extra_dir / "acd_compare_Raw.exr").exists()
         print("ACD EXTRA INPUT SEED COMPLETE", extra_seed)
 
+    blend_hash = None
+    if scene_variant == "external":
+        hasher = hashlib.sha256()
+        with open(bpy.data.filepath, "rb") as stream:
+            while True:
+                chunk = stream.read(4 * 1024 * 1024)
+                if not chunk:
+                    break
+                hasher.update(chunk)
+        blend_hash = hasher.hexdigest()
     (destination / "metadata.json").write_text(json.dumps({
         "blender": bpy.app.version_string,
         "scene": scene_variant,
+        "source_blend": str(bpy.data.filepath) if scene_variant == "external" else None,
+        "source_blend_sha256": blend_hash,
+        "scene_name": scene.name,
+        "view_layer": view_layer.name,
+        "frame": scene.frame_current,
+        "render_device": device,
+        "capture_aov": capture_aov,
+        "color_management": {
+            "view_transform": scene.view_settings.view_transform,
+            "look": scene.view_settings.look,
+            "exposure": scene.view_settings.exposure,
+            "gamma": scene.view_settings.gamma,
+            "display_device": scene.display_settings.display_device,
+        },
+        "cycles": {
+            "max_bounces": scene.cycles.max_bounces,
+            "use_adaptive_sampling": scene.cycles.use_adaptive_sampling,
+            "use_denoising": scene.cycles.use_denoising,
+        },
         "samples": input_spp,
         "seed": input_seed,
         "reference_samples": reference_spp,
@@ -194,7 +397,18 @@ try:
         "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "compositional_methods": [name for _, _, name, _ in methods],
+        "sid_reference_methods": sid_selected,
+        "sid_reference_source_commit": (
+            "b4186389cac386eff9d777bb681c0051f8bd9bd2" if sid_selected else None
+        ),
+        "sid_reference_equivalence_verified": False,
+        "native_compositor_oidn": (
+            {"prefilter": "Accurate", "quality": "High", "hdr": True,
+             "not_equated_to_cycles_internal_denoiser": True}
+            if native_comp_selected else None
+        ),
         "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
+        "emission_ablation": emission_ablation,
         "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",
         "files": [p.name for p in generated],
     }, indent=2) + "\n")

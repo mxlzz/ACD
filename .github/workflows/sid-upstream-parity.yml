@@ -1,0 +1,75 @@
+name: ACD M3 upstream SID public graph vs Blender 5 reference
+
+on:
+  # Initial one-off execution by PR; remove PR trigger after verification.
+  pull_request:
+    paths:
+      - ".github/workflows/sid-upstream-parity.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare-legacy-graph:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      SID_UPSTREAM_ROOT: /tmp/acd_sid_upstream/SuperImageDenoiser
+      ACD_LEGACY_MANIFEST: /tmp/acd_sid_legacy_contract.json
+      ACD_PORT_MANIFEST: /tmp/acd_sid_port_contract.json
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install supported legacy SID source (temporary GPL clone)
+        run: |
+          mkdir -p "${{ runner.temp }}/upstream"
+          git clone --quiet https://github.com/PidgeonTools/SuperImageDenoiser.git "$SID_UPSTREAM_ROOT"
+          git -C "$SID_UPSTREAM_ROOT" checkout --quiet b4186389cac386eff9d777bb681c0051f8bd9bd2
+          test "$(git -C "$SID_UPSTREAM_ROOT" rev-parse HEAD)" = "b4186389cac386eff9d777bb681c0051f8bd9bd2"
+      - name: Cache official Blender 3.6.23
+        id: old-cache
+        uses: actions/cache@v4
+        with:
+          path: blender-3.6.23-linux-x64
+          key: official-blender-3.6.23-linux-x64-v1
+      - name: Download Blender 3.6.23
+        if: steps.old-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender3.6/blender-3.6.23-linux-x64.tar.xz \
+            -o blender36.tar.xz
+          tar -xf blender36.tar.xz
+      - name: Extract original SID node graph contract in Blender 3.6
+        run: ./blender-3.6.23-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_legacy_probe.py
+      - name: Cache official Blender 5.0.1
+        id: new-cache
+        uses: actions/cache@v4
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download Blender 5.0.1
+        if: steps.new-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz \
+            -o blender50.tar.xz
+          tar -xf blender50.tar.xz
+      - name: Extract ported SID graph contract in Blender 5
+        run: ./blender-5.0.1-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_sid_reference_snapshot.py
+      - name: Compare behavioral invariants and write difference report
+        run: |
+          python scripts/compare_sid_contracts.py "$ACD_LEGACY_MANIFEST" "$ACD_PORT_MANIFEST"
+      - name: Archive contract manifests and failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sid-upstream-3.6-vs-port-5.0-graph-contracts
+          if-no-files-found: error
+          retention-days: 14
+          # These are the exact absolute paths used by the probes and comparator.
+          path: |
+            /tmp/acd_sid_legacy_contract.json
+            /tmp/acd_sid_port_contract.json
+            /tmp/sid_contract_comparison.json
