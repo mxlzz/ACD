@@ -15,6 +15,7 @@ def compare_regions_from_files(
     directory: str | Path,
     *,
     passes_file: str | Path | None = None,
+    passes_layer: str | None = None,
     regions_file: str | Path | None = None,
     energy_fraction: float = 0.35,
     min_signal: float = 0.01,
@@ -55,7 +56,12 @@ def compare_regions_from_files(
             definitions[name] = {"type": "manual_rect_norm", "rect": rect}
 
     if passes_file is not None:
-        raw = read_arrays(passes_file)
+        if passes_layer is None:
+            metadata_file = root / "metadata.json"
+            if metadata_file.is_file():
+                info = json.loads(metadata_file.read_text(encoding="utf-8"))
+                passes_layer = info.get("view_layer")
+        raw = read_arrays(passes_file, layer=passes_layer)
         aov_masks = aov_energy_masks(raw, threshold=energy_fraction, min_signal=min_signal)
         for name, mask in aov_masks.items():
             tag = "aov_" + name

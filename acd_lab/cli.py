@@ -47,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     region_cmd = sub.add_parser("compare-regions", help="Measure ACD methods within ROI and AOV contribution masks")
     region_cmd.add_argument("--directory", required=True)
     region_cmd.add_argument("--passes", help="Raw Cycles multilayer EXR with auxiliary light contributions")
+    region_cmd.add_argument("--passes-layer", help="EXR view layer; defaults to view_layer in metadata.json")
     region_cmd.add_argument("--regions", help="Optional JSON with named normalized rectangles")
     region_cmd.add_argument("--energy-fraction", type=float, default=.35)
     region_cmd.add_argument("--min-signal", type=float, default=.01)
@@ -80,7 +81,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         from .region_cli import compare_regions_from_files
         result = compare_regions_from_files(
-            args.directory, passes_file=args.passes, regions_file=args.regions,
+            args.directory, passes_file=args.passes, passes_layer=args.passes_layer, regions_file=args.regions,
             energy_fraction=args.energy_fraction, min_signal=args.min_signal,
             error_maps=args.error_maps,
         )
