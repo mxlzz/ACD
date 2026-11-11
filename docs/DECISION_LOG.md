@@ -220,3 +220,13 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Cambio de evaluación:** incluir flags explícitos de validez y métricas directas entre candidatos; evita confundir igualdad de errores respecto de referencia con identidad de píxeles.
 - **Diseño segunda corrida:** glass_lobby + interior_emissive, 1024 spp ×2 refs, 24 spp ×3 noisy seeds, comparar también `STANDARD_emission_preserved`. No modificar denoiser ni promover ninguna variante con los datos actuales.
 - **Estado:** nuevo workflow por verificar y debilidad de Classroom sin causa comprobada.
+
+
+## 2026-11-11 — M3.9 segunda corrida verificada: baseline nativo no superado, exigir nuevo escenario
+
+- **Prueba real:** [run 43113414513](https://github.com/mxlzz/ACD/actions/runs/43113414513) `success`, artifacts 13896374534 Glass y 13897536701 interior emisivo. Tres noisy seeds con diversidad verificada y dos referencias 1024 spp no idénticas; convergencia todavía no demostrada.
+- **Resultado directo:** promedios RMSE Glass Raw 0.31338931, Standard/Compositor OIDN 0.14833401, High 0.17022242 y Super 0.17611973. Emisivo Raw 0.24915133, Standard/OIDN 0.08236044, High 0.08670461 y Super 0.09241571. SID4 Reference High/Super quedan peor que native en ambos. Preservación de emisión emisiva 0.08267392 (peor promedio +~0.38 % aunque gana 1/3 semillas). No hay evidencia de mejora universal.
+- **Hallazgo del proceso:** E0007 ya contenía evidencia de la anomalía de semillas de Classroom; fue improcedente repetir Classroom como supuesto benchmark multisemilla en primer M3.9. Se documenta la redundancia en E0013 para prevenir nuevos experimentos sin revisar precedentes.
+- **Identificación fuente:** en código oficial Blender tag v3.6.23, build_environment/cmake/versions.cmake declara OIDN 1.4.3; binario Blender5.0.1 del runner contiene OIDN 2.3.3. Distinguir dependencia fuente de biblioteca runtime y no afirmar causalidad exclusiva de versiones.
+- **Decisión:** no cambiar addon SID4 Reference ni estable, ni promover Quality/HDR menos fieles a radiancia por proximidad histórica. Archivar números fuera de artifacts temporales (E0013) y preparar un benchmark profesional con `.blend` aportado/autorizado; el runner `scripts/run_scene_benchmark.py` ya está implementado. PR #4 permanece draft.
+- **Criterio próximo:** distintas escenas reales, múltiples seeds verificadas, 2 o más referencias razonables y validación de detalle, glass, glossy, emisión HDR; hipótesis y comparación contra nativo predefinidas.

@@ -11,6 +11,17 @@ Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked 
 - **Inferencia:** estas operaciones y el mapeo de alfa probado no explican las diferencias mucho mayores en High/Super (RGB RMSE 0.065–0.068 y alfa ~0.00387). Esto acota causas hacia OIDN/parametrización/otras ramas, pero no las identifica de manera exhaustiva.
 - **Siguiente:** aislar nodos OIDN individuales bajo exactamente las mismas entradas (Fast, Accurate guiado, emisión Accurate sin guías, alfa Accurate guiado).
 
+## M3.9 — Segunda corrida completada y decisión de transición (2026-11-11)
+
+- [Run #43113414513](https://github.com/mxlzz/ACD/actions/runs/43113414513): **ambos jobs success**, `glass_lobby` y `interior_emissive`, tres noisy seeds 24 spp, dos referencias 1024 spp, 160×120. Artifacts [glass 13896374534](https://github.com/mxlzz/ACD/actions/runs/43113414513/artifacts/13896374534), [emisivo 13897536701](https://github.com/mxlzz/ACD/actions/runs/43113414513/artifacts/13897536701).
+- **Resultados promediados por tres semillas, RGB RMSE:** Glass Raw 0.31338931, ACD Standard y OIDN compositor nativo 0.14833401, High/SID4 High 0.17022242/0.17022239, Super/SID4 Super 0.17611973/0.17611974. Emisivo Raw 0.24915133, Standard/nativo 0.08236044, emisión preservada 0.08267392, High 0.08670461, Super 0.09241571, SID4 High 0.09496714 y SID4 Super 0.09986059.
+- **Auditoría de referencias:** ambas escenas pasan heurística de diversidad y no disparan alerta de spread, con discrepancia ref/raw **0.19417 (Glass)** y **0.20842 (emisivo)**; convergencia e independencia Monte Carlo siguen sin demostrarse.
+- **Decisión:** no promover ACD Standard como mejora sobre nodo nativo, ni High/Super ni preservación de emisión; el RMSE agregado de esta última empeora ~0.38 % en interior (ganó solo 1/3 semillas). La coincidencia de métricas no equivale a imagen idéntica: diferencias directas están disponibles en `summary.json`.
+- **Hallazgo de disciplina:** E0007 ya había demostrado que Classroom carece de variación de semillas en esta versión: la primera corrida M3.9 replicó innecesariamente un ensayo que debía estar excluido. No repetirlo como prueba multisemilla sin modificar condiciones y verificar imágenes.
+- **Fuente de OIDN:** el árbol de código Blender [v3.6.23](https://github.com/blender/blender/blob/v3.6.23/build_files/build_environment/cmake/versions.cmake) especifica `OIDN_VERSION 1.4.3`; Blender5 oficial contiene `libOpenImageDenoise.so.2.3.3` en el runner. No prueba por sí mismo qué DLL concreta cargó el Blender3.6 binario ni causalidad única.
+- Informe permanente [E0013](docs/experiments/E0013.md) y protocolo de escena profesional [PRO_SCENE_INPUT.md](docs/PRO_SCENE_INPUT.md).
+- **Siguiente puerta:** archivo `.blend` real autorizado/anonimizado, con cámara y texturas empaquetadas; el evaluador local ya existe. Dejar de reiterar el mismo tipo de escena pequeña. PR #4 sigue draft, addon estable intacto.
+
 ## M3.9 — Primeras escenas: resultados y control de validez (2026-11-11)
 
 - [Run #43112553045](https://github.com/mxlzz/ACD/actions/runs/43112553045): ambos jobs `success`, pero un job verde significa que produjo medidas, **no** que el conjunto tenga validez estadística. EXR y reportes en [Glass Lobby artifact 13897341205](https://github.com/mxlzz/ACD/actions/runs/43112553045/artifacts/13897341205) y [Classroom artifact 13896727821](https://github.com/mxlzz/ACD/actions/runs/43112553045/artifacts/13896727821).
