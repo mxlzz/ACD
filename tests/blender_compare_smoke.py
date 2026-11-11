@@ -142,6 +142,14 @@ try:
     assert "FINISHED" in ref_result
     assert (destination / "reference.exr").is_file()
     print("ACD REFERENCE", destination / "reference.exr", "spp", reference_spp)
+    second_reference = os.environ.get("ACD_DOUBLE_REFERENCE") == "1"
+    if second_reference:
+        scene.cycles.seed = reference_seed + 103
+        scene.render.filepath = str(destination / "reference_check.exr")
+        check_result = bpy.ops.render.render(write_still=True)
+        assert "FINISHED" in check_result
+        assert (destination / "reference_check.exr").is_file()
+        print("ACD SECOND INDEPENDENT REFERENCE", destination / "reference_check.exr")
 
     (destination / "metadata.json").write_text(json.dumps({
         "blender": bpy.app.version_string,
@@ -150,6 +158,8 @@ try:
         "seed": 539,
         "reference_samples": reference_spp,
         "reference_seed": reference_seed,
+        "second_reference": second_reference,
+        "second_reference_seed": reference_seed + 103 if second_reference else None,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "compositional_methods": [name for _, _, name, _ in methods],
         "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
