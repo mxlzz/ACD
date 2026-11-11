@@ -4,6 +4,13 @@
 
 Updated: 2026-11-11. Branch dev/acd-m2-real-scenes-regions, draft PR #4 stacked on M1 PR #3.
 
+## E0010 / E0011 — Ejecuciones completas (11-11-2026)
+
+- E0010: la repetición completa de E0008 PASÓ, con 3 entradas diferentes y máscara regional idéntica (SHA-256; 66 píxeles). El RMSE en la región emisiva se redujo 0,2758194 → 0,2717647, pero las regresiones de MAE y RMSE global impiden activarlo por defecto. Run 43085166506.
+- E0011: segundo escenario **procedural** de lobby con vidrio y metal. Blender 5.0.1, 128×96, 24 spp, 3 entradas y dos referencias de 1024 spp. Standard RMSE 0,1746515; High 0,1949242; Super 0,2014348. En máscaras glossy/transmisión Standard superó a Super en las tres entradas. Run 43085451268.
+- Los dos workflows intensivos quedaron como **manuales** después de validarlos. Los reportes completos están en docs/experiments/E0010.md y E0011.md, con JSON numérico E0011_metrics.json.
+- Las referencias no están certificadas como convergidas; E0011 no equivale a una segunda escena profesional externa. Próximo paso: ablar guías de Albedo/Normal por señal y reunir más escenas externas.
+
 ## M2.1 — Validación de la integridad de las comparaciones (2026-11-11)
 
 - Incorporado `mask_sha256`: digest versionado del tamaño y la pertenencia exacta de cada píxel a la ROI. Los informes nuevos incluyen el hash; el agregador rechaza ROI con igual área/definición pero ubicación diferente y exige regenerar informes antiguos sin huella. Tests unitarios y OpenEXR de regresión agregados.
