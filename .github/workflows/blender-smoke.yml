@@ -20,24 +20,29 @@ jobs:
   blender:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["5.0.1", "5.3.0"]
     env:
-      BLENDER_VERSION: "5.0.1"
+      BLENDER_VERSION: ${{ matrix.version }}
     steps:
       - uses: actions/checkout@v4
       - name: Cache official Blender binary
         id: cache
         uses: actions/cache@v4
         with:
-          path: blender-5.0.1-linux-x64
-          key: official-blender-5.0.1-linux-x64-v1
+          path: blender-${{ matrix.version }}-linux-x64
+          key: official-blender-${{ matrix.version }}-linux-x64-v2
       - name: Download official Blender
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
+          RELEASE_FOLDER="Blender"$(echo "$BLENDER_VERSION" | cut -d. -f1,2)
           curl -fL --retry 3 --connect-timeout 30 \
-            "https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz" \
+            "https://download.blender.org/release/$RELEASE_FOLDER/blender-$BLENDER_VERSION-linux-x64.tar.xz" \
             -o blender.tar.xz
           tar -xf blender.tar.xz
       - name: Blender version
-        run: ./blender-5.0.1-linux-x64/blender --version
-      - name: Test Cycles compositor construction and small CPU render
-        run: ./blender-5.0.1-linux-x64/blender -b --factory-startup -noaudio --python tests/blender_smoke.py
+        run: "./blender-$BLENDER_VERSION-linux-x64/blender --version"
+      - name: Test Cycles compositor and CPU render
+        run: "./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_smoke.py"
