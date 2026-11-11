@@ -7,6 +7,7 @@ from .core import compare_images
 from .io import read_arrays
 
 NAMES = ("Raw", "STANDARD", "HIGH", "SUPER")
+OPTIONAL = ("RawRecomposed", "HIGH_no_final", "SUPER_no_final")
 
 
 def evaluate_batch(directory: str | Path) -> dict:
@@ -24,6 +25,11 @@ def evaluate_batch(directory: str | Path) -> dict:
         candidate = read_arrays(target)["image"]
         results[name] = compare_images(reference, candidate)
 
+    for name in OPTIONAL:
+        candidate_file = root / ("acd_compare_" + name + ".exr")
+        if candidate_file.is_file():
+            results[name] = compare_images(reference, read_arrays(candidate_file)["image"])
+
     raw_rmse = float(results["Raw"]["rmse_linear"])
     relative_change = {
         name: (None if raw_rmse == 0 else 1 - float(report["rmse_linear"]) / raw_rmse)
@@ -34,5 +40,10 @@ def evaluate_batch(directory: str | Path) -> dict:
         "note": "One small test scene; independent reference is not convergence-verified",
         "measurements": results,
         "rmse_reduction_vs_raw": relative_change,
-        "rank_by_rmse": sorted(NAMES, key=lambda name: results[name]["rmse_linear"]),
+        "rank_by_rmse": sorted(results, key=lambda name: results[name]["rmse_linear"]),
+        "raw_recomposition_vs_raw": (
+            compare_images(read_arrays(root / "acd_compare_Raw.exr")["image"],
+                           read_arrays(root / "acd_compare_RawRecomposed.exr")["image"])
+            if (root / "acd_compare_RawRecomposed.exr").is_file() else None
+        ),
     }
