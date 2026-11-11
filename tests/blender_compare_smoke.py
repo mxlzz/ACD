@@ -48,7 +48,7 @@ try:
         if os.environ.get("ACD_FRAME"):
             scene.frame_set(int(os.environ["ACD_FRAME"]))
         print("ACD EXTERNAL BLEND LOADED", bpy.data.filepath, "scene", scene.name)
-    else:
+    elif scene_variant != "factory":
         raise ValueError("Unknown ACD_SCENE: " + scene_variant)
     scene.render.engine = "CYCLES"
     device = os.environ.get("ACD_DEVICE", "CPU").upper()
