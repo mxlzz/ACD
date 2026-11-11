@@ -66,6 +66,12 @@ jobs:
           ACD_BENCH_DIR: ${{ runner.temp }}/acd_compare
         run: |
           ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Compare all denoisers against independent reference
+        if: matrix.version == '5.0.1'
+        env:
+          ACD_BENCH_DIR: ${{ runner.temp }}/acd_compare
+        run: |
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/metrics.json"
       - name: Upload paired comparison EXRs
         if: matrix.version == '5.0.1' && always()
         uses: actions/upload-artifact@v4
