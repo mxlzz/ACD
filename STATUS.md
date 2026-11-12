@@ -1,3 +1,12 @@
+## F2 — OIDN 2.5.1 standalone, ejecución experimental preparada (2026-11-12)
+
+- Código nuevo: PFM RGB32 little-endian sin color management, test de roundtrip HDR/orden de filas; `scripts/oidn251_compare.py` ejecuta el binario oficial CPU sobre beauty/albedo/normal exactamente de cada seed y compara frente a compositor OIDN en dos referencias. Export multilayer por semilla activado cuando AOV capture.
+- El workflow descarga un binario oficial SHA-256 fijado (digest de GitHub Releases API) y registra SHA de PFM/output, log de proceso, error global y gradiente. Escenas piloto Glass Lobby/interior emisivo a 192×144, 24 spp ×3 y 1024 spp ×2 referencias. Es **nueva comparación de versión**, no repetición de ranking SID.
+- **Pendiente en este commit:** CI real y piloto, sin resultados numéricos todavía; no implica equivalencia de políticas de prefilter en Blender y CLI.
+- Siguiente: inspeccionar resultados y conservar informe permanente E0014, después aumentar dificultad de escena de detalle.
+
+---
+
 ## F3 — Implementación de medición de gradientes (2026-11-12)
 
 - Añadido `acd_lab/detail.py`: gradientes RGB con compresión `asinh`, máscaras de borde definidas exclusivamente por referencia y error en regiones planas. Los métodos no pueden elegir sus propias máscaras. ROI se mide en cuadrícula original, con parejas contiguas válidas, evitando un artefacto previo de vecinos ficticios al aplanar máscaras.

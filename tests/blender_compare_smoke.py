@@ -349,7 +349,13 @@ try:
         scene.render.use_compositing = True
         scene.cycles.samples = input_spp
         scene.cycles.seed = extra_seed
-        scene.render.filepath = str(extra_dir / "composite.exr")
+        if capture_aov:
+            # Independent inputs require their own guides; never reuse seed-539 AOVs.
+            scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
+            scene.render.image_settings.file_format = "OPEN_EXR_MULTILAYER"
+            scene.render.filepath = str(extra_dir / "raw_multilayer.exr")
+        else:
+            scene.render.filepath = str(extra_dir / "composite.exr")
         fileout.directory = str(extra_dir)
         repeated_result = bpy.ops.render.render(write_still=True)
         assert "FINISHED" in repeated_result

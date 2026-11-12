@@ -248,3 +248,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Controles:** pruebas sintéticas de blur y oversharpen deben dar error de gradiente positivo; un sharpening puede elevar contraste sin mejorar fidelidad; ruido plano detectado; referencia lisa no genera ranking de bordes. Tests de integración regional añadidos.
 - **Estado:** commit de código y pruebas; CI real pendiente. Sin modificaciones de producción ni denoiser.
 - **Siguiente:** ejecutar CI, corregir fallos, ampliar a EXR reales y evaluar rankings sobre varios seeds y escenas.
+
+
+## 2026-11-12 — F2, comparador OIDN oficial con igualdad de EXR/AOV por seed
+
+- **Método:** PFM de 32 bits con transformaciones únicamente de formato endian/orden de filas, binario OIDN 2.5.1 descargado con SHA256 de asset oficial, `--hdr --alb --nrm -q high -d cpu` y verificación numérica de beauty exportado en raw multlayer vs candidato Raw.
+- **Corrección de procedencia:** antes solo se guardaba multilayer de seed inicial; ahora cada seed exporta sus propias guías; mezclar guías de seed anterior sería científicamente inválido.
+- **Incertidumbre:** el compositor Blender5.0.1 usa prefilter Accurate; CLI `cleanAux` por defecto false, sin garantía de identidad de políticas ni modelos. La comparación 2.3.3/2.5.1 exploratoria no aísla todas las causas.
+- **Estado:** código, tests y CI del experimento añadidos, validación real pendiente, sin cambios al addon estable. Siguiente: revisar CI y publicar E0014 con números verificados.
