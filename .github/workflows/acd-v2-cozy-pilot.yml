@@ -1,11 +1,6 @@
 name: ACD V2 Cozy Kitchen controlled benchmark pilot
 
 on:
-  push:
-    branches:
-      - dev/acd-v2-oidn-detail-eval
-    paths:
-      - .github/workflows/acd-v2-cozy-pilot.yml
   workflow_dispatch:
 
 permissions:

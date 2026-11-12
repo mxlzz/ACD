@@ -1,3 +1,11 @@
+## E0024 — diagnóstico sobre EXR existentes, no repetir E0020 (2026-11-12)
+
+- Al recuperar la historia completa de la rama, se constató que **E0020 fue seguido por E0021** (Cozy Kitchen 512×482, tres seeds, dos referencias 1024 spp; OIDN nativo supera High/Super en RMSE y gradientes) y **E0023** (Terraced Houses exterior nocturno, RMSE nativo mayor que Raw pero menor MAE y error de bordes). No tomar el piloto 320px añadido nuevamente como experimento nuevo; su workflow se pasa a **manual** y se conserva por reproducibilidad.
+- Nuevo instrumento E0024 `acd_lab/hdr_tail.py` + tests sintéticos: máscaras comunes de píxeles HDR más luminosos según referencia y de errores raw más altos; SSE/RMSE/MAE dentro/fuera; selección *reference-only* y *raw-reference* explícita con advertencia de sesgo. Workflow consume artifacts reales E0023 (sin render) y compara tres seeds/dos refs. **Pendiente de ejecución al commit**.
+- Aún no se ha desarrollado algoritmo nuevo ni habilitado F5. Se requiere diagnosticar si errores HDR localizados justifican estudiar preservación de emisión/varianza con método reproducible y sin sobreajuste a escena examinada.
+
+---
+
 ## E0020 — benchmark real sobre Cozy Kitchen preparado (2026-11-12)
 
 - `acd-v2-cozy-pilot.yml` crea piloto de Cycles Blender5.0.1 en la escena pública E0019 a 320px ancho, 24 spp x3 seeds, dos refs independientes 512 spp, mismos inputs nativos/ACD Standard/High/Super, EXR/AOV raw por seed; informe en [E0020](docs/experiments/E0020.md).

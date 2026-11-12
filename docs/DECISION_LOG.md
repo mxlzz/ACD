@@ -450,3 +450,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Plan fijo:** 320px de ancho con relación de aspecto original, 24 spp, tres seeds 539/911/1337 y dos refs 512 spp 8819/8922. Métodos igualan RenderLayer/guías, comparar Standard/High/Super vs compositor OIDN y raw; métricas RMSE HDR, MAE, gradiente en borde, plano y ratio contraste (no usar solo nitidez).
 - **Validez:** si las referencias divergen en exceso o seed variation falla, no inferir ranking. 320px es exploratorio (aliasing), no FHD profesional. Siguiente 512/1024px o dataset independiente tras resultados.
 - **Estado:** workflow y protocolo comprometidos, sin resultados al commit. Renders solo por workflow de esta revisión y dispatch manual posterior; no ejecutar en cada commit.
+
+
+## 2026-11-12 — E0024 priorizar diagnóstico HDR y no duplicar E0020
+
+- **Contexto recuperado:** E0021 completó ya Cozy Kitchen 512×482 a 24spp x3, refs 1024spp x2. E0023 completó exterior nocturno: Raw mejor RMSE pero peor MAE/gradientes que OIDN, error cuadrático concentrado en peor 1 % de píxeles. Nuevo workflow de 320px E0020 es redundante, cambiar a manual y no inferir resultados nuevos. Rendimiento de Actions es recurso limitado.
+- **Método E0024:** máscaras top1% de luminancia de la referencia y top1% de error Raw, idénticas por método, dos refs y tres seeds, SSE/RMSE/MAE dentro y fuera. La máscara raw-error seleccionada tiene sesgo en favor del raw: explícitamente **no** usar como evaluación de superioridad ni en inferencia.
+- **Protocolo:** test sintético de máscara invariante frente a candidato, empates, conservación SSE, HDR y validación input. Workflow lee EXR existentes run 43291659387; no recrea referencias ni altera el denoiser. Estado real del diagnóstico pendiente al commit.
+- **Puerta F5:** no activada. Cualquier hipótesis basada en región nocturna examinada debe validarse en otra escena no vista y evitar leakage de referencia a tiempo de uso.
