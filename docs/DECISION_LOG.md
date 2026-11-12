@@ -524,3 +524,7 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - Selección previa de nuevo contenido: emrelab/blender-projects, autor Yunus Emre Karaman, low-poly-island/v4.5 Cycles con cabin, vidrio, lámparas; MIT según README+LICENSE, blob e540ffe... (2,621,405 B), commit upstream 36c46d3. No ha sido usado en experimentos ACD. Mismo autor que Terraced implica relación estilística, no independencia total.
 - No modificar AOV emission scale .25 ni pesos max .5/1 de E0027 tras observar este archivo. Preparar descarga oficial inmutable, verificación SHA git blob/tamaño, render smoke Blender5, solo después commit de .blend original, licencia y audit. Estado pendiente.
 - Próximo: benchmark del nuevo contenido y reporte con dos refs/varios seeds, luego criterios para ampliar a escena profesional, sin prometer ganancia.
+
+## 2026-11-12 — E0028 external island fixture imported before measuring ACD
+- Pinned MIT source repo commit 36c46d3, original Git blob e540ffe, smoke Blender5 Cycles functional, no missing images/linked libraries. Scene is different from Cozy/Terraced, but shares Terraced author and stylized lighting; not sufficient alone for generalization across professional architectural renders.
+- Original bin unchanged, source license copied, metadata SHA/credits stored; no candidate parameters changed. Next quality test will compare E0027 emitted-guide configurations prespecified earlier.

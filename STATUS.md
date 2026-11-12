@@ -640,3 +640,6 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 ## E0023 — Exterior nocturno, discrepancia entre errores, diagnóstico archivado
 - Run 43291659387 valida 320×240 24spp x3 y 512spp refs x2, nativo OIDN RMSE más alto que Raw pero MAE y gradiente menores. Informe E0023 y comparativas: docs/experiments/E0023.md, benchmarks/results/terraced_e0023. EXR fuente conservados temporalmente en Actions.
 - Se midió concentración SSE peor 1% y errores por AOV emission/glossy sobre primera seed, contra mismas refs sin alterar algoritmos. Esta escena fue observada: requiere otra escena final ciega para evaluar un candidato entrenado.
+
+## E0028 — Low-Poly Island third-scene source validated and versioned
+- Official MIT source emrelab/blender-projects at immutable 36c46d3; SHA from benchmarks/scenes/low_poly_island.audit.json. Blender5 Cycles smoke 4spp passed, no assets missing. The previously examined Terraced scene shares its author; test is a new scene but NOT independent artist/style. Results quality still pending.
