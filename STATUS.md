@@ -1,3 +1,10 @@
+## E0027 observado — guiado por Emission AOV mejora RMSE, requiere prueba nueva (2026-11-12)
+
+- [Run #43307378645](https://github.com/mxlzz/ACD/actions/runs/43307378645) **success, 11 tests**, mismos EXR E0021/E0023, 3 seeds×2refs. [E0027](docs/experiments/E0027.md): AOV_EMISSION50 (mezcla Raw local máx .5) Cozy RMSE 0.083196 vs OIDN0.083393, edge0.089395 vs0.089698; Terraced RMSE0.122200 vs OIDN0.167785 y MAE0.01765 vs0.02107, pero edge sube 0.06795→0.07210. AOV_EMISSION100 mejora RMSE nocturno aún más (0.1130), pero empeora mucho edge (0.08098). Control mezcla global al peso medio no recupera esa mejora. Fuente emisiva: 0.0408% píxeles Cozy, 4.49% Terraced.
+- **Decisión:** candidata AOV es plausible pero no puede promoverse por error de bordes y falta de validación ciega. Probar exactamente mismos coeficientes/escala en una tercera escena pública sin observar previamente sus resultados. E0027 workflow a manual tras completar. No hay nuevo addon ni modificación del núcleo OIDN.
+
+---
+
 ## E0027 — ablation específica Cycles Emission AOV preparada (2026-11-12)
 
 - E0026 descartó gating Raw por brillo como método general pese a buena mejora nocturna: degrada Cozy. E0027 prueba un indicador más específico disponible en el render **sin oracle:** `Emission` AOV de cada seed, peso suave de mezcla Raw/OIDN según energía de emisión, escala fija 0.25 y fracción máxima Raw .5/1.0; control mezcla uniforme del mismo peso medio y comparación con variante genérica E0026.

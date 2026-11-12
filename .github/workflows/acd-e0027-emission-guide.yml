@@ -1,11 +1,6 @@
 name: ACD E0027 Cycles emission AOV guided HDR ablation offline
 
 on:
-  push:
-    branches:
-      - dev/acd-v2-oidn-detail-eval
-    paths:
-      - .github/workflows/acd-e0027-emission-guide.yml
   workflow_dispatch:
 
 permissions:

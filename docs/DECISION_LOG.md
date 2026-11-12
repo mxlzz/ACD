@@ -511,3 +511,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - E0026 falló en Cozy y mejoró Terraced usando brillo Raw. Atribución hipotética: indicador por brillo incluye texturas/glossy y fireflies no emisivos. E0027 usa Cycles `emission` AOV **del mismo seed** sin referencia en inferencia; peso `w=maxMix*emitL/(emitL+0.25)`, maxMix 0.5/1.0, benchmarkado frente a control constante peso medio.
 - Dos escenas ya observadas E0021/E0023, cada una 3 semillas y dos refs; registrar disponibilidad y fracción no cero del pase, RMSE/MAE, bordes y RMSE dentro/fuera top1% ref. Ningún parámetro se ajustará retrospectivamente a escena. Mejora en ambas requerida para proseguir y nueva tercera escena para generalizar.
 - Tests de no emisión => OIDN exacto, emisión localizada, no dependencia de denoised en peso, negativo, NaN y shapes. Código/workflow pendiente de GH Actions, sin cambio en addon.
+
+
+## 2026-11-12 — E0027 AOV Emission mejora RMSE sin superar completamente OIDN
+
+- **Evidencia:** run #43307378645, 11 tests, sin rerender. Cozy Kitchen AOV_EMISSION50 RMSE 0.083196 vs OIDN 0.083393 (escena con 0.04% emisión); noche Terraced RMSE 0.12220 vs OIDN0.167785 y MAE0.01765 vs0.02107, pero edge se degrada 0.067948->0.072103. Variante AOV_EMISSION100 RMSE noche0.11304 pero edge0.08098. Control constante de peso medio no consigue misma mejora.
+- **Decisión:** conservar AOV_EMISSION50/100 como candidatos experimentales, sin integrar addon. No ajustar factor de escala .25 tras mirar resultados. Seleccionar nueva escena bajo licencia verificada antes de observar sus imágenes y medir sin modificar parámetros; considerar calidad de borde como restricción. La segunda referencia de las dos escenas confirma resultados, pero no es validación independiente de contenido.
