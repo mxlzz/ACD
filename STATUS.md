@@ -1,3 +1,9 @@
+## E0024 — reejecución tras fix de prueba (2026-11-12)
+
+- Se amplió el trigger **únicamente** del workflow E0024 a test/analizador específicos para ejecutar la versión corregida sin rehacer renders; se mantiene manual y no dispara por docs. Se conserva evidencia del fallo original y aserción ya corregida. Nuevo run pendiente.
+
+---
+
 ## E0024 — corrección de aserción de test (2026-11-12)
 
 - [Run #43304804793](https://github.com/mxlzz/ACD/actions/runs/43304804793) falló en **un único regex de test**, no en fórmula: `acd_lab.core.rgb` rechaza NaN antes del validador local con mensaje `raw: found NaN or infinite values`, mientras el test esperaba literalmente `Nonfinite`. Se ajustó la expresión del test al mensaje efectivo (sin reducir validación). 6/7 tests E0024 pasaron; script sobre EXR todavía no corrió. Nuevo run pendiente.

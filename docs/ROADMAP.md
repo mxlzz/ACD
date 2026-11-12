@@ -1,3 +1,5 @@
+> E0024 workflow trigger actualizado para cambios específicos de test/parser HDR tail, tras corrección de mensaje NaN. Reejecución pendiente, no crear nuevos renders. 
+
 > E0024 primera ejecución [43304804793](https://github.com/mxlzz/ACD/actions/runs/43304804793): 6/7 tests pasan, único fallo de regex `Nonfinite` frente a error real `raw: found NaN or infinite values`, sin cálculos EXR. Ajuste de aserción solamente, nueva ejecución pendiente.
 
 > **E0024 (2026-11-12) en preparación:** auditoría de top 1 % HDR ref-luminance y raw error, máscaras comunes para Raw/OIDN/High/Super, errores dentro/fuera y concentración SSE; E0023 EXR existentes, **sin rerender**. Workflow E0024 pendiente. Detectada redundancia: E0021 ya probó Cozy 512×482 1024spp refs, por lo que el nuevo workflow E0020 320px se dejó solo manual y su ejecución redundante no debe definir nuevas decisiones. [E0024](experiments/E0024.md).

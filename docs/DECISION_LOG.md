@@ -464,3 +464,8 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - Primera CI E0024 #43304804793 falló antes de leer EXR, específicamente por texto del error del validador `rgb`; no se observó corrupción de método ni resultados de escena.
 - Se corrigió `pytest.raises` para esperar el mensaje real de `rgb`, manteniendo que NaN sea rechazado y sin modificar algoritmo. Próximo: reejecución controlada con EXR existentes.
+
+
+## 2026-11-12 — E0024 disparo mínimo de pipeline corregido
+
+- El cambio de test corrigió error de regex, pero GitHub solo ejecutaba el workflow cuando cambiaba YAML. Se añadieron rutas de test y diagnóstico al trigger para revalidar sin ejecución de Blender y sin re-render de escena. Evitar reruns por cambios documentales.

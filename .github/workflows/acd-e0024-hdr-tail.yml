@@ -6,6 +6,9 @@ on:
       - dev/acd-v2-oidn-detail-eval
     paths:
       - .github/workflows/acd-e0024-hdr-tail.yml
+      - tests/test_hdr_tail.py
+      - acd_lab/hdr_tail.py
+      - scripts/analyze_hdr_tail_e0024.py
   workflow_dispatch:
 
 permissions:
