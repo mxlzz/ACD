@@ -1,3 +1,10 @@
+## E0026 ejecutado — descartar gating Raw como solución general (2026-11-12)
+
+- [Run #43306559564](https://github.com/mxlzz/ACD/actions/runs/43306559564) **success, 16 tests**, reutiliza EXR E0021/E0023 sin render. [Informe E0026](docs/experiments/E0026.md) almacena dos refs x3 seeds: Cozy OIDN RMSE 0.08339 vs RAW_BRIGHT50 0.09781, RAW_BRIGHT100 0.13909; Terraced OIDN 0.16778 vs RAW_BRIGHT50 0.12253, RAW_BRIGHT100 0.10936. El algoritmo mejora claramente exterior nocturno pero degrada mucho interior: **no generaliza**. Errores de gradientes también se deterioran fuertemente en Cozy.
+- Decisión: **NO integrar** la variante y **NO optimizar post hoc** sus percentiles / pesos contra mismas escenas. E0026 workflow a manual; paquete experimental permanece disponible para investigación y casos negativos. Siguiente hipótesis: AOV Emission de Cycles como guía de clase física, no brillo crudo genérico, siempre con controles y sin referencia en inferencia. No hay ventaja general probada.
+
+---
+
 ## E0026 — primer candidato adaptativo *input-only* preparado, sin tocar Blender (2026-11-12)
 
 - [E0025](docs/experiments/E0025.md) reportó que OIDN reduce ligeramente la media energética en highlights (-0.85% aprox), pero produce error absoluto espacial mucho mayor que Raw. Para explorar preservación de extremos sin oracle se creó `acd_lab/highlight_blend.py` y tests: selección únicamente por percentiles de luminancia **Raw**, smoothstep 97%–99.5%, fusión local máxima 50% o 100% con OIDN; controles fijos 10% y 50% Raw globales.

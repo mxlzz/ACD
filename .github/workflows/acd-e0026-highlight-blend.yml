@@ -1,11 +1,6 @@
 name: ACD E0026 raw-only bright HDR blending controls on previous EXRs
 
 on:
-  push:
-    branches:
-      - dev/acd-v2-oidn-detail-eval
-    paths:
-      - .github/workflows/acd-e0026-highlight-blend.yml
   workflow_dispatch:
 
 permissions:

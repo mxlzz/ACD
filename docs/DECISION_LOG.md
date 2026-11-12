@@ -497,3 +497,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - Cuatro condiciones predeclaradas: FIXED10, FIXED50 globales, RAW_BRIGHT50 y RAW_BRIGHT100 con percentiles Raw 97/99.5 y smoothstep. OIDN/Raw/ACD High/Super se conservan de referencias. Mismas variantes en Cozy E0021 y Terraced E0023 contra ambas referencias y 3 seeds, RGB RMSE, MAE, edge, top1% ref y outside.
 - **Limitaciones:** los dos escenarios ya fueron observados y motivaron la hipótesis, por tanto evaluación exploratoria; no holdout. El threshold por Raw puede elegir fireflies, reintroducir ruido/artefactos y no ser seguro a FHD. No cambiar parámetros post hoc para maximizar RMSE observado, descartar si empeora.
 - **Estado:** scripts y workflow sin rerender comprometidos, tests/ejecución por verificar, addon/producto estable intactos.
+
+
+## 2026-11-12 — E0026 negativo fuera de escena: gating Raw por brillo rechazado
+
+- **Evidencia de GH run #43306559564:** 16 tests, dos escenas previamente examinadas, tres seeds/dos refs. RAW_BRIGHT100 mejora Terraced RMSE 0.16778->0.10936 y MAE 0.02107->0.01609, pero empeora fuertemente Cozy RMSE 0.08339->0.13909, edge 0.08970->0.13272. Segunda referencia conserva orden. Fusión local 50% también empeora Cozy 0.08339->0.09781.
+- **Decisión negativa:** no promover algoritmo, no reajustar umbrales Raw/mezclas ad hoc por escena, pues sería sobreajuste a datos ya observados. Esta es una hipótesis descartada como estrategia universal simple.
+- **Siguiente candidato:** guía física `Emission` AOV disponible en Cycles podría separar luces de superficies reflectantes, sin que se use la referencia para seleccionar píxeles en inferencia. Investigar su presencia en ambas escenas y compararla con mezcla global y Raw input. No anticipar mejora ni integrar sin validación ciega.
