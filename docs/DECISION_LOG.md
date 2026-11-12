@@ -469,3 +469,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-12 — E0024 disparo mínimo de pipeline corregido
 
 - El cambio de test corrigió error de regex, pero GitHub solo ejecutaba el workflow cuando cambiaba YAML. Se añadieron rutas de test y diagnóstico al trigger para revalidar sin ejecución de Blender y sin re-render de escena. Evitar reruns por cambios documentales.
+
+
+## 2026-11-12 — E0024 confirma concentración por highlights con máscara reference-only
+
+- **Run exitoso:** #43305087148, 7 tests y análisis EXR original E0023 (sin rerender). Datos 320×240, tres seeds y dos refs 512 spp. El top1% de brillo de referencia concentra ~71.69% SSE OIDN frente 35.46% Raw; RMSE local OIDN 1.42073, Raw 0.71512. Fuera del top1%, OIDN 0.08967 mejora Raw 0.09701. Dos refs patrón robusto; no implica convergencia.
+- **Limitación:** RMSE no distingue error por subestimación o sobreestimación de luminancia, desplazamiento espacial, AOV emission o glossy; clasificación no causal. Máscara por error raw tiene sesgo y no debe considerarse ranking de filtros.
+- **Decisión:** no incorporar corrección HDR ni retocar pesos todavía. Preparar E0025 análisis de signo/energía con los EXR existentes; E0024 workflow vuelve a manual. Conservar método y resultados en documento permanente.

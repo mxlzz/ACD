@@ -1,3 +1,5 @@
+> **E0024 verificado 2026-11-12:** [run 43305087148](https://github.com/mxlzz/ACD/actions/runs/43305087148), top1% brillo referencia concentra ~71.7% SSE OIDN vs 35.5% Raw. RMSE OIDN dentro=1.4207 vs Raw=0.7151; fuera=0.08967 vs Raw=0.09701. Segunda ref reproduce. [Informe](experiments/E0024.md). Es error espacial HDR, no causalidad de emisión; siguiente E0025 sesgo de luminancia con signo sobre mismos EXR. Workflow E0024 manual para ahorrar Actions.
+
 > E0024 workflow trigger actualizado para cambios específicos de test/parser HDR tail, tras corrección de mensaje NaN. Reejecución pendiente, no crear nuevos renders. 
 
 > E0024 primera ejecución [43304804793](https://github.com/mxlzz/ACD/actions/runs/43304804793): 6/7 tests pasan, único fallo de regex `Nonfinite` frente a error real `raw: found NaN or infinite values`, sin cálculos EXR. Ajuste de aserción solamente, nueva ejecución pendiente.

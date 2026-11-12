@@ -1,3 +1,10 @@
+## E0024 verificado — error HDR concentrado en luces, no causalidad (2026-11-12)
+
+- [Run #43305087148](https://github.com/mxlzz/ACD/actions/runs/43305087148) **success**, 7 tests; mismo EXR E0023 3 seeds ×2 refs. [E0024](docs/experiments/E0024.md): en top1% píxeles de mayor luminancia (solo referencia), RMSE medio Raw=0.7151 vs OIDN nativo=1.4207, High=1.2794, Super=1.2843. Fuera del 1%, OIDN=0.08967 mejora Raw=0.09701 y High=0.09479. Top luminosidad concentra ~71.7% del SSE nativo vs 35.5% Raw. Segunda referencia ratifica patrón. No confirma si OIDN atenúa o aumenta iluminación, ni efecto exclusivamente emisión; 512 spp no son convergencia probada.
+- E0020 320px se archivó como redundante frente a E0021 512px y dejó workflow **manual**, así como E0024 que ya completó. Siguiente diagnóstico E0025 de sesgo de luminancia firmado sin nuevos renders; F5 todavía sin base suficiente. No se tocó addon ni el motor del denoiser.
+
+---
+
 ## E0024 — reejecución tras fix de prueba (2026-11-12)
 
 - Se amplió el trigger **únicamente** del workflow E0024 a test/analizador específicos para ejecutar la versión corregida sin rehacer renders; se mantiene manual y no dispara por docs. Se conserva evidencia del fallo original y aserción ya corregida. Nuevo run pendiente.
