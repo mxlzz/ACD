@@ -406,3 +406,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Verificación E0022:** run 43291261400 success, Blender5 Cycles 4 spp, fuente MIT `Terraced Houses` con SHA256 y Git blob fijados, licencia original preservada, no faltan activos. Fixture ahora versionado y se incluye test de integridad en CI.
 - **E0023 diseño:** tras fijar explícitamente el baseline, probar sobre exterior nocturno no usado durante diagnóstico de Cozy Kitchen: 320 de ancho preservando relación fuente, 24 spp ×3 seeds, dos refs 512 spp, OIDN compositor frente ACD Standard/High/Super, mismo EXR y guías. Informe compacto generalizado. Resultado real por validar.
 - **Regla:** no ajustar hiperparámetros, modelo o código de ACD usando esta escena *si pretendemos utilizarla como held-out final*. Datos de prueba sirven para informar generalización, no para elegir los cambios. F5 aún no iniciado.
+
+
+## 2026-11-12 — Auditoría de costo GitHub Actions: runtime Blender no debe dispararse por PR
+
+- **Evidencia:** runs `ACD Blender 5.0.1 offline runtime bundle` aparecieron repetidamente al sincronizar el PR #10, descargando archivando ~374MB en cada commit documental. No aportan a los benchmarks ya existentes que descargan Blender por cache.
+- **Decisión:** cambiar solo el workflow del runtime efímero a `workflow_dispatch`, preservándolo cuando se necesite; quality CI permanece automático, E0021/E0023 workflows de benchmark siguen corriendo.
+- **Costo evitado:** no generar descargas/artefactos de runtime en commits posteriores sin motivo. Cambio de ejecución, no de algoritmo.

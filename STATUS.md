@@ -1,3 +1,11 @@
+## Ahorro de CI real — Runtime Blender manual (2026-11-12)
+
+- Se constató que `.github/workflows/acd-blender-runtime-bundle.yml` se reejecutaba en cada cambio del PR #10 aunque el código de Blender no cambiaba, generando ~374 MB de artifact de duración 1 día por commit. **Se reemplazó el trigger pull_request por workflow_dispatch manual**, preservando el workflow para descargar Blender cuando haga falta. El quality gate Python permanece automático.
+- E0021 Cozy Kitchen mayor resolución/ref 1024 spp y E0023 exterior retenido continúan ejecutándose en GitHub Actions; este commit no interrumpe ni duplica ambos tests, pues usan workflows distintos.
+- Cambio en configuración CI, no denoiser. Quality del commit pendiente.
+
+---
+
 ## E0022 verificado y E0023 prueba retenida preparada (2026-11-12)
 
 - [E0022 run #43291261400](https://github.com/mxlzz/ACD/actions/runs/43291261400) **success**, `terraced_houses.blend` 3,044,256 bytes, SHA256 `37b39be2ae1fc8624110f57bf5dd38f77a0420139b4c9a89946a2db35dffab84`, MIT de Yunus Emre Karaman, fijado commit fuente. Abrió y renderizó Blender5.0.1 Cycles CPU 192²×4 spp sin activos faltantes. [E0022](docs/experiments/E0022.md).

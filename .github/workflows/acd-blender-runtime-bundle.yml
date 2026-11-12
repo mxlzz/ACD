@@ -1,9 +1,8 @@
 name: ACD Blender 5.0.1 offline runtime bundle
 
+# This downloads and uploads a ~374 MB transient runtime.
+# Trigger manually only, NOT on every sync of the experimental PR.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/acd-blender-runtime-bundle.yml'
   workflow_dispatch:
 
 permissions:
