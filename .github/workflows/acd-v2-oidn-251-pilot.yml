@@ -60,6 +60,16 @@ jobs:
           test -n "$BIN" && test -x "$BIN"
           echo "OIDN_BIN=$BIN" >> "$GITHUB_ENV"
           "$BIN" --list_devices
+      - name: Get official OIDN 2.3.3 for version-isolated CPU comparison
+        run: |
+          curl -fL --retry 3 https://github.com/RenderKit/oidn/releases/download/v2.3.3/oidn-2.3.3.x86_64.linux.tar.gz -o oidn233.tar.gz
+          sha256sum oidn233.tar.gz
+          mkdir oidn233-dist
+          tar -xzf oidn233.tar.gz -C oidn233-dist
+          BIN233="$(find "$PWD/oidn233-dist" -type f -name oidnDenoise | head -n 1)"
+          test -n "$BIN233" && test -x "$BIN233"
+          echo "OIDN233_BIN=$BIN233" >> "$GITHUB_ENV"
+          "$BIN233" --list_devices
       - name: Blender render same noisy beauty and AOV for every seed
         run: |
           ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio \
@@ -77,6 +87,11 @@ jobs:
         run: |
           python -m scripts.oidn251_compare --directory "$ACD_BENCH_DIR" \
             --oidn "$OIDN_BIN" --output "$ACD_BENCH_DIR/oidn251_comparison.json"
+      - name: Isolate OIDN 2.3.3 vs 2.5.1 with same PFM and flags
+        run: |
+          python -m scripts.oidn_versions_compare --directory "$ACD_BENCH_DIR" \
+            --oidn233 "$OIDN233_BIN" --oidn251 "$OIDN_BIN" \
+            --output "$ACD_BENCH_DIR/oidn_versions.json"
       - name: Archive EXR, PFM, reports and SHA input provenance
         if: always()
         uses: actions/upload-artifact@v4

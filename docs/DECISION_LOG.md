@@ -264,3 +264,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Decisión de orquestación:** añadir descarga SHA fijado y comparador standalone al workflow `sid-architectural-pilot.yml`, que se dispara por modificación del propio workflow y ya ejecuta Blender real. No se alteran algoritmos ni escenas; se obtiene un nuevo método/versión sobre inputs existentes.
 - **Resultado:** cambio de workflow registrado; nuevo run pendiente. Si falla descarga o guías incompatibles, documentar causa y corregir sin reinterpretar como defecto de OIDN.
 - **Siguiente:** observar run, capturar errores de gradiente/HDR y diferencias raw/PFM, preservar evidencia E0014.
+
+
+## 2026-11-12 — E0014 verificado, diseñar aislamiento de versión OIDN en CLI
+
+- **Hecho observado:** run 43233365334 dos jobs success, verificado SHA oficial OIDN 2.5.1 y coincidencia raw beauty/AOV/colores PFM bajo 1e-5. Blender5 compositor supera media CLI 2.5.1 en RMSE y error de gradiente sobre Glass/interior emisivo a 192×144, 24 spp, tres seeds; E0014 fija resultados con números por seed y referencias.
+- **Limitación causal:** mezcla de diferencias OIDN 2.3.3 vs 2.5.1, parametrización y prefilter Accurate del compositor; no etiquetar 2.5.1 como inferior en general.
+- **Siguiente intervención falsable:** mismos PFM, mismas guías y mismos flags en CLI 2.3.3 y 2.5.1; medir contra dos referencias; comprobar repetibilidad 2.5.1. El tag 2.3.3 no publica digest de asset en GitHub REST, así que registrar SHA obtenida sin afirmar pinning externo hasta verificarla.
+- **Estado:** código de aislamiento, tests de flags y workflow preparados; aún no observada nueva ejecución ni resultados.

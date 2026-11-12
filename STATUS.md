@@ -1,3 +1,11 @@
+## E0014 — OIDN standalone 2.5.1 comprobado, siguiente aislamiento 2.3.3 vs 2.5.1 (2026-11-12)
+
+- [Run #43233365334](https://github.com/mxlzz/ACD/actions/runs/43233365334) **success ambos jobs**. Informe permanente [E0014](docs/experiments/E0014.md) y artifacts [Glass #13951826448](https://github.com/mxlzz/ACD/actions/runs/43233365334/artifacts/13951826448), [interior #13950773895](https://github.com/mxlzz/ACD/actions/runs/43233365334/artifacts/13950773895).
+- RMSE medio 3 seeds: Glass OIDN compositor 0.15562493 vs CLI 2.5.1 0.15612150; Interior compositor 0.07563019 vs CLI 2.5.1 0.08564105. Error gradiente bordes Glass 0.09138522 vs 0.09695046; interior 0.06909926 vs 0.07730485. **Sin ganancia demostrada** en estos fixtures para OIDN 2.5.1 CLI; configuraciones potencialmente distintas, no atribuir a versiones.
+- **Ahora preparado:** `oidn_versions_compare.py` compara dos binarios oficiales 2.3.3/2.5.1 sobre mismos PFMs y flags CPU HDR High, prueba repetición 2.5.1; workflow de F2 actualizado. Ejecución nueva pendiente.
+
+---
+
 ## F2 — Implementación conectada al workflow existente (2026-11-12)
 
 - [CI Python #43233365339](https://github.com/mxlzz/ACD/actions/runs/43233365339) **success: 89 tests**, incluida conversión PFM y métricas de detalle; comprobador de trazabilidad aprobó. Esto **no** es ejecución de Blender/OIDN standalone.
