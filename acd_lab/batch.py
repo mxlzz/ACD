@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .core import compare_images
+from .detail import detail_fidelity
 from .io import read_arrays
 
 NAMES = ("Raw", "STANDARD", "HIGH", "SUPER")
@@ -31,12 +32,13 @@ def evaluate_batch(directory: str | Path) -> dict:
     for name in NAMES:
         target = root / ("acd_compare_" + name + ".exr")
         candidate = read_arrays(target)["image"]
-        results[name] = compare_images(reference, candidate)
+        results[name] = {**compare_images(reference, candidate), "detail": detail_fidelity(reference, candidate)}
 
     for name in OPTIONAL:
         candidate_file = root / ("acd_compare_" + name + ".exr")
         if candidate_file.is_file():
-            results[name] = compare_images(reference, read_arrays(candidate_file)["image"])
+            candidate = read_arrays(candidate_file)["image"]
+            results[name] = {**compare_images(reference, candidate), "detail": detail_fidelity(reference, candidate)}
 
     check_file = root / "reference_check.exr"
     ref_disagreement = None
@@ -66,6 +68,11 @@ def evaluate_batch(directory: str | Path) -> dict:
         "rmse_reduction_vs_raw": relative_change,
         "rank_by_rmse": sorted(results, key=lambda name: results[name]["rmse_linear"]),
         "rank_by_mae": sorted(results, key=lambda name: results[name]["mae_linear"]),
+        "rank_by_edge_gradient_rmse": (sorted(
+            (name for name in results if results[name]["detail"]["edge_gradient_rmse"] is not None),
+            key=lambda name: results[name]["detail"]["edge_gradient_rmse"]
+        ) or None),
+        "detail_metric_scope": "Reference-defined color gradients; diagnostic, not a perceptual score or proof of reference convergence",
         "rank_by_log1p_luminance": sorted(results, key=lambda name: results[name]["log1p_luminance_rmse"]),
         "independent_reference_difference": ref_disagreement,
         "reference_quality_diagnostic": reference_quality_diagnostic,

@@ -1,3 +1,12 @@
+## F3 — Implementación de medición de gradientes (2026-11-12)
+
+- Añadido `acd_lab/detail.py`: gradientes RGB con compresión `asinh`, máscaras de borde definidas exclusivamente por referencia y error en regiones planas. Los métodos no pueden elegir sus propias máscaras. ROI se mide en cuadrícula original, con parejas contiguas válidas, evitando un artefacto previo de vecinos ficticios al aplanar máscaras.
+- Integrado en `evaluate_batch`, `assess_regions` y agregado descriptivo de semillas. `edge_contrast_ratio` **no es ranking autónomo**; puede premiar halos. Referencias finitas pueden introducir errores en la máscara.
+- Pruebas sintéticas nuevas para fidelidad exacta, blur, oversharpen, ruido plano, región discontinua, borde cromático, HDR negativo y entrada inválida. **CI pendiente al commit; no hay benchmarks de escenas ejecutados en esta etapa.**
+- Siguiente: comprobar quality CI y corregir cualquier fallo; usar EXR/Blender reales y comprobar distinción de métodos sobre detalle antes de inferir superioridad.
+
+---
+
 # ACD V2 — OIDN y conservación de detalle
 
 **2026-11-12, F1 — cambio de estrategia iniciado.** Branch `dev/acd-v2-oidn-detail-eval` creada desde commit `9a70736d88af` de PR #4. Issue #9 abierto. Este commit registra [plan V2](docs/ACD_V2_PLAN.md), auditoría estática de OIDN [v2.5.1](docs/OIDN_SOURCE_AUDIT.md), actualización del protocolo y prioridades. **No hay código, tests ni nuevos renders en este commit**; CI aún pendiente. El addon estable y reconstrucción SID no se alteran.

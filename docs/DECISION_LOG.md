@@ -239,3 +239,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Cambio de rumbo registrado:** F1–F6 en ACD_V2_PLAN.md e Issue #9; protocolo anterior M3 reemplazado formalmente con condiciones de validez y trazabilidad conservadas. Auditoría de OIDN v2.5.1 es **lectura de código**, no ejecución, clon o benchmarking.
 - **Validación:** repo/branch/issue y commits de documentación; CI de esta revisión pendiente. ACD addon original y SID Reference sin cambios.
 - **Próximo:** implementar y probar métricas de gradiente bajo máscara definida solo desde referencia; luego benchmark OIDN standalone con mismos EXR y guías.
+
+
+## 2026-11-12 — F3, diagnósticos por gradientes de referencia (commit de implementación)
+
+- **Hipótesis:** un RMSE global no distingue bien blur de detalles arquitectónicos. Añadir error de gradiente en bordes relevantes de la *referencia* y diferencia en zonas planas, sin seleccionar máscaras a partir de salidas candidatas.
+- **Diseño:** `asinh` por canal conserva signo de valores HDR; máscaras sobre magnitud de diferencias RGB, incluidas texturas isoluminantes; ROI con pares verdaderamente adyacentes. No reemplaza RMSE lineal ni métricas perceptuales ni modelos de error de referencia.
+- **Controles:** pruebas sintéticas de blur y oversharpen deben dar error de gradiente positivo; un sharpening puede elevar contraste sin mejorar fidelidad; ruido plano detectado; referencia lisa no genera ranking de bordes. Tests de integración regional añadidos.
+- **Estado:** commit de código y pruebas; CI real pendiente. Sin modificaciones de producción ni denoiser.
+- **Siguiente:** ejecutar CI, corregir fallos, ampliar a EXR reales y evaluar rankings sobre varios seeds y escenas.
