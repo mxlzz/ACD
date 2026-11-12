@@ -1,3 +1,5 @@
+> E0019 [Run 43285264648](https://github.com/mxlzz/ACD/actions/runs/43285264648): Blender5.0.1 abrió Cozy Kitchen y renderizó Cycles 192×192 a 4 spp, sin dependencias faltantes; 1077 objetos, 175 materiales, 2 cámaras. El bloqueo de publicación era `.gitignore` para .blend; fix limitado a `git add -f benchmarks/scenes/cozy_kitchen.blend` (sin modificar regla general), reintento pendiente.
+
 > E0019 primer import [43285007004](https://github.com/mxlzz/ACD/actions/runs/43285007004) falló antes de Blender debido a un chequeo de cabecera `BLENDER` que no contempla .blend comprimidos. Se conserva tamaño esperado, se registra tipo/bytes, se delega validación al parser Blender5 real. Nueva ejecución pendiente. No se publicó binario.
 
 > **E0019 iniciado 2026-11-12:** escena oficial Blender 3.5 Cozy Kitchen de Nicole Morena, 7.3 MiB, CC BY-SA, workflow que *solo publica el binario si Blender5.0.1 lo abre y renderiza sin dependencias faltantes*. [E0019](experiments/E0019.md). El render funcional y commit binario están pendientes de prueba al escribir este documento. Escena del usuario no se sube.

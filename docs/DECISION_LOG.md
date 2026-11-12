@@ -319,3 +319,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - Hecho: primer run 43285007004 falló en inspección superficial inicial sin llegar a Blender (HTTP 200, payload 7.3 MiB). Un archivo .blend puede estar comprimido y no comenzar en texto plano por la cabecera BLENDER; no asumir formato de byte literal.
 - Corrección: mantener control exacto del tamaño oficial y diagnóstico con `file`/primeros bytes, posponer validez estructural al parser oficial Blender5 y smoke. Binario todavía no publicado, nuevo run pendiente.
+
+
+## 2026-11-12 — E0019 verificación real de Cozy Kitchen y excepción de ignore
+
+- **Observado:** GH Actions 43285264648, Blender5.0.1 Cycles abrió y renderizó (192×192 4 spp) sin recursos de imagen faltantes: 1077 objetos, 1058 mesh, 175 materiales, 2 cámaras, 0 bibliotecas externas. Descarga 7,685,702 bytes. No es benchmark de calidad.
+- **Problema de publicación:** la regla general `*.blend` en .gitignore bloqueó `git add`, impidiendo el commit pese a superar el render. No se cambió el archivo ni se publicó.
+- **Corrección:** añadir `-f` solo al archivo pequeño específico; no tocar .gitignore ni promover otros artefactos. Reintento verificable, CI posterior al commit.

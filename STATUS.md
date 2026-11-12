@@ -1,3 +1,10 @@
+## E0019 — Cozy Kitchen validada, bloqueo de gitignore en publicación (2026-11-12)
+
+- [Workflow 43285264648](https://github.com/mxlzz/ACD/actions/runs/43285264648) ejecutó Blender5.0.1 **con éxito**: escena `Main`, cámara activa `CAM-wide`, 2 cámaras, 1077 objetos, 1058 meshes, 175 materiales, 6 imágenes (4 packed), 0 texturas faltantes, 0 librerías externas, render de prueba Cycles CPU 192×192 ×4 spp OK. Fuente oficial 7,685,702 B. El original permaneció sin cambios.
+- Publicación posterior falló porque `.gitignore` omite `*.blend`; se corrigió la etapa de `git add` con **`-f` únicamente en `benchmarks/scenes/cozy_kitchen.blend`**. No eliminar el ignore global ni permitir otros .blend por accidente. Reintento pendiente. Este commit todavía no contiene el binario.
+
+---
+
 ## E0019 — Validación de fuente: corrección de premisa de cabecera (2026-11-12)
 
 - Primer intento [workflow 43285007004](https://github.com/mxlzz/ACD/actions/runs/43285007004) **failure en paso de descarga**, probablemente por comprobación inadecuada de magic uncomprimido `BLENDER` en .blend (puede estar comprimido); descarga HTTP 200 de ~7.3 MiB. No se abrió Blender ni se publicó archivo. Se corrigió el protocolo: conservar validación de tamaño y documentar bytes iniciales, después dejar a Blender verificar el archivo realmente. Nuevo run pendiente; no inferir defecto de la escena.
