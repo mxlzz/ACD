@@ -1,3 +1,9 @@
+## E0024 — corrección de aserción de test (2026-11-12)
+
+- [Run #43304804793](https://github.com/mxlzz/ACD/actions/runs/43304804793) falló en **un único regex de test**, no en fórmula: `acd_lab.core.rgb` rechaza NaN antes del validador local con mensaje `raw: found NaN or infinite values`, mientras el test esperaba literalmente `Nonfinite`. Se ajustó la expresión del test al mensaje efectivo (sin reducir validación). 6/7 tests E0024 pasaron; script sobre EXR todavía no corrió. Nuevo run pendiente.
+
+---
+
 ## E0024 — diagnóstico sobre EXR existentes, no repetir E0020 (2026-11-12)
 
 - Al recuperar la historia completa de la rama, se constató que **E0020 fue seguido por E0021** (Cozy Kitchen 512×482, tres seeds, dos referencias 1024 spp; OIDN nativo supera High/Super en RMSE y gradientes) y **E0023** (Terraced Houses exterior nocturno, RMSE nativo mayor que Raw pero menor MAE y error de bordes). No tomar el piloto 320px añadido nuevamente como experimento nuevo; su workflow se pasa a **manual** y se conserva por reproducibilidad.

@@ -458,3 +458,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Método E0024:** máscaras top1% de luminancia de la referencia y top1% de error Raw, idénticas por método, dos refs y tres seeds, SSE/RMSE/MAE dentro y fuera. La máscara raw-error seleccionada tiene sesgo en favor del raw: explícitamente **no** usar como evaluación de superioridad ni en inferencia.
 - **Protocolo:** test sintético de máscara invariante frente a candidato, empates, conservación SSE, HDR y validación input. Workflow lee EXR existentes run 43291659387; no recrea referencias ni altera el denoiser. Estado real del diagnóstico pendiente al commit.
 - **Puerta F5:** no activada. Cualquier hipótesis basada en región nocturna examinada debe validarse en otra escena no vista y evitar leakage de referencia a tiempo de uso.
+
+
+## 2026-11-12 — E0024 verificación de precondición NaN en test
+
+- Primera CI E0024 #43304804793 falló antes de leer EXR, específicamente por texto del error del validador `rgb`; no se observó corrupción de método ni resultados de escena.
+- Se corrigió `pytest.raises` para esperar el mensaje real de `rgb`, manteniendo que NaN sea rechazado y sin modificar algoritmo. Próximo: reejecución controlada con EXR existentes.

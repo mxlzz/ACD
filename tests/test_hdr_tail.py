@@ -61,7 +61,7 @@ def test_invalid_fraction_and_shape():
     with pytest.raises(ValueError, match="candidate"):
         hdr_tail_breakdown(ref, raw, {"Bad": np.zeros((2, 3, 3))})
     raw[0, 0, 0] = np.nan
-    with pytest.raises(ValueError, match="Nonfinite"):
+    with pytest.raises(ValueError, match="NaN or infinite"):
         hdr_tail_breakdown(ref, raw, {})
 
 
