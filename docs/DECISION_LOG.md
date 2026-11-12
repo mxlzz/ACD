@@ -289,3 +289,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Limitación de E0015 descubierta:** OIDN 2.3.3 y 2.5.1 binarios mismos SHA entre runs, pero color PFM diferente RMSE 4.96e-5 entre corridas; la superioridad v2.3.3 en una corrida no se repitió como diferencia de versión en corrida posterior. Diferencias de rendimiento sugieren CPUs ISA distintos; v2.4 añadió AMX-FP16 y v2.5 lo optimizó, pero aún falta confirmar CPU efectiva en jobs.
 - **Próxima prueba controlada:** PFM matemático de hash fijo en Ubuntu22/24 runners, log CPU/ISA desde `oidnDenoise -v 2`, versión/digest/output, comparación directa sin Blender. El código prueba reproducibilidad de fixture. No usar datos de distinto CPU como comparación absoluta de rendimiento.
 - **Aprobación de etapa:** F3 instrumentación y ejecución parcial logradas; F5/F6 en espera por necesidad de casos representativos. 
+
+
+## 2026-11-12 — E0017 confirma ISA/hardware; workflows pesados manuales; siguiente puerta profesional
+
+- **Evidencia:** run 43237525190, Ubuntu24 AMD EPYC 7763 (AVX2) y Ubuntu22 AMD EPYC 9V45 (AVX-512), PFM de tres passes SHA idénticos entre hosts. Salida 2.3.3==2.5.1 por host, salida entre hosts RMSE 7.4117e-7. ISA afecta valores en pequeño grado. No suficiente para explicar E0015 ~0.0022; falta observar backend AMX y/o causas de variabilidad en inputs entre workers.
+- **Conclusión metodológica:** detener comparaciones de rendimiento absoluto entre diferentes VMs; registrar CPU/ISA y entradas SHA en resultados. No afirmar una ganancia por upgrade OIDN. E0017 permanente.
+- **Orquestación:** deshabilitar disparo de workflows pesados por sincronizaciones de PR (mantenidos con `workflow_dispatch`); quality automático sigue asegurando contrato y trazabilidad. Evita nueva ejecución del mismo benchmark por cambio documental sin nueva hipótesis.
+- **Bloqueo para F5:** aún no hay evidencia profesional de un detalle que OIDN pierda y ACD recupere fielmente; necesitamos escena arquitectónica autorizada o dataset público de calidad. No entrenar, no fork, no mezclar algoritmos sin objetivo verificable. PR experimental permanece draft, addon estable intacto.
+- **Estado del commit:** instrucciones y resultados documentados, nueva validación quality pendiente.

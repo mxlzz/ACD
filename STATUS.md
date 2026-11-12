@@ -1,3 +1,13 @@
+## E0017 validado — cierre del ciclo automático actual (2026-11-12)
+
+- [ISA fixed-input run #43237525190](https://github.com/mxlzz/ACD/actions/runs/43237525190) **success dos jobs**, [E0017](docs/experiments/E0017.md): mismo PFM por SHA en AMD EPYC 7763 AVX2 vs EPYC9V45 AVX-512; los dos OIDN CLI v2.3.3/v2.5.1 son idénticos *dentro* de cada CPU, pero entre CPUs su output difiere RGB RMSE 7.41e-7 (max abs 3.48e-5). La causa de discrepancias mayores E0015 no está aislada. No atribuir diferencias a AMX sin medición.
+- F1 gobernanza/documentación completa en PR #10 draft e Issue #9. F2 runtime CLI/versión verificadas, quedando control estricto prefilter/compositor e ISA. F3 tests de detalle y escena sintética verificados E0016, pero no hay escena profesional 1080p con referencia adecuada. F4 revisión repos ProDen/StatMC/StatER hecha, sin port. F5/F6 sin habilitación científica.
+- **Decisión de eficiencia de CI:** el workflow pesado histórico M3.9, piloto independiente OIDN y diagnostico ISA pasan a `workflow_dispatch` manual; solo quality gate permanece automático en cada PR. Razón: cualquier push a PR #10 reejecutaba todos los workflows a pesar de no modificar su código, consumiendo minutos y repitiendo datos ya verificados. Se mantienen disponibles y reproducibles, sin borrar scripts ni artifacts existentes.
+- **Pendiente que requiere escena externa:** una escena .blend arquitectónica autorizada y con recursos empaquetados (o dataset público realmente representativo), idealmente detalles finos, vidrio, reflejos, vegetación, iluminación artificial. No incorporar escena propietaria al repo público. Hasta entonces, no diseñar un 'denoiser mejor' basándose solo en fixture sintético.
+- En este commit calidad CI **aún pendiente**; confirmar antes de dar estado final.
+
+---
+
 ## E0016 verificado / CPU ISA bajo investigación (2026-11-12)
 
 - [Run #43235485653](https://github.com/mxlzz/ACD/actions/runs/43235485653) **3 jobs success** incluyendo `detail_target` 320×240; [quality #43235484414](https://github.com/mxlzz/ACD/actions/runs/43235484414) **90 tests**. [E0016](docs/experiments/E0016.md) almacena comparación y caveats. En detail_target OIDN nativo RGB RMSE medio 0.0608849 y error gradiente 0.0721193, frente ACD High 0.0613499/0.0721533 y Super 0.0632406/0.0726432. Super eleva contraste y mejora MAE pero empeora fidelidad de gradiente y RMSE: aparente nitidez no equivale a detalle verdadero.

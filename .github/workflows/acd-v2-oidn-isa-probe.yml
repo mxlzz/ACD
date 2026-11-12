@@ -1,9 +1,6 @@
 name: ACD V2 OIDN fixed-input CPU ISA probe
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/acd-v2-oidn-isa-probe.yml"
   workflow_dispatch:
 
 permissions:

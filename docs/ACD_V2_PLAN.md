@@ -50,3 +50,8 @@ F1 completado a nivel de gobierno (Issue #9, PR #10, trazabilidad y CI); F2 aisl
 ### E0016, 2026-11-12 — control de detalle y de backend
 
 [E0016](experiments/E0016.md) valida que la métrica integrada funciona en escena controlada de lamas/juntas/vidrio, y detecta que ACD Super puede elevar contraste aparente mientras empeora RMSE y error de bordes. F3 **no concluido** por ausencia de escenas profesionales. El cambio de versión OIDN fue sensible a differences de inputs entre runs/posible ISA. Se habilita microensayo de CPU ISA con input sintético SHA fijo, antes de decidir algoritmo. Sin prueba de mejora ACD, no se abre F5.
+
+
+### Puerta actual después de E0017 (2026-11-12)
+
+Infraestructura, baseline OIDN, métricas de detalle y separación de versiones/hardware verificadas; docs E0014–E0017. Las únicas pruebas de detalle aún son 320×240 sintéticas. El paso próximo es aportar y analizar una escena **realista, sin filtrar contenidos privados** en repo público, y realizar varios seeds y referencias antes de una hipótesis F5. Los workflows pesados permanecen manuales; CI calidad automático. F5/F6 no realizados.

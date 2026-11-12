@@ -1,13 +1,6 @@
 name: ACD M3.9 Cycles Classroom Glass Lobby SID4 ACD Native comparison
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/sid-architectural-pilot.yml"
-      - "tests/blender_compare_smoke.py"
-      - "acd_lab/batch.py"
-      - "scripts/summarize_sid_realbench.py"
-      - "tests/test_sid_realbench_summary.py"
   workflow_dispatch:
 
 permissions:

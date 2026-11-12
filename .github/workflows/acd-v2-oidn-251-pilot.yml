@@ -1,9 +1,7 @@
 name: ACD V2 OIDN 2.5.1 vs Blender 5 same raw AOVs
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/acd-v2-oidn-251-pilot.yml"
   workflow_dispatch:
+
 permissions:
   contents: read
 jobs:

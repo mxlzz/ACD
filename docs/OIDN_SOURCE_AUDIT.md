@@ -24,3 +24,8 @@ La fuente recomienda `git lfs install; git clone --recursive https://github.com/
 
 ## Prueba F2 todavía pendiente
 Obtener EXR de input idéntico para OIDN de Blender5.0.1 y standalone2.5.1, registrar SHA256, tipo HDR/guías, precisión, OIDN build string, CPU/GPU, tiempo, versiones y outputs. **No confundir salida numéricamente distinta con superioridad**. Usar E0013 de partida, pero aumentar resolución y diversidad de escenas para conclusión. No reemplazar dependencias de Blender en producción.
+
+
+## F2 ejecutado, actualización 2026-11-12
+
+El trabajo ya no se limita a auditoría estática: se descargaron y ejecutaron los **binarios oficiales** 2.3.3/2.5.1 en GitHub Actions CPU, con PFM/guías y metadatos de procedencia. [E0014](experiments/E0014.md) compara standalone2.5.1 con nodo compositor Blender; [E0015](experiments/E0015.md) aísla versiones con mismos inputs por run; [E0016](experiments/E0016.md) encuentra cambios entre runners con entradas no idénticas y sin captura ISA; [E0017](experiments/E0017.md) confirma diferencias numéricas muy pequeñas entre AVX2 y AVX-512 para un PFM sintético idéntico, sin atribuir E0015 a AMX todavía. No se ha compilado fork, entrenado pesos, probado OptiX ni validado calidad en escena profesional.
