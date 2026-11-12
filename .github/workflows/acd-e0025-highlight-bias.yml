@@ -1,11 +1,6 @@
 name: ACD E0025 signed HDR highlight diagnosis without rerender
 
 on:
-  push:
-    branches:
-      - dev/acd-v2-oidn-detail-eval
-    paths:
-      - .github/workflows/acd-e0025-highlight-bias.yml
   workflow_dispatch:
 
 permissions:

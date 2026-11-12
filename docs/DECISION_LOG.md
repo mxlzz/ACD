@@ -483,3 +483,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - A partir de E0024 el top1% brillo según referencia conserva 71.69% SSE de OIDN en escena nocturna, pero RMSE no señala dirección. Hipótesis falsable: filtro atenúa o amplifica iluminación media en ese subconjunto.
 - Diseño: máscara seleccionada únicamente por luminancia RGB de referencia, única para todos los candidatos; reportar delta de luminancia con signo, ratio de energía, porcentaje de pixels sobre y bajo referencia, para ambas referencias/tres seeds. Registro sin rerender desde EXR E0023, con pruebas direccionales y caso de referencia cero.
 - Estado: código/test/workflow preparados, ejecución pendiente. No mezclar selección de máscara con estimación en inferencia, no inferir causa por emisión o red sin pruebas.
+
+
+## 2026-11-12 — E0025 sesgo firmado de highlights verificado
+
+- E0025 GH run 43305700278 completó 10 tests y cuantificación con 3 seeds, 2 refs del E0023. En top1% luminosidad referencia OIDN ratio 0.99147 (ref1), delta -0.19294, abs error 0.79937 vs Raw 0.33771; 56.16% píxeles sobre referencia, por lo tanto sesgo global promedio no implica subestimación uniforme. Ref2 confirma ratio 0.99088 y delta -0.20627. High/Super corrigen signo medio pero mantienen error local elevado.
+- **Decisión:** no corregir exposición ni reasignar emisión basándose en media. Probar, solo offline, fusión Raw/OIDN con control *input-only* sobre dos escenas observadas, además de fusión constante como ablation; exigir tercer conjunto no observado antes de conclusión. E0025 workflow queda manual.

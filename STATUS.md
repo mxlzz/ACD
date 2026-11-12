@@ -1,3 +1,10 @@
+## E0025 verificado — OIDN sesgo mixto en highlights (2026-11-12)
+
+- [Run 43305700278](https://github.com/mxlzz/ACD/actions/runs/43305700278) **success**, 10 tests. [E0025](docs/experiments/E0025.md): en top1% brillo de referencia, OIDN promedio ratio energía 0.99147 y delta lum -0.19294 (ref2 ratio 0.99088), pero 56% de píxeles sobre ref, abs error 0.799 vs Raw 0.338. High ratio 1.00395/abs0.728 y Super 1.00542/abs0.746. Error espacial mixto, no basta reajustar exposición global, no prueba causalidad de emisión. Prueba sin rerender a partir de E0023, tres seeds y dos referencias finitas.
+- Siguiente: ablation **postproceso sin guías de referencia** usando solo luminosidad de Raw para mezcla localizada frente a mezcla constante, evaluar exactamente mismos parámetros en Cozy Kitchen y exterior nocturno. E0025 workflow pasa a manual tras éxito. Aún sin algoritmo validado ni mejora publicable.
+
+---
+
 ## E0025 — sesgo HDR firmado, preparación sin nuevo render (2026-11-12)
 
 - E0024 confirmó gran SSE en top1% luminosidad de referencia, pero no dirección. Se añadió `highlight_signed_bias` y pruebas para detectar atenuación o amplificación de energía en máscaras SOLO de referencia; contiene ratio de suma de luminancias, delta firmado, fracción sobre/bajo ref para mismos píxeles/métodos. Workflow nuevo consume artifacts E0023 y escribe JSON 3 semillas ×2 refs. **CI y ejecución pendientes**, no se ha concluido ninguna causa; aun sin datos para entrenar/cambiar algoritmo.
