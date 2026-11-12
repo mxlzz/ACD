@@ -1,3 +1,11 @@
+## E0021 — Post-análisis de mayor resolución preparado (2026-11-12)
+
+- [Run real #43289852695](https://github.com/mxlzz/ACD/actions/runs/43289852695) **success**: Blender5.0.1 Cozy Kitchen 512×482, 24spp ×3, 1024spp refs ×2, mismo RenderLayer/AOV. Nativo/Standard RMSE media 0.0833928, High 0.0860779, Super 0.0971167; error bordes 0.0896975/0.0902929/0.0962214. Las referencias entre sí difieren 0.0355077 RMSE o 13.5268% del error raw, menor que E0020 24.51%; rankings entre refs coherentes.
+- Workflow `acd-e0021-cozy-analyze.yml` recuperará estos EXR exactos y computará medias contra ambas refs para 3 semillas + ROI nativo corregido y tres recortes. Publicará E0021 y derived CC BY-SA en GitHub. **Al registrar este commit el análisis y su publicación aún no están verificados.**
+- E0023 sobre segunda escena retenida sigue separado. Protocolo: seguir sin tocar algoritmo hasta cotejar resultados con referencias y escena retenida.
+
+---
+
 ## Ahorro de CI real — Runtime Blender manual (2026-11-12)
 
 - Se constató que `.github/workflows/acd-blender-runtime-bundle.yml` se reejecutaba en cada cambio del PR #10 aunque el código de Blender no cambiaba, generando ~374 MB de artifact de duración 1 día por commit. **Se reemplazó el trigger pull_request por workflow_dispatch manual**, preservando el workflow para descargar Blender cuando haga falta. El quality gate Python permanece automático.

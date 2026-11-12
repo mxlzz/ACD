@@ -1,3 +1,5 @@
+> E0021 run #43289852695 Blender5.0.1 Cozy Kitchen **success**: 512×482, 24spp ×3 refs1024spp ×2; discrepancia de refs 0.03551 RMSE (13.53% raw, vs 24.51% E0020). OIDN nativo/Standard menor RMSE y gradiente que High/Super; se prepara postprocesamiento ROI con 2 refs y 3 seeds, no rerender; workflow, pruebas y publicación E0021 aún pendientes.
+
 > 2026-11-12 mantenimiento CI: el workflow `acd-blender-runtime-bundle.yml` descargaba y archivaba 374MB en cada sync del PR #10; ahora es manual únicamente, dejando quality CI automático y benchmarks por disparo controlado. Objetivo: evitar consumo de minutos y artefactos sin evidencia nueva.
 
 > **E0022 verificado y E0023 lanzable, 2026-11-12:** exterior nocturno MIT ya versionado (SHA y licencia), Blender5 smoke passed [#43291261400](https://github.com/mxlzz/ACD/actions/runs/43291261400). Workflow E0023 usa 24 spp ×3, refs 512 ×2 a ancho320 para **test retenido**. Preparado, ejecución pendiente. E0021 de Cozy Kitchen 1024spp referencias continúa separadamente.

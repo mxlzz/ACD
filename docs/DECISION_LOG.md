@@ -413,3 +413,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Evidencia:** runs `ACD Blender 5.0.1 offline runtime bundle` aparecieron repetidamente al sincronizar el PR #10, descargando archivando ~374MB en cada commit documental. No aportan a los benchmarks ya existentes que descargan Blender por cache.
 - **Decisión:** cambiar solo el workflow del runtime efímero a `workflow_dispatch`, preservándolo cuando se necesite; quality CI permanece automático, E0021/E0023 workflows de benchmark siguen corriendo.
 - **Costo evitado:** no generar descargas/artefactos de runtime en commits posteriores sin motivo. Cambio de ejecución, no de algoritmo.
+
+
+## 2026-11-12 — E0021 ejecutado, preservar detalle en ROI con 2 referencias y 3 seeds
+
+- **Verificado:** GH Actions 43289852695 success, escena Cozy Kitchen original, proporción preservada 512×482, 24spp×3, refs1024spp×2. Discrepancia refs/raw bajó de E0020 ~24.5% a 13.5% pero no prueba convergencia. OIDN compositor/Standard RMSE media 0.0833928 y borde 0.0896975, High 0.0860779/0.0902929, Super 0.0971167/0.0962214. Ranking total entre refs coherente.
+- **Siguiente comprobación:** recuperar EXR real, medir todas semillas con ambas refs y visualizar ROI de alto gradiente elegidas sin salida candidata; persistir reporte y previews bajo licencia original CC BY-SA. Workflow nuevo no vuelve a renderizar.
+- **Estado al commit:** datos y workflow; ejecución del postprocesador aún pendiente. Ninguna mejora algorítmica demostrada.
