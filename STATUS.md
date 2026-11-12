@@ -1,3 +1,12 @@
+## E0023 — Instrumento de concentración de errores HDR añadido (2026-11-12)
+
+- Resultados verificados E0023 [run 43291659387](https://github.com/mxlzz/ACD/actions/runs/43291659387): Raw RMSE 0.1201359 frente OIDN comp 0.1677849; pero Raw MAE 0.0281466 frente OIDN 0.0210728 y error de bordes Raw 0.1210943 vs OIDN 0.0679478. Ref spread/raw 17.01%; multiseed heurística aprobó, no independencia científica.
+- Nuevo `acd_lab.error_concentration` cuantifica qué proporción del error cuadrático HDR aportan el peor 1 % de píxeles, más valor máximo/p99, con tests de outlier y error uniforme. **Implementado pero no corrido sobre E0023 al commit**. Permite investigar la discrepancia RMSE/MAE sin afirmar causa antes de medir.
+- E0021 Cozy Kitchen a 512×482 con dos refs de 1024 spp está archivado con ROI/crops en [E0021](docs/experiments/E0021.md). No mejora ACD High/Super.
+- Precaución: E0023 ya se observó y por ello pierde pureza como test completamente ciego para futuros candidatos; requiere otra escena no observada en F5.
+
+---
+
 ## E0021 — Post-análisis de mayor resolución preparado (2026-11-12)
 
 - [Run real #43289852695](https://github.com/mxlzz/ACD/actions/runs/43289852695) **success**: Blender5.0.1 Cozy Kitchen 512×482, 24spp ×3, 1024spp refs ×2, mismo RenderLayer/AOV. Nativo/Standard RMSE media 0.0833928, High 0.0860779, Super 0.0971167; error bordes 0.0896975/0.0902929/0.0962214. Las referencias entre sí difieren 0.0355077 RMSE o 13.5268% del error raw, menor que E0020 24.51%; rankings entre refs coherentes.

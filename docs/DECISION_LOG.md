@@ -424,3 +424,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-12 — E0021 two-reference detail analysis preserved
 - Reused exact EXR artifacts from run 43289852695, computed RMSE and reference-selected edge gradients on all three noisy seeds against both reference renders. Crops selected without candidate signals, tonemapping non-OCIO diagnostic. Attribution Nicole Morena CC BY-SA.
 - Result: Native compositor OIDN/Standard lower RMSE and edge-gradient error vs ACD High/Super on this development scene at 512x482. Reference discrepancy decreased relative to E0020 but convergence/independence still unproven. No algorithm trained or altered.
+
+
+## 2026-11-12 — E0023 discrepancia RMSE vs MAE: medir outliers HDR antes de atribuir causas
+
+- **Hecho:** 24spp×3 seeds, refs512spp×2, noche Terraced Houses: raw RMSE 0.12014 < OIDN0.16778, pero raw MAE0.02815 > OIDN0.02107 y error gradiente0.12109 > OIDN0.06795. No demuestra superioridad visual de raw ni causa específica.
+- **Nueva metrología:** reportar fracción SSE en el peor 1% de píxeles, valor extremo y p99 sobre datos lineales HDR. Tests sintéticos de un outlier vs error uniforme. No se ha corrido en la escena real a este commit.
+- **Higiene experimental:** al usar E0023 para identificar una anomalía, deja de ser un held-out ciego en el sentido estricto. Cualquier candidato F5 exige validación sobre otra escena no observada. Sin alterar denoiser.

@@ -1,3 +1,5 @@
+> E0023 diagnóstico HDR 2026-11-12: Raw gana RMSE 0.120 frente OIDN 0.168, pero OIDN gana MAE y error de gradientes. Nueva métrica de concentración SSE peor 1 % con tests creada; analizar aún en EXR existentes sin rerender. Escena nocturna E0023 ya observada, así que no es test ciego para cambios posteriores. E0021 ROI/crops archivados y quality validada.
+
 > E0021 run #43289852695 Blender5.0.1 Cozy Kitchen **success**: 512×482, 24spp ×3 refs1024spp ×2; discrepancia de refs 0.03551 RMSE (13.53% raw, vs 24.51% E0020). OIDN nativo/Standard menor RMSE y gradiente que High/Super; se prepara postprocesamiento ROI con 2 refs y 3 seeds, no rerender; workflow, pruebas y publicación E0021 aún pendientes.
 
 > 2026-11-12 mantenimiento CI: el workflow `acd-blender-runtime-bundle.yml` descargaba y archivaba 374MB en cada sync del PR #10; ahora es manual únicamente, dejando quality CI automático y benchmarks por disparo controlado. Objetivo: evitar consumo de minutos y artefactos sin evidencia nueva.
