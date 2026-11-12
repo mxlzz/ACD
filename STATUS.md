@@ -1,3 +1,11 @@
+## E0021 — Control de mayor resolución y convergencia de referencias (2026-11-12)
+
+- E0020 se verificó y sus [ROI/3 crops + informe](docs/experiments/E0020.md) se versionaron efectivamente en commit `4825a4afc57991e7c4be42a044925d38f67fc5e1`, [run de postproceso #43289259037](https://github.com/mxlzz/ACD/actions/runs/43289259037) success; no rerender. F3 `NATIVE_COMP_OIDN` presente en ROI.
+- Nuevo ensayo E0021: Blender5.0.1 Cozy Kitchen a **ancho máximo 512, alto derivado de aspecto original**, 24spp ×3 seeds y referencias 1024spp ×2; ACD Standard/High/Super frente a nativo. Introduce `--max-width` sin mutar el original, guarda `source_original_resolution` y pixel aspect en metadata. Un solo job manual/push-path, no rerenders innecesarios.
+- **Estado al commit:** código y tests, nuevo workflow y resultados aún no verificados. Prioridad: comprobar nueva discrepancia entre refs, comparación global y detalles y revisar si los beneficios perceptuales ameritan hipótesis F5. No inferir convergencia por spp altos solamente.
+
+---
+
 ## E0020 post-proceso completó cálculos, publicación bloqueada por gitignore (2026-11-12)
 
 - [Run #43288965340](https://github.com/mxlzz/ACD/actions/runs/43288965340) generó recortes y reporte regional desde los EXR originales **sin rerender**: tres ROI 80×80 seleccionadas solo de referencias; `NATIVE_COMP_OIDN` recuperado en reporte de regiones. Comparación de cinco métodos contra cada referencia arroja mismo orden sustantivo en la seed primaria (Standard/OIDN idénticos, después High, Super, Raw).

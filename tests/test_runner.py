@@ -71,3 +71,13 @@ def test_no_unexpected_shell_invocations(paths, monkeypatch):
               "--output", str(paths[2])])
     assert seen[0][1]["check"] is True
     assert isinstance(seen[0][0], list)
+
+
+def test_max_width_preserves_scene_ratio_via_blender_and_rejects_mixed_overrides(paths):
+    _, env = make_command(args(paths, "--max-width", "512"))
+    assert env["ACD_MAX_WIDTH"] == "512"
+    assert "ACD_WIDTH" not in env and "ACD_HEIGHT" not in env
+    with pytest.raises(ValueError, match="mutually exclusive"):
+        validate(args(paths, "--max-width", "512", "--height", "384"))
+    with pytest.raises(ValueError, match="between"):
+        validate(args(paths, "--max-width", "2"))

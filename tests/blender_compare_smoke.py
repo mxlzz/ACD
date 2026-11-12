@@ -95,8 +95,16 @@ try:
     scene.cycles.device = "CPU" if device == "CPU" else "GPU"
     input_spp = int(os.environ.get("ACD_INPUT_SPP", "16"))
     input_seed = int(os.environ.get("ACD_INPUT_SEED", "539"))
-    width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
-    height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
+    source_resolution = [scene.render.resolution_x, scene.render.resolution_y]
+    if scene_variant == "external" and os.environ.get("ACD_MAX_WIDTH"):
+        max_width = int(os.environ["ACD_MAX_WIDTH"])
+        if not 8 <= max_width <= 4096:
+            raise ValueError("ACD_MAX_WIDTH must be in [8, 4096]")
+        width = min(source_resolution[0], max_width)
+        height = max(8, round(source_resolution[1] * width / source_resolution[0]))
+    else:
+        width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
+        height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
     assert input_spp > 0 and 8 <= width <= 4096 and 8 <= height <= 4096
     scene.cycles.samples = input_spp
     scene.cycles.seed = input_seed
@@ -413,6 +421,8 @@ try:
         "second_reference_seed": reference_seed + 103 if second_reference else None,
         "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
+        "source_original_resolution": source_resolution if scene_variant == "external" else None,
+        "source_original_pixel_aspect": [scene.render.pixel_aspect_x, scene.render.pixel_aspect_y] if scene_variant == "external" else None,
         "compositional_methods": [name for _, _, name, _ in methods],
         "sid_reference_methods": sid_selected,
         "sid_reference_source_commit": (

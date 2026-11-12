@@ -372,3 +372,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-12 — E0020 ROI analysis (no rerender)
 - Reused exact EXRs from Actions 43287450449 via gh run download. Computed both-reference rankings and corrected region metrics including NATIVE_COMP_OIDN. Crops chosen only from two refs, display transform explicitly non-OCIO.
 - Persisted E0020.md plus coordinates, 3 derived CC BY-SA images under benchmarks/results/cozy_e0020 (credit Nicole Morena), and JSON. Numerical conclusions remain provisional for 320×240 finite refs. No ACD algorithm change.
+
+
+## 2026-11-12 — E0021, aumentar resolución y spp con aspecto preservado
+
+- **E0020 confirmado:** informe E0020 y recortes tras postproceso fueron versionados con fuente/atribución CC BY-SA y ROIs determinadas por refs. Baseline nativo incluido en diagnóstico de regiones.
+- **Justificación E0021:** referencia par E0020 discrepaba 0.0610 RMSE, ~24.5% del error raw (casi alerta 25%); a 320×240 los detalles reales son demasiado pequeños para evaluar pérdida de textura. Aumentar muestreo de referencias a 1024 cada una y tamaño sin modificar la proporción original de la imagen.
+- **Método:** `--max-width 512` conserva resolución original con alto proporcional, 24 spp×3 seeds, 1024 spp×2 refs, mismo objeto RenderLayer y AOV. Comparar referencias 1/2 y rankings. Controlar coste y no repetir sin razón. Corrida pendiente, tests nuevos.
+- **Riesgo:** diferencias de entorno/ruido/reference y métodos per-pass; ni mejor resolución ni más spp prueban convergencia ni calidad visual. F5 aún suspendido.
