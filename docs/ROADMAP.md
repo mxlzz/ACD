@@ -1,3 +1,5 @@
+> F3 comparabilidad de referencias: agregado analizador reutilizable para dos referencias y 3 seeds por método, con ROI solo desde refs y recortes 3x, ahora para E0021. La corrida E0021 de mayor resolución sigue pendiente de verificación; el análisis toma sus artifacts, sin rerender. Conservar F5 suspendido hasta evidencias de detalle.
+
 > **E0021 preparado (2026-11-12):** E0020 informe +3 ROI/crops permanentes ya disponibles. Para reducir discrepancia de referencias y preservar encuadre, E0021 usa ancho máximo 512 derivando alto desde resolución original, 24 spp ×3 seeds, refs 1024 spp ×2, estándar/High/Super/OIDN nativo. Nuevo runner guarda fuente/aspect metadata y desactiva autoexec. Workflow y CI aún pendientes; artefactos de referencia versionados tras revisión, no confiar en métricas aisladas.
 
 > E0020 postprocesamiento [run 43288965340](https://github.com/mxlzz/ACD/actions/runs/43288965340) generó ROI/3 crops y métricas sin rerender, pero el `git add` falló por regla ignore sobre nuevos docs experimentales. Fix allowlist `git add -f` solo para E0020.md y preview/JSON. Publicación pendiente nueva ejecución. Métricas globales E0020 ya verificadas.

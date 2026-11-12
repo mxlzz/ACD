@@ -380,3 +380,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Justificación E0021:** referencia par E0020 discrepaba 0.0610 RMSE, ~24.5% del error raw (casi alerta 25%); a 320×240 los detalles reales son demasiado pequeños para evaluar pérdida de textura. Aumentar muestreo de referencias a 1024 cada una y tamaño sin modificar la proporción original de la imagen.
 - **Método:** `--max-width 512` conserva resolución original con alto proporcional, 24 spp×3 seeds, 1024 spp×2 refs, mismo objeto RenderLayer y AOV. Comparar referencias 1/2 y rankings. Controlar coste y no repetir sin razón. Corrida pendiente, tests nuevos.
 - **Riesgo:** diferencias de entorno/ruido/reference y métodos per-pass; ni mejor resolución ni más spp prueban convergencia ni calidad visual. F5 aún suspendido.
+
+
+## 2026-11-12 — F3, ampliar interpretación E0021 a ambos refs y todas las semillas
+
+- **Motivación:** el analizador inicial de E0020 generaba recortes desde dos referencias, pero la tabla de error del reporte por ROI correspondía solo a seed inicial, mientras los rankings globales resumían tres. Fijar método explícito evita confundir unidades.
+- **Implementación:** `scripts/analyze_cozy_exr.py` calcula medias de RMSE/gradientes de **3 seeds contra cada referencia** y rankings por referencia, más ROI elegidas desde promedio de refs, con los mismos candidatos y curva diagnóstica visual por método. Regiones incluyen OIDN nativo.
+- **Estado:** código y tests nuevos; evaluación real sobre E0021 pendiente. No modifica algoritmo OIDN ni geometría original; no demuestra mejora por sí mismo.

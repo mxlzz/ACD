@@ -1,3 +1,10 @@
+## E0021 — Postprocesamiento de dos referencias preparado sin nuevos renders (2026-11-12)
+
+- Se añadió `scripts/analyze_cozy_exr.py` para E0020/E0021: 3 ROI elegidas por gradiente de ambas refs solamente; JPG/PNG comparativos con curva común; informe de métricas **promediadas sobre las tres seeds respecto de ambas referencias** (no solo seed539), incluyendo OIDN nativo en máscaras AOV; captura resolución original y de ensayo. No interfiere con la corrida E0021 que ya está ejecutándose.
+- Este commit deja el script y tests; ejecución E0021 aún pendiente. No se ejecutará un segundo Cycles render para generar crops. `scripts/analyze_cozy_e0020.py` permanece como historial de E0020.
+
+---
+
 ## E0021 — Control de mayor resolución y convergencia de referencias (2026-11-12)
 
 - E0020 se verificó y sus [ROI/3 crops + informe](docs/experiments/E0020.md) se versionaron efectivamente en commit `4825a4afc57991e7c4be42a044925d38f67fc5e1`, [run de postproceso #43289259037](https://github.com/mxlzz/ACD/actions/runs/43289259037) success; no rerender. F3 `NATIVE_COMP_OIDN` presente en ROI.
