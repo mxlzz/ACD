@@ -1,0 +1,103 @@
+name: ACD E0028 verify new independent geometry MIT Cycles island scene
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0028-island-import.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate-before-publish:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Fetch pinned MIT scene and license with verified git blob hash
+        run: |
+          SOURCE=36c46d3b49ea872f6039e07a5e4769b5f9443654
+          mkdir -p benchmarks/scenes
+          curl -fL --retry 3 \
+            "https://raw.githubusercontent.com/emrelab/blender-projects/$SOURCE/low-poly-island/envanto-tutariol.blend" \
+            -o benchmarks/scenes/low_poly_island.blend
+          test "$(stat -c%s benchmarks/scenes/low_poly_island.blend)" -eq 2621405
+          test "$(git hash-object benchmarks/scenes/low_poly_island.blend)" = "e540ffeae1f063393d644bd4af3a0a27f732fe5c"
+          curl -fL --retry 3 \
+            "https://raw.githubusercontent.com/emrelab/blender-projects/$SOURCE/LICENSE" \
+            -o benchmarks/scenes/low_poly_island_LICENSE.txt
+          grep -q "MIT License" benchmarks/scenes/low_poly_island_LICENSE.txt
+          sha256sum benchmarks/scenes/low_poly_island.blend
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - if: steps.blender-cache.outputs.cache-hit != 'true'
+        name: Get Blender 5.0.1
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Open .blend with no scripts and render Cycles smoke 4 spp
+        run: |
+          ./blender-5.0.1-linux-x64/blender --factory-startup --disable-autoexec \
+            -b benchmarks/scenes/low_poly_island.blend --python-exit-code 1 \
+            --python scripts/audit_island_scene.py
+      - name: Preserve metadata and SHA for frozen future blind quality test
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          file=Path("benchmarks/scenes/low_poly_island.blend")
+          data=json.loads(Path("/tmp/acd_island_audit.json").read_text())
+          data.update({
+            "sha256":hashlib.sha256(file.read_bytes()).hexdigest(),
+            "size_bytes":file.stat().st_size,
+            "source_commit":"36c46d3b49ea872f6039e07a5e4769b5f9443654",
+            "source_blob_sha1":"e540ffeae1f063393d644bd4af3a0a27f732fe5c",
+            "source_url":"https://github.com/emrelab/blender-projects/blob/36c46d3b49ea872f6039e07a5e4769b5f9443654/low-poly-island/envanto-tutariol.blend",
+          })
+          Path("benchmarks/scenes/low_poly_island.audit.json").write_text(json.dumps(data,indent=2)+"\n")
+          print("ACD_ISLAND_SHA",data["sha256"])
+          PY
+      - name: Commit only verified MIT artifact and development-trace records
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f benchmarks/scenes/low_poly_island.blend
+          git add benchmarks/scenes/low_poly_island_LICENSE.txt benchmarks/scenes/low_poly_island.audit.json
+          {
+            echo
+            echo "## E0028 — Low-Poly Island third-scene source validated and versioned"
+            echo "- Official MIT source emrelab/blender-projects at immutable 36c46d3; SHA from benchmarks/scenes/low_poly_island.audit.json. Blender5 Cycles smoke 4spp passed, no assets missing. The previously examined Terraced scene shares its author; test is a new scene but NOT independent artist/style. Results quality still pending."
+          } >> STATUS.md
+          {
+            echo
+            echo "> E0028 import: Low-Poly Island MIT by Yunus Emre Karaman, 2.62MB, source pinned and smoke Cycles validated (see benchmarks/scenes/low_poly_island.audit.json); unexamined as ACD denoiser benchmark at this commit. Quality test to follow."
+          } >> docs/ROADMAP.md
+          {
+            echo
+            echo "## 2026-11-12 — E0028 external island fixture imported before measuring ACD"
+            echo "- Pinned MIT source repo commit 36c46d3, original Git blob e540ffe, smoke Blender5 Cycles functional, no missing images/linked libraries. Scene is different from Cozy/Terraced, but shares Terraced author and stylized lighting; not sufficient alone for generalization across professional architectural renders."
+            echo "- Original bin unchanged, source license copied, metadata SHA/credits stored; no candidate parameters changed. Next quality test will compare E0027 emitted-guide configurations prespecified earlier."
+          } >> docs/DECISION_LOG.md
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "testdata(E0028): add new MIT Low-Poly Island before unseen denoiser validation"
+          git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
+      - name: Preserve simple scene audit (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0028-island-smoke
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            /tmp/acd_island_audit.json
+            /tmp/acd_island_smoke.png

@@ -517,3 +517,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - **Evidencia:** run #43307378645, 11 tests, sin rerender. Cozy Kitchen AOV_EMISSION50 RMSE 0.083196 vs OIDN 0.083393 (escena con 0.04% emisión); noche Terraced RMSE 0.12220 vs OIDN0.167785 y MAE0.01765 vs0.02107, pero edge se degrada 0.067948->0.072103. Variante AOV_EMISSION100 RMSE noche0.11304 pero edge0.08098. Control constante de peso medio no consigue misma mejora.
 - **Decisión:** conservar AOV_EMISSION50/100 como candidatos experimentales, sin integrar addon. No ajustar factor de escala .25 tras mirar resultados. Seleccionar nueva escena bajo licencia verificada antes de observar sus imágenes y medir sin modificar parámetros; considerar calidad de borde como restricción. La segunda referencia de las dos escenas confirma resultados, pero no es validación independiente de contenido.
+
+
+## 2026-11-12 — E0028 test posterior sin retocar parámetros: elegir Low-Poly Island MIT
+
+- Selección previa de nuevo contenido: emrelab/blender-projects, autor Yunus Emre Karaman, low-poly-island/v4.5 Cycles con cabin, vidrio, lámparas; MIT según README+LICENSE, blob e540ffe... (2,621,405 B), commit upstream 36c46d3. No ha sido usado en experimentos ACD. Mismo autor que Terraced implica relación estilística, no independencia total.
+- No modificar AOV emission scale .25 ni pesos max .5/1 de E0027 tras observar este archivo. Preparar descarga oficial inmutable, verificación SHA git blob/tamaño, render smoke Blender5, solo después commit de .blend original, licencia y audit. Estado pendiente.
+- Próximo: benchmark del nuevo contenido y reporte con dos refs/varios seeds, luego criterios para ampliar a escena profesional, sin prometer ganancia.

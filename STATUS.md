@@ -1,3 +1,10 @@
+## E0028 — tercera escena pública MIT seleccionada, sin resultados de denoiser (2026-11-12)
+
+- Encontrado `emrelab/blender-projects/low-poly-island/envanto-tutariol.blend` de Yunus Emre Karaman, MIT, 2,621,405 bytes, git blob `e540ffeae1f063393d644bd4af3a0a27f732fe5c`, source commit fijo `36c46d3b49ea872f6039e07a5e4769b5f9443654`. Escena distinta de Terraced y Cozy, cabin sobre isla con vidrio, lámparas y materiales; comparte autor de Terraced (no independiente de estilo).
+- E0028 crea workflow de importación que comprueba hash/mit/license, abre Blender5 sin autoexec, ejecuta smoke CPU de 4 spp y **solo si pasa** publica binario y SHA en GitHub; **ejecución pendiente al commit**. Parámetros E0027 (.25, maxMix 50/100) congelados antes de usar escena; ningún entrenamiento ni modificación del addon.
+
+---
+
 ## E0027 observado — guiado por Emission AOV mejora RMSE, requiere prueba nueva (2026-11-12)
 
 - [Run #43307378645](https://github.com/mxlzz/ACD/actions/runs/43307378645) **success, 11 tests**, mismos EXR E0021/E0023, 3 seeds×2refs. [E0027](docs/experiments/E0027.md): AOV_EMISSION50 (mezcla Raw local máx .5) Cozy RMSE 0.083196 vs OIDN0.083393, edge0.089395 vs0.089698; Terraced RMSE0.122200 vs OIDN0.167785 y MAE0.01765 vs0.02107, pero edge sube 0.06795→0.07210. AOV_EMISSION100 mejora RMSE nocturno aún más (0.1130), pero empeora mucho edge (0.08098). Control mezcla global al peso medio no recupera esa mejora. Fuente emisiva: 0.0408% píxeles Cozy, 4.49% Terraced.
