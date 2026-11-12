@@ -331,3 +331,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - Decision: adopt a redistributable compact public architectural scene as reproducible benchmark fixture. Source official Blender 3.5 splash by Nicole Morena (CC BY-SA). Binary verified before commit with exact byte size, active camera, packed resources and Cycles CPU 4-spp render. No quality conclusions.
 - Control: sha256 and audit recorded, source unchanged; benchmark must preserve artist attribution and ShareAlike terms. User-provided scene stays private.
+
+
+## 2026-11-12 — E0019 final: scene asset oficial publicado tras validar y seguro ante cambios
+
+- **Validado:** Run 43285518302 completó descarga de fuente oficial y abrió/renderizó en Blender 5.0.1 con --disable-autoexec; sin assets faltantes; se confirmó commit `b63204749a95109eb5e913d6f4a1c4607cb7ddac` y blob `benchmarks/scenes/cozy_kitchen.blend` de 7,685,702 bytes. SHA256 `5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395` coincide con manifest. Licencia obra CC BY-SA y crédito Nicole Morena. No se modificó contenido.
+- **Problemas previos cerrados:** validador raw magic incompatible con formatos comprimidos; `.gitignore` correctamente ignora .blend generalmente, excepción de `git add -f` para único fixture. Ambos fallos quedaron trazados. El usuario original E0018 no fue publicado.
+- **Seguridad:** reemplazar workflow de importación `contents:write` y push automático por comprobación manual `contents:read` tras su cometido. Agregar test Python de sha/tamaño/licencia/manifest para detectar reemplazo accidental.
+- **Calidad:** smoke 4 spp no representa resultado denoised ni contiene referencias; siguiente checkpoint es un benchmark a 512² con dos refs y tres seeds. No se puede afirmar ventaja sobre OIDN por haber conseguido datos de prueba.

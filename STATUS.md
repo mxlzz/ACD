@@ -1,3 +1,12 @@
+## E0019 completado — Cozy Kitchen pública e íntegra en GitHub (2026-11-12)
+
+- **Hecho verificado:** [workflow #43285518302](https://github.com/mxlzz/ACD/actions/runs/43285518302) success y commit automático `b63204749a95109eb5e913d6f4a1c4607cb7ddac`; [archivo .blend](benchmarks/scenes/cozy_kitchen.blend) **realmente versionado** con 7,685,702 bytes, SHA256 `5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395`, fuente oficial Blender 3.5 splash *Cozy Kitchen*, Nicole Morena, CC BY-SA. [E0019](docs/experiments/E0019.md) y manifest auditado.
+- **Validación Blender real:** 5.0.1 CPU, cámara `CAM-wide`, 2 cámaras, 1077 objetos, 175 materiales, 0 imágenes externas faltantes y 0 bibliotecas .blend enlazadas; Cycles 192x192 ×4 spp sin denoising renderizado exitosamente. Esto no demuestra fidelidad OIDN ni vence referencias.
+- **Seguridad/permisos:** el workflow de importación ahora es una comprobación manual de solo lectura, sin permisos write; SHA del fixture pasa a test Python automático. La escena privada del usuario no se distribuyó.
+- **Siguiente paso:** corrida controlada a 512², 3 seeds ×2 refs, ACD Standard/High/Super vs OIDN compositor, graduar resolución y crops; mantener referencia convergente. No entrenar o fork antes de defecto reproducible.
+
+---
+
 ## E0019 — Cozy Kitchen validada, bloqueo de gitignore en publicación (2026-11-12)
 
 - [Workflow 43285264648](https://github.com/mxlzz/ACD/actions/runs/43285264648) ejecutó Blender5.0.1 **con éxito**: escena `Main`, cámara activa `CAM-wide`, 2 cámaras, 1077 objetos, 1058 meshes, 175 materiales, 6 imágenes (4 packed), 0 texturas faltantes, 0 librerías externas, render de prueba Cycles CPU 192×192 ×4 spp OK. Fuente oficial 7,685,702 B. El original permaneció sin cambios.

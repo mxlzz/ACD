@@ -1,37 +1,24 @@
-name: ACD import official compact Cycles reference scene
+name: ACD verify vendored official compact Cycles reference
 
 on:
-  push:
-    branches:
-      - dev/acd-v2-oidn-detail-eval
-    paths:
-      - .github/workflows/acd-import-public-scene.yml
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  verify-and-vendor:
-    # Only runs on repository-owned branch pushes; never on untrusted fork PRs.
-    if: github.repository == 'mxlzz/ACD'
+  verify-fixture:
     runs-on: ubuntu-24.04
-    timeout-minutes: 22
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          persist-credentials: true
-      - name: Fetch official CC-BY-SA Blender 3.5 demo
+          python-version: "3.11"
+      - name: Check pinned public binary and license metadata
         run: |
-          mkdir -p benchmarks/scenes
-          curl -fL --retry 3 --connect-timeout 30 --max-time 240 \
-            https://download.blender.org/demo/splash/blender-3.5-splash.blend \
-            -o benchmarks/scenes/cozy_kitchen.blend
-          test "$(stat -c%s benchmarks/scenes/cozy_kitchen.blend)" -eq 7685702
-          # .blend may be Zstd/Gzip-compressed: raw BLENDER magic is NOT required.
-          # Actual structure is verified by opening in Blender below.
-          file benchmarks/scenes/cozy_kitchen.blend
-          head -c 16 benchmarks/scenes/cozy_kitchen.blend | xxd -p
-          sha256sum benchmarks/scenes/cozy_kitchen.blend
+          python -m pytest -q tests/test_public_reference_fixture.py
+          echo "5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395  benchmarks/scenes/cozy_kitchen.blend" | sha256sum -c -
       - uses: actions/cache@v4
         id: blender-cache
         with:
@@ -43,51 +30,18 @@ jobs:
           curl -fL --retry 3 --connect-timeout 30 \
             https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
           tar -xf blender.tar.xz
-      - name: Inspect real scene and render 4 spp smoke WITHOUT auto-execution
+      - name: Cycles smoke verification with disabled auto-execution
         run: |
           ./blender-5.0.1-linux-x64/blender --factory-startup --disable-autoexec \
             -b benchmarks/scenes/cozy_kitchen.blend --python-exit-code 1 \
             --python scripts/audit_public_scene.py
-      - name: Preserve source identity and provenance
-        run: |
-          python - <<'PY'
-          import hashlib, json
-          from pathlib import Path
-          p=Path("benchmarks/scenes/cozy_kitchen.blend")
-          audit=json.loads(Path("/tmp/acd_public_scene_audit.json").read_text())
-          audit["source_url"]="https://download.blender.org/demo/splash/blender-3.5-splash.blend"
-          audit["licence"]="CC BY-SA (specific version not specified by Blender demo page)"
-          audit["author"]="Nicole Morena"
-          audit["sha256"]=hashlib.sha256(p.read_bytes()).hexdigest()
-          audit["size_bytes"]=p.stat().st_size
-          Path("benchmarks/scenes/cozy_kitchen.audit.json").write_text(json.dumps(audit,indent=2)+"\n")
-          print(json.dumps(audit,indent=2))
-          PY
-      - name: Publish independently verified binary and provenance
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # Explicitly allow this one vetted scene; keep the global .blend ignore.
-          git add -f benchmarks/scenes/cozy_kitchen.blend
-          git add benchmarks/scenes/cozy_kitchen.audit.json
-          if git diff --cached --quiet; then
-            echo "No change in tracked fixture"
-            exit 0
-          fi
-          {
-            printf '\n## E0019 — Cozy Kitchen CC-BY-SA vendored and Blender validated\n'
-            printf '\n- Source: Blender official 3.5 splash by Nicole Morena, ~7.3 MiB; permission CC BY-SA.\n'
-            printf -- '- Validation: original SHA and metadata in benchmarks/scenes/cozy_kitchen.audit.json. Blender 5.0.1 Cycles CPU smoke 192x192 4 spp succeeded (not quality).\n'
-            printf -- '- Asset is public; keep license and attribution. Existing user scene remains unpublished.\n'
-          } >> STATUS.md
-          {
-            printf '\n> **E0019 validated fixture:** Official Cozy Kitchen by Nicole Morena CC BY-SA at benchmarks/scenes/cozy_kitchen.blend; Blender 5.0.1 smoke checked, SHA in .audit.json. Quality benchmark pending.\n'
-          } >> docs/ROADMAP.md
-          {
-            printf '\n## 2026-11-12 — E0019 official scene binary incorporated after Blender smoke check\n'
-            printf '\n- Decision: adopt a redistributable compact public architectural scene as reproducible benchmark fixture. Source official Blender 3.5 splash by Nicole Morena (CC BY-SA). Binary verified before commit with exact byte size, active camera, packed resources and Cycles CPU 4-spp render. No quality conclusions.\n'
-            printf -- '- Control: sha256 and audit recorded, source unchanged; benchmark must preserve artist attribution and ShareAlike terms. User-provided scene stays private.\n'
-          } >> docs/DECISION_LOG.md
-          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
-          git commit -m "testdata(E0019): vendor official Cozy Kitchen scene after Blender smoke validation"
-          git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
+      - name: Archive functional audit and low-spp smoke only
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acd-cozy-kitchen-verification
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            /tmp/acd_public_scene_audit.json
+            /tmp/acd_public_scene_smoke.png
