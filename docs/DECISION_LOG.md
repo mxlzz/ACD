@@ -546,3 +546,6 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-12 — E0030 frozen visual diagnostics before selecting new model
 
 - E0029 Emission50 reduces RMSE on new Island scene with small edge regression. Need visually inspect localized artifacts rather than promote algorithm on scalar score. E0030 selects ROI from *both references alone* and produces fixed-transfer Raw/OIDN/Emission50/100 and High/Super panels, local RMSE, no new render or parameter tuning. All derivative images MIT with attribution; pending workflow.
+
+## 2026-11-12 — E0030 reference-only diagnostic crops for Island
+- Reused EXR E0029 run 43309302172, selected a high-HDR ROI and gradient ROIs exclusively from two finite references, rendered same transfer to Raw/OIDN/Emission50/100/High/Super. Derived MIT images and local metrics permanently stored. No readjustment of candidate parameters or rerender.

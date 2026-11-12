@@ -236,3 +236,5 @@ Al cerrar una etapa o cambiar de dirección, actualizar **STATUS**, este roadmap
 > E0023 reporte permanente: exterior nocturno Terraced Houses MIT, discrepancia Raw/OIDN en RMSE vs MAE; concentración de error HDR y AOV más 3 recortes desde referencias en [E0023](experiments/E0023.md). Ninguna mejora de denoiser probada.
 
 > E0028 import: Low-Poly Island MIT by Yunus Emre Karaman, 2.62MB, source pinned and smoke Cycles validated (see benchmarks/scenes/low_poly_island.audit.json); unexamined as ACD denoiser benchmark at this commit. Quality test to follow.
+
+> E0030 reference-controlled Island MIT eight-panel emission diagnostics stored in benchmarks/results/island_e0030; numerical regional checks and ROI in analysis.json; no OCIO or perceptual claim.

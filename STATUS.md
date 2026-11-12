@@ -663,3 +663,6 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 
 ## E0028 — Low-Poly Island third-scene source validated and versioned
 - Official MIT source emrelab/blender-projects at immutable 36c46d3; SHA from benchmarks/scenes/low_poly_island.audit.json. Blender5 Cycles smoke 4spp passed, no assets missing. The previously examined Terraced scene shares its author; test is a new scene but NOT independent artist/style. Results quality still pending.
+
+## E0030 — Low-Poly Island E0029 visual crops from saved EXRs
+- Reference-selected diagnostic ROIs, same display curve and unmodified E0027 Emission50/100 parameters, derived MIT eight-panel crops in benchmarks/results/island_e0030/. No rerender, no claim of perceptual quality until inspected.
