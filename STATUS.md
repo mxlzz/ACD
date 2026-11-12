@@ -1,3 +1,10 @@
+## E0029: nueva escena confirma disminución HDR con regresión de borde leve (2026-11-12)
+
+- GH run #43309302172 success y 21 tests; Low-Poly Island 320x272, 24 spp x3, refs512 spp x2, discrepancia refs RMSE 0.0112732 (~18% Raw). Parámetros Emission50 congelados desde E0027. OIDN nativo RMSE 0.065539 vs Emission50 0.053347 (**-18.6%**), pero edge error 0.039348 vs 0.039621 (+0.70%). Segunda ref confirma. No hubo tuning por esta escena ni se integró addon.
+- Informe numérico permanente [E0029](docs/experiments/E0029.md), workflow caro ahora manual. Island comparte autor/estilo low-poly con Terraced, referencias no convergidas demostrablemente. Próximo: inspectar crops 1:1 en zonas emisivas y buscar escena/autor verdaderamente independiente antes de declarar éxito general.
+
+---
+
 ## E0029 — New-scene frozen Emission AOV test staged (2026-11-12)
 
 - E0028 GH Actions #43308643155 success; source Low-Poly Island SHA256 0fceb72489873a1ebbdf8210c435713e5fee1b3c58ffa4105187023f6896b701, MIT, 2.62MB, Blender5 smoke passed. Import workflow disabled after publication.

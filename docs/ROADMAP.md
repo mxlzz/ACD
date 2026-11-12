@@ -1,3 +1,5 @@
+> E0029 [Actions #43309302172](https://github.com/mxlzz/ACD/actions/runs/43309302172) COMPLETADO, nueva Low-Poly Island MIT 320x272, 3 seeds24 spp, refs512 x2: Emission50 congelado reduce OIDN RMSE 0.06554→0.05335 (-18.6%), pero gradiente bordes 0.03935→0.03962 (+0.7%); segunda ref confirma. [E0029](experiments/E0029.md). Falta evaluación visual y escena de otro autor; no integrar addon ni entrenar OIDN. Workflow solo manual.
+
 > E0028 imported and validated MIT Low-Poly Island via Actions #43308643155. E0029 prespecified third-scene emission experiment (320px, 24spp x3, twin 512spp refs, fixed E0027 weights), pending run. Preserve holdout caveat shared author with Terraced; no addon merge.
 
 > **E0028 en preparación (2026-11-12):** Low-Poly Island de Yunus Emre Karaman, .blend 2.62 MB MIT source commit 36c46d3, geometría/iluminación inéditas para ACD aunque autor compartido con Terraced. Workflow comprobará blob/hash, licencia y Blender5 Cycles 4spp antes de subirlo, luego comparación con E0027 parámetros fijos sin tuning. [E0028](experiments/E0028.md). Importación y benchmark no verificados al commit.

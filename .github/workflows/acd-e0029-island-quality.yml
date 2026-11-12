@@ -1,8 +1,5 @@
 name: ACD E0029 third-scene emission validation
 on:
-  push:
-    branches: [dev/acd-v2-oidn-detail-eval]
-    paths: [.github/workflows/acd-e0029-island-quality.yml]
   workflow_dispatch:
 permissions:
   contents: read
