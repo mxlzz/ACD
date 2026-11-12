@@ -1,3 +1,13 @@
+# ACD V2 — OIDN y conservación de detalle
+
+**2026-11-12, F1 — cambio de estrategia iniciado.** Branch `dev/acd-v2-oidn-detail-eval` creada desde commit `9a70736d88af` de PR #4. Issue #9 abierto. Este commit registra [plan V2](docs/ACD_V2_PLAN.md), auditoría estática de OIDN [v2.5.1](docs/OIDN_SOURCE_AUDIT.md), actualización del protocolo y prioridades. **No hay código, tests ni nuevos renders en este commit**; CI aún pendiente. El addon estable y reconstrucción SID no se alteran.
+
+**Evidencia que motiva F1:** [E0013](docs/experiments/E0013.md): Blender5.0.1 Glass Lobby e interior emisivo, Standard y OIDN compositor nativo mismo RMSE medio (~0.14833 y 0.08236), High/Super peor promedio; no mide fidelidad de texturas finas. SID comercial 5.x no está incluido. Classroom multiseed excluido por E0007. No aseverar superioridad general ni descartar recuerdos de conservación de detalle en SID 5.x.
+
+**Siguiente acción:** F3 métricas de detalle *reference-driven* con pruebas sintéticas y conexión al pipeline, junto a F2 comparación de OIDN independiente; disponer luego de escenas mayores. Consulta de PR draft y workflow CI tras commit.
+
+---
+
 # M2 — External .blend scene benchmark and regional analysis
 
 **Project plan:** [docs/ROADMAP.md](docs/ROADMAP.md). **Scientific foundations and hypotheses:** [docs/research_foundations.md](docs/research_foundations.md). These are reference documents; the status below records actual implementation and evidence.

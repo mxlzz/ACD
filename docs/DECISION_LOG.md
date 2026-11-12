@@ -230,3 +230,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Identificación fuente:** en código oficial Blender tag v3.6.23, build_environment/cmake/versions.cmake declara OIDN 1.4.3; binario Blender5.0.1 del runner contiene OIDN 2.3.3. Distinguir dependencia fuente de biblioteca runtime y no afirmar causalidad exclusiva de versiones.
 - **Decisión:** no cambiar addon SID4 Reference ni estable, ni promover Quality/HDR menos fieles a radiancia por proximidad histórica. Archivar números fuera de artifacts temporales (E0013) y preparar un benchmark profesional con `.blend` aportado/autorizado; el runner `scripts/run_scene_benchmark.py` ya está implementado. PR #4 permanece draft.
 - **Criterio próximo:** distintas escenas reales, múltiples seeds verificadas, 2 o más referencias razonables y validación de detalle, glass, glossy, emisión HDR; hipótesis y comparación contra nativo predefinidas.
+
+
+## 2026-11-12 — F1 ACD V2, reorientación hacia OIDN y fidelidad de detalle
+
+- **Motivo, no hipótesis:** E0013 compara SID4 port, ACD y nodo nativo OIDN en dos escenas pequeñas y encuentra equivalencia Standard/OIDN en RMSE, sin ventaja High/Super; no resuelve la conservación visual de textura ni representa SID5 comercial. No procede mantener la paridad SID como prioridad absoluta.
+- **Decisión:** OIDN compositor nativo Blender5.0.1 es baseline inmediato; OIDN 2.5.1 se estudia independientemente; SID4 es histórico, SID5 un comparador no reproducido, no se asume calidad superior.
+- **Cambio de rumbo registrado:** F1–F6 en ACD_V2_PLAN.md e Issue #9; protocolo anterior M3 reemplazado formalmente con condiciones de validez y trazabilidad conservadas. Auditoría de OIDN v2.5.1 es **lectura de código**, no ejecución, clon o benchmarking.
+- **Validación:** repo/branch/issue y commits de documentación; CI de esta revisión pendiente. ACD addon original y SID Reference sin cambios.
+- **Próximo:** implementar y probar métricas de gradiente bajo máscara definida solo desde referencia; luego benchmark OIDN standalone con mismos EXR y guías.

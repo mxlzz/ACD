@@ -1,3 +1,5 @@
+> **NUEVA PRIORIDAD 2026-11-12:** [ACD V2 — OIDN y evaluación de detalle](ACD_V2_PLAN.md), [Issue #9](https://github.com/mxlzz/ACD/issues/9). El programa histórico M3/SID a continuación se conserva por trazabilidad y **ya no es la puerta obligatoria hacia mejoras**. Se revalidó la pertinencia de la infraestructura M1–M3 y E0013. F1 en proceso (documentación/CI pendiente), F2 auditoría estática iniciada, F3 métricas de detalle pendientes. No se modificó producción.
+
 # ACD — Roadmap de investigación y desarrollo
 
 **Documento rector del plan.** Revisión inicial: 2026-11-11. Vigente para la rama `dev/acd-m2-real-scenes-regions`.
