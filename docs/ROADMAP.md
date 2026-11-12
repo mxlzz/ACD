@@ -168,3 +168,5 @@ La implementación actual `addon/acd_blender.py` está **inspirada en** SID, per
 - Issues / PR: implementación y validación antes de fusionar.
 
 Al cerrar una etapa o cambiar de dirección, actualizar **STATUS**, este roadmap y las entradas de investigación asociadas. No inferir que una tarea está terminada por la existencia de código o de una ejecución de Actions.
+
+> **E0019 validated fixture:** Official Cozy Kitchen by Nicole Morena CC BY-SA at benchmarks/scenes/cozy_kitchen.blend; Blender 5.0.1 smoke checked, SHA in .audit.json. Quality benchmark pending.

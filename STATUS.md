@@ -428,3 +428,9 @@ M1 development: PR #3, branch dev/acd-m1-exr-evaluation. Related issue #2.
 
 ## Policy
 No merge of experimental M1 as a production denoiser unless empirical and API tests substantiate it. Keep the source research and licensing record in GitHub.
+
+## E0019 — Cozy Kitchen CC-BY-SA vendored and Blender validated
+
+- Source: Blender official 3.5 splash by Nicole Morena, ~7.3 MiB; permission CC BY-SA.
+- Validation: original SHA and metadata in benchmarks/scenes/cozy_kitchen.audit.json. Blender 5.0.1 Cycles CPU smoke 192x192 4 spp succeeded (not quality).
+- Asset is public; keep license and attribution. Existing user scene remains unpublished.

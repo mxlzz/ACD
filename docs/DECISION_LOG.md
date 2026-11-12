@@ -326,3 +326,8 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Observado:** GH Actions 43285264648, Blender5.0.1 Cycles abrió y renderizó (192×192 4 spp) sin recursos de imagen faltantes: 1077 objetos, 1058 mesh, 175 materiales, 2 cámaras, 0 bibliotecas externas. Descarga 7,685,702 bytes. No es benchmark de calidad.
 - **Problema de publicación:** la regla general `*.blend` en .gitignore bloqueó `git add`, impidiendo el commit pese a superar el render. No se cambió el archivo ni se publicó.
 - **Corrección:** añadir `-f` solo al archivo pequeño específico; no tocar .gitignore ni promover otros artefactos. Reintento verificable, CI posterior al commit.
+
+## 2026-11-12 — E0019 official scene binary incorporated after Blender smoke check
+
+- Decision: adopt a redistributable compact public architectural scene as reproducible benchmark fixture. Source official Blender 3.5 splash by Nicole Morena (CC BY-SA). Binary verified before commit with exact byte size, active camera, packed resources and Cycles CPU 4-spp render. No quality conclusions.
+- Control: sha256 and audit recorded, source unchanged; benchmark must preserve artist attribution and ShareAlike terms. User-provided scene stays private.
