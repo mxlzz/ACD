@@ -13,7 +13,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scene: [glass_lobby, interior_emissive]
+        include:
+          - scene: glass_lobby
+            width: 192
+            height: 144
+          - scene: interior_emissive
+            width: 192
+            height: 144
+          - scene: detail_target
+            width: 320
+            height: 240
     env:
       BLENDER_VERSION: "5.0.1"
       EGL_PLATFORM: surfaceless
@@ -21,8 +30,8 @@ jobs:
       ACD_DEVICE: CPU
       ACD_SCENE: ${{ matrix.scene }}
       ACD_BENCH_DIR: /tmp/acd_v2_${{ matrix.scene }}
-      ACD_WIDTH: "192"
-      ACD_HEIGHT: "144"
+      ACD_WIDTH: "${{ matrix.width }}"
+      ACD_HEIGHT: "${{ matrix.height }}"
       ACD_INPUT_SPP: "24"
       ACD_INPUT_SEED: "539"
       ACD_EXTRA_SEEDS: "911,1337"

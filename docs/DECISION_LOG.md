@@ -272,3 +272,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Limitación causal:** mezcla de diferencias OIDN 2.3.3 vs 2.5.1, parametrización y prefilter Accurate del compositor; no etiquetar 2.5.1 como inferior en general.
 - **Siguiente intervención falsable:** mismos PFM, mismas guías y mismos flags en CLI 2.3.3 y 2.5.1; medir contra dos referencias; comprobar repetibilidad 2.5.1. El tag 2.3.3 no publica digest de asset en GitHub REST, así que registrar SHA obtenida sin afirmar pinning externo hasta verificarla.
 - **Estado:** código de aislamiento, tests de flags y workflow preparados; aún no observada nueva ejecución ni resultados.
+
+
+## 2026-11-12 — E0015 aislado + detalle arquitectónico controlado y prior art
+
+- **Verificado:** run 43234478588 completó CLI OIDN v2.3.3/v2.5.1 con mismos inputs y parámetros CPU HDR High. Glass output idéntico bit a bit en PFM para 3 seeds; interior output RMSE mutuo 0.00221–0.00225 y 2.3.3 ligeramente menor RMSE global 3/3. E0015 consigna tabla, controles y límites; no inferir mejor calidad general.
+- **F3 hipótesis comprobable preparada:** escena de 52 slats, juntas de alta frecuencia, metal, vidrio y microbump a 320×240 debe permitir verificar si diagnósticos de gradiente capturan pérdidas de detalle frente a referencia, sin premiar más nitidez aparente. No hay resultados todavía ni prueba de referencia convergida.
+- **F4 revisión de código upstream:** ProDen 2022 usa SURE+modelo de mezcla y parches OIDN históricos, StatMC/StatER usan fork pbrt-v3, requieren estadísticas por muestra y CUDA/OpenCV; no son filtros postproceso listos para Blender EXR. Documento de prior art y licencias advierte dependencias.
+- **Corrección de orquestación:** retirar puente temporal OIDN CLI del workflow M3.9 luego de confirmar que V2 sí dispara; evitar pruebas caras duplicadas. Conservamos workflows históricos independientes.
+- **Estado:** cambios nuevos de escena/workflow/documentación por validar en CI y Blender real. Próximo: observar run, depurar y registrar E0016; solo luego diseñar hipótesis algorítmica.

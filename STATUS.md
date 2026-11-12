@@ -1,3 +1,12 @@
+## E0015 y F3/F4 — Aislamiento de versiones terminado, fixture de detalle preparado (2026-11-12)
+
+- [Run #43234478588](https://github.com/mxlzz/ACD/actions/runs/43234478588) **success, 2 jobs**; [E0015](docs/experiments/E0015.md) archiva resultados por seed: OIDN CLI 2.3.3 y 2.5.1 obtienen salidas idénticas Glass Lobby (RMSE mutuo 0 en 3/3); en interior emisivo cambian ligeramente (RMSE mutuo ~0.00221) y 2.3.3 tiene RMSE global menor en las 3 semillas. Misma PFM/flags/CPU; no implica ranking general ni diferencia de calidad perceptual.
+- [F4 fuentes y dependencias](docs/EXTERNAL_DENOISER_PRIOR_ART.md) auditadas por README: ProDen requiere SURE/modelo/pesos, StatMC/StatER modifican pbrt-v3 y recogen estadísticas por muestra; no son filtros drop-in para EXR de Blender. No se ha portado código.
+- **F3 candidato pendiente de CI real:** `tests/scene_detail_target.py` con 52 lamas, juntas de 26 filas/13 columnas, vidrio, metal y microbump; Blender generator acepta `ACD_SCENE=detail_target`. Matrix de workflow incluye 320×240 para este caso con refs 1024 spp ×2 y tres noisy seeds; medición de gradiente debe validarse en este fixture.
+- Se eliminó duplicación temporal de OIDN CLI en workflow histórico M3.9: el workflow V2 autónomo ya se ejecuta correctamente, evitar rerender innecesario. Nueva CI y benchmark **pendientes al commit**, no afirmar que fixture corre.
+
+---
+
 ## E0014 — OIDN standalone 2.5.1 comprobado, siguiente aislamiento 2.3.3 vs 2.5.1 (2026-11-12)
 
 - [Run #43233365334](https://github.com/mxlzz/ACD/actions/runs/43233365334) **success ambos jobs**. Informe permanente [E0014](docs/experiments/E0014.md) y artifacts [Glass #13951826448](https://github.com/mxlzz/ACD/actions/runs/43233365334/artifacts/13951826448), [interior #13950773895](https://github.com/mxlzz/ACD/actions/runs/43233365334/artifacts/13950773895).

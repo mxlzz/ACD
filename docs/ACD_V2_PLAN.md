@@ -40,3 +40,8 @@ Paquete reproducible, licencias y recursos, CPU/GPU, tiempo y memoria, fallback 
 
 ## Trazabilidad
 [STATUS.md](../STATUS.md) (ejecución real), [DECISION_LOG.md](DECISION_LOG.md) (decisiones por commit), [DEVELOPMENT_PROTOCOL.md](DEVELOPMENT_PROTOCOL.md) (reglas), [E0013](experiments/E0013.md) (últimos números SID vs OIDN) y [OIDN_SOURCE_AUDIT.md](OIDN_SOURCE_AUDIT.md) (inventario verificable). Este documento prevalece sobre hitos SID históricos en el roadmap anterior.
+
+
+## Avance verificado 2026-11-12
+
+F1 completado a nivel de gobierno (Issue #9, PR #10, trazabilidad y CI); F2 aisló versiones OIDN CLI 2.3.3/2.5.1 en E0015 (Glass idéntico, Interior pequeñas diferencias). F3 métricas de gradientes y pruebas sintéticas aprobadas, pero aún no validadas perceptualmente en texturas reales; primer fixture específico de lamas/juntas preparado, sin resultado al commit. F4 inspección de repositorios ProDen/StatMC/StatER documentada en [EXTERNAL_DENOISER_PRIOR_ART.md](EXTERNAL_DENOISER_PRIOR_ART.md); ninguno se ha ejecutado ni portado. F5/F6 bloqueadas hasta pruebas de escenas representativas. El roadmap no se reescribe sobre historia; consultar STATUS para verificaciones.
