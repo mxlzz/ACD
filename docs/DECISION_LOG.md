@@ -281,3 +281,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **F4 revisión de código upstream:** ProDen 2022 usa SURE+modelo de mezcla y parches OIDN históricos, StatMC/StatER usan fork pbrt-v3, requieren estadísticas por muestra y CUDA/OpenCV; no son filtros postproceso listos para Blender EXR. Documento de prior art y licencias advierte dependencias.
 - **Corrección de orquestación:** retirar puente temporal OIDN CLI del workflow M3.9 luego de confirmar que V2 sí dispara; evitar pruebas caras duplicadas. Conservamos workflows históricos independientes.
 - **Estado:** cambios nuevos de escena/workflow/documentación por validar en CI y Blender real. Próximo: observar run, depurar y registrar E0016; solo luego diseñar hipótesis algorítmica.
+
+
+## 2026-11-12 — E0016, detalles visuales y probable variación entre CPU ISA (sin causalidad establecida)
+
+- **Resultados:** job 43235485653, 3 escenas success, detalle-target 320×240. OIDN compositor/ACD Standard RMSE=0.0608849, edge=0.0721193; High RMSE=0.0613499, edge=0.0721533; Super 0.0632406, 0.0726432. Super aumenta ratio contraste 0.723 vs 0.670 y baja MAE pero empeora otros errores. No declarar ganador perceptual sin crops 1:1 y referencia mejor.
+- **Limitación de E0015 descubierta:** OIDN 2.3.3 y 2.5.1 binarios mismos SHA entre runs, pero color PFM diferente RMSE 4.96e-5 entre corridas; la superioridad v2.3.3 en una corrida no se repitió como diferencia de versión en corrida posterior. Diferencias de rendimiento sugieren CPUs ISA distintos; v2.4 añadió AMX-FP16 y v2.5 lo optimizó, pero aún falta confirmar CPU efectiva en jobs.
+- **Próxima prueba controlada:** PFM matemático de hash fijo en Ubuntu22/24 runners, log CPU/ISA desde `oidnDenoise -v 2`, versión/digest/output, comparación directa sin Blender. El código prueba reproducibilidad de fixture. No usar datos de distinto CPU como comparación absoluta de rendimiento.
+- **Aprobación de etapa:** F3 instrumentación y ejecución parcial logradas; F5/F6 en espera por necesidad de casos representativos. 

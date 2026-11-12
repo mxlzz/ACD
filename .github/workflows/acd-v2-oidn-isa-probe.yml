@@ -1,0 +1,50 @@
+name: ACD V2 OIDN fixed-input CPU ISA probe
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/acd-v2-oidn-isa-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  oidn-cpu-isa:
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.image }}
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install numerical dependencies and verify PFM fixture
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pytest -q tests/test_pfm.py tests/test_oidn_isa_probe.py
+      - name: Download unmodified official OIDN 2.3.3 and 2.5.1
+        run: |
+          curl -fL --retry 3 https://github.com/RenderKit/oidn/releases/download/v2.3.3/oidn-2.3.3.x86_64.linux.tar.gz -o oidn233.tar.gz
+          echo "3c385230d9e6f63527ba72f2229594dbac5051674219d72e0044b5d0b841796f  oidn233.tar.gz" | sha256sum -c -
+          curl -fL --retry 3 https://github.com/RenderKit/oidn/releases/download/v2.5.1/oidn-2.5.1.x86_64.linux.tar.gz -o oidn251.tar.gz
+          echo "743c3e2aff8c220d5d70fe6cb970fb3d36f2702d2693c61d1d148e404cf37cd6  oidn251.tar.gz" | sha256sum -c -
+          mkdir oidn233-dist oidn251-dist
+          tar -xzf oidn233.tar.gz -C oidn233-dist
+          tar -xzf oidn251.tar.gz -C oidn251-dist
+      - name: ISA and fixed PFM outputs on each host
+        run: |
+          BIN233="$(find "$PWD/oidn233-dist" -type f -name oidnDenoise | head -n 1)"
+          BIN251="$(find "$PWD/oidn251-dist" -type f -name oidnDenoise | head -n 1)"
+          python -m scripts.oidn_isa_probe --oidn233 "$BIN233" --oidn251 "$BIN251" --output-dir /tmp/acd_oidn_isa
+      - name: Archive reproducible fixed-input measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oidn-isa-${{ matrix.image }}
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd_oidn_isa/

@@ -45,3 +45,8 @@ Paquete reproducible, licencias y recursos, CPU/GPU, tiempo y memoria, fallback 
 ## Avance verificado 2026-11-12
 
 F1 completado a nivel de gobierno (Issue #9, PR #10, trazabilidad y CI); F2 aisló versiones OIDN CLI 2.3.3/2.5.1 en E0015 (Glass idéntico, Interior pequeñas diferencias). F3 métricas de gradientes y pruebas sintéticas aprobadas, pero aún no validadas perceptualmente en texturas reales; primer fixture específico de lamas/juntas preparado, sin resultado al commit. F4 inspección de repositorios ProDen/StatMC/StatER documentada en [EXTERNAL_DENOISER_PRIOR_ART.md](EXTERNAL_DENOISER_PRIOR_ART.md); ninguno se ha ejecutado ni portado. F5/F6 bloqueadas hasta pruebas de escenas representativas. El roadmap no se reescribe sobre historia; consultar STATUS para verificaciones.
+
+
+### E0016, 2026-11-12 — control de detalle y de backend
+
+[E0016](experiments/E0016.md) valida que la métrica integrada funciona en escena controlada de lamas/juntas/vidrio, y detecta que ACD Super puede elevar contraste aparente mientras empeora RMSE y error de bordes. F3 **no concluido** por ausencia de escenas profesionales. El cambio de versión OIDN fue sensible a differences de inputs entre runs/posible ISA. Se habilita microensayo de CPU ISA con input sintético SHA fijo, antes de decidir algoritmo. Sin prueba de mejora ACD, no se abre F5.

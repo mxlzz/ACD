@@ -1,3 +1,12 @@
+## E0016 verificado / CPU ISA bajo investigación (2026-11-12)
+
+- [Run #43235485653](https://github.com/mxlzz/ACD/actions/runs/43235485653) **3 jobs success** incluyendo `detail_target` 320×240; [quality #43235484414](https://github.com/mxlzz/ACD/actions/runs/43235484414) **90 tests**. [E0016](docs/experiments/E0016.md) almacena comparación y caveats. En detail_target OIDN nativo RGB RMSE medio 0.0608849 y error gradiente 0.0721193, frente ACD High 0.0613499/0.0721533 y Super 0.0632406/0.0726432. Super eleva contraste y mejora MAE pero empeora fidelidad de gradiente y RMSE: aparente nitidez no equivale a detalle verdadero.
+- Comparación de artifacts E0015/E0016 revela variación de imagen entrada entre workflows aun con mismos seeds y binarios (RGB PFM RMSE 4.96e-5 seed539). La salida OIDN2.5 cambió más entre jobs que OIDN2.3; tiempos e [OIDN changelog AMX-FP16](https://github.com/RenderKit/oidn/blob/v2.5.1/CHANGELOG.md) sugieren **posible dependencia del ISA** (no probada). E0015 se actualiza para no afirmar ventaja v2.3.3 estable.
+- Nuevo **ensayo específico de ISA**, SIN Blender, sobre entradas sintéticas idénticas en GH runners 22.04/24.04 con CPU/ISA verboso, hashes de binarios, inputs y outputs. CI/piloto pendientes en este commit; no atribuir diferencias a ISA hasta observar ambas ejecuciones.
+- F5/F6 no autorizadas por resultados actuales. Próxima puerta de calidad real: escena arquitectónica autorizada 1080p+ con texturas finas/reflejos y referencias de calidad; alternativa pública bajo licencia verificada. Ningún cambio al addon estable.
+
+---
+
 ## E0015 y F3/F4 — Aislamiento de versiones terminado, fixture de detalle preparado (2026-11-12)
 
 - [Run #43234478588](https://github.com/mxlzz/ACD/actions/runs/43234478588) **success, 2 jobs**; [E0015](docs/experiments/E0015.md) archiva resultados por seed: OIDN CLI 2.3.3 y 2.5.1 obtienen salidas idénticas Glass Lobby (RMSE mutuo 0 en 3/3); en interior emisivo cambian ligeramente (RMSE mutuo ~0.00221) y 2.3.3 tiene RMSE global menor en las 3 semillas. Misma PFM/flags/CPU; no implica ranking general ni diferencia de calidad perceptual.
