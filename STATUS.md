@@ -1,3 +1,10 @@
+## E0029 — New-scene frozen Emission AOV test staged (2026-11-12)
+
+- E0028 GH Actions #43308643155 success; source Low-Poly Island SHA256 0fceb72489873a1ebbdf8210c435713e5fee1b3c58ffa4105187023f6896b701, MIT, 2.62MB, Blender5 smoke passed. Import workflow disabled after publication.
+- E0029 workflow prepared to apply identical E0027 emission blend scale .25 with max Raw weights .5/1 to the newly introduced island scene, 24spp x3 and 512spp refs x2. No quality result at commit. All references only used for scoring; original addon untouched.
+
+---
+
 ## E0028 — tercera escena pública MIT seleccionada, sin resultados de denoiser (2026-11-12)
 
 - Encontrado `emrelab/blender-projects/low-poly-island/envanto-tutariol.blend` de Yunus Emre Karaman, MIT, 2,621,405 bytes, git blob `e540ffeae1f063393d644bd4af3a0a27f732fe5c`, source commit fijo `36c46d3b49ea872f6039e07a5e4769b5f9443654`. Escena distinta de Terraced y Cozy, cabin sobre isla con vidrio, lámparas y materiales; comparte autor de Terraced (no independiente de estilo).

@@ -1,3 +1,5 @@
+> E0028 imported and validated MIT Low-Poly Island via Actions #43308643155. E0029 prespecified third-scene emission experiment (320px, 24spp x3, twin 512spp refs, fixed E0027 weights), pending run. Preserve holdout caveat shared author with Terraced; no addon merge.
+
 > **E0028 en preparación (2026-11-12):** Low-Poly Island de Yunus Emre Karaman, .blend 2.62 MB MIT source commit 36c46d3, geometría/iluminación inéditas para ACD aunque autor compartido con Terraced. Workflow comprobará blob/hash, licencia y Blender5 Cycles 4spp antes de subirlo, luego comparación con E0027 parámetros fijos sin tuning. [E0028](experiments/E0028.md). Importación y benchmark no verificados al commit.
 
 > **E0027 verificado:** Emission AOV ayuda a discriminar entre Cozy (0.04% emisión; RMSE 0.083393→0.083196) y Terraced nocturno (4.49% emisión; RMSE 0.167785→0.122200 con maxmix50). Pero error de gradientes nocturnos sube 0.06795→0.07210 (maxmix100 lo empeora más). [Informe](experiments/E0027.md), [Actions #43307378645](https://github.com/mxlzz/ACD/actions/runs/43307378645). **No integrar** sin nueva escena no observada y verificar calidad de bordes. Workflow manual tras éxito.

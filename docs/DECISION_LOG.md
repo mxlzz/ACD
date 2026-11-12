@@ -528,3 +528,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-12 — E0028 external island fixture imported before measuring ACD
 - Pinned MIT source repo commit 36c46d3, original Git blob e540ffe, smoke Blender5 Cycles functional, no missing images/linked libraries. Scene is different from Cozy/Terraced, but shares Terraced author and stylized lighting; not sufficient alone for generalization across professional architectural renders.
 - Original bin unchanged, source license copied, metadata SHA/credits stored; no candidate parameters changed. Next quality test will compare E0027 emitted-guide configurations prespecified earlier.
+
+
+## 2026-11-12 — E0029 fixed parameter validation on new island scene
+
+- E0028 MIT Low-Poly Island binary audited and published with source hash, Blender5 smoke OK. Workflow importer disabled to avoid duplicate push.
+- E0029 prespecified E0027 emission scale .25 and max raw weights .5/1, three noisy seeds and two high-spp references, same-seed AOV and native OIDN comparators. Results pending; no tuning permitted on this scene. Original addon unchanged.

@@ -1,11 +1,6 @@
 name: ACD E0028 verify new independent geometry MIT Cycles island scene
 
 on:
-  push:
-    branches:
-      - dev/acd-v2-oidn-detail-eval
-    paths:
-      - .github/workflows/acd-e0028-island-import.yml
   workflow_dispatch:
 
 permissions:
@@ -13,7 +8,7 @@ permissions:
 
 jobs:
   validate-before-publish:
-    if: github.repository == 'mxlzz/ACD'
+    if: false # Import completed; disabled to prevent duplicate bot commits
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
