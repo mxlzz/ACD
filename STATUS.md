@@ -1,3 +1,11 @@
+## E0026 — primer candidato adaptativo *input-only* preparado, sin tocar Blender (2026-11-12)
+
+- [E0025](docs/experiments/E0025.md) reportó que OIDN reduce ligeramente la media energética en highlights (-0.85% aprox), pero produce error absoluto espacial mucho mayor que Raw. Para explorar preservación de extremos sin oracle se creó `acd_lab/highlight_blend.py` y tests: selección únicamente por percentiles de luminancia **Raw**, smoothstep 97%–99.5%, fusión local máxima 50% o 100% con OIDN; controles fijos 10% y 50% Raw globales.
+- Comparación E0026 planeada en **dos escenas ya observadas**, Cozy Kitchen E0021 y Terraced Houses E0023, usando sus EXR originales (sin rerender), 3 semillas ×2 referencias; métricas RMSE lineal, MAE, gradientes, errores dentro/fuera de highlights definidos solo por referencia para scoring. No se han ajustado parámetros contra referencias ni liberado addon. **CI/workflow pendientes al commit; ningún resultado todavía**.
+- Los resultados no equivalen a test held-out, ni demuestran superioridad hasta disponer de tercera escena nueva. Si falla se descarta el método sin retocar selectivamente percentiles.
+
+---
+
 ## E0025 verificado — OIDN sesgo mixto en highlights (2026-11-12)
 
 - [Run 43305700278](https://github.com/mxlzz/ACD/actions/runs/43305700278) **success**, 10 tests. [E0025](docs/experiments/E0025.md): en top1% brillo de referencia, OIDN promedio ratio energía 0.99147 y delta lum -0.19294 (ref2 ratio 0.99088), pero 56% de píxeles sobre ref, abs error 0.799 vs Raw 0.338. High ratio 1.00395/abs0.728 y Super 1.00542/abs0.746. Error espacial mixto, no basta reajustar exposición global, no prueba causalidad de emisión. Prueba sin rerender a partir de E0023, tres seeds y dos referencias finitas.

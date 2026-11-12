@@ -489,3 +489,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - E0025 GH run 43305700278 completó 10 tests y cuantificación con 3 seeds, 2 refs del E0023. En top1% luminosidad referencia OIDN ratio 0.99147 (ref1), delta -0.19294, abs error 0.79937 vs Raw 0.33771; 56.16% píxeles sobre referencia, por lo tanto sesgo global promedio no implica subestimación uniforme. Ref2 confirma ratio 0.99088 y delta -0.20627. High/Super corrigen signo medio pero mantienen error local elevado.
 - **Decisión:** no corregir exposición ni reasignar emisión basándose en media. Probar, solo offline, fusión Raw/OIDN con control *input-only* sobre dos escenas observadas, además de fusión constante como ablation; exigir tercer conjunto no observado antes de conclusión. E0025 workflow queda manual.
+
+
+## 2026-11-12 — E0026 ablation de mezcla HDR seleccionada por Raw en inferencia
+
+- E0024/E0025 señalan error OIDN en 1% más luminoso de referencias, Raw con menor error local y mayor error fuera. Hipótesis de combinación local solo con raw at runtime, sin acceso a referencia ni parámetros por escena, no requiere fork neuronal.
+- Cuatro condiciones predeclaradas: FIXED10, FIXED50 globales, RAW_BRIGHT50 y RAW_BRIGHT100 con percentiles Raw 97/99.5 y smoothstep. OIDN/Raw/ACD High/Super se conservan de referencias. Mismas variantes en Cozy E0021 y Terraced E0023 contra ambas referencias y 3 seeds, RGB RMSE, MAE, edge, top1% ref y outside.
+- **Limitaciones:** los dos escenarios ya fueron observados y motivaron la hipótesis, por tanto evaluación exploratoria; no holdout. El threshold por Raw puede elegir fireflies, reintroducir ruido/artefactos y no ser seguro a FHD. No cambiar parámetros post hoc para maximizar RMSE observado, descartar si empeora.
+- **Estado:** scripts y workflow sin rerender comprometidos, tests/ejecución por verificar, addon/producto estable intactos.
