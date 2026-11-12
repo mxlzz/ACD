@@ -361,3 +361,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Observación:** GitHub Actions 43287450449 success, 320×240, 24 spp ×3 seeds, 512 spp ×2 refs; raw RMSE 0.25433; Native/Standard 0.1058435; High 0.1072723; Super 0.1286238, todos en promedio y ref1. Referencias RMSE mutuo 0.06105, 24.5% del error del raw; ranking contra refs no exactamente coincidente. No se demuestra convergencia.
 - **Decisión:** no comenzar mejora algorítmica. Reutilizar EXR para controlar regiones de detalle seleccionadas solo por referencias, añadir nativo a ROI, medir segunda referencia con mismos candidatos y generar recortes comparables 3x sin interpolación. No rerender, commit posterior de reporte con authoria/licencia CC BY-SA si pasa.
 - **Datos permanentes en este commit:** números resumidos/URL, scripts/workflow/tests. Informe y crops finales pendientes hasta ejecución, nunca afirmar que existen antes de confirmarlos.
+
+
+## 2026-11-12 — E0020 postprocesamiento con EXR reales y corrección de gitignore
+
+- **Evidencia:** el run 43288965340 restauró artifacts E0020, ejecutó análisis con OIDN nativo en regiones, seleccionó tres zonas de gradiente desde refs exclusivamente y generó tres comparativas, reporte JSON y Markdown. Archivo de salida disponible como artifact 13975528472.
+- **Desviación:** publicación git bloqueada por regla general de ignore de `docs/experiments` para archivos nuevos, no por fallo de análisis. Esta situación es análoga a la importación .blend.
+- **Corrección:** `git add -f` solo para rutas analíticas E0020 concretas, sin tocar reglas ignore globales. Mantener la documentación de cambios de flujo en STATUS/ROADMAP/DECISION_LOG del mismo commit. Reintento pendiente y verificar SHA de branch tras push.

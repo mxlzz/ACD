@@ -71,8 +71,10 @@ jobs:
           } >> docs/DECISION_LOG.md
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f benchmarks/results/cozy_e0020/*.png
-          git add benchmarks/results/cozy_e0020/*.json docs/experiments/E0020.md STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          # The experiment markdown and derived preview directory can be ignored
+          # by broad .gitignore rules; allowlist only these specific vetted files.
+          git add -f docs/experiments/E0020.md benchmarks/results/cozy_e0020/*.png benchmarks/results/cozy_e0020/*.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
           git commit -m "research(E0020): preserve reference-controlled ROI results and visual crops"
           git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
       - name: Archive region metrics and generated comparisons

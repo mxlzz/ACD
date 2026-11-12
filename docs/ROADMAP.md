@@ -1,3 +1,5 @@
+> E0020 postprocesamiento [run 43288965340](https://github.com/mxlzz/ACD/actions/runs/43288965340) generó ROI/3 crops y métricas sin rerender, pero el `git add` falló por regla ignore sobre nuevos docs experimentales. Fix allowlist `git add -f` solo para E0020.md y preview/JSON. Publicación pendiente nueva ejecución. Métricas globales E0020 ya verificadas.
+
 > E0020 [run 43287450449](https://github.com/mxlzz/ACD/actions/runs/43287450449) **success**: Native/Standard mejor RMSE global y edge gradient que High/Super con 320×240 24 spp ×3 y ref 512 spp ×2; discrepancia referencias 0.06105 y orden contra referencia 2 no idéntico. Postprocesamiento de EXR existente para regiones/crops ref-only y reporte E0020 documentado, **ejecución pendiente** en nuevo workflow. No gastar otro render hasta revisar datos.
 
 > F3 corrección región 2026-11-12: `region_cli` ahora incluye `NATIVE_COMP_OIDN` y SID4 (si existen) para comparar AOV/ROI con ACD. E0020 ya iniciado en commit anterior, por lo que se considerará reprocesamiento desde los mismos EXR, sin relanzar renders. Nuevo test EXR y CI pendientes.

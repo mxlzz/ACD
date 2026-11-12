@@ -1,3 +1,10 @@
+## E0020 post-proceso completó cálculos, publicación bloqueada por gitignore (2026-11-12)
+
+- [Run #43288965340](https://github.com/mxlzz/ACD/actions/runs/43288965340) generó recortes y reporte regional desde los EXR originales **sin rerender**: tres ROI 80×80 seleccionadas solo de referencias; `NATIVE_COMP_OIDN` recuperado en reporte de regiones. Comparación de cinco métodos contra cada referencia arroja mismo orden sustantivo en la seed primaria (Standard/OIDN idénticos, después High, Super, Raw).
+- El paso de publicación falló por `.gitignore` que omite `docs/experiments` para archivos nuevos (como había ocurrido con .blend). Los análisis existen en [artifact #13975528472](https://github.com/mxlzz/ACD/actions/runs/43288965340/artifacts/13975528472); se corrige `git add -f` **solo para E0020.md y tres PNG/JSON concretos**, preservando reglas generales. Nuevo run pendiente; no declarar permanencia de reportes aún.
+
+---
+
 ## E0020 post-análisis sin rerender — preparación (2026-11-12)
 
 - [Benchmark #43287450449](https://github.com/mxlzz/ACD/actions/runs/43287450449) **success**: Cozy Kitchen 320×240, 24 spp ×3 semillas y referencias 512 spp ×2. Heurística diversidad seeds pasó; refs discrepan RMSE 0.0610477, 24.51 % del error raw, **casi** el umbral exploratorio 25 %; ranking con ref2 no fue exactamente igual. Global RMSE media Native/Standard 0.1058435, High 0.1072723, Super 0.1286238. Borde: Native/Standard 0.1252201, High 0.1272333, Super 0.1324044. Son solo medidas contra refs finitas.
