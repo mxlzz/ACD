@@ -87,7 +87,8 @@ def validate(args) -> tuple[Path, Path, Path]:
 
 def make_command(args) -> tuple[list[str], dict[str, str]]:
     blender, blend, output = validate(args)
-    command = [str(blender), "-b", str(blend)]
+    # Third-party scenes must never auto-execute embedded Python or drivers.
+    command = [str(blender), "-b", "--disable-autoexec", str(blend)]
     if args.scene_name:
         command.extend(["-S", args.scene_name])
     command.extend(["-noaudio", "--python-exit-code", "1", "--python", str(BLENDER_SCRIPT)])

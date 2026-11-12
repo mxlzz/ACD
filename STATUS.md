@@ -1,3 +1,12 @@
+## E0020 — Benchmark Cozy Kitchen con referencias y semillas preparado (2026-11-12)
+
+- Se agregó `acd-e0020-cozy-pilot.yml` como job único: fixture público SHA fijo, Blender5.0.1 CPU, 320×240, **24 spp ×3 semillas (539, 911, 1337)**, **512 spp ×2 refs** (8819 y 8922), Standard/High/Super/comp-OIDN (además Raw), EXR con AOV y diagnóstico por región. Workflow automático solo cuando cambie su propio fichero; posterior desactivar disparo por push para no gastar minutos repetidos.
+- Añadido `scripts/summarize_e0020.py` para emitir métricas compactas legibles (RMSE, MAE, gradientes, ratio contraste), control de diversidad y discrepancia de refs; no afirma mejora por métrica única. Validación de `tests/test_e0020_summary.py` pendiente CI.
+- Runner de escena externa invoca Blender con `--disable-autoexec` (archivo de terceros), sin modificar el original. Tests del comando actualizados.
+- **La ejecución real en este commit todavía no está confirmada.** Si falla, registrar causa. Tras piloto juzgar validez de refs; ampliar resolución/spp solo con hipótesis y cuota disponibles. No fusionar addon estable.
+
+---
+
 ## E0019 completado — Cozy Kitchen pública e íntegra en GitHub (2026-11-12)
 
 - **Hecho verificado:** [workflow #43285518302](https://github.com/mxlzz/ACD/actions/runs/43285518302) success y commit automático `b63204749a95109eb5e913d6f4a1c4607cb7ddac`; [archivo .blend](benchmarks/scenes/cozy_kitchen.blend) **realmente versionado** con 7,685,702 bytes, SHA256 `5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395`, fuente oficial Blender 3.5 splash *Cozy Kitchen*, Nicole Morena, CC BY-SA. [E0019](docs/experiments/E0019.md) y manifest auditado.

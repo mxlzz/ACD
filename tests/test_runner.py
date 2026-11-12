@@ -25,7 +25,8 @@ def test_dry_run_builds_safe_blender_command(paths, capsys):
     options = args(paths, "--samples", "64", "--device", "OPTIX", "--dry-run")
     command, env = make_command(options)
     assert command[1] == "-b"
-    assert command[2].endswith("scene.blend")
+    assert command[2] == "--disable-autoexec"
+    assert command[3].endswith("scene.blend")
     assert "--python-exit-code" in command
     assert env["ACD_DEVICE"] == "OPTIX"
     assert env["ACD_CAPTURE_AOV"] == "1"

@@ -339,3 +339,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Problemas previos cerrados:** validador raw magic incompatible con formatos comprimidos; `.gitignore` correctamente ignora .blend generalmente, excepción de `git add -f` para único fixture. Ambos fallos quedaron trazados. El usuario original E0018 no fue publicado.
 - **Seguridad:** reemplazar workflow de importación `contents:write` y push automático por comprobación manual `contents:read` tras su cometido. Agregar test Python de sha/tamaño/licencia/manifest para detectar reemplazo accidental.
 - **Calidad:** smoke 4 spp no representa resultado denoised ni contiene referencias; siguiente checkpoint es un benchmark a 512² con dos refs y tres seeds. No se puede afirmar ventaja sobre OIDN por haber conseguido datos de prueba.
+
+
+## 2026-11-12 — E0020, experimento real Cozy Kitchen sobre EXR idéntico
+
+- **Motivo:** E0019 aporta escena realista pública bajo CC BY-SA de 7.33 MiB, verificada funcionalmente con Blender5.0.1. Necesidad F3: evidenciar si métodos ACD preservan detalle verdadero frente a baseline OIDN, en escena materialmente más compleja.
+- **Método predefinido:** 320×240, 24 spp ×3 seeds, 512 spp ×2 refs, misma rama RenderLayer y AOV, métodos Standard/High/Super/NATIVE_COMP_OIDN, HDR RGB RMSE/MAE, gradientes en bordes de referencia y en plano, ROI por AOV; comprobar diversidad y discrepancia de referencia antes de ranking. Calidad no inferida del smoke.
+- **Seguridad:** Blender abre escena pública con `--disable-autoexec`; no guardar .blend modificado. Workflow automático solo por su propio fichero, no reiterar al modificar docs. Informe E0020 se genera desde JSON con caveats sin ganador declarado.
+- **Estado al commit:** código/workflow/test nuevo; CI y corrida todavía pendientes. Primer número solo cuando el run muestre outputs reales.
