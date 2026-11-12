@@ -27,7 +27,10 @@ jobs:
             https://download.blender.org/demo/splash/blender-3.5-splash.blend \
             -o benchmarks/scenes/cozy_kitchen.blend
           test "$(stat -c%s benchmarks/scenes/cozy_kitchen.blend)" -eq 7685702
-          test "$(head -c 7 benchmarks/scenes/cozy_kitchen.blend)" = BLENDER
+          # .blend may be Zstd/Gzip-compressed: raw BLENDER magic is NOT required.
+          # Actual structure is verified by opening in Blender below.
+          file benchmarks/scenes/cozy_kitchen.blend
+          head -c 16 benchmarks/scenes/cozy_kitchen.blend | xxd -p
           sha256sum benchmarks/scenes/cozy_kitchen.blend
       - uses: actions/cache@v4
         id: blender-cache

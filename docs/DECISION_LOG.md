@@ -313,3 +313,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Selección:** Cozy Kitchen Blender 3.5 por Nicole Morena, 7,685,702 B y CC BY-SA publicado por Blender; no inferir versión particular ni modificar licencia de código de ACD. Mejor comparador arquitectónico que fixtures sin textura.
 - **Control antes de publicar:** workflow de importación con URL oficial, tamaño/header, apertura en Blender5 sin autoexec, cámara/materiales/recursos y render funcional. Solo el éxito habilita commit binario con SHA y metadatos, manteniendo trazabilidad ROADMAP/STATUS/DECISION_LOG incluso para commit automático.
 - **Estado:** scripts/workflow/docs comprometidos; aún no hay binario ni ejecución que demuestre compatibilidad. No se cambia addon.
+
+
+## 2026-11-12 — E0019 corrección del validador de archivos .blend
+
+- Hecho: primer run 43285007004 falló en inspección superficial inicial sin llegar a Blender (HTTP 200, payload 7.3 MiB). Un archivo .blend puede estar comprimido y no comenzar en texto plano por la cabecera BLENDER; no asumir formato de byte literal.
+- Corrección: mantener control exacto del tamaño oficial y diagnóstico con `file`/primeros bytes, posponer validez estructural al parser oficial Blender5 y smoke. Binario todavía no publicado, nuevo run pendiente.

@@ -1,3 +1,5 @@
+> E0019 primer import [43285007004](https://github.com/mxlzz/ACD/actions/runs/43285007004) falló antes de Blender debido a un chequeo de cabecera `BLENDER` que no contempla .blend comprimidos. Se conserva tamaño esperado, se registra tipo/bytes, se delega validación al parser Blender5 real. Nueva ejecución pendiente. No se publicó binario.
+
 > **E0019 iniciado 2026-11-12:** escena oficial Blender 3.5 Cozy Kitchen de Nicole Morena, 7.3 MiB, CC BY-SA, workflow que *solo publica el binario si Blender5.0.1 lo abre y renderiza sin dependencias faltantes*. [E0019](experiments/E0019.md). El render funcional y commit binario están pendientes de prueba al escribir este documento. Escena del usuario no se sube.
 
 > **E0018, 2026-11-12:** escena arquitectónica real entregada. Inventario Cycles FHD con 137 objetos, 86 materiales y 121 imágenes packed; detalles [E0018](experiments/E0018.md). No subir original por rutas internas y activos BlenderKit/Blendkit de terceros. Prioridad: abrir con Blender5, probar dependencias, render mínimo, multi-seed y referencias. Workflow portátil por verificar, F5 suspendido.

@@ -1,3 +1,9 @@
+## E0019 — Validación de fuente: corrección de premisa de cabecera (2026-11-12)
+
+- Primer intento [workflow 43285007004](https://github.com/mxlzz/ACD/actions/runs/43285007004) **failure en paso de descarga**, probablemente por comprobación inadecuada de magic uncomprimido `BLENDER` en .blend (puede estar comprimido); descarga HTTP 200 de ~7.3 MiB. No se abrió Blender ni se publicó archivo. Se corrigió el protocolo: conservar validación de tamaño y documentar bytes iniciales, después dejar a Blender verificar el archivo realmente. Nuevo run pendiente; no inferir defecto de la escena.
+
+---
+
 ## E0019 — Fuente pública compacta seleccionada (2026-11-12)
 
 - Se seleccionó **Cozy Kitchen**, Blender 3.5 splash by Nicole Morena, **7,685,702 bytes**, licencia declarada **CC BY-SA**, fuente Blender Foundation, archiviz/interior con objetos y materiales. Documentado en [E0019](docs/experiments/E0019.md) y [benchmarks/scenes/README.md](benchmarks/scenes/README.md).
