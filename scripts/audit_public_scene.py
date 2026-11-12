@@ -40,13 +40,13 @@ scene.render.resolution_y = 192
 scene.render.resolution_percentage = 100
 scene.render.use_compositing = False
 scene.render.image_settings.file_format = "PNG"
-scene.render.filepath = "/tmp/acd_public_scene_smoke.png"
+scene.render.filepath = os.environ.get("ACD_AUDIT_RENDER", "/tmp/acd_public_scene_smoke.png")
 result = bpy.ops.render.render(write_still=True)
 assert "FINISHED" in result
 assert Path(scene.render.filepath).is_file()
 
 report = {
-    "source": "Blender Foundation official Blender 3.5 splash / Cozy Kitchen / Nicole Morena",
+    "source": os.environ.get("ACD_AUDIT_SOURCE", "Blender Foundation official Blender 3.5 splash / Cozy Kitchen / Nicole Morena"),
     "blender_used": bpy.app.version_string,
     "scene": scene.name,
     "saved_file_untouched": True,
@@ -63,5 +63,5 @@ report = {
     "smoke_render_success": True,
     "not_a_quality_benchmark": True
 }
-Path("/tmp/acd_public_scene_audit.json").write_text(json.dumps(report, indent=2) + "\n")
+Path(os.environ.get("ACD_AUDIT_OUTPUT", "/tmp/acd_public_scene_audit.json")).write_text(json.dumps(report, indent=2) + "\n")
 print("ACD_PUBLIC_SCENE_AUDIT", json.dumps(report, sort_keys=True))

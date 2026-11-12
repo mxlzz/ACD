@@ -387,3 +387,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Motivación:** el analizador inicial de E0020 generaba recortes desde dos referencias, pero la tabla de error del reporte por ROI correspondía solo a seed inicial, mientras los rankings globales resumían tres. Fijar método explícito evita confundir unidades.
 - **Implementación:** `scripts/analyze_cozy_exr.py` calcula medias de RMSE/gradientes de **3 seeds contra cada referencia** y rankings por referencia, más ROI elegidas desde promedio de refs, con los mismos candidatos y curva diagnóstica visual por método. Regiones incluyen OIDN nativo.
 - **Estado:** código y tests nuevos; evaluación real sobre E0021 pendiente. No modifica algoritmo OIDN ni geometría original; no demuestra mejora por sí mismo.
+
+
+## 2026-11-12 — F3, fuente retenida de distinto dominio (E0022)
+
+- **Problema:** medir solo Cozy Kitchen después de inspeccionarla puede sobreajustar la elección de una solución a ese fixture, no representar otras escenas. Introducir un exterior nocturno con emisiones y materiales sencillos para pruebas fuera de desarrollo.
+- **Fuente:** Terraced Houses (Yunus Emre Karaman), repo MIT `emrelab/blender-projects`, commit SHA fijado `36c46d3`, 3,044,256 bytes, blob SHA1 fijo. README afirma MIT sobre .blend, pero autor nota tutoriales antiguos de procedencia no especificada.
+- **Protocolo:** descargar solo desde commit inmutable, verificar git blob, licencia y tamaño, abrir sin autoexec en Blender5 y render Cycles 4spp antes de publicar. En este commit es candidato, no validado. No tocar el archivo de usuario ni el addon estable.

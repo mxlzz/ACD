@@ -14,3 +14,12 @@
 - Attribution does not imply sponsorship or endorsement by Nicole Morena or Blender.
 
 `Prueba ACD.blend` from the user is intentionally **not** part of this public repository. Its third-party assets and paths have not been cleared for public redistribution.
+
+
+## Held-out reference candidate: Terraced Houses (2026)
+
+- **Source:** [Terraced Houses](https://github.com/emrelab/blender-projects/tree/36c46d3b49ea872f6039e07a5e4769b5f9443654/terraced-houses) by Yunus Emre Karaman, source commit `36c46d3b49ea872f6039e07a5e4769b5f9443654`, 3,044,256 bytes.
+- **License:** MIT © 2026 Yunus Emre Karaman, explicitly applied to the .blend/render by author's README; LICENSE file to be preserved as `terraced_houses_LICENSE.txt` after import. Source mentions inspiration from unrecorded public tutorials; do not remove this attribution warning.
+- **Role:** withheld nighttime architectural exterior: emissive windows/streetlights, simple materials, without image-texture dependencies. Different failure modes from Cozy Kitchen; **not** a fine-texture quality test.
+- **State:** original binary imported only after SHA/source/Blender5 Cycles-smoke validation via `.github/workflows/acd-import-terraced-houses.yml`. For verified hash/manifest read `terraced_houses.audit.json` after job succeeds; until then this is a planned fixture.
+- The original professional scene of the user stays excluded.

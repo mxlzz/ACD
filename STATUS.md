@@ -1,3 +1,11 @@
+## E0022 — Segunda fuente pública MIT seleccionada como test retenido (2026-11-12)
+
+- Fuente candidata: [Terraced Houses](https://github.com/emrelab/blender-projects/tree/36c46d3b49ea872f6039e07a5e4769b5f9443654/terraced-houses) de Yunus Emre Karaman, licencia MIT explicita para .blend, 3,044,256 bytes, commit fuente fijado, git blob SHA1 conocido. Exterior nocturno con emisión en ventanas y farolas, diferencia sustantiva respecto de Cozy Kitchen. Autor declara tutoriales no registrados, se conserva caveat.
+- Workflow `acd-import-terraced-houses.yml` verifica fuente/integridad/Blender5 Cycles 192px 4 spp antes de publicar; `scripts/audit_public_scene.py` parametrizado por variables de entorno sin alterar auditoría anterior. **Estado en commit:** importación y render todavía sin verificar.
+- Objetivo: fixture retenido para evaluación de generalización, no optimización. No equivale a una escena profesional de texturas finas. E0021 continúa en ejecución por separado.
+
+---
+
 ## E0021 — Postprocesamiento de dos referencias preparado sin nuevos renders (2026-11-12)
 
 - Se añadió `scripts/analyze_cozy_exr.py` para E0020/E0021: 3 ROI elegidas por gradiente de ambas refs solamente; JPG/PNG comparativos con curva común; informe de métricas **promediadas sobre las tres seeds respecto de ambas referencias** (no solo seed539), incluyendo OIDN nativo en máscaras AOV; captura resolución original y de ensayo. No interfiere con la corrida E0021 que ya está ejecutándose.
