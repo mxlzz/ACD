@@ -503,3 +503,7 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 - Run [43287450449](https://github.com/mxlzz/ACD/actions/runs/43287450449) success; 320×240, 24 spp ×3, reference 512 spp ×2. Details in [E0020](docs/experiments/E0020.md).
 - Crops and ROI selection from references only: [benchmarks/results/cozy_e0020](benchmarks/results/cozy_e0020). Original EXRs remain Actions artifacts for 7 days; key numbers and previews permanently tracked.
 - Interpretation restricted by finite-spp reference disagreement and no convergence proof; no denoiser improvement established.
+
+## E0022 — Held-out nighttime architecture source incorporated (2026-11-12)
+- Terraced Houses, Yunus Emre Karaman, MIT source pinned upstream commit 36c46d3; source 3,044,256 B and SHA256 in benchmarks/scenes/terraced_houses.audit.json. Renderer Blender5.0.1 Cycles 192px 4spp passed. Original source unmodified.
+- Scene assigned held-out generalization benchmark: do not tune denoiser against it. No quality comparison performed by this smoke. The user's project remains unpublished.

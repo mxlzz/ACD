@@ -394,3 +394,8 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Problema:** medir solo Cozy Kitchen después de inspeccionarla puede sobreajustar la elección de una solución a ese fixture, no representar otras escenas. Introducir un exterior nocturno con emisiones y materiales sencillos para pruebas fuera de desarrollo.
 - **Fuente:** Terraced Houses (Yunus Emre Karaman), repo MIT `emrelab/blender-projects`, commit SHA fijado `36c46d3`, 3,044,256 bytes, blob SHA1 fijo. README afirma MIT sobre .blend, pero autor nota tutoriales antiguos de procedencia no especificada.
 - **Protocolo:** descargar solo desde commit inmutable, verificar git blob, licencia y tamaño, abrir sin autoexec en Blender5 y render Cycles 4spp antes de publicar. En este commit es candidato, no validado. No tocar el archivo de usuario ni el addon estable.
+
+## 2026-11-12 — E0022, held-out MIT night scene verified and copied from immutable source
+- Upstream repo emrelab/blender-projects commit 36c46d3, MIT explicitly covers .blend scene according to its README and LICENSE. Filename, size, Git blob SHA1 and postdownload SHA256 recorded; source unmodified.
+- 192px Cycles 4spp smoke passed under --disable-autoexec before commit. Add original license and attribution. Source author notes tutorial-based modelling with unknown tutorial credits: retain this provenance; no implication of endorsement.
+- Assign as a held-out scene, distinct from Cozy Kitchen development; no denoiser training or parameter tuning against it.

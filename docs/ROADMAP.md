@@ -188,3 +188,5 @@ Al cerrar una etapa o cambiar de dirección, actualizar **STATUS**, este roadmap
 > **E0019 validated fixture:** Official Cozy Kitchen by Nicole Morena CC BY-SA at benchmarks/scenes/cozy_kitchen.blend; Blender 5.0.1 smoke checked, SHA in .audit.json. Quality benchmark pending.
 
 > **E0020 numeric benchmark completed:** Cozy Kitchen 320×240 24 spp ×3, 512 spp ×2, reports and 3 reference-only region crops versioned at [E0020](experiments/E0020.md). OIDN native still baseline. No F5 algorithm until reference convergence/detailed material validation.
+
+> **E0022 held-out scene validated and imported:** MIT Terraced Houses of Yunus Emre Karaman, 3MB, authored .blend+license SHA pinned; Blender5 Cycles smoke passed; next evaluate native baseline vs ACD without optimizing on held-out data.
