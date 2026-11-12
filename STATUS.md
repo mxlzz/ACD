@@ -475,3 +475,8 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 - Source: Blender official 3.5 splash by Nicole Morena, ~7.3 MiB; permission CC BY-SA.
 - Validation: original SHA and metadata in benchmarks/scenes/cozy_kitchen.audit.json. Blender 5.0.1 Cycles CPU smoke 192x192 4 spp succeeded (not quality).
 - Asset is public; keep license and attribution. Existing user scene remains unpublished.
+
+## E0020 — Cozy Kitchen real benchmark and ROI post-analysis (2026-11-12)
+- Run [43287450449](https://github.com/mxlzz/ACD/actions/runs/43287450449) success; 320×240, 24 spp ×3, reference 512 spp ×2. Details in [E0020](docs/experiments/E0020.md).
+- Crops and ROI selection from references only: [benchmarks/results/cozy_e0020](benchmarks/results/cozy_e0020). Original EXRs remain Actions artifacts for 7 days; key numbers and previews permanently tracked.
+- Interpretation restricted by finite-spp reference disagreement and no convergence proof; no denoiser improvement established.

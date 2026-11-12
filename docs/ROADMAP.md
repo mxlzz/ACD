@@ -180,3 +180,5 @@ La implementación actual `addon/acd_blender.py` está **inspirada en** SID, per
 Al cerrar una etapa o cambiar de dirección, actualizar **STATUS**, este roadmap y las entradas de investigación asociadas. No inferir que una tarea está terminada por la existencia de código o de una ejecución de Actions.
 
 > **E0019 validated fixture:** Official Cozy Kitchen by Nicole Morena CC BY-SA at benchmarks/scenes/cozy_kitchen.blend; Blender 5.0.1 smoke checked, SHA in .audit.json. Quality benchmark pending.
+
+> **E0020 numeric benchmark completed:** Cozy Kitchen 320×240 24 spp ×3, 512 spp ×2, reports and 3 reference-only region crops versioned at [E0020](experiments/E0020.md). OIDN native still baseline. No F5 algorithm until reference convergence/detailed material validation.

@@ -368,3 +368,7 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Evidencia:** el run 43288965340 restauró artifacts E0020, ejecutó análisis con OIDN nativo en regiones, seleccionó tres zonas de gradiente desde refs exclusivamente y generó tres comparativas, reporte JSON y Markdown. Archivo de salida disponible como artifact 13975528472.
 - **Desviación:** publicación git bloqueada por regla general de ignore de `docs/experiments` para archivos nuevos, no por fallo de análisis. Esta situación es análoga a la importación .blend.
 - **Corrección:** `git add -f` solo para rutas analíticas E0020 concretas, sin tocar reglas ignore globales. Mantener la documentación de cambios de flujo en STATUS/ROADMAP/DECISION_LOG del mismo commit. Reintento pendiente y verificar SHA de branch tras push.
+
+## 2026-11-12 — E0020 ROI analysis (no rerender)
+- Reused exact EXRs from Actions 43287450449 via gh run download. Computed both-reference rankings and corrected region metrics including NATIVE_COMP_OIDN. Crops chosen only from two refs, display transform explicitly non-OCIO.
+- Persisted E0020.md plus coordinates, 3 derived CC BY-SA images under benchmarks/results/cozy_e0020 (credit Nicole Morena), and JSON. Numerical conclusions remain provisional for 320×240 finite refs. No ACD algorithm change.

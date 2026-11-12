@@ -1,0 +1,108 @@
+{
+  "experiment": "E0020",
+  "source_sha256": "5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395",
+  "source_license": "Cozy Kitchen Nicole Morena CC BY-SA; derivative crops also CC BY-SA with attribution",
+  "source_render_run": "https://github.com/mxlzz/ACD/actions/runs/43287450449",
+  "resolution": [
+    320,
+    240
+  ],
+  "samples": 24,
+  "ref_spp": 512,
+  "seeds": [
+    539,
+    911,
+    1337
+  ],
+  "region_selection": "asinh RGB gradients of mean of two references; never candidate-derived",
+  "coords_px": [
+    [
+      156,
+      130,
+      80,
+      80
+    ],
+    [
+      182,
+      26,
+      80,
+      80
+    ],
+    [
+      52,
+      130,
+      80,
+      80
+    ]
+  ],
+  "rank_by_rmse_against_each_reference": {
+    "first": [
+      "STANDARD",
+      "NATIVE_COMP_OIDN",
+      "HIGH",
+      "SUPER",
+      "Raw"
+    ],
+    "second": [
+      "STANDARD",
+      "NATIVE_COMP_OIDN",
+      "HIGH",
+      "SUPER",
+      "Raw"
+    ]
+  },
+  "metrics_against_each_reference": {
+    "first": {
+      "Raw": {
+        "rmse_linear": 0.25129101669700143,
+        "edge_gradient_rmse": 0.3322839029798723
+      },
+      "STANDARD": {
+        "rmse_linear": 0.10819758310768302,
+        "edge_gradient_rmse": 0.12445763534236112
+      },
+      "HIGH": {
+        "rmse_linear": 0.11030054898160109,
+        "edge_gradient_rmse": 0.1262853282509499
+      },
+      "SUPER": {
+        "rmse_linear": 0.12687901648559102,
+        "edge_gradient_rmse": 0.1316699170423214
+      },
+      "NATIVE_COMP_OIDN": {
+        "rmse_linear": 0.10819758310768302,
+        "edge_gradient_rmse": 0.12445763534236112
+      }
+    },
+    "second": {
+      "Raw": {
+        "rmse_linear": 0.25056769848084365,
+        "edge_gradient_rmse": 0.3335136411759698
+      },
+      "STANDARD": {
+        "rmse_linear": 0.10701248387553901,
+        "edge_gradient_rmse": 0.12621478349397444
+      },
+      "HIGH": {
+        "rmse_linear": 0.10966396088829285,
+        "edge_gradient_rmse": 0.12767583165025626
+      },
+      "SUPER": {
+        "rmse_linear": 0.12683383061719503,
+        "edge_gradient_rmse": 0.13306573396696617
+      },
+      "NATIVE_COMP_OIDN": {
+        "rmse_linear": 0.10701248387553901,
+        "edge_gradient_rmse": 0.12621478349397444
+      }
+    }
+  },
+  "region_metrics_path": "region_metrics_fixed.json",
+  "preview_files": [
+    "reference_selected_crop_1.png",
+    "reference_selected_crop_2.png",
+    "reference_selected_crop_3.png"
+  ],
+  "preview_caveat": "Shared simple compress+gamma display approximation, nearest neighbor 3x, NOT Blender OCIO/color-accurate, not perceptual proof.",
+  "scientific_caveat": "512-spp references differ materially, correlated samples/convergence unverified; crops do not replace validation."
+}
