@@ -504,3 +504,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Evidencia de GH run #43306559564:** 16 tests, dos escenas previamente examinadas, tres seeds/dos refs. RAW_BRIGHT100 mejora Terraced RMSE 0.16778->0.10936 y MAE 0.02107->0.01609, pero empeora fuertemente Cozy RMSE 0.08339->0.13909, edge 0.08970->0.13272. Segunda referencia conserva orden. Fusión local 50% también empeora Cozy 0.08339->0.09781.
 - **Decisión negativa:** no promover algoritmo, no reajustar umbrales Raw/mezclas ad hoc por escena, pues sería sobreajuste a datos ya observados. Esta es una hipótesis descartada como estrategia universal simple.
 - **Siguiente candidato:** guía física `Emission` AOV disponible en Cycles podría separar luces de superficies reflectantes, sin que se use la referencia para seleccionar píxeles en inferencia. Investigar su presencia en ambas escenas y compararla con mezcla global y Raw input. No anticipar mejora ni integrar sin validación ciega.
+
+
+## 2026-11-12 — E0027 AOV Emission como posible guía física de preservación HDR
+
+- E0026 falló en Cozy y mejoró Terraced usando brillo Raw. Atribución hipotética: indicador por brillo incluye texturas/glossy y fireflies no emisivos. E0027 usa Cycles `emission` AOV **del mismo seed** sin referencia en inferencia; peso `w=maxMix*emitL/(emitL+0.25)`, maxMix 0.5/1.0, benchmarkado frente a control constante peso medio.
+- Dos escenas ya observadas E0021/E0023, cada una 3 semillas y dos refs; registrar disponibilidad y fracción no cero del pase, RMSE/MAE, bordes y RMSE dentro/fuera top1% ref. Ningún parámetro se ajustará retrospectivamente a escena. Mejora en ambas requerida para proseguir y nueva tercera escena para generalizar.
+- Tests de no emisión => OIDN exacto, emisión localizada, no dependencia de denoised en peso, negativo, NaN y shapes. Código/workflow pendiente de GH Actions, sin cambio en addon.

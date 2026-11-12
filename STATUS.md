@@ -1,3 +1,10 @@
+## E0027 — ablation específica Cycles Emission AOV preparada (2026-11-12)
+
+- E0026 descartó gating Raw por brillo como método general pese a buena mejora nocturna: degrada Cozy. E0027 prueba un indicador más específico disponible en el render **sin oracle:** `Emission` AOV de cada seed, peso suave de mezcla Raw/OIDN según energía de emisión, escala fija 0.25 y fracción máxima Raw .5/1.0; control mezcla uniforme del mismo peso medio y comparación con variante genérica E0026.
+- Código `acd_lab/emission_guide.py`, tests e informe predeclarado [E0027](docs/experiments/E0027.md). Workflow recupera EXR de Cozy E0021/Terraced E0023 sin rerender, dos referencias y tres seeds; documenta cobertura del pase y score HDR/gradientes. **CI y resultados pendientes al commit**. No toca addon ni fork OIDN.
+
+---
+
 ## E0026 ejecutado — descartar gating Raw como solución general (2026-11-12)
 
 - [Run #43306559564](https://github.com/mxlzz/ACD/actions/runs/43306559564) **success, 16 tests**, reutiliza EXR E0021/E0023 sin render. [Informe E0026](docs/experiments/E0026.md) almacena dos refs x3 seeds: Cozy OIDN RMSE 0.08339 vs RAW_BRIGHT50 0.09781, RAW_BRIGHT100 0.13909; Terraced OIDN 0.16778 vs RAW_BRIGHT50 0.12253, RAW_BRIGHT100 0.10936. El algoritmo mejora claramente exterior nocturno pero degrada mucho interior: **no generaliza**. Errores de gradientes también se deterioran fuertemente en Cozy.
