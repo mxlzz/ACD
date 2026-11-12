@@ -1,0 +1,85 @@
+name: ACD E0020 analyze saved EXR no rerender, archive findings
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0020-cozy-analyze.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  postprocess-original-exr:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate E0020 postprocessor, install OpenEXR + Pillow
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install Pillow
+          python -m pytest -q tests/test_cozy_e0020_analysis.py tests/test_region_cli.py
+      - name: Restore exact original E0020 EXR and reports from action artifacts
+        run: |
+          mkdir -p /tmp/acd_cozy_e0020
+          gh run download 43287450449 -R mxlzz/ACD -n acd-e0020-cozy-exr -D /tmp/acd_cozy_e0020
+          gh run download 43287450449 -R mxlzz/ACD -n acd-e0020-cozy-metrics -D /tmp/acd_cozy_e0020
+          test -f /tmp/acd_cozy_e0020/reference_check.exr
+          test -f /tmp/acd_cozy_e0020/raw_multilayer.exr
+          test -f /tmp/acd_cozy_e0020/metadata.json
+          sha256sum benchmarks/scenes/cozy_kitchen.blend
+      - name: Restore native OIDN baseline to region metrics and make impartial crops
+        run: |
+          python -m scripts.analyze_cozy_e0020 \
+            --directory /tmp/acd_cozy_e0020 \
+            --output /tmp/acd_cozy_e0020/analysis
+      - name: Permanently preserve report, 3 comparison crops and provenance
+        run: |
+          mkdir -p benchmarks/results/cozy_e0020 docs/experiments
+          cp /tmp/acd_cozy_e0020/analysis/E0020.md docs/experiments/E0020.md
+          cp /tmp/acd_cozy_e0020/analysis/reference_selected_crop_*.png benchmarks/results/cozy_e0020/
+          cp /tmp/acd_cozy_e0020/analysis/roi_analysis.json benchmarks/results/cozy_e0020/
+          cp /tmp/acd_cozy_e0020/analysis/reference_rois.json benchmarks/results/cozy_e0020/
+          {
+            echo
+            echo "## E0020 — Cozy Kitchen real benchmark and ROI post-analysis (2026-11-12)"
+            echo "- Run [43287450449](https://github.com/mxlzz/ACD/actions/runs/43287450449) success; 320×240, 24 spp ×3, reference 512 spp ×2. Details in [E0020](docs/experiments/E0020.md)."
+            echo "- Crops and ROI selection from references only: [benchmarks/results/cozy_e0020](benchmarks/results/cozy_e0020). Original EXRs remain Actions artifacts for 7 days; key numbers and previews permanently tracked."
+            echo "- Interpretation restricted by finite-spp reference disagreement and no convergence proof; no denoiser improvement established."
+          } >> STATUS.md
+          {
+            echo
+            echo "> **E0020 numeric benchmark completed:** Cozy Kitchen 320×240 24 spp ×3, 512 spp ×2, reports and 3 reference-only region crops versioned at [E0020](experiments/E0020.md). OIDN native still baseline. No F5 algorithm until reference convergence/detailed material validation."
+          } >> docs/ROADMAP.md
+          {
+            echo
+            echo "## 2026-11-12 — E0020 ROI analysis (no rerender)"
+            echo "- Reused exact EXRs from Actions 43287450449 via gh run download. Computed both-reference rankings and corrected region metrics including NATIVE_COMP_OIDN. Crops chosen only from two refs, display transform explicitly non-OCIO."
+            echo "- Persisted E0020.md plus coordinates, 3 derived CC BY-SA images under benchmarks/results/cozy_e0020 (credit Nicole Morena), and JSON. Numerical conclusions remain provisional for 320×240 finite refs. No ACD algorithm change."
+          } >> docs/DECISION_LOG.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f benchmarks/results/cozy_e0020/*.png
+          git add benchmarks/results/cozy_e0020/*.json docs/experiments/E0020.md STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0020): preserve reference-controlled ROI results and visual crops"
+          git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
+      - name: Archive region metrics and generated comparisons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0020-cozy-analyses
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd_cozy_e0020/analysis/

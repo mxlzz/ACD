@@ -354,3 +354,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Defecto observado:** `region_cli.compare_regions_from_files` tenía un listado fijo sin `NATIVE_COMP_OIDN`, aunque el benchmark por imagen y por seed sí tenía baseline. Esto impedía diagnosticar el fallo central (detalle OIDN) por AOV/región.
 - **Corrección acotada:** incluir `NATIVE_COMP_OIDN` y versiones SID4 cuando sus EXR estén presentes, sin modificar selección/máscaras ni métricas. Test EXR incluye aserción explícita del nativo en ROI. Antes de interpretaciones E0020 se reparará la comparación regional desde los EXR originales, no se ejecutará otro render idéntico.
 - **Evidencia:** código y test en este commit; CI pendiente. Sin cambio al addon ni al método de denoising.
+
+
+## 2026-11-12 — E0020 primera corrida Cozy Kitchen y post-análisis
+
+- **Observación:** GitHub Actions 43287450449 success, 320×240, 24 spp ×3 seeds, 512 spp ×2 refs; raw RMSE 0.25433; Native/Standard 0.1058435; High 0.1072723; Super 0.1286238, todos en promedio y ref1. Referencias RMSE mutuo 0.06105, 24.5% del error del raw; ranking contra refs no exactamente coincidente. No se demuestra convergencia.
+- **Decisión:** no comenzar mejora algorítmica. Reutilizar EXR para controlar regiones de detalle seleccionadas solo por referencias, añadir nativo a ROI, medir segunda referencia con mismos candidatos y generar recortes comparables 3x sin interpolación. No rerender, commit posterior de reporte con authoria/licencia CC BY-SA si pasa.
+- **Datos permanentes en este commit:** números resumidos/URL, scripts/workflow/tests. Informe y crops finales pendientes hasta ejecución, nunca afirmar que existen antes de confirmarlos.

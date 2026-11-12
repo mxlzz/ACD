@@ -1,3 +1,11 @@
+## E0020 post-análisis sin rerender — preparación (2026-11-12)
+
+- [Benchmark #43287450449](https://github.com/mxlzz/ACD/actions/runs/43287450449) **success**: Cozy Kitchen 320×240, 24 spp ×3 semillas y referencias 512 spp ×2. Heurística diversidad seeds pasó; refs discrepan RMSE 0.0610477, 24.51 % del error raw, **casi** el umbral exploratorio 25 %; ranking con ref2 no fue exactamente igual. Global RMSE media Native/Standard 0.1058435, High 0.1072723, Super 0.1286238. Borde: Native/Standard 0.1252201, High 0.1272333, Super 0.1324044. Son solo medidas contra refs finitas.
+- F3 defecto corregido aparte: ROI antes omitía NATIVE_COMP_OIDN. Workflow nuevo descargará EXR originales de este run, reanalizará (sin rerender) con nativo en regiones, seleccionará crops en base a ambas referencias y archivará informe permanente E0020+3 imágenes+coordenadas/JSON en GitHub **solo si passes**. Última validación del workflow todavía pendiente.
+- No iniciar F5; primero identificar naturaleza de discrepancia entre referencias y evaluar visualmente crops; posteriormente considerar 1024–2048 spp referencias/escena de prueba a mayor resolución.
+
+---
+
 ## F3 — Corrección del comparador de regiones nativo (2026-11-12)
 
 - Hallazgo durante E0020: `acd_lab.region_cli.compare_regions_from_files` filtraba método `NATIVE_COMP_OIDN` del diagnóstico espacial aunque se incluía en batch global. Se incorporó baseline nativo y SID4 cuando estén presentes, además de test sobre lectura real EXR.
