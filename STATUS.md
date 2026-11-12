@@ -1,3 +1,10 @@
+## E0023 postproceso cuantitativo preparado sin nuevos renders (2026-11-12)
+
+- Nuevo script analyze_terraced_e0023.py reusa métricas de 3 semillas/2 referencias del laboratorio, añade distribución de error HDR en peor 1%, ROI de AOV emisión/glossy/transmission/environment y tres recortes seleccionados solo por referencias. Se compara nativo, Raw y High/Super. Licencia y crédito MIT del fixture preservados.
+- Workflow acd-e0023-analyze-exr.yml recuperará EXR del run 43291659387 y publicará E0023.md, previews y JSON **solo después de superar tests y cálculos**. En este commit no se dispone de diagnóstico final del origen de RMSE. La escena nocturna ya observada no es test ciego para ajustes posteriores.
+
+---
+
 ## E0023 — Instrumento de concentración de errores HDR añadido (2026-11-12)
 
 - Resultados verificados E0023 [run 43291659387](https://github.com/mxlzz/ACD/actions/runs/43291659387): Raw RMSE 0.1201359 frente OIDN comp 0.1677849; pero Raw MAE 0.0281466 frente OIDN 0.0210728 y error de bordes Raw 0.1210943 vs OIDN 0.0679478. Ref spread/raw 17.01%; multiseed heurística aprobó, no independencia científica.

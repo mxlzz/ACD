@@ -431,3 +431,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Hecho:** 24spp×3 seeds, refs512spp×2, noche Terraced Houses: raw RMSE 0.12014 < OIDN0.16778, pero raw MAE0.02815 > OIDN0.02107 y error gradiente0.12109 > OIDN0.06795. No demuestra superioridad visual de raw ni causa específica.
 - **Nueva metrología:** reportar fracción SSE en el peor 1% de píxeles, valor extremo y p99 sobre datos lineales HDR. Tests sintéticos de un outlier vs error uniforme. No se ha corrido en la escena real a este commit.
 - **Higiene experimental:** al usar E0023 para identificar una anomalía, deja de ser un held-out ciego en el sentido estricto. Cualquier candidato F5 exige validación sobre otra escena no observada. Sin alterar denoiser.
+
+
+## 2026-11-12 — E0023 análisis AOV/errores extremos independiente de Cycles
+
+- **Diseño:** interpretar contradicción Raw mejor RMSE vs OIDN mejor MAE y gradientes: calcular error concentrado peor1%, comparar errores de máscaras AOV emisión/glossy/transmission/environment, recortes de ROI elegidas solo desde refs; tres seeds frente a ambas refs en misma escena.
+- **Fuente:** EXR de Actions 43291659387 que ya incluyen RAW, AOV y OIDN, sin rerender ni cambios de algoritmo. Proveniencia y licencia de Yunus Emre Karaman MIT.
+- **Estado:** script y workflow de lectura/persistencia por ejecutar. Hasta completar no afirmar causa de aumento RMSE. E0023 ya se ha visto, por lo que no puede considerarse test de generalización ciego de futuros cambios.

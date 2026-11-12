@@ -1,3 +1,5 @@
+> E0023 script y workflow preparados: reportar concentración del error HDR peor1% + ROI de emisión/glossy desde el EXR 24spp existente, comparando Raw vs OIDN en tres seeds/dos refs; y guardar 3 recortes de referencias/diagnóstico en GitHub MIT sin volver a renderizar. Ejecución aún no validada; no atribuir el aumento RMSE a causa específica.
+
 > E0023 diagnóstico HDR 2026-11-12: Raw gana RMSE 0.120 frente OIDN 0.168, pero OIDN gana MAE y error de gradientes. Nueva métrica de concentración SSE peor 1 % con tests creada; analizar aún en EXR existentes sin rerender. Escena nocturna E0023 ya observada, así que no es test ciego para cambios posteriores. E0021 ROI/crops archivados y quality validada.
 
 > E0021 run #43289852695 Blender5.0.1 Cozy Kitchen **success**: 512×482, 24spp ×3 refs1024spp ×2; discrepancia de refs 0.03551 RMSE (13.53% raw, vs 24.51% E0020). OIDN nativo/Standard menor RMSE y gradiente que High/Super; se prepara postprocesamiento ROI con 2 refs y 3 seeds, no rerender; workflow, pruebas y publicación E0021 aún pendientes.
