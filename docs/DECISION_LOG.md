@@ -305,3 +305,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Decisión:** usar la escena para pruebas privadas, no poner el archivo editable en GitHub público. Posee rutas internas y componentes BlenderKit con licencias no comprobadas individualmente; el usuario consintió uso, no transfirió licencias de terceros. GitHub tiene además límite normal de 100 MB por blob.
 - **Validación:** inspección binaria, no Blender real ni render. Se crea workflow para obtener Blender oficial 5.0.1 y continuar inspección local en condiciones reproducibles; CI pendiente.
 - **Siguiente:** Blender --factory-startup --disable-autoexec para diagnóstico, smoke Cycles y luego métricas EXR. El addon estable permanece intacto.
+
+
+## 2026-11-12 — E0019, elegir fixture público compacto de Blender
+
+- **Necesidad:** prueba arquviz representativa y compartible en repo GitHub sin publicar materiales/procedencia dudosa de escena del usuario. La escena de usuario E0018 pesa ~159 MiB y conserva assets de terceros.
+- **Selección:** Cozy Kitchen Blender 3.5 por Nicole Morena, 7,685,702 B y CC BY-SA publicado por Blender; no inferir versión particular ni modificar licencia de código de ACD. Mejor comparador arquitectónico que fixtures sin textura.
+- **Control antes de publicar:** workflow de importación con URL oficial, tamaño/header, apertura en Blender5 sin autoexec, cámara/materiales/recursos y render funcional. Solo el éxito habilita commit binario con SHA y metadatos, manteniendo trazabilidad ROADMAP/STATUS/DECISION_LOG incluso para commit automático.
+- **Estado:** scripts/workflow/docs comprometidos; aún no hay binario ni ejecución que demuestre compatibilidad. No se cambia addon.

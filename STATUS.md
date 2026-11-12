@@ -1,3 +1,11 @@
+## E0019 — Fuente pública compacta seleccionada (2026-11-12)
+
+- Se seleccionó **Cozy Kitchen**, Blender 3.5 splash by Nicole Morena, **7,685,702 bytes**, licencia declarada **CC BY-SA**, fuente Blender Foundation, archiviz/interior con objetos y materiales. Documentado en [E0019](docs/experiments/E0019.md) y [benchmarks/scenes/README.md](benchmarks/scenes/README.md).
+- Se agregó workflow controlado de importación: descarga oficial, verificación de tamaño/cabecera, apertura Blender 5.0.1 sin autoexec, revisión cámara/texturas/libraries y render funcional CPU 192x192 4 spp. **Este commit solo crea el workflow; ejecución y publicación de binario quedan pendientes de comprobar**. Si pasa, el workflow crea un commit binario con SHA256 y también actualiza los tres archivos de trazabilidad por protocolo. `Prueba ACD.blend` del usuario sigue privado.
+- Siguiente: comprobar ejecución, SHA, CI y que archivo .blend está efectivamente en GitHub; correr luego benchmark real de detalle solo con referencia validada, no inferir calidad del smoke.
+
+---
+
 ## E0018 — Escena real recibida (2026-11-12)
 
 - Archivo Prueba ACD.blend recibido y auditado estáticamente. Cycles 1920×1080, 137 objetos, 86 materiales, cinco cámaras (activa Camera.003), 121/122 imágenes empaquetadas. SHA256 e inventario en [E0018](docs/experiments/E0018.md).
