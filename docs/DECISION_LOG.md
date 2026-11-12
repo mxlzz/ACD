@@ -420,3 +420,7 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Verificado:** GH Actions 43289852695 success, escena Cozy Kitchen original, proporción preservada 512×482, 24spp×3, refs1024spp×2. Discrepancia refs/raw bajó de E0020 ~24.5% a 13.5% pero no prueba convergencia. OIDN compositor/Standard RMSE media 0.0833928 y borde 0.0896975, High 0.0860779/0.0902929, Super 0.0971167/0.0962214. Ranking total entre refs coherente.
 - **Siguiente comprobación:** recuperar EXR real, medir todas semillas con ambas refs y visualizar ROI de alto gradiente elegidas sin salida candidata; persistir reporte y previews bajo licencia original CC BY-SA. Workflow nuevo no vuelve a renderizar.
 - **Estado al commit:** datos y workflow; ejecución del postprocesador aún pendiente. Ninguna mejora algorítmica demostrada.
+
+## 2026-11-12 — E0021 two-reference detail analysis preserved
+- Reused exact EXR artifacts from run 43289852695, computed RMSE and reference-selected edge gradients on all three noisy seeds against both reference renders. Crops selected without candidate signals, tonemapping non-OCIO diagnostic. Attribution Nicole Morena CC BY-SA.
+- Result: Native compositor OIDN/Standard lower RMSE and edge-gradient error vs ACD High/Super on this development scene at 512x482. Reference discrepancy decreased relative to E0020 but convergence/independence still unproven. No algorithm trained or altered.

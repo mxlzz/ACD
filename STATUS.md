@@ -531,3 +531,7 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 ## E0022 — Held-out nighttime architecture source incorporated (2026-11-12)
 - Terraced Houses, Yunus Emre Karaman, MIT source pinned upstream commit 36c46d3; source 3,044,256 B and SHA256 in benchmarks/scenes/terraced_houses.audit.json. Renderer Blender5.0.1 Cycles 192px 4spp passed. Original source unmodified.
 - Scene assigned held-out generalization benchmark: do not tune denoiser against it. No quality comparison performed by this smoke. The user's project remains unpublished.
+
+## E0021 — Cozy Kitchen higher-reference quality archived (2026-11-12)
+- Blender5.0.1 [run 43289852695](https://github.com/mxlzz/ACD/actions/runs/43289852695), 512x482, 24spp x3 and refs1024spp x2; refs spread/raw-error 13.53%, vs E0020 24.51%. OIDN compositor/Standard RMSE mean 0.0833928, High 0.0860779, Super 0.0971167; native best gradients. Two-ref + 3-seed detail table and crops [E0021](docs/experiments/E0021.md).
+- Reused EXR original, no rerender; 3 reference-only ROIs and previews under benchmarks/results/cozy_e0021, derivatives of Nicole Morena Cozy Kitchen CC BY-SA. No perceputal superiority claim.

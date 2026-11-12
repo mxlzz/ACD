@@ -196,3 +196,5 @@ Al cerrar una etapa o cambiar de dirección, actualizar **STATUS**, este roadmap
 > **E0020 numeric benchmark completed:** Cozy Kitchen 320×240 24 spp ×3, 512 spp ×2, reports and 3 reference-only region crops versioned at [E0020](experiments/E0020.md). OIDN native still baseline. No F5 algorithm until reference convergence/detailed material validation.
 
 > **E0022 held-out scene validated and imported:** MIT Terraced Houses of Yunus Emre Karaman, 3MB, authored .blend+license SHA pinned; Blender5 Cycles smoke passed; next evaluate native baseline vs ACD without optimizing on held-out data.
+
+> **E0021 complete:** 512x482 preserves source ratio, 24spp×3 and refs1024spp×2; ref disagreement/raw ratio 13.5%, consistent rankings. Three ROI crops+2-reference averages stored at [E0021](experiments/E0021.md); native OIDN still benchmark leader. Not a F5 algorithm improvement.
