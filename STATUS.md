@@ -1,3 +1,11 @@
+## F3 — Corrección del comparador de regiones nativo (2026-11-12)
+
+- Hallazgo durante E0020: `acd_lab.region_cli.compare_regions_from_files` filtraba método `NATIVE_COMP_OIDN` del diagnóstico espacial aunque se incluía en batch global. Se incorporó baseline nativo y SID4 cuando estén presentes, además de test sobre lectura real EXR.
+- El [run E0020](https://github.com/mxlzz/ACD/actions/runs/43287450449) arrancó en commit anterior (3cda34e); sus métricas regionales **no** incluirán OIDN nativo hasta reprocesarlas. Global batch sí lo mide. **No se desencadena un segundo render costoso por este cambio.**
+- El fix y nuevos tests quedan pendientes de CI. Reanalizar los EXR E0020 de forma independiente solo si los artifacts pueden recuperarse sin alterar inputs.
+
+---
+
 ## E0020 — Benchmark Cozy Kitchen con referencias y semillas preparado (2026-11-12)
 
 - Se agregó `acd-e0020-cozy-pilot.yml` como job único: fixture público SHA fijo, Blender5.0.1 CPU, 320×240, **24 spp ×3 semillas (539, 911, 1337)**, **512 spp ×2 refs** (8819 y 8922), Standard/High/Super/comp-OIDN (además Raw), EXR con AOV y diagnóstico por región. Workflow automático solo cuando cambie su propio fichero; posterior desactivar disparo por push para no gastar minutos repetidos.

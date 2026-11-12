@@ -347,3 +347,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Método predefinido:** 320×240, 24 spp ×3 seeds, 512 spp ×2 refs, misma rama RenderLayer y AOV, métodos Standard/High/Super/NATIVE_COMP_OIDN, HDR RGB RMSE/MAE, gradientes en bordes de referencia y en plano, ROI por AOV; comprobar diversidad y discrepancia de referencia antes de ranking. Calidad no inferida del smoke.
 - **Seguridad:** Blender abre escena pública con `--disable-autoexec`; no guardar .blend modificado. Workflow automático solo por su propio fichero, no reiterar al modificar docs. Informe E0020 se genera desde JSON con caveats sin ganador declarado.
 - **Estado al commit:** código/workflow/test nuevo; CI y corrida todavía pendientes. Primer número solo cuando el run muestre outputs reales.
+
+
+## 2026-11-12 — F3, regresión de omisión OIDN nativo en regiones
+
+- **Defecto observado:** `region_cli.compare_regions_from_files` tenía un listado fijo sin `NATIVE_COMP_OIDN`, aunque el benchmark por imagen y por seed sí tenía baseline. Esto impedía diagnosticar el fallo central (detalle OIDN) por AOV/región.
+- **Corrección acotada:** incluir `NATIVE_COMP_OIDN` y versiones SID4 cuando sus EXR estén presentes, sin modificar selección/máscaras ni métricas. Test EXR incluye aserción explícita del nativo en ROI. Antes de interpretaciones E0020 se reparará la comparación regional desde los EXR originales, no se ejecutará otro render idéntico.
+- **Evidencia:** código y test en este commit; CI pendiente. Sin cambio al addon ni al método de denoising.
