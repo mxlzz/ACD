@@ -551,3 +551,7 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 ## E0021 — Cozy Kitchen higher-reference quality archived (2026-11-12)
 - Blender5.0.1 [run 43289852695](https://github.com/mxlzz/ACD/actions/runs/43289852695), 512x482, 24spp x3 and refs1024spp x2; refs spread/raw-error 13.53%, vs E0020 24.51%. OIDN compositor/Standard RMSE mean 0.0833928, High 0.0860779, Super 0.0971167; native best gradients. Two-ref + 3-seed detail table and crops [E0021](docs/experiments/E0021.md).
 - Reused EXR original, no rerender; 3 reference-only ROIs and previews under benchmarks/results/cozy_e0021, derivatives of Nicole Morena Cozy Kitchen CC BY-SA. No perceputal superiority claim.
+
+## E0023 — Exterior nocturno, discrepancia entre errores, diagnóstico archivado
+- Run 43291659387 valida 320×240 24spp x3 y 512spp refs x2, nativo OIDN RMSE más alto que Raw pero MAE y gradiente menores. Informe E0023 y comparativas: docs/experiments/E0023.md, benchmarks/results/terraced_e0023. EXR fuente conservados temporalmente en Actions.
+- Se midió concentración SSE peor 1% y errores por AOV emission/glossy sobre primera seed, contra mismas refs sin alterar algoritmos. Esta escena fue observada: requiere otra escena final ciega para evaluar un candidato entrenado.

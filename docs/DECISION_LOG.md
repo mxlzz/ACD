@@ -438,3 +438,7 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Diseño:** interpretar contradicción Raw mejor RMSE vs OIDN mejor MAE y gradientes: calcular error concentrado peor1%, comparar errores de máscaras AOV emisión/glossy/transmission/environment, recortes de ROI elegidas solo desde refs; tres seeds frente a ambas refs en misma escena.
 - **Fuente:** EXR de Actions 43291659387 que ya incluyen RAW, AOV y OIDN, sin rerender ni cambios de algoritmo. Proveniencia y licencia de Yunus Emre Karaman MIT.
 - **Estado:** script y workflow de lectura/persistencia por ejecutar. Hasta completar no afirmar causa de aumento RMSE. E0023 ya se ha visto, por lo que no puede considerarse test de generalización ciego de futuros cambios.
+
+## 2026-11-12 — E0023 auditoría de outliers y AOV a partir de mismo EXR
+- Reprocesados los datos exactos de Actions 43291659387 sin volver a renderizar. Error cuadrático concentrado peor 1%, AOV emisión/glossy, tres ROIs de referencias, tres seeds vs dos referencias. Fuente original MIT Yunus Emre Karaman y copyright intacto.
+- No asignar causalidad a emisión solo por máscara de energía AOV ni elegir parámetros a partir de esta escena ya examinada. Una nueva escena no observada será necesaria para test final.

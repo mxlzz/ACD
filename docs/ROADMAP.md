@@ -202,3 +202,5 @@ Al cerrar una etapa o cambiar de dirección, actualizar **STATUS**, este roadmap
 > **E0022 held-out scene validated and imported:** MIT Terraced Houses of Yunus Emre Karaman, 3MB, authored .blend+license SHA pinned; Blender5 Cycles smoke passed; next evaluate native baseline vs ACD without optimizing on held-out data.
 
 > **E0021 complete:** 512x482 preserves source ratio, 24spp×3 and refs1024spp×2; ref disagreement/raw ratio 13.5%, consistent rankings. Three ROI crops+2-reference averages stored at [E0021](experiments/E0021.md); native OIDN still benchmark leader. Not a F5 algorithm improvement.
+
+> E0023 reporte permanente: exterior nocturno Terraced Houses MIT, discrepancia Raw/OIDN en RMSE vs MAE; concentración de error HDR y AOV más 3 recortes desde referencias en [E0023](experiments/E0023.md). Ninguna mejora de denoiser probada.
