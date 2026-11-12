@@ -1,3 +1,5 @@
+> **F2 verificación en curso 2026-11-12:** CI Python aprobada #43233365339 (89 pruebas). El workflow OIDN nuevo no disparó automáticamente; los pasos standalone OIDN 2.5.1 se anexaron al workflow M3.9 ya operativo como puente temporal, sin cambiar algoritmos. Esperar evidencia real, depurar errores y fijar resultados E0014. Producto estable sin cambios.
+
 > **F2 candidato 2026-11-12:** CLI standalone OIDN 2.5.1, conversión PFM y pruebas; workflow de mismos AOVs por seed preparado, **CI aún pendiente**. No asumir equivalencia entre prefilter de Blender y comportamiento por defecto de OIDN standalone; revisar run, documentar E0014 y priorizar escena con detalle fino. F1/F3 CI previa aprobada #43231850644; addon estable intacto.
 
 > **F3 código candidato — 2026-11-12:** métrica de error de gradientes RGB en referencia y por región implementada con pruebas sintéticas; CI aún pendiente, ningún ranking de escena real obtenido. Revalidación: F1 documentación creada, F2 auditoría inicial realizada, F3 falta ejecución/validación en renders representativos. Guías operativas en [ACD_V2_PLAN.md](ACD_V2_PLAN.md) y [test_protocol.md](test_protocol.md).

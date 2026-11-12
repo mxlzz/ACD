@@ -1,3 +1,11 @@
+## F2 — Implementación conectada al workflow existente (2026-11-12)
+
+- [CI Python #43233365339](https://github.com/mxlzz/ACD/actions/runs/43233365339) **success: 89 tests**, incluida conversión PFM y métricas de detalle; comprobador de trazabilidad aprobó. Esto **no** es ejecución de Blender/OIDN standalone.
+- El nuevo workflow `acd-v2-oidn-251-pilot.yml` no apareció en la lista de runs automáticamente durante el PR; para no depender de un disparo manual imposible de garantizar, se agregó el paso OIDN 2.5.1 al workflow M3.9 existente, que ya está activado por cambios en su archivo. Conserva los ensayos y añade mediciones de la versión externa sobre iguales beauty/AOV.
+- **Nueva ejecución pendiente al commit.** Inspeccionar si se descargó binario con SHA oficial, si cada seed generó su multilayer y si PFM/native comparten beauty sin delta; abortar si no. No inferir superioridad.
+
+---
+
 ## F2 — OIDN 2.5.1 standalone, ejecución experimental preparada (2026-11-12)
 
 - Código nuevo: PFM RGB32 little-endian sin color management, test de roundtrip HDR/orden de filas; `scripts/oidn251_compare.py` ejecuta el binario oficial CPU sobre beauty/albedo/normal exactamente de cada seed y compara frente a compositor OIDN en dos referencias. Export multilayer por semilla activado cuando AOV capture.

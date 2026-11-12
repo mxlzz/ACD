@@ -256,3 +256,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Corrección de procedencia:** antes solo se guardaba multilayer de seed inicial; ahora cada seed exporta sus propias guías; mezclar guías de seed anterior sería científicamente inválido.
 - **Incertidumbre:** el compositor Blender5.0.1 usa prefilter Accurate; CLI `cleanAux` por defecto false, sin garantía de identidad de políticas ni modelos. La comparación 2.3.3/2.5.1 exploratoria no aísla todas las causas.
 - **Estado:** código, tests y CI del experimento añadidos, validación real pendiente, sin cambios al addon estable. Siguiente: revisar CI y publicar E0014 con números verificados.
+
+
+## 2026-11-12 — F2, activar comparador OIDN sobre workflow ya existente
+
+- **Control observado:** quality gate del commit adf4132 pasó: 89 tests, PFM y detail incluidas. No había nuevo run del workflow OIDN creado (aun sin prueba de ejecución).
+- **Decisión de orquestación:** añadir descarga SHA fijado y comparador standalone al workflow `sid-architectural-pilot.yml`, que se dispara por modificación del propio workflow y ya ejecuta Blender real. No se alteran algoritmos ni escenas; se obtiene un nuevo método/versión sobre inputs existentes.
+- **Resultado:** cambio de workflow registrado; nuevo run pendiente. Si falla descarga o guías incompatibles, documentar causa y corregir sin reinterpretar como defecto de OIDN.
+- **Siguiente:** observar run, capturar errores de gradiente/HDR y diferencias raw/PFM, preservar evidencia E0014.

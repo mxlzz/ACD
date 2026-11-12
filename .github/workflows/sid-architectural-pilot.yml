@@ -78,6 +78,21 @@ jobs:
           done
           python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/seed_aggregate.json"
           python -m scripts.summarize_sid_realbench --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/summary.json"
+      - name: Install official OIDN 2.5.1 standalone CPU (SHA-256 pinned)
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://github.com/RenderKit/oidn/releases/download/v2.5.1/oidn-2.5.1.x86_64.linux.tar.gz -o oidn251.tar.gz
+          echo "743c3e2aff8c220d5d70fe6cb970fb3d36f2702d2693c61d1d148e404cf37cd6  oidn251.tar.gz" | sha256sum -c -
+          mkdir oidn-dist
+          tar -xzf oidn251.tar.gz -C oidn-dist
+          BIN="$(find "$PWD/oidn-dist" -type f -name oidnDenoise | head -n 1)"
+          test -n "$BIN" && test -x "$BIN"
+          echo "OIDN_BIN=$BIN" >> "$GITHUB_ENV"
+          "$BIN" --list_devices
+      - name: V2 same-EXR OIDN 2.5.1 and reference-only gradient diagnosis
+        run: |
+          python -m scripts.oidn251_compare --directory "$ACD_BENCH_DIR" \
+            --oidn "$OIDN_BIN" --output "$ACD_BENCH_DIR/oidn251_comparison.json"
       - name: Archive reproducible EXRs and metric reports
         if: always()
         uses: actions/upload-artifact@v4
