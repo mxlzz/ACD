@@ -1,3 +1,11 @@
+## E0022 verificado y E0023 prueba retenida preparada (2026-11-12)
+
+- [E0022 run #43291261400](https://github.com/mxlzz/ACD/actions/runs/43291261400) **success**, `terraced_houses.blend` 3,044,256 bytes, SHA256 `37b39be2ae1fc8624110f57bf5dd38f77a0420139b4c9a89946a2db35dffab84`, MIT de Yunus Emre Karaman, fijado commit fuente. Abrió y renderizó Blender5.0.1 Cycles CPU 192²×4 spp sin activos faltantes. [E0022](docs/experiments/E0022.md).
+- Se creó workflow E0023 de **test retenido**, 320 de ancho con relación de aspecto original, 24spp×3 seeds, refs 512spp×2; métodos OIDN comp, ACD Standard/High/Super. Compara sin modificar el algoritmo. Añadida prueba de SHA/licencia y reporte genérico reutilizado para distinta escena.
+- **Estado al commit:** prueba de calidad E0023 aún pendiente, mientras E0021 Cozy Kitchen refs mejoradas sigue en ejecución. No incluir resultados de held-out en desarrollo ni tomar decisiones hasta verificar su calidad de referencias.
+
+---
+
 ## E0022 — Segunda fuente pública MIT seleccionada como test retenido (2026-11-12)
 
 - Fuente candidata: [Terraced Houses](https://github.com/emrelab/blender-projects/tree/36c46d3b49ea872f6039e07a5e4769b5f9443654/terraced-houses) de Yunus Emre Karaman, licencia MIT explicita para .blend, 3,044,256 bytes, commit fuente fijado, git blob SHA1 conocido. Exterior nocturno con emisión en ventanas y farolas, diferencia sustantiva respecto de Cozy Kitchen. Autor declara tutoriales no registrados, se conserva caveat.

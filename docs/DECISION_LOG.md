@@ -399,3 +399,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - Upstream repo emrelab/blender-projects commit 36c46d3, MIT explicitly covers .blend scene according to its README and LICENSE. Filename, size, Git blob SHA1 and postdownload SHA256 recorded; source unmodified.
 - 192px Cycles 4spp smoke passed under --disable-autoexec before commit. Add original license and attribution. Source author notes tutorial-based modelling with unknown tutorial credits: retain this provenance; no implication of endorsement.
 - Assign as a held-out scene, distinct from Cozy Kitchen development; no denoiser training or parameter tuning against it.
+
+
+## 2026-11-12 — E0022 verificado y E0023 evaluación retenida
+
+- **Verificación E0022:** run 43291261400 success, Blender5 Cycles 4 spp, fuente MIT `Terraced Houses` con SHA256 y Git blob fijados, licencia original preservada, no faltan activos. Fixture ahora versionado y se incluye test de integridad en CI.
+- **E0023 diseño:** tras fijar explícitamente el baseline, probar sobre exterior nocturno no usado durante diagnóstico de Cozy Kitchen: 320 de ancho preservando relación fuente, 24 spp ×3 seeds, dos refs 512 spp, OIDN compositor frente ACD Standard/High/Super, mismo EXR y guías. Informe compacto generalizado. Resultado real por validar.
+- **Regla:** no ajustar hiperparámetros, modelo o código de ACD usando esta escena *si pretendemos utilizarla como held-out final*. Datos de prueba sirven para informar generalización, no para elegir los cambios. F5 aún no iniciado.

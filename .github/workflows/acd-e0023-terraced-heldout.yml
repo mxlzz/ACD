@@ -1,0 +1,85 @@
+name: ACD E0023 withheld night exterior multi-seed baseline test
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0023-terraced-heldout.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  withheld-scene-verification:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test pinned public held-out MIT scene and CLI
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_public_reference_fixture.py tests/test_runner.py
+          echo "37b39be2ae1fc8624110f57bf5dd38f77a0420139b4c9a89946a2db35dffab84  benchmarks/scenes/terraced_houses.blend" | sha256sum -c -
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - if: steps.blender-cache.outputs.cache-hit != 'true'
+        name: Get official Blender 5.0.1
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Render heldout exterior without touching original MIT scene
+        run: |
+          python scripts/run_scene_benchmark.py \
+            --blender ./blender-5.0.1-linux-x64/blender \
+            --blend benchmarks/scenes/terraced_houses.blend \
+            --output /tmp/acd_terraced_e0023 \
+            --scene-name Scene --max-width 320 \
+            --samples 24 --reference-samples 512 \
+            --seed 539 --extra-seeds 911,1337 --reference-seed 8819 \
+            --second-reference --device CPU \
+            --methods STANDARD,HIGH,SUPER,NATIVE_COMP_OIDN
+      - name: Report whole-scene and detail fidelity on withheld exterior
+        run: |
+          python -m scripts.summarize_e0020 \
+            --directory /tmp/acd_terraced_e0023 \
+            --experiment E0023 --scene-label "Terraced Houses (WITHHELD)" \
+            --output /tmp/acd_terraced_e0023/E0023_GENERATED.md
+      - name: Archive metadata, seed/reference QA and compact metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0023-terraced-metrics
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            /tmp/acd_terraced_e0023/metadata.json
+            /tmp/acd_terraced_e0023/metrics.json
+            /tmp/acd_terraced_e0023/seed_aggregate.json
+            /tmp/acd_terraced_e0023/region_metrics.json
+            /tmp/acd_terraced_e0023/E0023_GENERATED.md
+            /tmp/acd_terraced_e0023/seed_*/metrics.json
+      - name: Archive EXRs for inspection (7 days)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0023-terraced-exr
+          retention-days: 7
+          if-no-files-found: warn
+          compression-level: 1
+          path: |
+            /tmp/acd_terraced_e0023/*.exr
+            /tmp/acd_terraced_e0023/seed_*/*.exr
