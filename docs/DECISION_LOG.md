@@ -541,3 +541,8 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - Run #43309302172 success, 21 tests, 3 semillas y 2 referencias 512 spp para Low-Poly Island MIT de Yunus Emre Karaman. E0027 Emission50 con escala .25 inalterada logra RMSE 0.05335 vs OIDN nativo 0.06554, pero error de bordes 0.03962 vs 0.03935. ACD High/Super tienen errores HDR severos 0.143. Ref2 repite mejora.
 - E0029 confirma hipótesis de preservación localizada de emisión en una tercera geometría sin tuning, pero la comparte autor con Terraced, no hay convergencia de referencias garantizada y el error de bordes sube. No afirmar superioridad perceptual ni general, no instalar variante en addon. Congelar E0029 workflow como manual, conservar EXR en artifacts y números en docs.
 - Próximo: diagnóstico de recortes y una escena de autor independiente, más revisión de luminancia para eliminar halos/saltos antes de integración.
+
+
+## 2026-11-12 — E0030 frozen visual diagnostics before selecting new model
+
+- E0029 Emission50 reduces RMSE on new Island scene with small edge regression. Need visually inspect localized artifacts rather than promote algorithm on scalar score. E0030 selects ROI from *both references alone* and produces fixed-transfer Raw/OIDN/Emission50/100 and High/Super panels, local RMSE, no new render or parameter tuning. All derivative images MIT with attribution; pending workflow.

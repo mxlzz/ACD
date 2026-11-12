@@ -1,3 +1,9 @@
+## E0030 visual diagnostics prepared (2026-11-12)
+
+- Reference-selected multi-panel crops with fixed diagnostic transfer and MIT attribution prepared from E0029 Island original EXRs (no rerender), 4 ROIs including brightest and gradients; computes local RMSE both references for Raw/OIDN/Emission50/Emission100/High/Super. Workflow publishes derived PNG and JSON under benchmarks/results/island_e0030 only after successful postprocess. Results pending. Do not infer perceptual superiority without inspecting images.
+
+---
+
 ## E0029: nueva escena confirma disminución HDR con regresión de borde leve (2026-11-12)
 
 - GH run #43309302172 success y 21 tests; Low-Poly Island 320x272, 24 spp x3, refs512 spp x2, discrepancia refs RMSE 0.0112732 (~18% Raw). Parámetros Emission50 congelados desde E0027. OIDN nativo RMSE 0.065539 vs Emission50 0.053347 (**-18.6%**), pero edge error 0.039348 vs 0.039621 (+0.70%). Segunda ref confirma. No hubo tuning por esta escena ni se integró addon.
