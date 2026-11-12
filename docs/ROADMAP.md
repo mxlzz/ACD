@@ -1,3 +1,5 @@
+> **E0025 preparado 2026-11-12:** E0024 identifica top1% HDR ref como fuente de exceso RMSE nocturno; nuevo diagnóstico del signo de diferencia en luminancia sobre máscara *reference-only*, 3 semillas/2 referencias usando EXRs ya existentes. Tests sintéticos y workflow de bajo coste; ejecución pendiente y F5 todavía no habilitado. [E0025](experiments/E0025.md).
+
 > **E0024 verificado 2026-11-12:** [run 43305087148](https://github.com/mxlzz/ACD/actions/runs/43305087148), top1% brillo referencia concentra ~71.7% SSE OIDN vs 35.5% Raw. RMSE OIDN dentro=1.4207 vs Raw=0.7151; fuera=0.08967 vs Raw=0.09701. Segunda ref reproduce. [Informe](experiments/E0024.md). Es error espacial HDR, no causalidad de emisión; siguiente E0025 sesgo de luminancia con signo sobre mismos EXR. Workflow E0024 manual para ahorrar Actions.
 
 > E0024 workflow trigger actualizado para cambios específicos de test/parser HDR tail, tras corrección de mensaje NaN. Reejecución pendiente, no crear nuevos renders. 

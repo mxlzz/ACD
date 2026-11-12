@@ -1,0 +1,49 @@
+name: ACD E0025 signed HDR highlight diagnosis without rerender
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0025-highlight-bias.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  analyze-existing-terraced-exrs:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR support and validate directional bias behavior
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_hdr_tail.py
+      - name: Recover exact EXRs from E0023 (NO rerender)
+        run: |
+          mkdir -p /tmp/acd-e0025
+          gh run download 43291659387 -R mxlzz/ACD -n acd-e0023-terraced-exr -D /tmp/acd-e0025
+          gh run download 43291659387 -R mxlzz/ACD -n acd-e0023-terraced-metrics -D /tmp/acd-e0025
+          test -f /tmp/acd-e0025/reference_check.exr
+          test -f /tmp/acd-e0025/seed_911/acd_compare_NATIVE_COMP_OIDN.exr
+      - name: Measure signed energy on the SAME reference-selected pixels
+        run: |
+          python -m scripts.analyze_highlight_bias_e0025 --directory /tmp/acd-e0025 \
+            --output /tmp/acd-e0025/highlight_signed_bias.json
+      - name: Preserve numeric report only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0025-signed-hdr-bias
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd-e0025/highlight_signed_bias.json

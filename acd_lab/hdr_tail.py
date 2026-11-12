@@ -101,3 +101,66 @@ def hdr_tail_breakdown(reference: np.ndarray, raw: np.ndarray,
             "may use the reference-based masks at inference."
         ),
     }
+
+
+def highlight_signed_bias(reference: np.ndarray, raw: np.ndarray,
+                          candidates: dict[str, np.ndarray], *,
+                          top_fraction: float = 0.01) -> dict:
+    """Signed scene-linear luminance bias on reference-only bright pixels.
+
+    Never select from candidates: an aggressive denoiser must not be able
+    to move the test ROI. Ratios are used only if reference sum > 0.
+    No gamma, display transform or clipping. Not a perceptual metric.
+    """
+    if not math.isfinite(top_fraction) or not 0 < top_fraction < 1:
+        raise ValueError("top_fraction must be in (0,1)")
+    ref = np.asarray(rgb(reference, "reference"), dtype=np.float64)
+    noise = np.asarray(rgb(raw, "raw"), dtype=np.float64)
+    if ref.ndim != 3 or ref.shape[-1] != 3 or ref.shape != noise.shape:
+        raise ValueError("Expected aligned RGB images")
+    if not np.isfinite(ref).all() or not np.isfinite(noise).all():
+        raise ValueError("Nonfinite reference or raw")
+    if ref.shape[0] * ref.shape[1] < 2:
+        raise ValueError("Need >=2 pixels")
+    weights = np.array((0.2126, 0.7152, 0.0722))
+    ref_luma = np.sum(ref * weights, axis=2)
+    mask = _mask_top(ref_luma, top_fraction)
+    chosen_ref = ref_luma[mask]
+    methods = {"Raw": noise, **candidates}
+    if "Raw" in candidates:
+        raise ValueError("Raw reserved")
+    out = {}
+    for name, value in methods.items():
+        array = np.asarray(rgb(value, name), dtype=np.float64)
+        if array.shape != ref.shape or not np.isfinite(array).all():
+            raise ValueError("Mismatched/nonfinite candidate " + name)
+        c_luma = np.sum(array * weights, axis=2)[mask]
+        signed = c_luma - chosen_ref
+        # Prefer mean over any one pixel: extreme sparkles can dominate
+        # this difference; also report under/over count.
+        total_ref = float(np.sum(chosen_ref))
+        out[name] = {
+            "reference_mean_luminance": float(np.mean(chosen_ref)),
+            "candidate_mean_luminance": float(np.mean(c_luma)),
+            "mean_signed_luminance_delta": float(np.mean(signed)),
+            "mean_absolute_luminance_delta": float(np.mean(np.abs(signed))),
+            "fraction_below_reference": float(np.mean(signed < 0)),
+            "fraction_above_reference": float(np.mean(signed > 0)),
+            "reference_luminance_sum": total_ref,
+            "candidate_luminance_sum": float(np.sum(c_luma)),
+            "candidate_to_reference_sum_ratio": (
+                float(np.sum(c_luma) / total_ref) if total_ref > 0 else None
+            ),
+            "max_reference_luminance": float(np.max(chosen_ref)),
+            "max_candidate_luminance": float(np.max(c_luma)),
+        }
+    return {
+        "selection": "reference_top_scene_linear_luminance; shared by all candidates",
+        "top_fraction_requested": float(top_fraction),
+        "selected_pixel_count": int(mask.sum()),
+        "mask_sha256": __import__("hashlib").sha256(
+            np.ascontiguousarray(mask).tobytes()
+        ).hexdigest(),
+        "methods": out,
+        "warning": "Signed HDR luminance diagnostic on finite reference; no causal inference, no perceptual color transform.",
+    }

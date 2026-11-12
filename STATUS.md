@@ -1,3 +1,10 @@
+## E0025 — sesgo HDR firmado, preparación sin nuevo render (2026-11-12)
+
+- E0024 confirmó gran SSE en top1% luminosidad de referencia, pero no dirección. Se añadió `highlight_signed_bias` y pruebas para detectar atenuación o amplificación de energía en máscaras SOLO de referencia; contiene ratio de suma de luminancias, delta firmado, fracción sobre/bajo ref para mismos píxeles/métodos. Workflow nuevo consume artifacts E0023 y escribe JSON 3 semillas ×2 refs. **CI y ejecución pendientes**, no se ha concluido ninguna causa; aun sin datos para entrenar/cambiar algoritmo.
+- E0024 pasó 7 tests, run #43305087148, reporte permanente [E0024](docs/experiments/E0024.md). E0021 y E0023 permanecen líneas de base de calidad.
+
+---
+
 ## E0024 verificado — error HDR concentrado en luces, no causalidad (2026-11-12)
 
 - [Run #43305087148](https://github.com/mxlzz/ACD/actions/runs/43305087148) **success**, 7 tests; mismo EXR E0023 3 seeds ×2 refs. [E0024](docs/experiments/E0024.md): en top1% píxeles de mayor luminancia (solo referencia), RMSE medio Raw=0.7151 vs OIDN nativo=1.4207, High=1.2794, Super=1.2843. Fuera del 1%, OIDN=0.08967 mejora Raw=0.09701 y High=0.09479. Top luminosidad concentra ~71.7% del SSE nativo vs 35.5% Raw. Segunda referencia ratifica patrón. No confirma si OIDN atenúa o aumenta iluminación, ni efecto exclusivamente emisión; 512 spp no son convergencia probada.

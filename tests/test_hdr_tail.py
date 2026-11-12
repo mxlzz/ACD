@@ -79,3 +79,38 @@ def test_sum_of_shared_mask_sse_is_total_sse():
             assert metrics["sse_inside"] + metrics["sse_outside"] == pytest.approx(
                 metrics["total_rgb_mean_sse"]
             )
+
+
+def test_brightness_signed_bias_direction_is_detected_without_candidates_changing_mask():
+    from acd_lab.hdr_tail import highlight_signed_bias
+    ref=np.zeros((4, 4, 3), dtype=float)
+    ref[0, 0] = 10
+    raw=ref.copy()
+    raw[0, 0]=5
+    high=ref.copy()
+    high[0, 0]=20
+    result=highlight_signed_bias(ref,raw,{"High":high},top_fraction=.0625)
+    assert result["selected_pixel_count"] == 1
+    assert result["methods"]["Raw"]["candidate_to_reference_sum_ratio"] == pytest.approx(.5)
+    assert result["methods"]["High"]["candidate_to_reference_sum_ratio"] == pytest.approx(2)
+    assert result["methods"]["Raw"]["mean_signed_luminance_delta"] < 0
+    assert result["methods"]["High"]["mean_signed_luminance_delta"] > 0
+    assert result["methods"]["High"]["fraction_above_reference"] == 1
+
+
+def test_signed_bias_zero_reference_does_not_divide_by_zero():
+    from acd_lab.hdr_tail import highlight_signed_bias
+    zeros=np.zeros((2, 4, 3))
+    result=highlight_signed_bias(zeros,zeros,{"X":zeros})
+    assert result["methods"]["X"]["candidate_to_reference_sum_ratio"] is None
+
+
+def test_signed_bias_rejects_misregistration_and_nonfinite():
+    from acd_lab.hdr_tail import highlight_signed_bias
+    a,b=sample()
+    with pytest.raises(ValueError,match="aligned"):
+        highlight_signed_bias(a,b[:-1],{})
+    bad=a.copy()
+    bad[0,0,0]=np.inf
+    with pytest.raises(ValueError,match="NaN or infinite"):
+        highlight_signed_bias(a,b,{"bad":bad})
