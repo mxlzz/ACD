@@ -1,3 +1,11 @@
+## E0018 — Escena real recibida (2026-11-12)
+
+- Archivo Prueba ACD.blend recibido y auditado estáticamente. Cycles 1920×1080, 137 objetos, 86 materiales, cinco cámaras (activa Camera.003), 121/122 imágenes empaquetadas. SHA256 e inventario en [E0018](docs/experiments/E0018.md).
+- Usuario autoriza pruebas. **No se publica el archivo original:** contiene paths de red de trabajo y referencias a assets BlenderKit sujetos a licencias individuales; además excede el límite habitual GitHub de 100 MB. Compartir solo código y resultados sin rutas sensibles.
+- La lectura de DNA y bloques completó; **Blender no se abrió ni renderizó** en esta etapa. Se prepara runtime Blender5.0.1 portable para ejecutar en entorno local sin descarga directa; el workflow todavía no está verificado.
+- Próximo: inspección bpy sin autoexec, smoke Cycles, regiones y multi-seed con dos referencias, sin alterar original.
+
+---
 ## E0017 validado — cierre del ciclo automático actual (2026-11-12)
 
 - [ISA fixed-input run #43237525190](https://github.com/mxlzz/ACD/actions/runs/43237525190) **success dos jobs**, [E0017](docs/experiments/E0017.md): mismo PFM por SHA en AMD EPYC 7763 AVX2 vs EPYC9V45 AVX-512; los dos OIDN CLI v2.3.3/v2.5.1 son idénticos *dentro* de cada CPU, pero entre CPUs su output difiere RGB RMSE 7.41e-7 (max abs 3.48e-5). La causa de discrepancias mayores E0015 no está aislada. No atribuir diferencias a AMX sin medición.

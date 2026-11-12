@@ -298,3 +298,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Orquestación:** deshabilitar disparo de workflows pesados por sincronizaciones de PR (mantenidos con `workflow_dispatch`); quality automático sigue asegurando contrato y trazabilidad. Evita nueva ejecución del mismo benchmark por cambio documental sin nueva hipótesis.
 - **Bloqueo para F5:** aún no hay evidencia profesional de un detalle que OIDN pierda y ACD recupere fielmente; necesitamos escena arquitectónica autorizada o dataset público de calidad. No entrenar, no fork, no mezclar algoritmos sin objetivo verificable. PR experimental permanece draft, addon estable intacto.
 - **Estado del commit:** instrucciones y resultados documentados, nueva validación quality pendiente.
+
+## 2026-11-12 — E0018, primera escena arquitectónica real autorizada
+
+- **Hecho:** archivo original 166–167 MB recibido, Zstandard Blender 5.0, hash y DNA del archivo verificados. Escena Cycles FHD, una cámara activa, 5 cámaras, 137 objetos, 86 materiales, 121/122 imágenes empaquetadas; 2 referencias a librerías enlazadas.
+- **Decisión:** usar la escena para pruebas privadas, no poner el archivo editable en GitHub público. Posee rutas internas y componentes BlenderKit con licencias no comprobadas individualmente; el usuario consintió uso, no transfirió licencias de terceros. GitHub tiene además límite normal de 100 MB por blob.
+- **Validación:** inspección binaria, no Blender real ni render. Se crea workflow para obtener Blender oficial 5.0.1 y continuar inspección local en condiciones reproducibles; CI pendiente.
+- **Siguiente:** Blender --factory-startup --disable-autoexec para diagnóstico, smoke Cycles y luego métricas EXR. El addon estable permanece intacto.
