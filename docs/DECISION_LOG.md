@@ -442,3 +442,11 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-12 — E0023 auditoría de outliers y AOV a partir de mismo EXR
 - Reprocesados los datos exactos de Actions 43291659387 sin volver a renderizar. Error cuadrático concentrado peor 1%, AOV emisión/glossy, tres ROIs de referencias, tres seeds vs dos referencias. Fuente original MIT Yunus Emre Karaman y copyright intacto.
 - No asignar causalidad a emisión solo por máscara de energía AOV ni elegir parámetros a partir de esta escena ya examinada. Una nueva escena no observada será necesaria para test final.
+
+
+## 2026-11-12 — E0020 primer benchmark multiseed en escenario público real
+
+- **Objetivo y evidencia:** E0019 provee escena oficialmente publicada de Blender 3.5, CC BY-SA, 7.33 MiB y render smoke Blender5 OK. Ejecutar calidad inicial sin necesitar usuario ni publicar el archivo privado E0018.
+- **Plan fijo:** 320px de ancho con relación de aspecto original, 24 spp, tres seeds 539/911/1337 y dos refs 512 spp 8819/8922. Métodos igualan RenderLayer/guías, comparar Standard/High/Super vs compositor OIDN y raw; métricas RMSE HDR, MAE, gradiente en borde, plano y ratio contraste (no usar solo nitidez).
+- **Validez:** si las referencias divergen en exceso o seed variation falla, no inferir ranking. 320px es exploratorio (aliasing), no FHD profesional. Siguiente 512/1024px o dataset independiente tras resultados.
+- **Estado:** workflow y protocolo comprometidos, sin resultados al commit. Renders solo por workflow de esta revisión y dispatch manual posterior; no ejecutar en cada commit.

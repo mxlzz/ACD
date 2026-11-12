@@ -1,0 +1,95 @@
+name: ACD V2 Cozy Kitchen controlled benchmark pilot
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-v2-cozy-pilot.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cozy-benchmark:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    env:
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BENCH: /tmp/acd-cozy-pilot
+      SCENE: benchmarks/scenes/cozy_kitchen.blend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR metrics and verify frozen scene integrity
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_public_reference_fixture.py tests/test_detail.py
+          sha256sum "$SCENE"
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - if: steps.blender-cache.outputs.cache-hit != 'true'
+        name: Download Blender official 5.0.1
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Render 3 controlled noisy seeds and 2 separate reference images
+        run: |
+          python scripts/run_scene_benchmark.py \
+            --blender "$PWD/blender-5.0.1-linux-x64/blender" \
+            --blend "$SCENE" --output "$BENCH" \
+            --max-width 320 --samples 24 --reference-samples 512 \
+            --seed 539 --extra-seeds 911,1337 --reference-seed 8819 \
+            --second-reference --device CPU \
+            --methods STANDARD,HIGH,SUPER,NATIVE_COMP_OIDN
+      - name: Persist compact metric evidence to CI log
+        if: success()
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ["BENCH"])
+          a=json.loads((root/"seed_aggregate.json").read_text())
+          m=json.loads((root/"metrics.json").read_text())
+          meta=json.loads((root/"metadata.json").read_text())
+          print("ACD_COZY_METRICS",json.dumps({
+            "source_sha256":meta["source_blend_sha256"],
+            "render_resolution":meta["resolution"],
+            "cycles":meta["cycles"],"samples":meta["samples"],
+            "reference_samples":meta["reference_samples"],
+            "second_reference":meta["second_reference"],
+            "reference_consistency":m.get("reference_consistency"),
+            "diversity":a["seed_diversity_audit"],
+            "valid_diversity":a["input_diversity_heuristic_passed"],
+            "rank_rmse":a["rank_by_mean_rmse"],
+            "rank_detail":a["rank_by_mean_edge_gradient_rmse"],
+            "methods":{
+              name:{"rmse":metrics["rmse_linear"]["mean"],
+                    "mae":metrics["mae_linear"]["mean"],
+                    "edge":a["detail_methods"][name]["edge_gradient_rmse"],
+                    "flat":a["detail_methods"][name]["flat_gradient_rmse"],
+                    "contrast":a["detail_methods"][name]["edge_contrast_ratio"]}
+              for name,metrics in a["methods"].items()
+            }
+          },indent=2))
+          PY
+      - name: Archive EXR/inputs/second reference/metric reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0020-cozy-320px-24spp-512ref
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 4
+          path: /tmp/acd-cozy-pilot/

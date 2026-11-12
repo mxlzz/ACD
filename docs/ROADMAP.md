@@ -1,3 +1,5 @@
+> **E0020 piloto preparado:** Cozy Kitchen fuente oficial vendorizada (E0019); render 320px, 24 spp x3 seeds, refs 512 spp x2, OIDN compositor nativo vs ACD Standard/High/Super, metrics HDR/gradiente y raw AOV. Ejecutar/verificar Actions antes de conclusión, ampliar resolución y referencias tras controlar divergencia. [Protocolo](experiments/E0020.md). Sin intervención del addon estable.
+
 > E0023 script y workflow preparados: reportar concentración del error HDR peor1% + ROI de emisión/glossy desde el EXR 24spp existente, comparando Raw vs OIDN en tres seeds/dos refs; y guardar 3 recortes de referencias/diagnóstico en GitHub MIT sin volver a renderizar. Ejecución aún no validada; no atribuir el aumento RMSE a causa específica.
 
 > E0023 diagnóstico HDR 2026-11-12: Raw gana RMSE 0.120 frente OIDN 0.168, pero OIDN gana MAE y error de gradientes. Nueva métrica de concentración SSE peor 1 % con tests creada; analizar aún en EXR existentes sin rerender. Escena nocturna E0023 ya observada, así que no es test ciego para cambios posteriores. E0021 ROI/crops archivados y quality validada.

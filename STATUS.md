@@ -1,3 +1,11 @@
+## E0020 — benchmark real sobre Cozy Kitchen preparado (2026-11-12)
+
+- `acd-v2-cozy-pilot.yml` crea piloto de Cycles Blender5.0.1 en la escena pública E0019 a 320px ancho, 24 spp x3 seeds, dos refs independientes 512 spp, mismos inputs nativos/ACD Standard/High/Super, EXR/AOV raw por seed; informe en [E0020](docs/experiments/E0020.md).
+- **Al registrar este commit el workflow aún no ha corrido**. No hay evidencia de que nuestras métricas de detalle ganen o de convergencia de 512 spp. Se conserva la escena original, sin tocar addon estable; outputs temporales, números esenciales a registrar permanentemente.
+- Prueba de integración real previa [E0019](docs/experiments/E0019.md) pasó con render smoke a 4 spp. Si este piloto falla, corregir bug real y conservar fallo; no iniciar F5 sin evidencia.
+
+---
+
 ## E0023 postproceso cuantitativo preparado sin nuevos renders (2026-11-12)
 
 - Nuevo script analyze_terraced_e0023.py reusa métricas de 3 semillas/2 referencias del laboratorio, añade distribución de error HDR en peor 1%, ROI de AOV emisión/glossy/transmission/environment y tres recortes seleccionados solo por referencias. Se compara nativo, Raw y High/Super. Licencia y crédito MIT del fixture preservados.
