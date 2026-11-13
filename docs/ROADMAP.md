@@ -1,3 +1,5 @@
+> E0036 real same-render Cycles internal vs compositor OIDN 5.2.4 LTS workflow triggered; no quality ranking, one noise realization; results pending.
+
 > E0036 B0b new same-render design: Raw Noisy Image, Cycles internal OIDN and compositor OIDN from identical Render Layers with known guide sockets; Python analysis contract and synthetic tests written; next run Blender 5.2.4; no claims until real jobs pass.
 
 > E0035 archive first run 43481397097 failed EXR path due nested artifact directory (not algorithm). Fix via unique recursive file selection, rerun no Blender.

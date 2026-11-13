@@ -1,3 +1,10 @@
+## 2026-11-13 — B0b E0036 real smoke initiated (pending results)
+
+- Workflow [.github/workflows/acd-e0036-cycles-internal.yml](.github/workflows/acd-e0036-cycles-internal.yml) agregado y disparado: Blender oficial 5.2.4 LTS verificado, Cycles 16 spp, una sola ejecución, RLayers Noisy Image/Imagen denoised interna/CompositorOIDN, mismo albedo y normal. Métricas RMSE entre outputs, sin ground truth ni ranking. No requiere escena o intervención privada.
+- Si falla, conservar mensaje real y reparar causa; no interpretar como diferencia de calidad. Resultados pendientes en Actions.
+
+---
+
 ## 2026-11-13 — B0b/E0036: estudio con idéntico RenderLayer diseñado
 
 - Implementados tests/blender_cycles_internal_e0036.py y scripts/analyze_cycles_internal_e0036.py. En una sola ejecución Cycles, se activa denoising integrado OIDN y se obtienen tres EXR del mismo nodo Render Layers: Raw/Noisy Image, CyclesInternal/Image y CompositorOIDN con Accurate/High/HDR + albedo/normal. Por tanto se eliminan diferencias entre seeds/renders al comparar ambas rutas. Fixtures procedurales 128×96, 16spp, sin ground truth; solo se informará **diferencia entre outputs**, no ranking de calidad.
