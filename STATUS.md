@@ -1,3 +1,11 @@
+## 2026-11-13 — E0043: retorno al problema de calidad sin repetir anterioridad
+
+- **Decisión de enfoque:** tras E0042 (RMSE interseed 128spp ≈0,05549), NO prolongar la escalera de referencias y NO inventar un nuevo filtro. Intel OIDN y Blender ya conocen variaciones sin guía / albedo / albedo+normal y prefilter; las comparaciones se usan solo para detectar una falla reproducible que pueda justificar investigación causal.
+- [E0043_PLAN](docs/experiments/E0043_PLAN.md) congelado antes de ejecución: Italian Flat, 640x400, 32spp seed539, **un render nuevo** 3 nodos OIDN existentes con los mismos Raw y guías; dos referencias 128spp existentes recuperadas del run E0042, grilla fija 4x4 y controles de disparidad inter-referencia.  No se proclama mejora de algoritmo ni se modifica addon. Los resultados dependen de la ejecución del nuevo workflow.
+- **Regla de descarte:** si las tres rutas conocidas no muestran un fallo interpretable/consistente con ambas referencias y con margen respecto a incertidumbre de referencias, suspender esta ablation sin más tuning ni referencias a ciegas. En tal caso avanzar a auditoría de modo de fallo de reflejos/transmisión ya documentado por OIDN, sin volver a implementarlo de cero.
+
+---
+
 ## 2026-11-13 — B2 E0042 640px reference pilot (run pending)
 
 - E0041 [run 43496312451](https://github.com/mxlzz/ACD/actions/runs/43496312451) **success**: Italian Flat Cam Kitchen Table (320×200, seeds8819/8922) interseed RMSE 8spp 0.24900, 16spp 0.17253, 32spp 0.11853, approx 1/sqrt(spp) behavior. CPU 30–34s/render with major fixed cost; 640x400 8spp 33.319s vs 320x200 8spp 30.166s. Process peak RSS ~10,968,480 KB. These references still noisy and not converged.
