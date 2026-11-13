@@ -605,3 +605,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - Código nuevo: tests/blender_cycles_capabilities_e0035.py registra sockets/propiedades de denoise de la versión real, scripts/summarize_blender_compat_e0035.py comprueba fuente RAW igual al beauty AOV de la misma seed y compara Standard con OIDN compositor, tests/test_blender_compat_e0035.py rechaza mezclar informes de diferentes versiones. 
 - Clasificación: **tests de contrato**, no calidad visual. Resolución 128×96, noisy16spp, referencia64spp (no convergida). Cycles-internal todavía sin ejecutar. Próximo workflow E0035 matrices 5.2.4 LTS/5.3.0 y checksums oficiales.
+
+
+## 2026-11-13 — E0035 control de versiones iniciado
+
+- Workflow E0035 incorporado con matriz Blender 5.2.4 LTS y 5.3.0 de archivos oficiales + hash, API compositor/Cycles y render ligero con misma beauty y AOV dentro de cada job.
+- Push de workflow dispara primera corrida; siguientes solo manual o cambio explícito a este workflow. Resultado **pendiente de GitHub Actions**, no benchmark de calidad ni comprobación Cycles-internal. Addon estable intacto.

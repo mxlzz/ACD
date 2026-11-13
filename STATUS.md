@@ -1,3 +1,10 @@
+## 2026-11-13 — E0035 control de versiones iniciado
+
+- Workflow E0035 incorporado con matriz Blender 5.2.4 LTS y 5.3.0 de archivos oficiales + hash, API compositor/Cycles y render ligero con misma beauty y AOV dentro de cada job.
+- Push de workflow dispara primera corrida; siguientes solo manual o cambio explícito a este workflow. Resultado **pendiente de GitHub Actions**, no benchmark de calidad ni comprobación Cycles-internal. Addon estable intacto.
+
+---
+
 
 ## 2026-11-13 — B0a/E0035: contrato reproducible implementado (ejecución pendiente)
 

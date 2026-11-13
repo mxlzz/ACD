@@ -1,3 +1,5 @@
+> E0035 workflow official Blender 5.2.4/5.3.0 tiny CPU API/compositor smoke committed and triggered by path. Await real jobs, do not declare denoiser quality.
+
 > E0035 code implemented: API scan, tiny same-seed beauty/AOV contracts and un-converged 64spp reference diagnostic. Workflow not yet run, no claims of 5.2/5.3 compatibility. Await official-build matrix.
 
 > **REORIENTACIÓN 2026-11-13:** plan B0–B4 vigente en docs/ACD_V2_REORIENTATION_2026-11-13.md. Iniciar B0a pruebas actuales 5.2.4 LTS y 5.3.0; no nuevos candidatos hasta corpus y referencias. Mantener OIDN como baseline, freeze Emission50/High/Super.

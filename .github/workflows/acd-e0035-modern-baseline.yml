@@ -1,0 +1,98 @@
+name: ACD E0035 Blender 5.2 LTS and 5.3 baseline contract (tiny CPU smoke)
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0035-modern-baseline.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  version-contract:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - blender: "5.2.4"
+            family: "5.2"
+          - blender: "5.3.0"
+            family: "5.3"
+    env:
+      BLENDER_VERSION: ${{ matrix.blender }}
+      BLENDER_FAMILY: ${{ matrix.family }}
+      ACD_E0035_CAPABILITIES: /tmp/acd-e0035-api.json
+      ACD_BENCH_DIR: /tmp/acd-e0035-render
+      ACD_SCENE: detail_target
+      ACD_DEVICE: CPU
+      ACD_WIDTH: "128"
+      ACD_HEIGHT: "96"
+      ACD_INPUT_SPP: "16"
+      ACD_INPUT_SEED: "539"
+      ACD_REFERENCE_SPP: "64"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_EXTRA_SEEDS: ""
+      ACD_DOUBLE_REFERENCE: "0"
+      ACD_METHODS: "STANDARD,HIGH,SUPER,NATIVE_COMP_OIDN"
+      ACD_CAPTURE_AOV: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test contracts and install OpenEXR support
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_blender_compat_e0035.py tests/test_exr.py tests/test_sid_contracts.py
+      - name: Download official version and verify official SHA256
+        run: |
+          BASE="blender-$BLENDER_VERSION-linux-x64.tar.xz"
+          curl -fL --retry 3 --connect-timeout 30 \
+            "https://download.blender.org/release/Blender$BLENDER_FAMILY/$BASE" -o "$BASE"
+          curl -fL --retry 3 --connect-timeout 30 \
+            "https://download.blender.org/release/Blender$BLENDER_FAMILY/blender-$BLENDER_VERSION.sha256" -o official.sha256
+          grep -F "$BASE" official.sha256 | sha256sum --check -
+          tar -xf "$BASE"
+          echo "E0035_CHECKED_BLENDER_ARCHIVE" && sha256sum "$BASE"
+          "./blender-$BLENDER_VERSION-linux-x64/blender" -b --factory-startup --version | head -n 10
+      - name: Inventory compositor node and Cycles internal denoising API
+        run: |
+          "./blender-$BLENDER_VERSION-linux-x64/blender" -b --factory-startup \
+            --python-exit-code 1 --python tests/blender_cycles_capabilities_e0035.py
+      - name: Render small same-seed noisy beauty / AOV / compositor variants
+        run: |
+          "./blender-$BLENDER_VERSION-linux-x64/blender" -b --factory-startup \
+            --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Confirm raw identity and compositor baseline
+        run: |
+          python -m scripts.summarize_blender_compat_e0035 \
+            --directory "$ACD_BENCH_DIR" \
+            --capabilities "$ACD_E0035_CAPABILITIES" \
+            --output /tmp/acd-e0035-report.json
+      - name: Store reports / tiny EXR only as temporary artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0035-blender-${{ matrix.blender }}
+          retention-days: 14
+          compression-level: 1
+          if-no-files-found: warn
+          path: |
+            /tmp/acd-e0035-report.json
+            /tmp/acd-e0035-api.json
+            /tmp/acd-e0035-render/metadata.json
+            /tmp/acd-e0035-render/acd_compare_Raw.exr
+            /tmp/acd-e0035-render/acd_compare_STANDARD.exr
+            /tmp/acd-e0035-render/acd_compare_NATIVE_COMP_OIDN.exr
+            /tmp/acd-e0035-render/raw_multilayer.exr
+            /tmp/acd-e0035-render/reference.exr
