@@ -1,3 +1,11 @@
+## 2026-11-13 — E0030 revisión visual y E0031 nueva fuente independiente
+
+- E0030: se inspeccionaron los 4 paneles archivados y sus métricas de dos referencias; la fusión Emission50 conserva una ganancia local HDR en luces intensas, pero no demuestra superioridad perceptual. **Limitación confirmada:** la ROI brightest solapa la detail_1 3354/6400 píxeles (52.4%), aunque las tres ROI de detalle son disjuntas entre sí. Se conserva E0030 sin reetiquetar cuatro vistas como cuatro regiones independientes. Ver informe E0030 revisado.
+- E0031: se seleccionó Living Room ©2014 Jure Sorn MIT, autor distinto, archivo .blend original 7,328,212 B en gto76/living-room, commit a36bac4 y blob 51374a6. Añadido workflow para verificar integridad/licencia, faltantes y render Cycles Blender5 de 192px 4spp antes de copiar binario a repo; **smoke pendiente al commit**. Si falla compatibilidad/dependencias, no incorporar el fichero. No se ejecutó aún prueba de calidad ni se tocó addon.
+- Puerta: 512px+ y 2 referencias sobre fuente nueva ya validada, con parámetros E0027 congelados y ROI disjuntas para un benchmark manual. No entrenar/forkear ni promover Emission50 mientras persistan regresiones de bordes y falta de diversidad profesional.
+
+---
+
 ## E0030 visual diagnostics prepared (2026-11-12)
 
 - Reference-selected multi-panel crops with fixed diagnostic transfer and MIT attribution prepared from E0029 Island original EXRs (no rerender), 4 ROIs including brightest and gradients; computes local RMSE both references for Raw/OIDN/Emission50/Emission100/High/Super. Workflow publishes derived PNG and JSON under benchmarks/results/island_e0030 only after successful postprocess. Results pending. Do not infer perceptual superiority without inspecting images.

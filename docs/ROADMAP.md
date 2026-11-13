@@ -1,3 +1,5 @@
+> E0031: candidato MIT Living Room de Jure Sorn (autor distinto), prueba de ingreso con hash, licencia y Blender5 4spp solo funcional. Pendiente; ver docs/experiments/E0031.md. E0030 inspeccionado: brillo ROI 0.17294 OIDN vs 0.15049 Emission50 (ref1), pero 2 ROI solapadas 52.4%; no hay 4 evidencias independientes ni superioridad visual general.
+
 > E0030 postprocess of E0029 original Island EXRs prepared, 4 reference-only ROIs, 8 image panels per ROI, same fixed diagnostic display and per-region first/second-ref RMSE; publish MIT derived crops only on success. Pending workflow, no rerender.
 
 > E0029 [Actions #43309302172](https://github.com/mxlzz/ACD/actions/runs/43309302172) COMPLETADO, nueva Low-Poly Island MIT 320x272, 3 seeds24 spp, refs512 x2: Emission50 congelado reduce OIDN RMSE 0.06554→0.05335 (-18.6%), pero gradiente bordes 0.03935→0.03962 (+0.7%); segunda ref confirma. [E0029](experiments/E0029.md). Falta evaluación visual y escena de otro autor; no integrar addon ni entrenar OIDN. Workflow solo manual.
