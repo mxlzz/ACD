@@ -1,3 +1,5 @@
+> E0040 7 Italian Flat camera renders (320x200 4spp) successful, ~27s each CPU. E0041 cost/convergence exploratory pilot 320x200 seeds 8819/8922 at 8/16/32spp plus one 640x400 8spp; quality/production render still gated.
+
 > Italian Flat B1 functional smoke accepted. E0040 7 author camera 320x200x4spp low-cost gallery and timing before convergence pilot; no denoising quality experiment yet.
 
 > B1 Barcelona source rejected missing water bump.jpg not in official archive; no substitution. New Italian Flat realistic Cycles demo Flavio Della Tommasa CC-BY 368MB read-only smoke 192²4spp introduced, no quality benchmark until fully verified.

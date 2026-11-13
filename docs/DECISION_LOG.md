@@ -798,3 +798,9 @@ Next: pin hash; convergence/cost pilot before large renders.
 ## E0040 original Italian Flat camera gallery, four-spp previews
 
 Gallery: benchmarks/results/italian_flat_e0040/README.md. 7 author cameras, Blender5.2.4, render-time measured; only 4spp, no convergence/denoiser ranking. Original 368MB .blend excluded.
+
+
+## 2026-11-13 — B2 E0041 low-cost finite-reference and timing pilot
+
+- Source Italian Flat CC-BY already audited SHA256 `0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25`. E0040 7 cameras completed [run 43494967820](https://github.com/mxlzz/ACD/actions/runs/43494967820) and [gallery](benchmarks/results/italian_flat_e0040/README.md). Each 4 spp 320×200 render ~27s CPU; camera chosen **Cam Kitchen Table** on architectural content, before benchmark metrics.
+- E0041 pre-registered: two seeds 8819/8922 at 8,16,32 spp and 320×200; one 640×400 8spp cost check. No denoiser, no training, no high-res/costly reference, not proof of convergence. Source download SHA checked, only EXR in 14-day Actions artifact; numerical outputs permanent. Results pending execution.
