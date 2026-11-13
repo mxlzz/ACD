@@ -1,0 +1,111 @@
+name: ACD E0034 recover E0033 EXR archive and publish viewable PNG comparison
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0034-hall-visual.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  recover-and-publish:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: "1"
+      SRC: /tmp/acd-e0034-source
+      VIS: /tmp/acd-e0034-gallery
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR and PNG dependencies and test ROI isolation
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install "Pillow>=10,<13"
+          python -m pytest -q tests/test_hall_e0034_visual.py tests/test_hall_e0033.py
+      - name: Download E0033 originals and check source metadata
+        run: |
+          mkdir -p "$SRC"
+          gh run download 43416607737 -R mxlzz/ACD \
+            -n acd-e0033-hall-exr-and-quality -D "$SRC"
+          test -f "$SRC/e0033_quality.json"
+          test -f "$SRC/reference_check.exr"
+          test -f "$SRC/raw_multilayer.exr"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from scripts.analyze_hall_e0033 import SOURCE_SHA256
+          d=json.loads(Path("/tmp/acd-e0034-source/e0033_quality.json").read_text())
+          assert d["source_blend_sha256"]==SOURCE_SHA256
+          assert d["experiment"]=="E0033" and d["seeds"]==3
+          assert d["reference_samples"]==1024
+          print("Original E0033 JSON/EXR verified")
+          PY
+      - name: Generate deterministic images without rerendering
+        run: |
+          python -m scripts.visualize_hall_e0034 --directory "$SRC" --output "$VIS"
+      - name: Archive exact JSON results and derived images in GitHub
+        run: |
+          mkdir -p benchmarks/results/hall_e0034
+          cp "$VIS"/* benchmarks/results/hall_e0034/
+          cp "$SRC/e0033_quality.json" docs/experiments/E0033_RESULTS.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("docs/experiments/E0033_RESULTS.json").read_text())
+          values=r["first_and_second_reference_mean_metrics_over_three_seeds"]
+          def row(n):
+              a,b=values["ref1"][n],values["ref2"][n]
+              return "| "+n+" | "+f'{a["rmse_hdr"]:.8f}'+" | "+f'{b["rmse_hdr"]:.8f}'+" | "+f'{a["edge_gradient_rmse"]:.8f}'+" |\n"
+          p=Path("docs/experiments/E0033.md")
+          with p.open("a",encoding="utf-8") as f:
+              f.write("\n## E0033 archived measured result (original run, 2026-11-13)\n\n"
+                "- E0033 run 43416607737 rendered/scored successfully but failed its Git publish because ignored directory experiments matched docs/experiments. Exact run JSON recovered from existing artifact; no render repeated.\n"
+                "- Input 3 seeds ×24 spp; 2 refs ×1024 spp; 512×512. Reference disagreement RMSE "+str(r["reference_disagreement_rmse"])+". No proven reference convergence.\n\n"
+                "| Method | RMSE ref1 | RMSE ref2 | Edge RMSE ref1 |\n|---|---:|---:|---:|\n"
+                + "".join(row(n) for n in ("Raw","OIDN","Emission50","Emission100","ACD High","ACD Super","ConstantMatched50"))
+                + "\nEmission50 reduces highest-reference-luminance 1% local RMSE but increases overall HDR RMSE and edge error vs OIDN on both references. No general superiority or addon integration. See [exact JSON](E0033_RESULTS.json) and [viewable comparison gallery](../../benchmarks/results/hall_e0034/README.md).\n")
+          d=json.loads(Path("benchmarks/results/hall_e0034/E0034_VISUAL.json").read_text())
+          lines=["# E0034 — Modern Hall denoiser gallery",
+            "", "From archived E0033 EXRs, no new render. Original source by NewSee2l035 (CC BY 3.0); source conversion by cuteday via Benedikt Bitterli. Original .blend not redistributed.",
+            "", "Columns: Reference 1, Raw 24 spp, OIDN, Emission50, ACD High, ACD Super, Reference 2. Same diagnostic HDR display transform; not Blender OCIO or proof of perceptual quality.",
+            "", "## Entire frame, native pixels",
+            "![Full Modern Hall denoiser comparison](hall_full_1to1.png)",
+            "", "## Brightest ROI, zoom 3x",
+            "![Brightest region](hall_brightest_3x.png)"]
+          for region in d["regions"]:
+              if region["name"]=="brightest":continue
+              lines += ["", "## "+region["name"]+" "+str(region["bbox_xywh"]),
+                        "![Reference-selected region]("+region["file"]+")"]
+          lines += ["", "All crop boxes are selected exclusively from both finite references and are mutually disjoint. Crops show the first 24 spp seed; global table uses three.",
+                    "Two 1024 spp references are not proven converged; compare bright pixels and halos descriptively. [E0033 numeric JSON](../../../docs/experiments/E0033_RESULTS.json).",""]
+          Path("benchmarks/results/hall_e0034/README.md").write_text("\n".join(lines),encoding="utf-8")
+          note="\n## E0034 result archive (2026-11-13)\n\n- Recovered E0033 run 43416607737 exact JSON and existing EXR, generated no new Cycles renders. Fixed gitignore publication failure using forced-add of JSON only. Published 1:1 full image and disjoint reference-selected ROI PNG in benchmarks/results/hall_e0034/README.md; kept original .blend out. Frozen Emission50 worse global RMSE/border than OIDN in Modern Hall; no integration.\n"
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(path).open("a",encoding="utf-8") as f:f.write(note)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0033_RESULTS.json
+          git add docs/experiments/E0033.md benchmarks/results/hall_e0034/ STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0034): archive E0033 measured JSON and visual comparison PNG without rerender"
+          git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
+      - name: Keep derived images even if publishing fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0034-hall-visual
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd-e0034-gallery/

@@ -1,3 +1,13 @@
+
+## E0033 run completed — numerical result, Git archiving issue (2026-11-13)
+
+- Run: https://github.com/mxlzz/ACD/actions/runs/43416607737 . Blender 5.0.1 rendered all three 24-spp seeds, two 1024-spp references and the lab produced scores. The final git-add failed because the ignore rule experiments/ covers docs/experiments/, but 149 MB of EXRs/JSON were uploaded as artifact 14034252923, expiring 2026-11-27. This is a publication error, NOT a rendering/denoiser failure.
+- First/second ref global HDR RMSE OIDN 0.02223804 / 0.02215599; frozen Emission50 0.02230239 / 0.02221500, worse in both. ACD High 0.02371872 / 0.02366157; ACD Super 0.03184713 / 0.03176431. First-ref edge RMSE OIDN 0.03445690 vs Emission50 0.03455458 (regression); top 1% reference brightness RMSE OIDN 0.01197959 vs Emission50 0.00643289 (localized improvement).
+- Reference-to-reference RMSE 0.02153122 (similar scale to denoised error). No reference convergence proven, and no universal ranking should be inferred. Emission50 FAILED to improve global quality on an independent artist/scene and must not be promoted or tuned against this now-observed scene.
+- E0034 is a postprocess-only recovery workflow: exact JSON + EXRs from the existing run, source-only ROI selection and nonoverlapping crops, fixed display transfer, archive PNG in Git. Its run is not yet verified at this commit. Addon stable unchanged.
+
+---
+
 ## 2026-11-13 — E0032 compatibilidad superada; E0033 benchmark congelado
 
 - [Run E0032 #43415697217](https://github.com/mxlzz/ACD/actions/runs/43415697217) **success**: Modern Hall cuteday source SHA256 b35b6694eb231d0d4d5d9ee9bbe63122218183fd519a05c7d5db0e62cbdaeca1, 5,793,896 B, 22 materiales, 32 mallas, 1 cámara, 3 imágenes empaquetadas / 4 imágenes, ningún archivo externo faltante, Cycles Blender5.0.1 192²×4spp completado; fuente externa efímera NO subida a ACD. Conversión y derechos de redistribución independientes aún sin resolver.
