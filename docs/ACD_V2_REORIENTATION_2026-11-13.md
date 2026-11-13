@@ -40,3 +40,10 @@ Mantener resultados negativos, hashes, versiones, licencias y visuales PNG en Gi
 **A fecha de este commit:** B0a se empieza por E0035 (compatibilidad de interfaz y tiny Cycles); todavía no existen pruebas reales de Blender 5.2.4/5.3.0 en el laboratorio. B0b/B1/B2/B3/B4 pendientes.
 
 Versiones: https://www.blender.org/releases/ ; archivos oficiales: https://download.blender.org/release/Blender5.2/ y https://download.blender.org/release/Blender5.3/ .
+
+
+## Estado verificado B0a/B0b inicial — 2026-11-13
+
+- B0a **aprobado** en Blender5.2.4/5.3.0 con E0035: contratos de API y compositor, identidad exacta de Raw vs EXR multilayer dentro de cada build. Diferencias entre builds en beauty, albedo y normal invalidan comparaciones de versión si se presupone el mismo input. Datos [E0035](experiments/E0035.md).
+- B0b **primera comparación controlada terminada**: [E0036](experiments/E0036.md) obtiene Cycles interno y compositor desde un único render, RMSE entre salidas 1.4466e-7 (no bitwise match). Faltan OIDN CLI 2.5.1 en misma señal y perfil coste normalizado. No ampliar conclusiones a materiales/resolución profesional ni calidad.
+- Próximo criterio de cierre B0: comparar CLI 2.5.1 con los exactos EXR y AOV a igual HDR/prefiltro, registrar condiciones; luego iniciar corpus B1 y convergencia B2. Mantener E0035/E0036 como contratos, no como ranking.

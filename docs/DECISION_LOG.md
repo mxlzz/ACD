@@ -662,3 +662,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - RMSE RGB entre salida interna y de compositor: 1.4466098094000755e-07; delta máximo 1.9073486328125e-06. Coincidencia exacta: False.
 - Raw→OIDN integrado RMSE 0.2544771700358048; Raw→OIDN compositor 0.25447716631777373. Estos números miden diferencia entre salidas, NO si una es mejor.
 - [JSON exacto](E0036_RESULTS.json). EXR/AOV en artifacts del run solo 14 días. Próxima puerta: misma entrada de forma verificable frente a OIDN standalone y controles de guías; luego referencias convergentes antes de ranking.
+
+
+## Checkpoint verificado 2026-11-13 — B0a terminado, B0b parcialmente resuelto
+
+- **E0035:** [run 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352), ambas versiones oficiales Blender 5.2.4 LTS y 5.3.0 verificadas por hash y con smoke real. En ambas, Raw/beauty de AOV delta máximo 0 y ACD Standard = OIDN compositor (RMSE=0, tiny fixture). [Resultado permanente](docs/experiments/E0035_RESULTS.json). Entre versiones, beauty Raw difiere RMSE **0.00616606**, albedo **0.00032205** y normal **0.00049133**: NO comparables como mismo input para atribuir cambios a filtro. [Archivo de contraste](https://github.com/mxlzz/ACD/actions/runs/43481617537) también completado.
+- **E0036:** [run 43482278177](https://github.com/mxlzz/ACD/actions/runs/43482278177) **success**: Blender 5.2.4, mismo RenderLayer seed539 16spp 128×96, Cycles-internal OIDN vs OIDN compositor con albedo/normal. Diferencia RMSE **1.44660981e-7**, máximo **1.90734863e-6**, no igualdad bit a bit; muy cercanos en este fixture. Sin referencia convergida y sin conclusión perceptual. [Informe](docs/experiments/E0036.md) y [JSON](docs/experiments/E0036_RESULTS.json).
+- **Siguiente dependencia B0b:** verificar OIDN CLI 2.5.1 sobre **idéntico Raw EXR y guías de E0036/E0035**, registrando prefilter, HDR, pesos/backend, CPU/ISA y tiempos normalizados; si las rutas difieren, aislar configuración antes de juzgar calidad. No volver a ejecutar automáticamente High/Super/Emission50 ni modificar addon.

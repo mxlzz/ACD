@@ -1,3 +1,11 @@
+## Checkpoint verificado 2026-11-13 — B0a terminado, B0b parcialmente resuelto
+
+- **E0035:** [run 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352), ambas versiones oficiales Blender 5.2.4 LTS y 5.3.0 verificadas por hash y con smoke real. En ambas, Raw/beauty de AOV delta máximo 0 y ACD Standard = OIDN compositor (RMSE=0, tiny fixture). [Resultado permanente](docs/experiments/E0035_RESULTS.json). Entre versiones, beauty Raw difiere RMSE **0.00616606**, albedo **0.00032205** y normal **0.00049133**: NO comparables como mismo input para atribuir cambios a filtro. [Archivo de contraste](https://github.com/mxlzz/ACD/actions/runs/43481617537) también completado.
+- **E0036:** [run 43482278177](https://github.com/mxlzz/ACD/actions/runs/43482278177) **success**: Blender 5.2.4, mismo RenderLayer seed539 16spp 128×96, Cycles-internal OIDN vs OIDN compositor con albedo/normal. Diferencia RMSE **1.44660981e-7**, máximo **1.90734863e-6**, no igualdad bit a bit; muy cercanos en este fixture. Sin referencia convergida y sin conclusión perceptual. [Informe](docs/experiments/E0036.md) y [JSON](docs/experiments/E0036_RESULTS.json).
+- **Siguiente dependencia B0b:** verificar OIDN CLI 2.5.1 sobre **idéntico Raw EXR y guías de E0036/E0035**, registrando prefilter, HDR, pesos/backend, CPU/ISA y tiempos normalizados; si las rutas difieren, aislar configuración antes de juzgar calidad. No volver a ejecutar automáticamente High/Super/Emission50 ni modificar addon.
+
+---
+
 ## 2026-11-13 — B0b E0036 real smoke initiated (pending results)
 
 - Workflow [.github/workflows/acd-e0036-cycles-internal.yml](.github/workflows/acd-e0036-cycles-internal.yml) agregado y disparado: Blender oficial 5.2.4 LTS verificado, Cycles 16 spp, una sola ejecución, RLayers Noisy Image/Imagen denoised interna/CompositorOIDN, mismo albedo y normal. Métricas RMSE entre outputs, sin ground truth ni ranking. No requiere escena o intervención privada.

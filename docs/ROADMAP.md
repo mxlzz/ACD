@@ -1,3 +1,5 @@
+> B0a verified: E0035 5.2.4/5.3.0 officially hashed, raw-multilayer matched and ACD Standard==native compositor; raw 5.2 vs 5.3 RMSE 0.006166. B0b first same-render result E0036 on 5.2.4: Cycles internal vs OIDN compositor RMSE 1.4466e-7. Next isolate standalone 2.5.1 on exactly same EXR+guides; no algorithm or quality ranking yet.
+
 > E0036 real same-render Cycles internal vs compositor OIDN 5.2.4 LTS workflow triggered; no quality ranking, one noise realization; results pending.
 
 > E0036 B0b new same-render design: Raw Noisy Image, Cycles internal OIDN and compositor OIDN from identical Render Layers with known guide sockets; Python analysis contract and synthetic tests written; next run Blender 5.2.4; no claims until real jobs pass.
