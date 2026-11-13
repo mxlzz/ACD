@@ -1,4 +1,10 @@
 
+## 2026-11-13 — E0034 publication staging correction
+- E0034 run 43451223536 generated the postprocessed PNG and verified original E0033 EXRs, but the git-add phase was blocked again by the broad nested-ignore rule for docs/experiments. No new render or scientific results. Fix the root ignore mismatch with an explicit documentation exception and force-stage both numeric JSON and tracked report, while retaining broad exclusions for .blend/.exr assets. This is a packaging fix, not algorithm adjustment.
+
+---
+
+
 ## E0033 run completed — numerical result, Git archiving issue (2026-11-13)
 
 - Run: https://github.com/mxlzz/ACD/actions/runs/43416607737 . Blender 5.0.1 rendered all three 24-spp seeds, two 1024-spp references and the lab produced scores. The final git-add failed because the ignore rule experiments/ covers docs/experiments/, but 149 MB of EXRs/JSON were uploaded as artifact 14034252923, expiring 2026-11-27. This is a publication error, NOT a rendering/denoiser failure.

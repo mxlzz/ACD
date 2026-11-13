@@ -579,3 +579,7 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - First/second ref global HDR RMSE OIDN 0.02223804 / 0.02215599; frozen Emission50 0.02230239 / 0.02221500, worse in both. ACD High 0.02371872 / 0.02366157; ACD Super 0.03184713 / 0.03176431. First-ref edge RMSE OIDN 0.03445690 vs Emission50 0.03455458 (regression); top 1% reference brightness RMSE OIDN 0.01197959 vs Emission50 0.00643289 (localized improvement).
 - Reference-to-reference RMSE 0.02153122 (similar scale to denoised error). No reference convergence proven, and no universal ranking should be inferred. Emission50 FAILED to improve global quality on an independent artist/scene and must not be promoted or tuned against this now-observed scene.
 - E0034 is a postprocess-only recovery workflow: exact JSON + EXRs from the existing run, source-only ROI selection and nonoverlapping crops, fixed display transfer, archive PNG in Git. Its run is not yet verified at this commit. Addon stable unchanged.
+
+
+## 2026-11-13 — E0034 publication staging correction
+- E0034 run 43451223536 generated the postprocessed PNG and verified original E0033 EXRs, but the git-add phase was blocked again by the broad nested-ignore rule for docs/experiments. No new render or scientific results. Fix the root ignore mismatch with an explicit documentation exception and force-stage both numeric JSON and tracked report, while retaining broad exclusions for .blend/.exr assets. This is a packaging fix, not algorithm adjustment.
