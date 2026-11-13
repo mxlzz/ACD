@@ -1,3 +1,10 @@
+## 2026-11-13 — B1 Barcelona descartada, Italian Flat preinscrito
+
+- Barcelona [run 43493720883](https://github.com/mxlzz/ACD/actions/runs/43493720883) (reintento): confirmados ZIP y .blend íntegros, pero la imagen llamada Mies-BCN_M11.jpg tiene ruta original water bump.jpg, **no presente** en los 24 paths ZIP. Reasignar el archivo de foto Mies a ese mapa de bump sería inventar un recurso; rechazo como fixture reproducible. No se renderizó.
+- Nuevo candidato: Italian Flat, Flavio Della Tommasa, CC-BY (versión no indicada), Blender demo Cycles fuente oficial https://download.blender.org/demo/cycles/flat-archiviz.blend (367,972,724 bytes publicados). Mayor tamaño que anteriores; solo smoke 192² 4spp, no referencia ni benchmark, y nunca subir original .blend. Workflow lanza check de dependencias, cámara, hash y Cycles CPU. Resultado **pendiente**.
+
+---
+
 
 ## B1 Barcelona — fallo de textura y control de relink (2026-11-13)
 

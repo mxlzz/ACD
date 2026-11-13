@@ -29,3 +29,8 @@
 
 - Fuente oficial: [Blender Demo Files](https://www.blender.org/download/demo-files/), sección Cycles, Barcelona Pavillion, **eMirage**, **CC-BY (versión no especificada en el catálogo)**. Descarga histórica publicada en Blender: https://download.blender.org/demo/test/pabellon_barcelona_v1.scene_.zip . Se conservará licencia y atribución por separado; NO redistribuir el .blend hasta verificar sus contenidos y condiciones.
 - Razonamiento: escena arquitectónica realista de autor distinto a Cozy Kitchen / Modern Hall / Island y Terraced Houses; candidata a observar juntas/reflejos, materiales y vidrio. El tamaño indicado en el catálogo es aprox. 24 MB, pero debe verificarse **contenido ZIP, recursos y cámara** antes de caracterizarla.
+
+
+## B1 Italian Flat (candidato sin aprobar)
+
+Autor Flavio Della Tommasa, Blender Demo Cycles CC-BY (versión no especificada), 367972724 bytes de fuente pública, path exacto https://download.blender.org/demo/cycles/flat-archiviz.blend . Auditoría de camera/assets/render en Blender 5.2.4 pendiente; no subir el original ni clasificar como holdout.

@@ -1,3 +1,5 @@
+> B1 Barcelona source rejected missing water bump.jpg not in official archive; no substitution. New Italian Flat realistic Cycles demo Flavio Della Tommasa CC-BY 368MB read-only smoke 192²4spp introduced, no quality benchmark until fully verified.
+
 > Barcelona B1 first smoke 43493237120 failed missing Mies-BCN_M11.jpg. Original ZIP and .blend hashes pinned. Log archive paths and allow unique packaged file basename in-memory relink, never change .blend or invent textures, rerun.
 
 > B0a passed, B0b contract and CLI discrepancy documented (E0037–E0039); not a quality blocker. B1 official Barcelona Pavilion eMirage CC-BY read-only functional smoke workflow introduced; awaiting results. Quality experiments remain manual and gated by convergence pilot.
