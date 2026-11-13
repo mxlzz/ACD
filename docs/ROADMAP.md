@@ -1,3 +1,5 @@
+> Barcelona B1 first smoke 43493237120 failed missing Mies-BCN_M11.jpg. Original ZIP and .blend hashes pinned. Log archive paths and allow unique packaged file basename in-memory relink, never change .blend or invent textures, rerun.
+
 > B0a passed, B0b contract and CLI discrepancy documented (E0037–E0039); not a quality blocker. B1 official Barcelona Pavilion eMirage CC-BY read-only functional smoke workflow introduced; awaiting results. Quality experiments remain manual and gated by convergence pilot.
 
 > E0039 first run 43491904780 failed before render: RLayers lacks Noisy Image when Cycles internal denoising is OFF. Capture Image as actual Raw input; guide sockets remain. Re-running.

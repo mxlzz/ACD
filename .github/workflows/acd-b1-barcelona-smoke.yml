@@ -20,6 +20,7 @@ jobs:
       ACD_AUDIT_SOURCE: "Barcelona Pavilion, eMirage, Blender official demo, CC-BY (version unspecified)"
       ACD_AUDIT_RENDER: /tmp/acd_b1_barcelona_smoke.png
       ACD_AUDIT_OUTPUT: /tmp/acd_b1_barcelona_audit.json
+      ACD_AUDIT_RELINK_ROOT: /tmp/acd-b1-source/unpacked
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,6 +42,7 @@ jobs:
           src=root/"barcelona.zip"
           with ZipFile(src) as z:
               members=z.infolist()
+              print("B1_ARCHIVE_CONTENTS", json.dumps([x.filename for x in members]))
               if len(members)>5000:
                   raise ValueError("Too many archive entries")
               total=sum(x.file_size for x in members)
@@ -53,16 +55,22 @@ jobs:
                   if ((info.external_attr >> 16) & 0o170000)==0o120000:
                       raise ValueError("External symlink forbidden")
               z.extractall(root/"unpacked")
+          actual_hash=hashlib.sha256(src.read_bytes()).hexdigest()
+          if actual_hash != "0a85bf512329f1780563069512b934d679a6c543eeb1a4ec4f60cddeab706697":
+              raise ValueError("Official Blender demo ZIP bytes changed; stop and review")
           blends=list((root/"unpacked").rglob("*.blend"))
           if len(blends)!=1:
               raise ValueError("Expect exactly one .blend, found "+str([str(x) for x in blends]))
           blend=blends[0]
+          if hashlib.sha256(blend.read_bytes()).hexdigest() != "92162db8cabcd03641c53df95554b604b494ba74a76a099c7e06637e9379120a":
+              raise ValueError("Blender source binary changed")
           (root/"blend_path.txt").write_text(str(blend))
           data={"source_url":"https://download.blender.org/demo/test/pabellon_barcelona_v1.scene_.zip",
                 "author":"eMirage","license_catalog":"CC-BY, version unspecified",
                 "archive_sha256":hashlib.sha256(src.read_bytes()).hexdigest(),
                 "archive_bytes":src.stat().st_size,
                 "archive_entries":len(members),
+                "archive_paths":[x.filename for x in members],
                 "uncompressed_bytes":total,
                 "blend_file_relative":str(blend.relative_to(root/"unpacked")),
                 "blend_size_bytes":blend.stat().st_size,
@@ -117,7 +125,8 @@ jobs:
                  "BLEND SHA256: "+source["blend_sha256"],
                  "Scene: "+audit["scene"]+"; camera: "+audit["active_camera"],
                  "Objects: "+str(audit["objects"])+"; meshes: "+str(audit["meshes"])+"; materials: "+str(audit["materials"])+
-                 "; missing textures: "+str(audit["unbundled_missing_images"]),
+                 "; missing textures: "+str(audit["unbundled_missing_images"])+
+                 "; archive-only in-memory path resolutions: "+str(audit["asset_path_remaps"]),
                  "Cycles 192×192, CPU 4 spp smoke: passed (functional only, not quality).",
                  "", "Next: pin source SHA in download step; run time/reference-convergence pilot, no production-size benchmark yet."]
           Path("docs/experiments/B1_BARCELONA.md").write_text("\n\n".join(lines)+"\n")

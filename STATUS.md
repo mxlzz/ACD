@@ -1,3 +1,11 @@
+
+## B1 Barcelona — fallo de textura y control de relink (2026-11-13)
+
+- [Run 43493237120](https://github.com/mxlzz/ACD/actions/runs/43493237120): ZIP 24,661,092 bytes, 24 entradas, SHA256 0a85bf512329f1780563069512b934d679a6c543eeb1a4ec4f60cddeab706697; BLEND 8,485,449 bytes SHA256 92162db8cabcd03641c53df95554b604b494ba74a76a099c7e06637e9379120a. Blender 5.2.4 lo abrió pero auditor rechazó antes de render por Mies-BCN_M11.jpg no resuelto; **no existe validación de render**.
+- Corrección de aceptación: registrar todos los paths ZIP y aplicar solo si hay **una única coincidencia por basename en la misma extracción verificada**, relink de textura temporal en memoria; el original .blend permanece intacto. Si no hay coincidencia exacta, sigue fallando el smoke y se descartará. Sin datos de calidad ni modificación del addon.
+
+---
+
 ## 2026-11-13 — B0b: E0037–E0039 cerrados como diagnóstico, no como ranking
 
 - E0037: OIDN standalone 2.5.1 en Raw/AOV congelados de Blender 5.2.4 y 5.3.0 difiere del compositor, RMSE ~0.04647 sin prefiltrado y ~0.04035 con filtros RT de guías + cleanAux. Las salidas no son rankings de calidad.

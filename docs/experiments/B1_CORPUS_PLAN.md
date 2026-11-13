@@ -11,3 +11,9 @@
 - Otras fuentes públicas **no inspeccionadas aún**: Blender Cycles Italian Flat (Flavio Della Tommasa, CC-BY, 368 MB), Flat Archviz (Marek Moravec, 368 MB) y Classroom (Christophe Seux, CC0), esta última condicionada por anomalía de seeds de E0007. La disponibilidad de un enlace no significa aprobación de licencia/recursos o aptitud para nuestro test.
 
 **Estado al crear:** no hay descarga del ZIP validada, cámara/render ni benchmark B1.
+
+
+## B1 Barcelona — fallo de textura y control de relink (2026-11-13)
+
+- [Run 43493237120](https://github.com/mxlzz/ACD/actions/runs/43493237120): ZIP 24,661,092 bytes, 24 entradas, SHA256 0a85bf512329f1780563069512b934d679a6c543eeb1a4ec4f60cddeab706697; BLEND 8,485,449 bytes SHA256 92162db8cabcd03641c53df95554b604b494ba74a76a099c7e06637e9379120a. Blender 5.2.4 lo abrió pero auditor rechazó antes de render por Mies-BCN_M11.jpg no resuelto; **no existe validación de render**.
+- Corrección de aceptación: registrar todos los paths ZIP y aplicar solo si hay **una única coincidencia por basename en la misma extracción verificada**, relink de textura temporal en memoria; el original .blend permanece intacto. Si no hay coincidencia exacta, sigue fallando el smoke y se descartará. Sin datos de calidad ni modificación del addon.

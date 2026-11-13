@@ -12,6 +12,30 @@ import bpy
 
 scene = bpy.context.scene
 camera_count = sum(ob.type == "CAMERA" for ob in bpy.data.objects)
+# Optional archive-only path correction for files actually included in a verified ZIP.
+# Never save the source .blend, and never fabricate replacement images.
+asset_path_remaps = []
+if os.environ.get("ACD_AUDIT_RELINK_ROOT"):
+    unpacked = Path(os.environ["ACD_AUDIT_RELINK_ROOT"]).resolve()
+    if not unpacked.is_dir():
+        raise RuntimeError("Archive root missing for in-memory relink")
+    for image in bpy.data.images:
+        if image.source != "FILE" or not image.filepath or image.packed_file:
+            continue
+        actual = Path(bpy.path.abspath(image.filepath, library=image.library))
+        if actual.is_file():
+            continue
+        basename = image.filepath.replace("\\", "/").rsplit("/", 1)[-1]
+        choices = [p.resolve() for p in unpacked.rglob(basename) if p.is_file()]
+        if len(choices) == 1 and choices[0].is_relative_to(unpacked):
+            image.filepath = str(choices[0])
+            asset_path_remaps.append({
+                "image": image.name, "archive_relative_path": str(choices[0].relative_to(unpacked)),
+                "in_memory_only": True
+            })
+        else:
+            print("ACD_AUDIT_UNRESOLVED_TEXTURE", image.name, basename, "candidate_count", len(choices))
+
 missing = [
     img.name
     for img in bpy.data.images
@@ -57,6 +81,7 @@ report = {
     "materials": len(bpy.data.materials),
     "images": len(bpy.data.images),
     "packed_images": sum(bool(img.packed_file) for img in bpy.data.images),
+    "asset_path_remaps": asset_path_remaps,
     "unbundled_missing_images": len(missing),
     "external_blend_libraries": len(libraries),
     "smoke_render": "192x192; 4 spp; Cycles CPU; no denoising; only functional validation",
