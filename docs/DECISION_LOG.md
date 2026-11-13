@@ -702,3 +702,17 @@ Los tiempos incorporan tres procesos y overhead de archivo, no comparables direc
 
 - Fuente Blender v5.2.4/v5.3.0 build_files/build_environment/cmake/versions.cmake establece OIDN_VERSION 2.5.0. E0037 usó standalone 2.5.1 y no igualó al compositor, incluso con guías prefiltradas. El release OIDN 2.5.0 x86_64 linux tiene digest SHA256 254a8355856f8cd433edb7dd832b5fb02e7157d073f7d22e331ce06533fb491f según GitHub release asset.
 - E0038 compara ambos binarios oficiales sobre PFM idénticos y misma configuración; verifica hashes de E0035/E0037, y separa distancia versión vs distancia Blender. **No mide calidad**. El workflow se inicia con este commit.
+
+## E0038 — comparación OIDN 2.5.0/2.5.1 sobre los mismos PFM
+
+Blender 5.2.4/5.3.0 CMake version pins OIDN 2.5.0. Ambos binarios standalone oficiales usados con mismos PFM, flags, CPU 4 threads. Entradas verificadas frente a E0035/E0037. Sin nuevos renders.
+
+| Blender fuente | Variante | OIDN 2.5.0 vs 2.5.1 | OIDN 2.5.0 vs compositor Blender |
+|---|---|---:|---:|
+| 5.2.4 | raw_aux | 0.000001955 | 0.046473076 |
+| 5.2.4 | accurate_like | 0.000002026 | 0.040350198 |
+| 5.3.0 | raw_aux | 0.000001967 | 0.046456354 |
+| 5.3.0 | accurate_like | 0.000002056 | 0.040380591 |
+
+La cercanía entre outputs no demuestra calidad superior. Si persisten diferencias con Blender con OIDN 2.5.0, revisar la identidad del socket de guía y la ruta de prefiltrado antes de atribuirlas al motor.
+Resultados numéricos, hashes y flags: [E0038_RESULTS.json](E0038_RESULTS.json).
