@@ -758,3 +758,15 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 ## E0034 result archive (2026-11-13)
 
 - Recovered E0033 run 43416607737 exact JSON and existing EXR, generated no new Cycles renders. Fixed gitignore staging failure; numerical JSON and tracked report staged explicitly. Published 1:1 full image and disjoint reference-selected ROI PNG in benchmarks/results/hall_e0034/README.md; kept original .blend out. Frozen Emission50 worse global RMSE/border than OIDN in Modern Hall; no integration.
+
+## E0035 completed — B0a contracts verified (2026-11-13)
+
+## E0035 — Blender 5.2.4 LTS vs 5.3.0: API + mismo input (2026-11-13)
+
+- [Successful workflow 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352), initial EGL runtime failure in [43480476666](https://github.com/mxlzz/ACD/actions/runs/43480476666) corrected by installing libegl1. Both official Blender archives passed published SHA256.
+- Procedural detail_target, 128x96, 16 spp noisy seed 539, 64 spp reference seed 8819. This is an API/smoke contract; reference NOT converged and no visual superiority claim.
+- 5.2.4 (build cd5dc428cce1): Raw/AOV delta 0.0, Standard/OIDN delta 0.0.
+- 5.3.0 (build 02f0899d78e3): Raw/AOV delta 0.0, Standard/OIDN delta 0.0.
+- Cross-version **Raw beauty** RMSE 0.006166062714630608. Denoising Albedo RMSE 0.00032205058212830514, Denoising Normal RMSE 0.0004913281671895542. Changes across Blender versions combine renderer/guide/backend effects; must use fixed EXR to isolate denoiser.
+- Cycles-internal denoising is configured/available in API, but **not measured**; 5.3.0 reports compositor API deprecation slated for Blender6.0; add compatibility planning, not algorithm tuning.
+- [Exact JSON](E0035_RESULTS.json). Original EXRs/actions artifacts expire after 14 days. Addon stable untouched.

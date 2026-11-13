@@ -629,3 +629,15 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-13 — E0035 archive corrected: nested artifact layout
 
 - Run [43481397097](https://github.com/mxlzz/ACD/actions/runs/43481397097) retrieved both E0035 artifacts and validated report versions, then failed reading EXR because Actions upload preserved `acd-e0035-render/` subfolder rather than placing raw EXR at archive root. Not a rendering/algorithm error. Fix by locating exactly one file recursively per name and rejecting ambiguous artifacts. Re-run without Blender/denoiser.
+
+## E0035 completed — B0a contracts verified (2026-11-13)
+
+## E0035 — Blender 5.2.4 LTS vs 5.3.0: API + mismo input (2026-11-13)
+
+- [Successful workflow 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352), initial EGL runtime failure in [43480476666](https://github.com/mxlzz/ACD/actions/runs/43480476666) corrected by installing libegl1. Both official Blender archives passed published SHA256.
+- Procedural detail_target, 128x96, 16 spp noisy seed 539, 64 spp reference seed 8819. This is an API/smoke contract; reference NOT converged and no visual superiority claim.
+- 5.2.4 (build cd5dc428cce1): Raw/AOV delta 0.0, Standard/OIDN delta 0.0.
+- 5.3.0 (build 02f0899d78e3): Raw/AOV delta 0.0, Standard/OIDN delta 0.0.
+- Cross-version **Raw beauty** RMSE 0.006166062714630608. Denoising Albedo RMSE 0.00032205058212830514, Denoising Normal RMSE 0.0004913281671895542. Changes across Blender versions combine renderer/guide/backend effects; must use fixed EXR to isolate denoiser.
+- Cycles-internal denoising is configured/available in API, but **not measured**; 5.3.0 reports compositor API deprecation slated for Blender6.0; add compatibility planning, not algorithm tuning.
+- [Exact JSON](E0035_RESULTS.json). Original EXRs/actions artifacts expire after 14 days. Addon stable untouched.
