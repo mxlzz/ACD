@@ -1,3 +1,5 @@
+> E0031 descartado: smoke 43414866242 falló por lapajne.jpg y lapajne.jpg.001 faltantes; SHA MIT válido, archivo NO incorporado. E0032 previsto: Modern Hall (NewSee2l035, Bitterli/cuteday), fuente .blend externa 5.79 MB, smoke Blender5 sin publicar binario ni benchmark; revisar licencia de conversión antes de redistribuir. Ver docs/experiments/E0032.md.
+
 > E0031: candidato MIT Living Room de Jure Sorn (autor distinto), prueba de ingreso con hash, licencia y Blender5 4spp solo funcional. Pendiente; ver docs/experiments/E0031.md. E0030 inspeccionado: brillo ROI 0.17294 OIDN vs 0.15049 Emission50 (ref1), pero 2 ROI solapadas 52.4%; no hay 4 evidencias independientes ni superioridad visual general.
 
 > E0030 postprocess of E0029 original Island EXRs prepared, 4 reference-only ROIs, 8 image panels per ROI, same fixed diagnostic display and per-region first/second-ref RMSE; publish MIT derived crops only on success. Pending workflow, no rerender.

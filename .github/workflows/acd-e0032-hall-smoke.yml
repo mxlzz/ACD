@@ -1,0 +1,60 @@
+name: ACD E0032 Modern Hall external Blender 5 smoke (no publication)
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0032-hall-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ephemeral-scene-compatibility:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      ACD_AUDIT_SOURCE: 'Modern Hall, NewSee2l035, Bitterli resource via cuteday Mitsuba conversion, CC BY 3.0 origin; redistribution not approved'
+      ACD_AUDIT_RENDER: /tmp/acd_e0032_smoke.png
+      ACD_AUDIT_OUTPUT: /tmp/acd_e0032_audit.json
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exactly pinned external source; keep outside repository
+        run: |
+          SRC=4271a729fdc7b8db23ad1c2f8a8f530c74f6a63c
+          mkdir -p /tmp/acd-e0032
+          curl -fL --retry 3 --connect-timeout 30 \
+            "https://raw.githubusercontent.com/cuteday/scenes_blender/$SRC/staircase2.blend" \
+            -o /tmp/acd-e0032/staircase2.blend
+          test "$(stat -c%s /tmp/acd-e0032/staircase2.blend)" -eq 5793896
+          test "$(git hash-object /tmp/acd-e0032/staircase2.blend)" = "6c60f72c0a8adffcfe946eae16640aa798668f50"
+          sha256sum /tmp/acd-e0032/staircase2.blend
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Fetch official Blender 5.0.1 only if cache missing
+        if: steps.blender-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Check material/camera/dependencies and 4 spp Cycles CPU smoke
+        run: |
+          ./blender-5.0.1-linux-x64/blender --factory-startup --disable-autoexec \
+            -b /tmp/acd-e0032/staircase2.blend --python-exit-code 1 \
+            --python scripts/audit_public_scene.py
+      - name: Retain audit only, never copy source .blend to ACD
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0032-hall-compatibility
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            /tmp/acd_e0032_smoke.png
+            /tmp/acd_e0032_audit.json
