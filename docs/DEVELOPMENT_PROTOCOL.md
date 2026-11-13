@@ -1,3 +1,5 @@
+> **Programa prioritario desde 2026-11-13:** [B0–B4](ACD_V2_REORIENTATION_2026-11-13.md). Se preserva lo anterior como historia. Blender 5.2.4 LTS de producción, 5.3.0 de compatibilidad, 5.0.1 histórico. Pausar variantes Emission50/High/Super, no nuevas mejoras antes de baseline, corpus y referencias sólidas.
+
 # Protocolo obligatorio de avance de ACD — revisión V2
 
 Vigente desde **2026-11-12** por [Issue #9](https://github.com/mxlzz/ACD/issues/9). [Programa rector V2](ACD_V2_PLAN.md). Sustituye la antigua obligación de *priorizar paridad SID 4.x*, que queda satisfecha hasta el alcance medido en E0013, **sin afirmar equivalencia con SID 5.x**. El resto de los experimentos permanece en el historial y sin modificación retroactiva.

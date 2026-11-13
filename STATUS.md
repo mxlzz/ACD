@@ -1,3 +1,9 @@
+## 2026-11-13 — Reorientación B0–B4 aprobada para implementación
+
+- Programa rector: [B0–B4](docs/ACD_V2_REORIENTATION_2026-11-13.md). Prioridad inmediata: B0a (compatibilidad Blender 5.2.4 LTS + 5.3.0 y auditoría de diferencias de rutas OIDN). Se conserva 5.0.1 como control histórico; las variantes High/Super/Emission50 no se siguen optimizando.
+- Los resultados reales y la ejecución de E0035 **todavía no están verificados** en este commit de decisión; el próximo commit implementa workflow y contrato. Addon estable y PR #10 draft sin merge.
+
+---
 
 ## 2026-11-13 — Índice permanente de imágenes del laboratorio
 - E0034 [run 43451534590](https://github.com/mxlzz/ACD/actions/runs/43451534590) success; commit de archivo f20d2a854f61e0681ffd6a659f0565b15269c124; resultados E0033 exactos y PNG E0034 versionados. Nuevo índice benchmarks/results/README.md integra Modern Hall, Island, Cozy Kitchen E0020/E0021 y Terraced; enlaza licencias, full/crops y diferencia entre PNG permanentes y artifacts EXR temporales. README principal enlaza el índice. No hubo nuevo render ni cambio al addon.

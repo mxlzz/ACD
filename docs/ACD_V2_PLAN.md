@@ -1,3 +1,5 @@
+> **Programa prioritario desde 2026-11-13:** [B0–B4](ACD_V2_REORIENTATION_2026-11-13.md). Se preserva lo anterior como historia. Blender 5.2.4 LTS de producción, 5.3.0 de compatibilidad, 5.0.1 histórico. Pausar variantes Emission50/High/Super, no nuevas mejoras antes de baseline, corpus y referencias sólidas.
+
 # ACD V2 — Programa OIDN / calidad de detalle
 
 Vigente desde 2026-11-12. [Issue #9](https://github.com/mxlzz/ACD/issues/9). Rama experimental `dev/acd-v2-oidn-detail-eval`, apilada sobre PR #4, **no es un reemplazo del addon publicado**.

@@ -592,3 +592,10 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 ## 2026-11-13 — Índice permanente de imágenes del laboratorio
 - E0034 [run 43451534590](https://github.com/mxlzz/ACD/actions/runs/43451534590) success; commit de archivo f20d2a854f61e0681ffd6a659f0565b15269c124; resultados E0033 exactos y PNG E0034 versionados. Nuevo índice benchmarks/results/README.md integra Modern Hall, Island, Cozy Kitchen E0020/E0021 y Terraced; enlaza licencias, full/crops y diferencia entre PNG permanentes y artifacts EXR temporales. README principal enlaza el índice. No hubo nuevo render ni cambio al addon.
+
+
+## 2026-11-13 — Corrección de rumbo de ACD V2, antes de E0035
+
+- **Hechos:** OIDN compositor es baseline reproducible; Standard equivale a él en ensayos locales. High/Super no tienen mejora consistente; Emission50 reduce el error de pocas luces pero retrocede en bordes y no supera globalmente a OIDN en Modern Hall; referencias E0033 no probadas convergentes. Los tests unitarios de ACD no miden nitidez a escala de producción.
+- **Decisión:** priorizar [B0–B4](ACD_V2_REORIENTATION_2026-11-13.md). B0 versiones Blender 5.2.4 LTS/5.3.0 y distinción OIDN compositor/Cycles interno/OIDN CLI; 5.0.1 queda para historia. B1 corpus de escenas realistas y holdout por escena. B2 referencias convergentes, HDR-FLIP y OCIO, tiempo vs más spp. B3 hipótesis de guías por un error reproducible. B4 promoción solo con evidencia fuera de muestra.
+- **Restricciones:** Emission50/High/Super congelados, no entrenamiento/fork ni merge addon; experimentos GPU o 1080p solo manuales. Documentar hashes, costes, fallos, licencias. Primera etapa B0a se preinscribe E0035, smoke pequeño, no ranking entre versiones con renders diferentes.
