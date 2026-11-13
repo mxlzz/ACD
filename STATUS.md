@@ -815,3 +815,18 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 - RMSE RGB entre salida interna y de compositor: 1.4466098094000755e-07; delta máximo 1.9073486328125e-06. Coincidencia exacta: False.
 - Raw→OIDN integrado RMSE 0.2544771700358048; Raw→OIDN compositor 0.25447716631777373. Estos números miden diferencia entre salidas, NO si una es mejor.
 - [JSON exacto](E0036_RESULTS.json). EXR/AOV en artifacts del run solo 14 días. Próxima puerta: misma entrada de forma verificable frente a OIDN standalone y controles de guías; luego referencias convergentes antes de ranking.
+
+## E0037: OIDN 2.5.1 standalone on frozen E0035 source (2026-11-13)
+
+[Protocolo preinscrito](E0037_PLAN.md). [E0035 fuente](E0035_RESULTS.json).
+Raw/AOV originales y hashes de las dos versiones verificados. Solo CPU, 4 threads; sin nuevos renders ni verdad de referencia convergente.
+
+| Blender fuente | Sin filtrar guías RMSE | Prefiltrado RT + cleanAux RMSE |
+|---|---:|---:|
+| 5.2.4 | 0.046473111 | 0.040350220 |
+| 5.3.0 | 0.046456395 | 0.040380501 |
+
+La comparación mide distancia de salida respecto al nodo compositor, no calidad. La variante de guías prefiltradas se aproxima al prefiltrado Accurate, pero no asegura idéntica versión/ponderación/preprocesamiento de Blender.
+Los tiempos incorporan tres procesos y overhead de archivo, no comparables directamente con el denoising integrado.
+
+[JSON exacto con flags, hashes y tiempos](E0037_RESULTS.json).

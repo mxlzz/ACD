@@ -681,3 +681,18 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 ## 2026-11-13 — E0037 workflow ingresado
 
 - Archivo .github/workflows/acd-e0037-oidn-cli-guides.yml dispara un único run que recupera E0035 artifacts, verifica SHA256 fuente y release OIDN 2.5.1, evalúa variantes raw_aux / accurate_like y archiva métricas permanentes. No se hace render ni comparación perceptual. El reporte de calidad aún no existe al momento del commit.
+
+## E0037: OIDN 2.5.1 standalone on frozen E0035 source (2026-11-13)
+
+[Protocolo preinscrito](E0037_PLAN.md). [E0035 fuente](E0035_RESULTS.json).
+Raw/AOV originales y hashes de las dos versiones verificados. Solo CPU, 4 threads; sin nuevos renders ni verdad de referencia convergente.
+
+| Blender fuente | Sin filtrar guías RMSE | Prefiltrado RT + cleanAux RMSE |
+|---|---:|---:|
+| 5.2.4 | 0.046473111 | 0.040350220 |
+| 5.3.0 | 0.046456395 | 0.040380501 |
+
+La comparación mide distancia de salida respecto al nodo compositor, no calidad. La variante de guías prefiltradas se aproxima al prefiltrado Accurate, pero no asegura idéntica versión/ponderación/preprocesamiento de Blender.
+Los tiempos incorporan tres procesos y overhead de archivo, no comparables directamente con el denoising integrado.
+
+[JSON exacto con flags, hashes y tiempos](E0037_RESULTS.json).
