@@ -388,3 +388,20 @@ Tiempo CPU total de los 7 renders (incluye escritura y costes de escena tras car
 No hay denoiser ni ground truth en esta prueba. Menor error entre semillas no garantiza referencia convergida; independencia estadística no acreditada. No extrapolar linealmente a 1080p sin otro piloto.
 
 [JSON completo](E0041_RESULTS.json).
+
+## E0042 Italian Flat 640px reference comparison (2026-11-13)
+
+Six Cycles CPU scene-linear renders, no denoising, Blender 5.2.4 LTS; camera Cam Kitchen Table. Original .blend not published.
+Two seeds 8819 and 8922 at 32, 64 and 128 spp each. Source CC-BY © Flavio Della Tommasa.
+
+![Reference pair ladder, same diagnostic tone map](italian_reference_ladder.png)
+
+| Samples | Interseed RMSE |
+|---|---:|
+| 32 | 0.11710424 |
+| 64 | 0.08073157 |
+| 128 | 0.05549192 |
+
+Combined actual rendering+write wall seconds: 456.1. Peak process RSS (Linux KB): 11002956.
+This comparison evaluates remaining Monte Carlo sample noise, NOT denoising quality. Two finite references are not converged ground truth and may have correlated random streams. Preview transfer not Blender OCIO/AgX.
+Analysis JSON: [E0042_RESULTS.json](../../../docs/experiments/E0042_RESULTS.json).

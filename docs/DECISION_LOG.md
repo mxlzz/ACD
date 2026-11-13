@@ -827,3 +827,20 @@ No hay denoiser ni ground truth en esta prueba. Menor error entre semillas no ga
 
 - E0041 [run 43496312451](https://github.com/mxlzz/ACD/actions/runs/43496312451) **success**: Italian Flat Cam Kitchen Table (320×200, seeds8819/8922) interseed RMSE 8spp 0.24900, 16spp 0.17253, 32spp 0.11853, approx 1/sqrt(spp) behavior. CPU 30–34s/render with major fixed cost; 640x400 8spp 33.319s vs 320x200 8spp 30.166s. Process peak RSS ~10,968,480 KB. These references still noisy and not converged.
 - E0042 predeclares 640×400, 32/64/128 spp × two independent seeds, no denoiser, locked SHA/source/camera. Render costs, actual interseed RMSE and 1:1 reference gallery preserved. **Results not claimed before workflow success.** No 1080p or test-set overfitting.
+
+## E0042 Italian Flat 640px reference comparison (2026-11-13)
+
+Six Cycles CPU scene-linear renders, no denoising, Blender 5.2.4 LTS; camera Cam Kitchen Table. Original .blend not published.
+Two seeds 8819 and 8922 at 32, 64 and 128 spp each. Source CC-BY © Flavio Della Tommasa.
+
+![Reference pair ladder, same diagnostic tone map](italian_reference_ladder.png)
+
+| Samples | Interseed RMSE |
+|---|---:|
+| 32 | 0.11710424 |
+| 64 | 0.08073157 |
+| 128 | 0.05549192 |
+
+Combined actual rendering+write wall seconds: 456.1. Peak process RSS (Linux KB): 11002956.
+This comparison evaluates remaining Monte Carlo sample noise, NOT denoising quality. Two finite references are not converged ground truth and may have correlated random streams. Preview transfer not Blender OCIO/AgX.
+Analysis JSON: [E0042_RESULTS.json](../../../docs/experiments/E0042_RESULTS.json).
