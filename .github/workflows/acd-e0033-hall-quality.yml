@@ -1,0 +1,118 @@
+name: ACD E0033 independent-author Modern Hall controlled quality test
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0033-hall-quality.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hall-benchmark:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 65
+    env:
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BENCH: /tmp/acd-e0033-hall
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install laboratory and check scoring contracts
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_hall_e0033.py tests/test_emission_guide.py tests/test_detail.py tests/test_runner.py
+      - name: Fetch immutable source externally; no redistributing Blender file
+        run: |
+          SRC=4271a729fdc7b8db23ad1c2f8a8f530c74f6a63c
+          mkdir -p /tmp/acd-e0033-source
+          curl -fL --retry 3 --connect-timeout 30 \
+            "https://raw.githubusercontent.com/cuteday/scenes_blender/$SRC/staircase2.blend" \
+            -o /tmp/acd-e0033-source/staircase2.blend
+          test "$(stat -c%s /tmp/acd-e0033-source/staircase2.blend)" -eq 5793896
+          test "$(git hash-object /tmp/acd-e0033-source/staircase2.blend)" = "6c60f72c0a8adffcfe946eae16640aa798668f50"
+          echo "b35b6694eb231d0d4d5d9ee9bbe63122218183fd519a05c7d5db0e62cbdaeca1  /tmp/acd-e0033-source/staircase2.blend" | sha256sum -c -
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - name: Download official Blender 5.0.1 only on cache miss
+        if: steps.blender-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Render 3 noisy seeds and 2 higher-spp references on same source
+        run: |
+          python scripts/run_scene_benchmark.py \
+            --blender "$PWD/blender-5.0.1-linux-x64/blender" \
+            --blend /tmp/acd-e0033-source/staircase2.blend \
+            --output "$BENCH" --max-width 512 \
+            --samples 24 --reference-samples 1024 \
+            --seed 539 --extra-seeds 911,1337 --reference-seed 8819 \
+            --second-reference --device CPU \
+            --methods STANDARD,HIGH,SUPER,NATIVE_COMP_OIDN
+      - name: Freeze cross-reference HDR and detail metrics
+        run: |
+          python -m scripts.analyze_hall_e0033 \
+            --directory "$BENCH" --output "$BENCH/e0033_quality.json"
+      - name: Permanently archive compact numerical result and provenance (no binary)
+        run: |
+          mkdir -p docs/experiments
+          cp "$BENCH/e0033_quality.json" docs/experiments/E0033_RESULTS.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("docs/experiments/E0033_RESULTS.json").read_text())
+          m=data["first_and_second_reference_mean_metrics_over_three_seeds"]
+          fmt=lambda ref,method: f'{m[ref][method]["rmse_hdr"]:.8f}'
+          report=(
+            "\n## Resultados de ejecución E0033 — números, no conclusión perceptual\n\n"
+            + "Fuente idéntica verificada SHA256 `"+data["source_blend_sha256"]+"`; "
+            + str(data["resolution"])+", seeds24spp×3, refs1024spp×2. "
+            + "Diversidad heurística: "+str(data["input_seed_diversity_heuristic_passed"])
+            + "; RMSE entre refs: "+str(data["reference_disagreement_rmse"])+".\n\n"
+            + "| Método | RMSE ref1 | RMSE ref2 |\n|---|---:|---:|\n"
+            + "".join(f'| {method} | {fmt("ref1",method)} | {fmt("ref2",method)} |\n'
+                      for method in ("Raw","OIDN","STANDARD","ACD High","ACD Super",
+                                     "Emission50","Emission100","ConstantMatched50"))
+            + "\nMétricas de borde, MAE, luces top1%, AOV y advertencias: "
+            + "[JSON completo](E0033_RESULTS.json). No se observó una referencia convergida "
+            + "ni se verificó superioridad visual en recortes a escala final. "
+            + "No integrar addon hasta revisión adicional.\n"
+          )
+          Path("docs/experiments/E0033.md").open("a").write(report)
+          for path,description in (
+            ("STATUS.md","E0033 ejecutado sobre Modern Hall sin redistribuir .blend; métricas permanentes E0033_RESULTS.json. La comparación sigue siendo exploratoria; verificar bordes y refs antes de promover."),
+            ("docs/ROADMAP.md","E0033 benchmark de Modern Hall ejecutado; tablas HDR/gradientes de 3 seeds y dos refs guardadas en docs/experiments/E0033_RESULTS.json; sin promoción ni cambios en addon."),
+            ("docs/DECISION_LOG.md","E0033 registró métricas bajo regla Emission50 E0027 fija (scale .25/maxRaw .5), controles de mezcla, dos referencias finitas. No declarar superioridad sin examinar degradaciones de gradientes, highlights y cobertura de escenas.")
+          ):
+            with Path(path).open("a") as f:
+              f.write("\n\n## 2026-11-13 — E0033 resultado verificable\n\n- "+description+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/experiments/E0033_RESULTS.json docs/experiments/E0033.md STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0033): archive independently rendered hall emission baseline metrics"
+          git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
+      - name: Keep EXRs temporarily for diagnostic crops, without source blend
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0033-hall-exr-and-quality
+          retention-days: 14
+          if-no-files-found: warn
+          compression-level: 1
+          path: /tmp/acd-e0033-hall/

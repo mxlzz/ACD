@@ -1,0 +1,31 @@
+name: ACD Blender 5.0.1 offline runtime bundle
+
+# This downloads and uploads a ~374 MB transient runtime.
+# Trigger manually only, NOT on every sync of the experimental PR.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-blender:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download official Blender 5.0.1 archive
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o /tmp/blender-5.0.1-linux-x64.tar.xz
+          sha256sum /tmp/blender-5.0.1-linux-x64.tar.xz > /tmp/blender-5.0.1-linux-x64.sha256
+          ls -lh /tmp/blender-5.0.1-linux-x64.tar.xz
+      - name: Archive official runtime for offline Blender inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: blender-5.0.1-official-runtime
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+          path: |
+            /tmp/blender-5.0.1-linux-x64.tar.xz
+            /tmp/blender-5.0.1-linux-x64.sha256

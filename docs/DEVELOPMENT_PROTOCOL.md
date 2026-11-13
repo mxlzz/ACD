@@ -1,45 +1,22 @@
-# Protocolo obligatorio de avance de ACD
+> **Programa prioritario desde 2026-11-13:** [B0–B4](ACD_V2_REORIENTATION_2026-11-13.md). Se preserva lo anterior como historia. Blender 5.2.4 LTS de producción, 5.3.0 de compatibilidad, 5.0.1 histórico. Pausar variantes Emission50/High/Super, no nuevas mejoras antes de baseline, corpus y referencias sólidas.
 
-Vigencia desde: 2026-11-11. Se aplica a **cada commit posterior a la introducción de este archivo**.
+# Protocolo obligatorio de avance de ACD — revisión V2
 
-## Objetivo vigente
+Vigente desde **2026-11-12** por [Issue #9](https://github.com/mxlzz/ACD/issues/9). [Programa rector V2](ACD_V2_PLAN.md). Sustituye la antigua obligación de *priorizar paridad SID 4.x*, que queda satisfecha hasta el alcance medido en E0013, **sin afirmar equivalencia con SID 5.x**. El resto de los experimentos permanece en el historial y sin modificación retroactiva.
 
-**M3 / Issue #7: portar con fidelidad el SID público a Blender 5.x antes de optimizar ACD.**
+## Prioridad vigente
+1. OIDN nativo de Blender 5 como baseline operativo explícito; OIDN standalone y OptiX como variantes con hardware disponible; SID4 público como comparador histórico y SID5.x solo con acceso reproducible al software original.
+2. Antes de diseñar una mejora, diagnosticar el error real sobre beauty, HDR y detalle, usar mapas/recortes contra referencias y repetir en escenas diversas.
+3. Antes de entrenar pesos o bifurcar OIDN, estudiar implementaciones externas, verificar licencias, evaluar cambios incrementales y la accesibilidad de datos por muestra.
+4. Mantener experimentos aislados del addon estable; no fusionar sin prueba representativa, validación por escena no vista y evaluación de recursos.
 
-Cadena de objetivos que no debe invertirse:
+## Procedimiento exigible en *cada commit*
+- Leer [ROADMAP.md](ROADMAP.md), [STATUS.md](../STATUS.md), [DECISION_LOG.md](DECISION_LOG.md) y el Issue #9. Fijar hipótesis, prerequisitos, prueba de aceptación y clasificación de evidencia (estático, test sintético, Blender real, benchmark real).
+- Tras la modificación actualizar **en el mismo commit** `docs/ROADMAP.md`, `STATUS.md`, `docs/DECISION_LOG.md`. El comprobador `scripts/check_development_trace.py` exige estos tres archivos desde la activación histórica del protocolo.
+- Documentar código, hashes y versiones, licencia de dependencias, método de referencia, número de muestras, seeds y validez de ranking; CI de Python solo confirma integridad/test, no calidad científica.
+- No inferir independencia de seeds por valores distintos ni convergencia por dos referencias cercanas; no tratar nitidez, gradientes o RMSE aisladamente como evidencia de detalle recuperado.
+- Auditorías, resultados negativos y problemas de tests se conservan; los artifacts que caducan son un suplemento, no la única fuente.
+- Trabajo pesado solo en workflows manuales/de decisión. Mantener PRs experimentales en draft y no publicar escenas propietarias.
 
-1. Fijar versión/commit, licencia y especificación completa del grafo del SID público.
-2. Implementar un modo **SID Reference** fiel y separado del experimento ACD.
-3. Verificar paridad de nodos, conexiones, parámetros, salidas y calidad contra SID original, explicitando diferencias entre Blender/OIDN.
-4. Solo entonces reanudar hipótesis de mejoras adaptativas, superresolución y nuevos filtros, con el laboratorio como respaldo.
-
-La investigación M1/M2 sigue siendo útil como infraestructura; no desplaza la prioridad M3. No presentar el prototipo actual como SID reproducido. No copiar código GPL en ACD sin resolver primero el esquema de licencia y atribución.
-
-## Cada cambio: procedimiento operativo
-
-**Antes del cambio**
-1. Leer [ROADMAP.md](ROADMAP.md), [STATUS.md](../STATUS.md), [sid_parity_gap.md](sid_parity_gap.md) y este protocolo; identificar el hito vigente y el primer requisito pendiente.
-2. Declarar cuál es el **objetivo verificable** del cambio y vincularlo con un issue/hito. Si no sirve M3 ni un prerequisito explícito, **no ejecutarlo** sin justificar y registrar una modificación de rumbo.
-3. Establecer la prueba de aceptación **antes** de cambiar el código. Si la hipótesis no está corroborada, marcarla como tal.
-
-**Después del cambio, en el mismo commit**
-4. Ejecutar tests relevantes (Python, Blender headless y/o render cuando el cambio lo exija). Nunca convertir una CI pendiente en prueba aprobada.
-5. Actualizar **simultáneamente**:
-   - [ROADMAP.md](ROADMAP.md): etapa, prioridad, siguiente paso y dependencias; si permanece igual, consignar explícitamente que se revalidó.
-   - [STATUS.md](../STATUS.md): qué fue implementado, qué está efectivamente verificado, qué falló y qué queda pendiente.
-   - [DECISION_LOG.md](DECISION_LOG.md): decisión, vínculo al hito, prueba, resultado real, desviaciones y siguiente acción.
-6. Cuando corresponda, actualizar auditorías, estudios o experimentos E00xx, sin modificar retroactivamente resultados históricos.
-7. Si falló una prueba o apareció una discrepancia con SID, detener la promoción al modo de referencia, abrir/actualizar issue y registrar la observación antes de corregir.
-8. **Rechequear alineación:** ¿sigue sirviendo al hito M3 y al objetivo de fidelidad SID? ¿Se mantiene separado del prototipo? ¿El próximo paso sigue siendo el más prioritario? Si una respuesta es no, justificar en el registro de decisiones y corregir el roadmap **antes de avanzar**.
-
-## Protección automática
-
-La CI ejecuta \`scripts/check_development_trace.py\`, que revisa cada commit **no-merge posterior al commit que incorpora este protocolo**. Exige que dicho commit toque los tres archivos \`docs/ROADMAP.md\`, \`STATUS.md\` y \`docs/DECISION_LOG.md\`. Aplica incluso a cambios documentales: la trazabilidad no depende de memoria de chats.
-
-La automatización verifica **presencia de actualizaciones**, no su calidad, veracidad, alineación o resultados científicos. La revisión argumental de cada paso sigue siendo obligatoria. Si la prioridad cambia legítimamente, registrar por qué y reordenar las etapas con un commit que actualice los tres documentos.
-
-**No fusionar** experimentos ni declarar equivalencia a SID mientras no exista evidencia de paridad. **No consumir Actions de render pesado en cada commit**: usar CI ligera por defecto y benchmarks manuales en puntos de decisión.
-
-## En caso de interrupción o cambio de chat
-
-Abrir, en este orden: \`docs/ROADMAP.md\` → \`STATUS.md\` → \`docs/DECISION_LOG.md\` → issue vigente. Continuar desde el primer criterio de aceptación incumplido, no desde la última idea conversada.
+## Recuperación entre chats
+Leer [ACD_V2_PLAN.md](ACD_V2_PLAN.md) → [STATUS.md](../STATUS.md) → [DECISION_LOG.md](DECISION_LOG.md) → [Issue #9](https://github.com/mxlzz/ACD/issues/9); ejecutar primero el prerequisito sin verificar. El [roadmap histórico](ROADMAP.md) conserva hitos SID y experiencias anteriores para trazabilidad, sin prioridad operativa actual.

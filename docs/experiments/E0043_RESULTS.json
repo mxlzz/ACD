@@ -1,0 +1,742 @@
+{
+  "experiment": "E0043",
+  "source": {
+    "experiment": "E0043",
+    "source_sha256": "0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25",
+    "artist": "Flavio Della Tommasa",
+    "blender": "5.2.4 LTS",
+    "camera": "Cam Kitchen Table",
+    "samples": 32,
+    "seed": 539,
+    "resolution": [
+      640,
+      400
+    ],
+    "device": "CPU",
+    "adaptive": false,
+    "cycles_internal_denoising": false,
+    "methods": [
+      "Raw",
+      "OIDN_RGB",
+      "OIDN_Albedo",
+      "OIDN_Both"
+    ],
+    "compositor_settings": {
+      "quality": "High",
+      "prefilter": "Accurate",
+      "HDR": true
+    },
+    "single_render": true,
+    "shared_raw_and_guide_sockets": true,
+    "wall_seconds_total": 45.07566424699999,
+    "files": {
+      "Raw": {
+        "sha256": "660339415523542befd0067a9fefaa4c3f60b2b919af14ec49ca8ae5066ef20d",
+        "size": 3077592
+      },
+      "OIDN_RGB": {
+        "sha256": "a613aa87c977a0136f5ee07be5dc627eea2ab97b74ad513df5e66bc63493ffde",
+        "size": 2989544
+      },
+      "OIDN_Albedo": {
+        "sha256": "3f44507b35a9793ff1521a592aed8f1a0560ac405083fa2346fb7844647c78bf",
+        "size": 2990181
+      },
+      "OIDN_Both": {
+        "sha256": "6b950c65b7b7bc98fb3d0420b06dac609a9879a496bc0ad9dfca818ed6cbe566",
+        "size": 2991428
+      }
+    },
+    "convergence_proven": false,
+    "source_not_saved": true
+  },
+  "reference_source_run": 43497486691,
+  "reference_source": "E0042 two finite 128spp seeds 8819/8922",
+  "prior_art_known": "OIDN recommends albedo/normal and prefilt; existing Blender exposes RGB, RGB+Albedo, RGB+Albedo+Normal. This is diagnosis only.",
+  "global_errors": {
+    "Raw": {
+      "ref8819": {
+        "log1p_luminance_rmse": 0.07042993805295854,
+        "pixel_rmse_p95": 0.2051679608606687,
+        "mae_linear": 0.05519415844560731,
+        "rmse_linear": 0.0917117350862464,
+        "relative_rmse": 0.5566237044317092,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "ref8922": {
+        "log1p_luminance_rmse": 0.07047107086399924,
+        "pixel_rmse_p95": 0.20433595760467305,
+        "mae_linear": 0.05525643467321322,
+        "rmse_linear": 0.09170636460411534,
+        "relative_rmse": 0.5572158647626657,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      }
+    },
+    "OIDN_RGB": {
+      "ref8819": {
+        "log1p_luminance_rmse": 0.03340397336565617,
+        "pixel_rmse_p95": 0.09599886226884141,
+        "mae_linear": 0.026010579777438807,
+        "rmse_linear": 0.04354428489075355,
+        "relative_rmse": 0.26428222233422527,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "ref8922": {
+        "log1p_luminance_rmse": 0.0333319301918787,
+        "pixel_rmse_p95": 0.09543595830348095,
+        "mae_linear": 0.025934321723563435,
+        "rmse_linear": 0.04348356168639288,
+        "relative_rmse": 0.2642099109766348,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      }
+    },
+    "OIDN_Albedo": {
+      "ref8819": {
+        "log1p_luminance_rmse": 0.03296126977586311,
+        "pixel_rmse_p95": 0.09486354033765755,
+        "mae_linear": 0.025740803683060975,
+        "rmse_linear": 0.043050094591577784,
+        "relative_rmse": 0.2612828457030587,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "ref8922": {
+        "log1p_luminance_rmse": 0.03290919833899301,
+        "pixel_rmse_p95": 0.09418172590204657,
+        "mae_linear": 0.02567948876569361,
+        "rmse_linear": 0.04299326641107014,
+        "relative_rmse": 0.26123083414802667,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      }
+    },
+    "OIDN_Both": {
+      "ref8819": {
+        "log1p_luminance_rmse": 0.03248740433328718,
+        "pixel_rmse_p95": 0.09334945862528087,
+        "mae_linear": 0.02538487304039236,
+        "rmse_linear": 0.042301289285729335,
+        "relative_rmse": 0.256738140678696,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "ref8922": {
+        "log1p_luminance_rmse": 0.032463333802562194,
+        "pixel_rmse_p95": 0.09274013928664235,
+        "mae_linear": 0.02533343203704132,
+        "rmse_linear": 0.042280494277809874,
+        "relative_rmse": 0.25689996853877617,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      }
+    }
+  },
+  "reference_pair_disagreement": {
+    "log1p_luminance_rmse": 0.04303618211105202,
+    "pixel_rmse_p95": 0.12408914231688029,
+    "mae_linear": 0.03365128502617905,
+    "rmse_linear": 0.055491923813307524,
+    "relative_rmse": 0.3367957237965021,
+    "psnr_db": null,
+    "psnr_data_range": null,
+    "exact_match": false
+  },
+  "tiles": [
+    {
+      "grid_xy": [
+        0,
+        0
+      ],
+      "xywh": [
+        0,
+        0,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.1122578578334396,
+          "ref8922": 0.11242414560492216
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.04781960313042625,
+          "ref8922": 0.0476335987305909
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.04765832176167572,
+          "ref8922": 0.047590220063678156
+        },
+        "OIDN_Both": {
+          "ref8819": 0.04715721209230174,
+          "ref8922": 0.04711178608922132
+        }
+      },
+      "reference_disagreement_rmse": 0.0645520777157441,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0006623910381245088,
+        "ref8922": -0.0005218126413695789
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        1,
+        0
+      ],
+      "xywh": [
+        160,
+        0,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.08588455418396966,
+          "ref8922": 0.08599167406982086
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.03591921015887366,
+          "ref8922": 0.035456435530065465
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.03583537362249626,
+          "ref8922": 0.035483254150816886
+        },
+        "OIDN_Both": {
+          "ref8819": 0.03564164210878113,
+          "ref8922": 0.0352615874586544
+        }
+      },
+      "reference_disagreement_rmse": 0.04983382502551395,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0002775680500925262,
+        "ref8922": -0.00019484807141106203
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        2,
+        0
+      ],
+      "xywh": [
+        320,
+        0,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.0978998855790701,
+          "ref8922": 0.09851625115471511
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.04844258852740315,
+          "ref8922": 0.048134877410636066
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.0490664224480028,
+          "ref8922": 0.04863223738953265
+        },
+        "OIDN_Both": {
+          "ref8819": 0.047486687299572075,
+          "ref8922": 0.047504509752010725
+        }
+      },
+      "reference_disagreement_rmse": 0.060793266875304085,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0009559012278310755,
+        "ref8922": -0.0006303676586253415
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        3,
+        0
+      ],
+      "xywh": [
+        480,
+        0,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.18104806390321854,
+          "ref8922": 0.181091961086152
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.09462312406537819,
+          "ref8922": 0.09495578558114076
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.0942108414217224,
+          "ref8922": 0.09477431290908689
+        },
+        "OIDN_Both": {
+          "ref8819": 0.09177689419018628,
+          "ref8922": 0.0925173099725209
+        }
+      },
+      "reference_disagreement_rmse": 0.11551840335396225,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0028462298751919107,
+        "ref8922": -0.0024384756086198583
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        0,
+        1
+      ],
+      "xywh": [
+        0,
+        100,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.11537113984759312,
+          "ref8922": 0.11542855438186934
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.04937891714166651,
+          "ref8922": 0.04896675869559939
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.04923227476818956,
+          "ref8922": 0.04884988704451285
+        },
+        "OIDN_Both": {
+          "ref8819": 0.04887447302406165,
+          "ref8922": 0.04852923536218621
+        }
+      },
+      "reference_disagreement_rmse": 0.06718372740176094,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0005044441176048631,
+        "ref8922": -0.00043752333341318117
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        1,
+        1
+      ],
+      "xywh": [
+        160,
+        100,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.1012583156041785,
+          "ref8922": 0.10052460935665015
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.04384612848420895,
+          "ref8922": 0.04358997879695216
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.043279825161578786,
+          "ref8922": 0.043063972791586046
+        },
+        "OIDN_Both": {
+          "ref8819": 0.04256416637302073,
+          "ref8922": 0.042546987125604174
+        }
+      },
+      "reference_disagreement_rmse": 0.05723789622756637,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.001281962111188216,
+        "ref8922": -0.0010429916713479842
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        2,
+        1
+      ],
+      "xywh": [
+        320,
+        100,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.08497934628190684,
+          "ref8922": 0.08431135118659415
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.042237514649631214,
+          "ref8922": 0.042414910758050886
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.0415342728568849,
+          "ref8922": 0.04143915148691145
+        },
+        "OIDN_Both": {
+          "ref8819": 0.04051906342632867,
+          "ref8922": 0.04013119928783175
+        }
+      },
+      "reference_disagreement_rmse": 0.05029755877789542,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.001718451223302546,
+        "ref8922": -0.0022837114702191352
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        3,
+        1
+      ],
+      "xywh": [
+        480,
+        100,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.1100465685246729,
+          "ref8922": 0.1106329085498889
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.0594933650967757,
+          "ref8922": 0.05949295942766837
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.05688726886860954,
+          "ref8922": 0.05665537075161148
+        },
+        "OIDN_Both": {
+          "ref8819": 0.05571246651242825,
+          "ref8922": 0.05536550909828723
+        }
+      },
+      "reference_disagreement_rmse": 0.06748428033720168,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.00378089858434745,
+        "ref8922": -0.004127450329381138
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        0,
+        2
+      ],
+      "xywh": [
+        0,
+        200,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.07499660857264656,
+          "ref8922": 0.07522532442523847
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.03182652336453342,
+          "ref8922": 0.032053191035899244
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.03158754921544627,
+          "ref8922": 0.0318476108322058
+        },
+        "OIDN_Both": {
+          "ref8819": 0.03148416383929463,
+          "ref8922": 0.03172304515348599
+        }
+      },
+      "reference_disagreement_rmse": 0.044772766228167435,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0003423595252387904,
+        "ref8922": -0.00033014588241325055
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        1,
+        2
+      ],
+      "xywh": [
+        160,
+        200,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.05292575359042406,
+          "ref8922": 0.05325260041989686
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.02451006381516008,
+          "ref8922": 0.0247637923773769
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.023511986649007364,
+          "ref8922": 0.023718386219146303
+        },
+        "OIDN_Both": {
+          "ref8819": 0.023191903815058534,
+          "ref8922": 0.02331782054500854
+        }
+      },
+      "reference_disagreement_rmse": 0.03216611868429452,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.001318160000101546,
+        "ref8922": -0.001445971832368359
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        2,
+        2
+      ],
+      "xywh": [
+        320,
+        200,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.04597840313165779,
+          "ref8922": 0.04605351342860692
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.021781628684865075,
+          "ref8922": 0.02178505108283348
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.020296552812645568,
+          "ref8922": 0.020214562441165044
+        },
+        "OIDN_Both": {
+          "ref8819": 0.020133725824198194,
+          "ref8922": 0.020014768831375162
+        }
+      },
+      "reference_disagreement_rmse": 0.028051980123887852,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0016479028606668812,
+        "ref8922": -0.0017702822514583175
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        3,
+        2
+      ],
+      "xywh": [
+        480,
+        200,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.11546985604119081,
+          "ref8922": 0.11465082297596324
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.05083308895409036,
+          "ref8922": 0.05055010756483785
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.05002032599395709,
+          "ref8922": 0.04975565610498915
+        },
+        "OIDN_Both": {
+          "ref8819": 0.04993082640997532,
+          "ref8922": 0.04961708659267604
+        }
+      },
+      "reference_disagreement_rmse": 0.06947525538866249,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0009022625441150386,
+        "ref8922": -0.0009330209721618091
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        0,
+        3
+      ],
+      "xywh": [
+        0,
+        300,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.03268665308039552,
+          "ref8922": 0.03273042849758128
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.014638384719096686,
+          "ref8922": 0.014649152486756134
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.014568700428046926,
+          "ref8922": 0.014568984122235534
+        },
+        "OIDN_Both": {
+          "ref8819": 0.014501066192121305,
+          "ref8922": 0.014539309641284153
+        }
+      },
+      "reference_disagreement_rmse": 0.020323408592821123,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.00013731852697538086,
+        "ref8922": -0.00010984284547198124
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        1,
+        3
+      ],
+      "xywh": [
+        160,
+        300,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.03128428341680138,
+          "ref8922": 0.031224584753885218
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.013841576277771961,
+          "ref8922": 0.013901611240056743
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.01370989894744876,
+          "ref8922": 0.013775294500230049
+        },
+        "OIDN_Both": {
+          "ref8819": 0.013695933522776229,
+          "ref8922": 0.013759133412459433
+        }
+      },
+      "reference_disagreement_rmse": 0.018834490753669362,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.00014564275499573225,
+        "ref8922": -0.00014247782759731036
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        2,
+        3
+      ],
+      "xywh": [
+        320,
+        300,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.03362416897915438,
+          "ref8922": 0.033852985808634925
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.015505909507347046,
+          "ref8922": 0.015350156025489376
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.015388995857792345,
+          "ref8922": 0.015230316802200173
+        },
+        "OIDN_Both": {
+          "ref8819": 0.015358354783778042,
+          "ref8922": 0.015190702510571247
+        }
+      },
+      "reference_disagreement_rmse": 0.020831771149842845,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.00014755472356900445,
+        "ref8922": -0.00015945351491812934
+      },
+      "screen_for_guide_regression": false
+    },
+    {
+      "grid_xy": [
+        3,
+        3
+      ],
+      "xywh": [
+        480,
+        300,
+        160,
+        100
+      ],
+      "rmse_per_method_per_ref": {
+        "Raw": {
+          "ref8819": 0.04785170909904098,
+          "ref8922": 0.04793444664335364
+        },
+        "OIDN_RGB": {
+          "ref8819": 0.021398724462462305,
+          "ref8922": 0.021050780777918013
+        },
+        "OIDN_Albedo": {
+          "ref8819": 0.021318243113667985,
+          "ref8922": 0.02099204399368182
+        },
+        "OIDN_Both": {
+          "ref8819": 0.021233615539630872,
+          "ref8922": 0.020929530281323685
+        }
+      },
+      "reference_disagreement_rmse": 0.029162054320197445,
+      "full_guides_minus_rgb_only_rmse_delta": {
+        "ref8819": -0.0001651089228314334,
+        "ref8922": -0.00012125049659432799
+      },
+      "screen_for_guide_regression": false
+    }
+  ],
+  "tentative_guide_regression_tiles": [],
+  "visual": "e0043_guides_1to1.png",
+  "convergence_proven": false,
+  "new_algorithm_tested": false,
+  "decision_gate": "Investigate only a visually meaningful, predeclared tile failing with both references and margin against reference disagreement; otherwise stop this line.",
+  "missing_external_ies": "IES_profiles/three-lobe-vee.ies",
+  "scene_lighting_fidelity_validated": false,
+  "limitation": "Single 32 spp and finite 128 spp refs cannot rank quality. All Italian Flat renders logged missing external IES profile. Original architectural illumination is not reproduced faithfully; experimental images are diagnostic only."
+}

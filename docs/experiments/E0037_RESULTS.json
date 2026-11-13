@@ -1,0 +1,263 @@
+{
+  "experiment": "E0037",
+  "source_run": 43480823352,
+  "oidn_release": "2.5.1",
+  "oidn_binary_sha256": "1cb3a28ebc99b90d7548b0b8b16f70c163cb59abe8582458a254aa303338269c",
+  "cases": {
+    "5.2.4": {
+      "blender": "5.2.4 LTS",
+      "input_seed": 539,
+      "source_sha256": {
+        "color": "df595fdf31d2f614073d8e68310f7ef558c7dae970ac95454aca25ab3b5f5b55",
+        "albedo": "dee02e7bdfc4f2924e7ceaf214438d8eb4a6af96cdf198880fed73b1275cb69b",
+        "normal": "6b0bafbbdff0306e81606e462253ce8df305071c5f01be1350323c2f49029347"
+      },
+      "raw_aux": {
+        "difference_from_native_compositor": {
+          "log1p_luminance_rmse": 0.017004931731010274,
+          "pixel_rmse_p95": 0.07090355063584719,
+          "mae_linear": 0.01993756005981595,
+          "rmse_linear": 0.04647311096462848,
+          "relative_rmse": 0.037229337224209846,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "max_absolute_difference": 1.090609073638916,
+        "sha256_output": "906bede25feaeead27031e17c79893171258e2ce4850205065004ed5dd1d5fe1",
+        "command_steps": [
+          {
+            "command": [
+              "-d",
+              "cpu",
+              "--hdr",
+              "/tmp/e0037/out/5_2_4/color.pfm",
+              "--alb",
+              "/tmp/e0037/out/5_2_4/albedo.pfm",
+              "--nrm",
+              "/tmp/e0037/out/5_2_4/normal.pfm",
+              "-q",
+              "high",
+              "--threads",
+              "4",
+              "-o",
+              "/tmp/e0037/out/5_2_4/raw_aux.pfm"
+            ],
+            "wall_seconds": 0.01851301099999958,
+            "stdout_tail": "Initializing device\n  device=CPU, version=2.5.1, msec=2.52117\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=3.17678\n\nDenoising 0% \nDenoising 3% \nDenoising 7% \nDenoising 11% \nDenoising 14% \nDenoising 18% \nDenoising 22% \nDenoising 25% \nDenoising 29% \nDenoising 33% \nDenoising 37% \nDenoising 40% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 59% \nDenoising 62% \nDenoising 66% \nDenoising 70% \nDenoising 74% \nDenoising 77% \nDenoising 81% \nDenoising 85% \nDenoising 88% \nDenoising 92% \nDenoising 96% \nDenoising 100% \n  msec=8.40299\nSaving output\n\n"
+          }
+        ]
+      },
+      "accurate_like": {
+        "difference_from_native_compositor": {
+          "log1p_luminance_rmse": 0.011983145114923939,
+          "pixel_rmse_p95": 0.04748919656969648,
+          "mae_linear": 0.01466342981325397,
+          "rmse_linear": 0.040350220086820376,
+          "relative_rmse": 0.03232432517432892,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "max_absolute_difference": 1.0348238945007324,
+        "sha256_output": "f63160205d9bfa1a9142b9931a1e688f7a068e78cffbcbecaff659c0a5e27979",
+        "command_steps": [
+          {
+            "command": [
+              "-d",
+              "cpu",
+              "--alb",
+              "/tmp/e0037/out/5_2_4/albedo.pfm",
+              "-q",
+              "high",
+              "--threads",
+              "4",
+              "-o",
+              "/tmp/e0037/out/5_2_4/filtered_albedo.pfm"
+            ],
+            "wall_seconds": 0.03776682799999875,
+            "stdout_tail": "Initializing device\n  device=CPU, version=2.5.1, msec=2.21325\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=12.5806\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 17% \nDenoising 20% \nDenoising 24% \nDenoising 27% \nDenoising 31% \nDenoising 34% \nDenoising 37% \nDenoising 41% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 58% \nDenoising 62% \nDenoising 65% \nDenoising 68% \nDenoising 72% \nDenoising 75% \nDenoising 79% \nDenoising 82% \nDenoising 86% \nDenoising 89% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=17.8896\nSaving output\n\n"
+          },
+          {
+            "command": [
+              "-d",
+              "cpu",
+              "--nrm",
+              "/tmp/e0037/out/5_2_4/normal.pfm",
+              "-q",
+              "high",
+              "--threads",
+              "4",
+              "-o",
+              "/tmp/e0037/out/5_2_4/filtered_normal.pfm"
+            ],
+            "wall_seconds": 0.03788144099999968,
+            "stdout_tail": "Initializing device\n  device=CPU, version=2.5.1, msec=2.23681\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=12.7844\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 17% \nDenoising 20% \nDenoising 24% \nDenoising 27% \nDenoising 31% \nDenoising 34% \nDenoising 37% \nDenoising 41% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 58% \nDenoising 62% \nDenoising 65% \nDenoising 68% \nDenoising 72% \nDenoising 75% \nDenoising 79% \nDenoising 82% \nDenoising 86% \nDenoising 89% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=17.8018\nSaving output\n\n"
+          },
+          {
+            "command": [
+              "-d",
+              "cpu",
+              "--hdr",
+              "/tmp/e0037/out/5_2_4/color.pfm",
+              "--alb",
+              "/tmp/e0037/out/5_2_4/filtered_albedo.pfm",
+              "--nrm",
+              "/tmp/e0037/out/5_2_4/filtered_normal.pfm",
+              "--clean_aux",
+              "-q",
+              "high",
+              "--threads",
+              "4",
+              "-o",
+              "/tmp/e0037/out/5_2_4/accurate_like.pfm"
+            ],
+            "wall_seconds": 0.03921725600000059,
+            "stdout_tail": "Initializing device\n  device=CPU, version=2.5.1, msec=2.19565\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=12.4926\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 16% \nDenoising 20% \nDenoising 23% \nDenoising 26% \nDenoising 30% \nDenoising 33% \nDenoising 36% \nDenoising 40% \nDenoising 43% \nDenoising 46% \nDenoising 50% \nDenoising 53% \nDenoising 56% \nDenoising 60% \nDenoising 63% \nDenoising 66% \nDenoising 70% \nDenoising 73% \nDenoising 76% \nDenoising 80% \nDenoising 83% \nDenoising 86% \nDenoising 90% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=18.7233\nSaving output\n\n"
+          }
+        ]
+      },
+      "prefilter_vs_unfiltered": {
+        "log1p_luminance_rmse": 0.017286044590690598,
+        "pixel_rmse_p95": 0.07221901499278237,
+        "mae_linear": 0.020081369252036692,
+        "rmse_linear": 0.04649633279843578,
+        "relative_rmse": 0.037623871345255064,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      }
+    },
+    "5.3.0": {
+      "blender": "5.3.0",
+      "input_seed": 539,
+      "source_sha256": {
+        "color": "00fb7b413f3cf7394eae96aeef491ef16b962ccf758f1cfe944af1328a07d805",
+        "albedo": "77974ec5853b9311368e3b4f7e786ab69cb73f5888def32b4896bc176f88d62d",
+        "normal": "fb1f229dbcc0896edd5854e860cd4d16505c8675f3b44c44f88717b0a3d95b67"
+      },
+      "raw_aux": {
+        "difference_from_native_compositor": {
+          "log1p_luminance_rmse": 0.016993123510193057,
+          "pixel_rmse_p95": 0.07099841129151452,
+          "mae_linear": 0.019930141993528296,
+          "rmse_linear": 0.046456394638978896,
+          "relative_rmse": 0.03721939970321782,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "max_absolute_difference": 1.0917582511901855,
+        "sha256_output": "94cefa82982b57d95d6ba60c98dc28606b46f2e0bd8d05798a5bce48ab0c0644",
+        "command_steps": [
+          {
+            "command": [
+              "-d",
+              "cpu",
+              "--hdr",
+              "/tmp/e0037/out/5_3_0/color.pfm",
+              "--alb",
+              "/tmp/e0037/out/5_3_0/albedo.pfm",
+              "--nrm",
+              "/tmp/e0037/out/5_3_0/normal.pfm",
+              "-q",
+              "high",
+              "--threads",
+              "4",
+              "-o",
+              "/tmp/e0037/out/5_3_0/raw_aux.pfm"
+            ],
+            "wall_seconds": 0.02305905600000102,
+            "stdout_tail": "Initializing device\n  device=CPU, version=2.5.1, msec=2.4484\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=5.29305\n\nDenoising 0% \nDenoising 3% \nDenoising 7% \nDenoising 11% \nDenoising 14% \nDenoising 18% \nDenoising 22% \nDenoising 25% \nDenoising 29% \nDenoising 33% \nDenoising 37% \nDenoising 40% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 59% \nDenoising 62% \nDenoising 66% \nDenoising 70% \nDenoising 74% \nDenoising 77% \nDenoising 81% \nDenoising 85% \nDenoising 88% \nDenoising 92% \nDenoising 96% \nDenoising 100% \n  msec=8.44728\nSaving output\n\n"
+          }
+        ]
+      },
+      "accurate_like": {
+        "difference_from_native_compositor": {
+          "log1p_luminance_rmse": 0.012006292537995953,
+          "pixel_rmse_p95": 0.047548795202656174,
+          "mae_linear": 0.01469501330297539,
+          "rmse_linear": 0.04038050074731541,
+          "relative_rmse": 0.032351584947777866,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "max_absolute_difference": 1.034104824066162,
+        "sha256_output": "4f393afdccdcbab77bb0ebd24da46c8ba038ecfccee09785a9b60c5987ee40c0",
+        "command_steps": [
+          {
+            "command": [
+              "-d",
+              "cpu",
+              "--alb",
+              "/tmp/e0037/out/5_3_0/albedo.pfm",
+              "-q",
+              "high",
+              "--threads",
+              "4",
+              "-o",
+              "/tmp/e0037/out/5_3_0/filtered_albedo.pfm"
+            ],
+            "wall_seconds": 0.03925116599999967,
+            "stdout_tail": "Initializing device\n  device=CPU, version=2.5.1, msec=2.12668\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=12.5551\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 17% \nDenoising 20% \nDenoising 24% \nDenoising 27% \nDenoising 31% \nDenoising 34% \nDenoising 37% \nDenoising 41% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 58% \nDenoising 62% \nDenoising 65% \nDenoising 68% \nDenoising 72% \nDenoising 75% \nDenoising 79% \nDenoising 82% \nDenoising 86% \nDenoising 89% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=19.2795\nSaving output\n\n"
+          },
+          {
+            "command": [
+              "-d",
+              "cpu",
+              "--nrm",
+              "/tmp/e0037/out/5_3_0/normal.pfm",
+              "-q",
+              "high",
+              "--threads",
+              "4",
+              "-o",
+              "/tmp/e0037/out/5_3_0/filtered_normal.pfm"
+            ],
+            "wall_seconds": 0.03816970600000147,
+            "stdout_tail": "Initializing device\n  device=CPU, version=2.5.1, msec=2.26703\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=12.5936\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 17% \nDenoising 20% \nDenoising 24% \nDenoising 27% \nDenoising 31% \nDenoising 34% \nDenoising 37% \nDenoising 41% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 58% \nDenoising 62% \nDenoising 65% \nDenoising 68% \nDenoising 72% \nDenoising 75% \nDenoising 79% \nDenoising 82% \nDenoising 86% \nDenoising 89% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=18.1763\nSaving output\n\n"
+          },
+          {
+            "command": [
+              "-d",
+              "cpu",
+              "--hdr",
+              "/tmp/e0037/out/5_3_0/color.pfm",
+              "--alb",
+              "/tmp/e0037/out/5_3_0/filtered_albedo.pfm",
+              "--nrm",
+              "/tmp/e0037/out/5_3_0/filtered_normal.pfm",
+              "--clean_aux",
+              "-q",
+              "high",
+              "--threads",
+              "4",
+              "-o",
+              "/tmp/e0037/out/5_3_0/accurate_like.pfm"
+            ],
+            "wall_seconds": 0.04066617399999828,
+            "stdout_tail": "Initializing device\n  device=CPU, version=2.5.1, msec=2.48772\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=13.113\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 16% \nDenoising 20% \nDenoising 23% \nDenoising 26% \nDenoising 30% \nDenoising 33% \nDenoising 36% \nDenoising 40% \nDenoising 43% \nDenoising 46% \nDenoising 50% \nDenoising 53% \nDenoising 56% \nDenoising 60% \nDenoising 63% \nDenoising 66% \nDenoising 70% \nDenoising 73% \nDenoising 76% \nDenoising 80% \nDenoising 83% \nDenoising 86% \nDenoising 90% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=18.5859\nSaving output\n\n"
+          }
+        ]
+      },
+      "prefilter_vs_unfiltered": {
+        "log1p_luminance_rmse": 0.017273788774986303,
+        "pixel_rmse_p95": 0.07226497567334238,
+        "mae_linear": 0.020070853642513004,
+        "rmse_linear": 0.04649517097109081,
+        "relative_rmse": 0.037626046342178636,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      }
+    }
+  },
+  "source_spp": 16,
+  "resolution": [
+    128,
+    96
+  ],
+  "reference_convergence_proven": false,
+  "caveat": "Single-seed same-input output differences, not denoiser quality or CPU speed ranking. Accurate-like may differ from actual Blender OIDN preprocessing and version."
+}

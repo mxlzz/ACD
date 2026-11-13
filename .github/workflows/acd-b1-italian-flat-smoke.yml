@@ -1,0 +1,122 @@
+name: ACD B1 official Italian Flat high-detail architectural functional smoke
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-b1-italian-flat-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  independent-architectural-fixture:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      ACD_AUDIT_SOURCE: "Italian Flat, Flavio Della Tommasa, official Blender Cycles demo, CC-BY (version unspecified)"
+      ACD_AUDIT_RENDER: /tmp/acd_b1_italian_smoke.png
+      ACD_AUDIT_OUTPUT: /tmp/acd_b1_italian_audit.json
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "4"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Fetch official source into runner only, verify byte size and hash
+        run: |
+          mkdir -p /tmp/acd-b1-italian
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 --connect-timeout 30 \
+            https://download.blender.org/demo/cycles/flat-archiviz.blend \
+            -o /tmp/acd-b1-italian/flat-archiviz.blend
+          test "$(stat -c%s /tmp/acd-b1-italian/flat-archiviz.blend)" -eq 367972724
+          sha256sum /tmp/acd-b1-italian/flat-archiviz.blend
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("/tmp/acd-b1-italian/flat-archiviz.blend")
+          r={"source_url":"https://download.blender.org/demo/cycles/flat-archiviz.blend",
+             "author":"Flavio Della Tommasa",
+             "license_catalog":"CC-BY, version not specified",
+             "source_size":p.stat().st_size,
+             "source_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+             "original_republished":False,
+             "quality_benchmark_performed":False}
+          Path("/tmp/acd-b1-italian/manifest.json").write_text(json.dumps(r,indent=2)+"\n")
+          print("ACD_B1_ITALIAN_SOURCE",json.dumps(r,sort_keys=True))
+          PY
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Obtain SHA-verified official Blender 5.2.4 if needed
+        if: steps.blender-cache.outputs.cache-hit != 'true'
+        run: |
+          F=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 \
+            https://download.blender.org/release/Blender5.2/$F -o "$F"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 \
+            https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$F" official.sha256 | sha256sum -c -
+          tar -xf "$F"
+      - name: Supply EGL/OpenGL headless libraries
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+            libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Check camera/assets and render tiny 4spp Cycles without denoiser
+        run: |
+          ./blender-5.2.4-linux-x64/blender --factory-startup --disable-autoexec \
+            -b /tmp/acd-b1-italian/flat-archiviz.blend \
+            --python-exit-code 1 --python scripts/audit_public_scene.py
+      - name: Publish metadata only after full smoke passed (source unmodified)
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("/tmp/acd-b1-italian/manifest.json").read_text())
+          a=json.loads(Path("/tmp/acd_b1_italian_audit.json").read_text())
+          assert a["smoke_render_success"] and not a["unbundled_missing_images"] and not a["external_blend_libraries"]
+          data={"experiment":"B1_ITALIAN_SMOKE","source":m,"audit":a,
+                "not_quality_benchmark":True,
+                "next":"pin hash for repeatability; separately profile render costs and reference convergence"}
+          Path("docs/experiments/B1_ITALIAN_AUDIT.json").write_text(json.dumps(data,indent=2)+"\n")
+          lines=[
+            "# B1 Italian Flat — functional Blender 5.2.4 LTS check",
+            "",
+            "Source official Cycles demo, Flavio Della Tommasa, CC-BY (version unspecified). Original 367,972,724-byte BLEND not redistributed.",
+            "SHA256 "+m["source_sha256"],
+            "Scene "+a["scene"]+"; camera "+a["active_camera"],
+            "Meshes "+str(a["meshes"])+", materials "+str(a["materials"])+", images "+str(a["images"]),
+            "Missing resources "+str(a["unbundled_missing_images"])+", linked libraries "+str(a["external_blend_libraries"]),
+            "Cycles CPU, 192×192, 4spp functional smoke passed; NOT a denoising quality result.",
+            "Next: pin hash; convergence/cost pilot before large renders.",
+          ]
+          Path("docs/experiments/B1_ITALIAN.md").write_text("\n\n".join(lines)+"\n")
+          trace="\n## B1 Italian Flat functional smoke passed (2026-11-13)\n\n"+"\n".join(lines[2:])+"\n"
+          for p in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+            with Path(p).open("a",encoding="utf-8") as f:f.write(trace)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/B1_ITALIAN.md docs/experiments/B1_ITALIAN_AUDIT.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "testdata(B1): validate official Italian Flat Cycles source and tiny smoke"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Preserve preview and audit for inspection without sharing source
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-b1-italian-flat-smoke
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            /tmp/acd_b1_italian_smoke.png
+            /tmp/acd_b1_italian_audit.json
+            /tmp/acd-b1-italian/manifest.json

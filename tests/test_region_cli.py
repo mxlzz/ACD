@@ -23,6 +23,7 @@ def test_regions_from_saved_exrs_and_roi_file(tmp_path, capsys):
     save_exr(tmp_path / "reference.exr", target)
     save_exr(tmp_path / "acd_compare_STANDARD.exr", altered)
     save_exr(tmp_path / "acd_compare_SUPER.exr", target)
+    save_exr(tmp_path / "acd_compare_NATIVE_COMP_OIDN.exr", target)
     regions_path = tmp_path / "rois.json"
     regions_path.write_text(json.dumps({
         "regions": [{"name": "left", "rect_norm": [0, 0, 1 / 3, 1]},
@@ -36,6 +37,8 @@ def test_regions_from_saved_exrs_and_roi_file(tmp_path, capsys):
     assert left["STANDARD"]["rmse_linear"] == pytest.approx(1)
     assert right["STANDARD"]["rmse_linear"] == pytest.approx(0)
     assert left["SUPER"]["rmse_linear"] == pytest.approx(0)
+    assert left["NATIVE_COMP_OIDN"]["rmse_linear"] == pytest.approx(0)
+    assert left["NATIVE_COMP_OIDN"]["detail"]["flat_gradient_rmse"] == 0
     assert (tmp_path / "maps.npz").is_file()
     assert main(["compare-regions", "--directory", str(tmp_path),
                  "--regions", str(regions_path)]) == 0

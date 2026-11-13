@@ -1,0 +1,47 @@
+name: ACD E0027 Cycles emission AOV guided HDR ablation offline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  reuse-existing-exr-without-render:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Setup and emission guide tests
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_emission_guide.py tests/test_highlight_blend.py
+      - name: Restore exact EXR and metadata for both prior runs
+        run: |
+          mkdir -p /tmp/cozy-e0027 /tmp/terraced-e0027
+          gh run download 43289852695 -R mxlzz/ACD -n acd-e0021-cozy-exr -D /tmp/cozy-e0027
+          gh run download 43289852695 -R mxlzz/ACD -n acd-e0021-cozy-metrics -D /tmp/cozy-e0027
+          gh run download 43291659387 -R mxlzz/ACD -n acd-e0023-terraced-exr -D /tmp/terraced-e0027
+          gh run download 43291659387 -R mxlzz/ACD -n acd-e0023-terraced-metrics -D /tmp/terraced-e0027
+          test -f /tmp/terraced-e0027/seed_1337/raw_multilayer.exr
+          test -f /tmp/cozy-e0027/seed_1337/raw_multilayer.exr
+      - name: Score emission-guided blends against both references and 3 seeds
+        run: |
+          python -m scripts.analyze_emission_guide_e0027 \
+            --cozy /tmp/cozy-e0027 --terraced /tmp/terraced-e0027 \
+            --output /tmp/e0027_emission_guide.json
+      - name: Archive compact numerical evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0027-emission-guided-results
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/e0027_emission_guide.json

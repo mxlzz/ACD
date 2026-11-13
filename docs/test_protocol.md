@@ -54,3 +54,15 @@ M4+: upscale, photo, optional trained selection model.
 - Existing E0001–E0008 reports are historic snapshots. Their original
   filenames and computed metrics are kept, but files without the new
   fingerprint cannot be safely aggregated by the new code.
+
+
+## V2 — conservación de detalle, 2026-11-12
+
+`acd_lab.detail.detail_fidelity` agrega métricas **descriptivas** sobre diferencias RGB de píxeles adyacentes tras `asinh` por canal (apto para valores HDR negativos, sin truncar los valores originales). Las máscaras de borde son el percentil superior del 20 % de las diferencias *positivas* en la referencia, las zonas planas el 50 % inferior de todas las parejas. Selección **solo a partir de referencia**, nunca de salida candidata; los empates pueden ampliar cobertura. Se computan parejas horizontal/vertical, y en ROI ambos extremos deben pertenecer a la máscara para evitar falsa vecindad al aplanar regiones.
+
+- `edge_gradient_rmse` / `edge_gradient_mae`: error de gradiente en bordes definidos por referencia (menor = mejor).
+- `edge_contrast_ratio`: razón de intensidad de gradiente candidato / referencia en esos bordes; **no es una puntuación de calidad**, puede subir por halo/sharpen/noise. Debe interpretarse junto al error.
+- `flat_gradient_rmse`: gradientes falsos o alterados en parejas planas de referencia (menor = mejor).
+- Cuando no hay bordes o parejas elegibles, las métricas afectadas son `null`; no inventar valor cero ni ranking. La referencia finita puede contener ruido y definir bordes incorrectos. No hay prueba de equivalencia con métricas HDR perceptuales ni sensibilidad validada en escenas profesionales.
+- Batch: `measurements[method].detail` y `rank_by_edge_gradient_rmse`; regiones: `regions[name].metrics[method].detail`; agregado de semillas: `detail_methods`. En agregado, ranking de detalle solo si la auditoría de diversidad de inputs pasa la heurística, y no acredita independencia ni convergencia.
+- Benchmark real: priorizar 1:1 crops, dos referencias con discrepancia aceptable, varios seeds, escenas withheld y métricas globales; no promover variante por una única puntuación.

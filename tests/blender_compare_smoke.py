@@ -27,11 +27,22 @@ try:
     destination.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
     scene_variant = os.environ.get("ACD_SCENE", "factory")
-    if scene_variant in ("interior", "interior_emissive", "glass_lobby"):
+    if scene_variant in ("interior", "interior_emissive", "glass_lobby", "detail_target"):
         interior_spec = importlib.util.spec_from_file_location("acd_scene", root / "tests" / "scene_factory.py")
         interior = importlib.util.module_from_spec(interior_spec)
         interior_spec.loader.exec_module(interior)
-        if scene_variant == "interior_emissive":
+        if scene_variant == "detail_target":
+            import sys
+            sys.path.insert(0, str(root / "tests"))
+            try:
+                detail_spec = importlib.util.spec_from_file_location(
+                    "acd_detail_target", root / "tests" / "scene_detail_target.py")
+                detail_scene = importlib.util.module_from_spec(detail_spec)
+                detail_spec.loader.exec_module(detail_scene)
+                detail_scene.make_detail_target(scene)
+            finally:
+                sys.path.pop(0)
+        elif scene_variant == "interior_emissive":
             interior.make_interior_emissive(scene)
         elif scene_variant == "glass_lobby":
             lobby_spec = importlib.util.spec_from_file_location(
@@ -84,8 +95,16 @@ try:
     scene.cycles.device = "CPU" if device == "CPU" else "GPU"
     input_spp = int(os.environ.get("ACD_INPUT_SPP", "16"))
     input_seed = int(os.environ.get("ACD_INPUT_SEED", "539"))
-    width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
-    height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
+    source_resolution = [scene.render.resolution_x, scene.render.resolution_y]
+    if scene_variant == "external" and os.environ.get("ACD_MAX_WIDTH"):
+        max_width = int(os.environ["ACD_MAX_WIDTH"])
+        if not 8 <= max_width <= 4096:
+            raise ValueError("ACD_MAX_WIDTH must be in [8, 4096]")
+        width = min(source_resolution[0], max_width)
+        height = max(8, round(source_resolution[1] * width / source_resolution[0]))
+    else:
+        width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
+        height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
     assert input_spp > 0 and 8 <= width <= 4096 and 8 <= height <= 4096
     scene.cycles.samples = input_spp
     scene.cycles.seed = input_seed
@@ -288,6 +307,21 @@ try:
         fileout.file_output_items.new("RGBA", "STANDARD_emission_preserved")
         tree.links.new(emission_protected, fileout.inputs["STANDARD_emission_preserved"])
 
+    # E0039 only: export the exact RLayers socket inputs to the compositor.
+    # This allows an exact comparison to EXR multi-layer denoising passes.
+    # Do not enable this outside the diagnostic workflow.
+    if os.environ.get("ACD_E0039_CAPTURE_SOCKETS", "0") == "1":
+        if not native_comp_selected or not capture_aov:
+            raise RuntimeError("E0039 requires compositor OIDN and multilayer AOV capture")
+        for key, socket_key in (
+            ("SOCKET_ResolvedRaw", "Image"),
+            ("SOCKET_Albedo", "Denoising Albedo"),
+            ("SOCKET_Normal", "Denoising Normal"),
+        ):
+            signal = addon.render_socket(layers, socket_key)
+            fileout.file_output_items.new("RGBA", key)
+            tree.links.new(signal, fileout.inputs[key])
+
     scene.compositing_node_group = tree
     scene.render.use_compositing = True
     result = bpy.ops.render.render(write_still=True)
@@ -349,7 +383,13 @@ try:
         scene.render.use_compositing = True
         scene.cycles.samples = input_spp
         scene.cycles.seed = extra_seed
-        scene.render.filepath = str(extra_dir / "composite.exr")
+        if capture_aov:
+            # Independent inputs require their own guides; never reuse seed-539 AOVs.
+            scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
+            scene.render.image_settings.file_format = "OPEN_EXR_MULTILAYER"
+            scene.render.filepath = str(extra_dir / "raw_multilayer.exr")
+        else:
+            scene.render.filepath = str(extra_dir / "composite.exr")
         fileout.directory = str(extra_dir)
         repeated_result = bpy.ops.render.render(write_still=True)
         assert "FINISHED" in repeated_result
@@ -396,6 +436,8 @@ try:
         "second_reference_seed": reference_seed + 103 if second_reference else None,
         "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
+        "source_original_resolution": source_resolution if scene_variant == "external" else None,
+        "source_original_pixel_aspect": [scene.render.pixel_aspect_x, scene.render.pixel_aspect_y] if scene_variant == "external" else None,
         "compositional_methods": [name for _, _, name, _ in methods],
         "sid_reference_methods": sid_selected,
         "sid_reference_source_commit": (

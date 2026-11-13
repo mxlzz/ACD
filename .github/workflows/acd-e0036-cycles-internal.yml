@@ -1,0 +1,94 @@
+name: ACD E0036 same RenderLayer Cycles internal OIDN vs compositor OIDN
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0036-cycles-internal.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  same-render-comparison:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      ACD_E0036_DIR: /tmp/acd-e0036
+      BLENDER_VERSION: "5.2.4"
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "4"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate pure numerical contract and OpenEXR library
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_cycles_internal_e0036.py tests/test_blender_compat_e0035.py
+      - name: Download and checksum official Blender 5.2.4 LTS
+        run: |
+          BASE=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 3 --connect-timeout 30 \
+            "https://download.blender.org/release/Blender5.2/$BASE" -o "$BASE"
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$BASE" official.sha256 | sha256sum -c -
+          tar -xf "$BASE"
+      - name: Provide EGL headless runtime
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+            libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+          ldconfig -p | grep -F libEGL.so.1
+      - name: Perform ONE Cycles render, capture raw and two OIDN routes
+        run: |
+          ./blender-5.2.4-linux-x64/blender -b --factory-startup \
+            --python-exit-code 1 --python tests/blender_cycles_internal_e0036.py
+      - name: Compare outputs numerically, no reference/quality ranking
+        run: |
+          python -m scripts.analyze_cycles_internal_e0036 \
+            --directory "$ACD_E0036_DIR" --output "$ACD_E0036_DIR/e0036_results.json"
+      - name: Archive accurate metadata and decision in GitHub
+        run: |
+          mkdir -p docs/experiments
+          cp "$ACD_E0036_DIR/e0036_results.json" docs/experiments/E0036_RESULTS.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("docs/experiments/E0036_RESULTS.json").read_text())
+          m=data["metrics"]
+          report=(
+              "# E0036 — Denoising interno de Cycles vs nodo OIDN de compositor (mismo render)\n\n"
+              "- [Workflow E0036](https://github.com/mxlzz/ACD/actions/workflows/acd-e0036-cycles-internal.yml), Blender "+data["blender"]+", scene procedural detail_target 128×96, 16spp, seed539, GPU none. Source: same RenderLayer Noisy Image, Image denoised and Denoising Albedo/Normal. Compositor OIDN Accurate/High/HDR. No reference converged or claim of quality winner.\n"
+              "- RMSE RGB entre salida interna y de compositor: "+str(m["internal_vs_compositor"]["rmse_linear"])+"; delta máximo "+str(m["internal_compositor_max_abs_diff"])+". Coincidencia exacta: "+str(m["internal_compositor_exact_match"])+".\n"
+              "- Raw→OIDN integrado RMSE "+str(m["raw_vs_internal"]["rmse_linear"])+"; Raw→OIDN compositor "+str(m["raw_vs_compositor"]["rmse_linear"])+". Estos números miden diferencia entre salidas, NO si una es mejor.\n"
+              "- [JSON exacto](E0036_RESULTS.json). EXR/AOV en artifacts del run solo 14 días. Próxima puerta: misma entrada de forma verificable frente a OIDN standalone y controles de guías; luego referencias convergentes antes de ranking.\n"
+          )
+          Path("docs/experiments/E0036.md").write_text(report,encoding="utf-8")
+          update="\n## E0036 — Cycles internal vs compositor OIDN actual (2026-11-13)\n\n"+report
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(path).open("a",encoding="utf-8") as f:f.write(update)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0036_RESULTS.json docs/experiments/E0036.md
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0036): record same-render Cycles internal vs compositor OIDN metrics"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Retain EXR and metadata for 14 days (no scene binary)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0036-same-render-exr
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd-e0036/
