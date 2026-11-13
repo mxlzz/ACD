@@ -778,3 +778,13 @@ Si las guías no coinciden, el EXR archivado no reproduce exactamente los inputs
 
 - Barcelona [run 43493720883](https://github.com/mxlzz/ACD/actions/runs/43493720883) (reintento): confirmados ZIP y .blend íntegros, pero la imagen llamada Mies-BCN_M11.jpg tiene ruta original water bump.jpg, **no presente** en los 24 paths ZIP. Reasignar el archivo de foto Mies a ese mapa de bump sería inventar un recurso; rechazo como fixture reproducible. No se renderizó.
 - Nuevo candidato: Italian Flat, Flavio Della Tommasa, CC-BY (versión no indicada), Blender demo Cycles fuente oficial https://download.blender.org/demo/cycles/flat-archiviz.blend (367,972,724 bytes publicados). Mayor tamaño que anteriores; solo smoke 192² 4spp, no referencia ni benchmark, y nunca subir original .blend. Workflow lanza check de dependencias, cámara, hash y Cycles CPU. Resultado **pendiente**.
+
+## B1 Italian Flat functional smoke passed (2026-11-13)
+
+Source official Cycles demo, Flavio Della Tommasa, CC-BY (version unspecified). Original 367,972,724-byte BLEND not redistributed.
+SHA256 0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25
+Scene Scene; camera Cam Pouf Details 
+Meshes 476, materials 109, images 81
+Missing resources 0, linked libraries 0
+Cycles CPU, 192×192, 4spp functional smoke passed; NOT a denoising quality result.
+Next: pin hash; convergence/cost pilot before large renders.
