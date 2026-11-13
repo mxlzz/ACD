@@ -1,3 +1,11 @@
+
+## 2026-11-13 — B0a/E0035: contrato reproducible implementado (ejecución pendiente)
+
+- Código nuevo: tests/blender_cycles_capabilities_e0035.py registra sockets/propiedades de denoise de la versión real, scripts/summarize_blender_compat_e0035.py comprueba fuente RAW igual al beauty AOV de la misma seed y compara Standard con OIDN compositor, tests/test_blender_compat_e0035.py rechaza mezclar informes de diferentes versiones. 
+- Clasificación: **tests de contrato**, no calidad visual. Resolución 128×96, noisy16spp, referencia64spp (no convergida). Cycles-internal todavía sin ejecutar. Próximo workflow E0035 matrices 5.2.4 LTS/5.3.0 y checksums oficiales.
+
+---
+
 ## 2026-11-13 — Reorientación B0–B4 aprobada para implementación
 
 - Programa rector: [B0–B4](docs/ACD_V2_REORIENTATION_2026-11-13.md). Prioridad inmediata: B0a (compatibilidad Blender 5.2.4 LTS + 5.3.0 y auditoría de diferencias de rutas OIDN). Se conserva 5.0.1 como control histórico; las variantes High/Super/Emission50 no se siguen optimizando.

@@ -1,3 +1,5 @@
+> E0035 code implemented: API scan, tiny same-seed beauty/AOV contracts and un-converged 64spp reference diagnostic. Workflow not yet run, no claims of 5.2/5.3 compatibility. Await official-build matrix.
+
 > **REORIENTACIÓN 2026-11-13:** plan B0–B4 vigente en docs/ACD_V2_REORIENTATION_2026-11-13.md. Iniciar B0a pruebas actuales 5.2.4 LTS y 5.3.0; no nuevos candidatos hasta corpus y referencias. Mantener OIDN como baseline, freeze Emission50/High/Super.
 
 > E0034 #43451534590 success: E0033 exact JSON and 5 PNG variants preserved. Central viewer index benchmarks/results/README.md links saved previews from all major scenes, distinguishes Git PNG from expiring EXR Actions artifacts. No algorithm or addon changes.

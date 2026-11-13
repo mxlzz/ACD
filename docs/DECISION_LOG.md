@@ -599,3 +599,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - **Hechos:** OIDN compositor es baseline reproducible; Standard equivale a él en ensayos locales. High/Super no tienen mejora consistente; Emission50 reduce el error de pocas luces pero retrocede en bordes y no supera globalmente a OIDN en Modern Hall; referencias E0033 no probadas convergentes. Los tests unitarios de ACD no miden nitidez a escala de producción.
 - **Decisión:** priorizar [B0–B4](ACD_V2_REORIENTATION_2026-11-13.md). B0 versiones Blender 5.2.4 LTS/5.3.0 y distinción OIDN compositor/Cycles interno/OIDN CLI; 5.0.1 queda para historia. B1 corpus de escenas realistas y holdout por escena. B2 referencias convergentes, HDR-FLIP y OCIO, tiempo vs más spp. B3 hipótesis de guías por un error reproducible. B4 promoción solo con evidencia fuera de muestra.
 - **Restricciones:** Emission50/High/Super congelados, no entrenamiento/fork ni merge addon; experimentos GPU o 1080p solo manuales. Documentar hashes, costes, fallos, licencias. Primera etapa B0a se preinscribe E0035, smoke pequeño, no ranking entre versiones con renders diferentes.
+
+
+## 2026-11-13 — B0a/E0035: contrato reproducible implementado (ejecución pendiente)
+
+- Código nuevo: tests/blender_cycles_capabilities_e0035.py registra sockets/propiedades de denoise de la versión real, scripts/summarize_blender_compat_e0035.py comprueba fuente RAW igual al beauty AOV de la misma seed y compara Standard con OIDN compositor, tests/test_blender_compat_e0035.py rechaza mezclar informes de diferentes versiones. 
+- Clasificación: **tests de contrato**, no calidad visual. Resolución 128×96, noisy16spp, referencia64spp (no convergida). Cycles-internal todavía sin ejecutar. Próximo workflow E0035 matrices 5.2.4 LTS/5.3.0 y checksums oficiales.
