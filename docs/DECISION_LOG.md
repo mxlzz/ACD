@@ -611,3 +611,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - Workflow E0035 incorporado con matriz Blender 5.2.4 LTS y 5.3.0 de archivos oficiales + hash, API compositor/Cycles y render ligero con misma beauty y AOV dentro de cada job.
 - Push de workflow dispara primera corrida; siguientes solo manual o cambio explícito a este workflow. Resultado **pendiente de GitHub Actions**, no benchmark de calidad ni comprobación Cycles-internal. Addon estable intacto.
+
+
+## 2026-11-13 — E0035 primer smoke abortado por biblioteca faltante en runner
+
+- [Actions run 43480476666](https://github.com/mxlzz/ACD/actions/runs/43480476666): **ambos jobs fallaron** tras pasar tests, SHA256 oficial, Blender --version y enumeración API. En el paso de render se produjo abort 134 con mensaje **libEGL.so.1: cannot open shared object file**; Blender 5.3 además advirtió que el backend Vulkan no se inicializaba. Esto indica una dependencia runtime del runner, no prueba de defecto del denoiser ni de incompatibilidad del addon.
+- Corrección limitada a CI: instalar libegl1/libgl1-mesa-dri/libopengl0/libxkbcommon0 y verificar ldconfig antes de render; repetir igual fixture/configuración. No modificar el método, reference spp o addon. Resultado del segundo intento pendiente.

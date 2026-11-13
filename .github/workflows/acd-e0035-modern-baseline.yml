@@ -69,6 +69,12 @@ jobs:
         run: |
           "./blender-$BLENDER_VERSION-linux-x64/blender" -b --factory-startup \
             --python-exit-code 1 --python tests/blender_cycles_capabilities_e0035.py
+      - name: Install runtime EGL/OpenGL libraries required by Blender 5.2 and 5.3 headless
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+          test -e /usr/lib/x86_64-linux-gnu/libEGL.so.1
+          ldconfig -p | grep -F libEGL.so.1
       - name: Render small same-seed noisy beauty / AOV / compositor variants
         run: |
           "./blender-$BLENDER_VERSION-linux-x64/blender" -b --factory-startup \

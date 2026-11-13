@@ -1,3 +1,5 @@
+> E0035 run 43480476666: SHA256, Blender5.2/5.3 API and unit tests OK, both render jobs abort(134) because ubuntu runner lacks libEGL.so.1. Install OS EGL/OpenGL dependencies, retry identical protocol; not compatibility verdict yet.
+
 > E0035 workflow official Blender 5.2.4/5.3.0 tiny CPU API/compositor smoke committed and triggered by path. Await real jobs, do not declare denoiser quality.
 
 > E0035 code implemented: API scan, tiny same-seed beauty/AOV contracts and un-converged 64spp reference diagnostic. Workflow not yet run, no claims of 5.2/5.3 compatibility. Await official-build matrix.
