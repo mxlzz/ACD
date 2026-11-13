@@ -676,3 +676,8 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - Objetivo: comparar OIDN standalone 2.5.1 sobre los datos reales ya congelados de E0035 (16 spp, 128×96, dos versiones) sin re-renderizar ni atribuir calidad. Se exige SHA256 exacto de Raw, compositor y multilayer, verificación de PFM float32 e identidad de AOV.
 - Dos modos: raw_aux (OIDN RT high/HDR guías originales, cleanAux=false) vs accurate_like (OIDN RT high prefilter solo albedo, luego normal, luego beauty con cleanAux=true). La guía de OIDN indica este prefiltrado; no se asume paridad exacta con el compositor Blender y no se mide verdad de referencia.
 - A registrar: RMSE directo respecto a compositor por misma versión, mayor diferencia, SHA256, flags de CPU y walltime por subprocess con overhead. Resultado todavía no obtenido; workflow separado en próximo commit. No tocar addon.
+
+
+## 2026-11-13 — E0037 workflow ingresado
+
+- Archivo .github/workflows/acd-e0037-oidn-cli-guides.yml dispara un único run que recupera E0035 artifacts, verifica SHA256 fuente y release OIDN 2.5.1, evalúa variantes raw_aux / accurate_like y archiva métricas permanentes. No se hace render ni comparación perceptual. El reporte de calidad aún no existe al momento del commit.
