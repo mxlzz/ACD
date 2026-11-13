@@ -1,3 +1,10 @@
+
+## 2026-11-13 — E0035 archive corrected: nested artifact layout
+
+- Run [43481397097](https://github.com/mxlzz/ACD/actions/runs/43481397097) retrieved both E0035 artifacts and validated report versions, then failed reading EXR because Actions upload preserved `acd-e0035-render/` subfolder rather than placing raw EXR at archive root. Not a rendering/algorithm error. Fix by locating exactly one file recursively per name and rejecting ambiguous artifacts. Re-run without Blender/denoiser.
+
+---
+
 ## 2026-11-13 — E0035 real success; archival validation triggered
 
 - [Run 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352) dos jobs **success**. Blender oficiales 5.2.4 LTS (build cd5dc428cce1) y 5.3.0 (02f0899d78e3), verificación SHA256/tiny Cycles 128×96, 16 spp, misma beauty raw/AOV delta=0, Standard vs OIDN compositor delta=0 en cada versión. Ninguna de estas cifras indica calidad real.

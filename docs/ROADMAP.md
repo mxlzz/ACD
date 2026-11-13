@@ -1,3 +1,5 @@
+> E0035 archive first run 43481397097 failed EXR path due nested artifact directory (not algorithm). Fix via unique recursive file selection, rerun no Blender.
+
 > E0035 run 43480823352 verified both Blender 5.2.4 LTS and 5.3.0 tiny Cycles/compositor contract: Raw/AOV exact within build and Standard==compositor OIDN. Added archive-only workflow to preserve metrics and compare cross-version raw/guides; pending. No Cycles-internal quality comparison yet.
 
 > E0035 run 43480476666: SHA256, Blender5.2/5.3 API and unit tests OK, both render jobs abort(134) because ubuntu runner lacks libEGL.so.1. Install OS EGL/OpenGL dependencies, retry identical protocol; not compatibility verdict yet.

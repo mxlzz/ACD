@@ -55,12 +55,16 @@ jobs:
               assert r["raw_multilayer_max_abs_delta"]<=1e-5
               assert r["standard_vs_native_compositor_rmse"]==0
               assert r["cycles_internal_output_compared"] is False
-          a,b=[read_arrays(p/"acd_compare_Raw.exr")["image"] for p in paths]
+          def locate(p,name):
+              found=list(p.rglob(name))
+              if len(found)!=1:raise ValueError(f"Expected one {name} under {p}, found {len(found)}")
+              return found[0]
+          a,b=[read_arrays(locate(p,"acd_compare_Raw.exr"))["image"] for p in paths]
           raw=compare_images(a,b)
           layers=[]
           for p in paths:
-              md=json.loads((p/"metadata.json").read_text())
-              layers.append(read_arrays(p/"raw_multilayer.exr",layer=md["view_layer"]))
+              md=json.loads(locate(p,"metadata.json").read_text())
+              layers.append(read_arrays(locate(p,"raw_multilayer.exr"),layer=md["view_layer"]))
           differences={
               name:compare_images(layers[0][name],layers[1][name]) for name in
               ("image","denoising_albedo","denoising_normal")
