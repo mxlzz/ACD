@@ -282,3 +282,12 @@ Al cerrar una etapa o cambiar de dirección, actualizar **STATUS**, este roadmap
 - Cross-version **Raw beauty** RMSE 0.006166062714630608. Denoising Albedo RMSE 0.00032205058212830514, Denoising Normal RMSE 0.0004913281671895542. Changes across Blender versions combine renderer/guide/backend effects; must use fixed EXR to isolate denoiser.
 - Cycles-internal denoising is configured/available in API, but **not measured**; 5.3.0 reports compositor API deprecation slated for Blender6.0; add compatibility planning, not algorithm tuning.
 - [Exact JSON](E0035_RESULTS.json). Original EXRs/actions artifacts expire after 14 days. Addon stable untouched.
+
+## E0036 — Cycles internal vs compositor OIDN actual (2026-11-13)
+
+# E0036 — Denoising interno de Cycles vs nodo OIDN de compositor (mismo render)
+
+- [Workflow E0036](https://github.com/mxlzz/ACD/actions/workflows/acd-e0036-cycles-internal.yml), Blender 5.2.4 LTS, scene procedural detail_target 128×96, 16spp, seed539, GPU none. Source: same RenderLayer Noisy Image, Image denoised and Denoising Albedo/Normal. Compositor OIDN Accurate/High/HDR. No reference converged or claim of quality winner.
+- RMSE RGB entre salida interna y de compositor: 1.4466098094000755e-07; delta máximo 1.9073486328125e-06. Coincidencia exacta: False.
+- Raw→OIDN integrado RMSE 0.2544771700358048; Raw→OIDN compositor 0.25447716631777373. Estos números miden diferencia entre salidas, NO si una es mejor.
+- [JSON exacto](E0036_RESULTS.json). EXR/AOV en artifacts del run solo 14 días. Próxima puerta: misma entrada de forma verificable frente a OIDN standalone y controles de guías; luego referencias convergentes antes de ranking.

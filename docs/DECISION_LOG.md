@@ -653,3 +653,12 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - Workflow [.github/workflows/acd-e0036-cycles-internal.yml](.github/workflows/acd-e0036-cycles-internal.yml) agregado y disparado: Blender oficial 5.2.4 LTS verificado, Cycles 16 spp, una sola ejecución, RLayers Noisy Image/Imagen denoised interna/CompositorOIDN, mismo albedo y normal. Métricas RMSE entre outputs, sin ground truth ni ranking. No requiere escena o intervención privada.
 - Si falla, conservar mensaje real y reparar causa; no interpretar como diferencia de calidad. Resultados pendientes en Actions.
+
+## E0036 — Cycles internal vs compositor OIDN actual (2026-11-13)
+
+# E0036 — Denoising interno de Cycles vs nodo OIDN de compositor (mismo render)
+
+- [Workflow E0036](https://github.com/mxlzz/ACD/actions/workflows/acd-e0036-cycles-internal.yml), Blender 5.2.4 LTS, scene procedural detail_target 128×96, 16spp, seed539, GPU none. Source: same RenderLayer Noisy Image, Image denoised and Denoising Albedo/Normal. Compositor OIDN Accurate/High/HDR. No reference converged or claim of quality winner.
+- RMSE RGB entre salida interna y de compositor: 1.4466098094000755e-07; delta máximo 1.9073486328125e-06. Coincidencia exacta: False.
+- Raw→OIDN integrado RMSE 0.2544771700358048; Raw→OIDN compositor 0.25447716631777373. Estos números miden diferencia entre salidas, NO si una es mejor.
+- [JSON exacto](E0036_RESULTS.json). EXR/AOV en artifacts del run solo 14 días. Próxima puerta: misma entrada de forma verificable frente a OIDN standalone y controles de guías; luego referencias convergentes antes de ranking.
