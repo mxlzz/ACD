@@ -1,3 +1,11 @@
+## 2026-11-13 — E0032 compatibilidad superada; E0033 benchmark congelado
+
+- [Run E0032 #43415697217](https://github.com/mxlzz/ACD/actions/runs/43415697217) **success**: Modern Hall cuteday source SHA256 b35b6694eb231d0d4d5d9ee9bbe63122218183fd519a05c7d5db0e62cbdaeca1, 5,793,896 B, 22 materiales, 32 mallas, 1 cámara, 3 imágenes empaquetadas / 4 imágenes, ningún archivo externo faltante, Cycles Blender5.0.1 192²×4spp completado; fuente externa efímera NO subida a ACD. Conversión y derechos de redistribución independientes aún sin resolver.
+- E0033 diseñado con mismos coeficientes E0027 y control de mezcla constante, 512px, 24spp×3 y refs1024×2, números y pruebas de borde/HDR guardables permanentemente. **No reportar números antes de ejecución.** Workflow autoiniciado por incorporación y CI Python.
+- E0031 continúa rechazado por texturas faltantes; ACD stable addon no modificado.
+
+---
+
 ## 2026-11-13 — E0031 fuente rechazada, E0032 smoke independiente preparado
 
 - E0031 [GH Actions 43414866242](https://github.com/mxlzz/ACD/actions/runs/43414866242): hash, tamaño y licencia MIT pasaron; abrió Blender5.0.1 pero falló el control funcional por `lapajne.jpg` y `lapajne.jpg.001` ausentes (y advertencia de archivo pre-2.50). **Sin render ni .blend versionado**, sin mediciones ACD. Rechazado sin sustituir recursos.
