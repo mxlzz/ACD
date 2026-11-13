@@ -50,3 +50,8 @@ Piloto de menor resolución conservado por trazabilidad, no la referencia prefer
 - **Escenas .blend:** leer benchmarks/scenes/README.md para procedencia y licencias. No confundir escenas permitidas con escenas privadas; el archivo del usuario Prueba ACD.blend no fue publicado.
 
 Los paneles utilizan una transferencia diagnóstica común para exposición HDR, **no** la transformación OCIO/AgX de Blender. La comparación numérica principal se calcula directamente sobre valores scene-linear, sin esa transformación.
+
+
+## Italian Flat — B1/E0040 y piloto B2/E0042
+
+[Galería de siete cámaras (4 spp, vistas de selección)](italian_flat_e0040/README.md). E0042 (640x400, dos semillas, 32/64/128 spp) está en ejecución; [galería al finalizar](italian_flat_e0042/README.md). Original © Flavio Della Tommasa, Blender demo Cycles CC-BY, fuente .blend fuera del repo. Estas son pruebas de ruido y convergencia, no comparaciones entre denoisers.

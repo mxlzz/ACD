@@ -1,3 +1,5 @@
+> E0041 finite-reference/cost pilot on Italian Flat 320px passed; spread 0.249/0.173/0.119 at spp8/16/32, approximately sqrt2 noise decrease, not converged. E0042 640x400 spp32/64/128 x 2 seeds with 1:1 gallery prepared, no denoiser; awaiting Action results.
+
 > E0040 7 Italian Flat camera renders (320x200 4spp) successful, ~27s each CPU. E0041 cost/convergence exploratory pilot 320x200 seeds 8819/8922 at 8/16/32spp plus one 640x400 8spp; quality/production render still gated.
 
 > Italian Flat B1 functional smoke accepted. E0040 7 author camera 320x200x4spp low-cost gallery and timing before convergence pilot; no denoising quality experiment yet.
