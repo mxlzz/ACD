@@ -641,3 +641,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 - Cross-version **Raw beauty** RMSE 0.006166062714630608. Denoising Albedo RMSE 0.00032205058212830514, Denoising Normal RMSE 0.0004913281671895542. Changes across Blender versions combine renderer/guide/backend effects; must use fixed EXR to isolate denoiser.
 - Cycles-internal denoising is configured/available in API, but **not measured**; 5.3.0 reports compositor API deprecation slated for Blender6.0; add compatibility planning, not algorithm tuning.
 - [Exact JSON](E0035_RESULTS.json). Original EXRs/actions artifacts expire after 14 days. Addon stable untouched.
+
+
+## 2026-11-13 — B0b/E0036: estudio con idéntico RenderLayer diseñado
+
+- Implementados tests/blender_cycles_internal_e0036.py y scripts/analyze_cycles_internal_e0036.py. En una sola ejecución Cycles, se activa denoising integrado OIDN y se obtienen tres EXR del mismo nodo Render Layers: Raw/Noisy Image, CyclesInternal/Image y CompositorOIDN con Accurate/High/HDR + albedo/normal. Por tanto se eliminan diferencias entre seeds/renders al comparar ambas rutas. Fixtures procedurales 128×96, 16spp, sin ground truth; solo se informará **diferencia entre outputs**, no ranking de calidad.
+- Tests sintéticos comprueban identidad, detección de diferencias y rechazo de dimensión. Workflow por crear/ejecutar tras este commit. No modificar ni forzar expectativas de igualdad: diferentes preprocesamientos pueden dar imágenes distintas.
