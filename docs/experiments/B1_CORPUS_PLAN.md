@@ -1,0 +1,13 @@
+# B1 — Corpus: inventario y aceptación de una escena arquitectónica realista
+
+**Preinscrito 2026-11-13; primer candidato: Barcelona Pavilion.**
+
+- Fuente oficial: [Blender Demo Files](https://www.blender.org/download/demo-files/), sección Cycles, Barcelona Pavillion, **eMirage**, **CC-BY (versión no especificada en el catálogo)**. Descarga histórica publicada en Blender: https://download.blender.org/demo/test/pabellon_barcelona_v1.scene_.zip . Se conservará licencia y atribución por separado; NO redistribuir el .blend hasta verificar sus contenidos y condiciones.
+- Razonamiento: escena arquitectónica realista de autor distinto a Cozy Kitchen / Modern Hall / Island y Terraced Houses; candidata a observar juntas/reflejos, materiales y vidrio. El tamaño indicado en el catálogo es aprox. 24 MB, pero debe verificarse **contenido ZIP, recursos y cámara** antes de caracterizarla.
+- Clasificación **desarrollo/calibración**, no holdout. Al inspeccionarla deja de ser una escena ciega. Reservar futuras escenas de otro autor/estilo para test fuera de muestra.
+- [Workflow](../../.github/workflows/acd-b1-barcelona-smoke.yml): descargar ZIP sin publicarlo, registrar SHA256 y número/tamaño de entradas, controlar zip-slip, extraer en /tmp, localizar un .blend exacto, rechazar dependencias faltantes, abrir con Blender 5.2.4 --disable-autoexec, render Cycles CPU 192×192 **4 spp** sin denoising y conservar solo metadatos y PNG de smoke. No usar este smoke como medición de denoising ni compararlo con OIDN. Archivo fuente permanece fuera de Git y de los artifacts.
+- **Aceptación:** SHA ZIP, estructura documentada, dependencias resolubles, cámara/materiales, Cycles smoke exitoso. Si no, registrar rechazo y pasar a otro candidato sin inventar texturas ni alterar escena.
+- Si pasa, fijar SHA en un segundo commit y diseñar B2 piloto 512–960px con escalera de 128/256/512 spp antes de plantear 1920px y referencias múltiples. El coste de 1920 y muchas muestras solo se aprueba tras una estimación obtenida de render de prueba. Comparar coste temporal frente a aumentar spp.
+- Otras fuentes públicas **no inspeccionadas aún**: Blender Cycles Italian Flat (Flavio Della Tommasa, CC-BY, 368 MB), Flat Archviz (Marek Moravec, 368 MB) y Classroom (Christophe Seux, CC0), esta última condicionada por anomalía de seeds de E0007. La disponibilidad de un enlace no significa aprobación de licencia/recursos o aptitud para nuestro test.
+
+**Estado al crear:** no hay descarga del ZIP validada, cámara/render ni benchmark B1.

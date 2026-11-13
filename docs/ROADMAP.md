@@ -1,3 +1,5 @@
+> B0a passed, B0b contract and CLI discrepancy documented (E0037–E0039); not a quality blocker. B1 official Barcelona Pavilion eMirage CC-BY read-only functional smoke workflow introduced; awaiting results. Quality experiments remain manual and gated by convergence pilot.
+
 > E0039 first run 43491904780 failed before render: RLayers lacks Noisy Image when Cycles internal denoising is OFF. Capture Image as actual Raw input; guide sockets remain. Re-running.
 
 > E0039 prepared to inspect real RLayers Noisy Image, Denoising Albedo/Normal sockets against multilayer AOV within same render; CI opt-in, results pending.

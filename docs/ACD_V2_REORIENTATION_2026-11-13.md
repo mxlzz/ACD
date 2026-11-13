@@ -47,3 +47,22 @@ Versiones: https://www.blender.org/releases/ ; archivos oficiales: https://downl
 - B0a **aprobado** en Blender5.2.4/5.3.0 con E0035: contratos de API y compositor, identidad exacta de Raw vs EXR multilayer dentro de cada build. Diferencias entre builds en beauty, albedo y normal invalidan comparaciones de versión si se presupone el mismo input. Datos [E0035](experiments/E0035.md).
 - B0b **primera comparación controlada terminada**: [E0036](experiments/E0036.md) obtiene Cycles interno y compositor desde un único render, RMSE entre salidas 1.4466e-7 (no bitwise match). Faltan OIDN CLI 2.5.1 en misma señal y perfil coste normalizado. No ampliar conclusiones a materiales/resolución profesional ni calidad.
 - Próximo criterio de cierre B0: comparar CLI 2.5.1 con los exactos EXR y AOV a igual HDR/prefiltro, registrar condiciones; luego iniciar corpus B1 y convergencia B2. Mantener E0035/E0036 como contratos, no como ranking.
+
+
+## 2026-11-13 — B0b: E0037–E0039 cerrados como diagnóstico, no como ranking
+
+- E0037: OIDN standalone 2.5.1 en Raw/AOV congelados de Blender 5.2.4 y 5.3.0 difiere del compositor, RMSE ~0.04647 sin prefiltrado y ~0.04035 con filtros RT de guías + cleanAux. Las salidas no son rankings de calidad.
+- E0038: OIDN oficial 2.5.0 vs 2.5.1 sobre los mismos PFM difiere ~0.0000020 RMSE, muy por debajo de la diferencia CLI vs Blender. Ambas releases de Blender compilan contra OIDN 2.5.0 según sus versions.cmake, pero equivalencia binaria/flags no garantizada.
+- E0039: [run 43492225086, attempt 2](https://github.com/mxlzz/ACD/actions/runs/43492225086) **success**. EXR multilayer y salidas FileOutput directamente de RLayers Image (Raw), Denoising Albedo y Denoising Normal son idénticos (RMSE y delta máximo 0 por cada pase). Primer attempt falló por ausencia de socket Noisy Image al tener denoising Cycles apagado, segundo attempt inicialmente sufrió HTTP 403 transitorio y funcionó tras rerun. No se inventaron guías ni se modificó OIDN.
+- **Decisión:** Blender 5.2.4 LTS compositor/Cycles ya es baseline funcional; mantener OIDN CLI como comparador distinto y la divergencia residual sin causalidad resuelta. No bloquear indefinidamente B1 por paridad de una interfaz externa en un fixture 128px; retomar solo si una hipótesis B3 necesita inferencia standalone. **No declarar B0b igualdad ni superioridad.**
+
+
+# B1 — Corpus: inventario y aceptación de una escena arquitectónica realista
+
+**Preinscrito 2026-11-13; primer candidato: Barcelona Pavilion.**
+
+- Fuente oficial: [Blender Demo Files](https://www.blender.org/download/demo-files/), sección Cycles, Barcelona Pavillion, **eMirage**, **CC-BY (versión no especificada en el catálogo)**. Descarga histórica publicada en Blender: https://download.blender.org/demo/test/pabellon_barcelona_v1.scene_.zip . Se conservará licencia y atribución por separado; NO redistribuir el .blend hasta verificar sus contenidos y condiciones.
+- Razonamiento: escena arquitectónica realista de autor distinto a Cozy Kitchen / Modern Hall / Island y Terraced Houses; candidata a observar juntas/reflejos, materiales y vidrio. El tamaño indicado en el catálogo es aprox. 24 MB, pero debe verificarse **contenido ZIP, recursos y cámara** antes de caracterizarla.
+- Clasificación **desarrollo/calibración**, no holdout. Al inspeccionarla deja de ser una escena ciega. Reservar futuras escenas de otro autor/estilo para test fuera de muestra.
+- [Workflow](../../.github/workflows/acd-b1-barcelona-smoke.yml): descargar ZIP sin publicarlo, registrar SHA256 y número/tamaño de entradas, controlar zip-slip, extraer en /tmp, localizar un .blend exacto, rechazar dependencias faltantes, abrir con Blender 5.2.4 --disable-autoexec, render Cycles CPU 192×192 **4 spp** sin denoising y conservar solo metadatos y PNG de smoke. No usar este smoke como medición de denoising ni compararlo con OIDN. Archivo fuente permanece fuera de Git y de los artifacts.
+- **Aceptación:** SHA ZIP, estructura documentada, dependencias resolubles, cámara/materiales, Cycles smoke exitoso. Si no, registr

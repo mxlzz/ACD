@@ -743,3 +743,26 @@ Blender 5.2.4 LTS, 128×96, 16 spp, una ejecución Cycles. Exports de sockets de
 
 Si las guías no coinciden, el EXR archivado no reproduce exactamente los inputs del nodo. Si coinciden, revisar otros estados de filtro/buffer/versiones. Sin ground truth convergente.
 [JSON completo](E0039_RESULTS.json).
+
+
+## 2026-11-13 — B0b: E0037–E0039 cerrados como diagnóstico, no como ranking
+
+- E0037: OIDN standalone 2.5.1 en Raw/AOV congelados de Blender 5.2.4 y 5.3.0 difiere del compositor, RMSE ~0.04647 sin prefiltrado y ~0.04035 con filtros RT de guías + cleanAux. Las salidas no son rankings de calidad.
+- E0038: OIDN oficial 2.5.0 vs 2.5.1 sobre los mismos PFM difiere ~0.0000020 RMSE, muy por debajo de la diferencia CLI vs Blender. Ambas releases de Blender compilan contra OIDN 2.5.0 según sus versions.cmake, pero equivalencia binaria/flags no garantizada.
+- E0039: [run 43492225086, attempt 2](https://github.com/mxlzz/ACD/actions/runs/43492225086) **success**. EXR multilayer y salidas FileOutput directamente de RLayers Image (Raw), Denoising Albedo y Denoising Normal son idénticos (RMSE y delta máximo 0 por cada pase). Primer attempt falló por ausencia de socket Noisy Image al tener denoising Cycles apagado, segundo attempt inicialmente sufrió HTTP 403 transitorio y funcionó tras rerun. No se inventaron guías ni se modificó OIDN.
+- **Decisión:** Blender 5.2.4 LTS compositor/Cycles ya es baseline funcional; mantener OIDN CLI como comparador distinto y la divergencia residual sin causalidad resuelta. No bloquear indefinidamente B1 por paridad de una interfaz externa en un fixture 128px; retomar solo si una hipótesis B3 necesita inferencia standalone. **No declarar B0b igualdad ni superioridad.**
+
+
+# B1 — Corpus: inventario y aceptación de una escena arquitectónica realista
+
+**Preinscrito 2026-11-13; primer candidato: Barcelona Pavilion.**
+
+- Fuente oficial: [Blender Demo Files](https://www.blender.org/download/demo-files/), sección Cycles, Barcelona Pavillion, **eMirage**, **CC-BY (versión no especificada en el catálogo)**. Descarga histórica publicada en Blender: https://download.blender.org/demo/test/pabellon_barcelona_v1.scene_.zip . Se conservará licencia y atribución por separado; NO redistribuir el .blend hasta verificar sus contenidos y condiciones.
+- Razonamiento: escena arquitectónica realista de autor distinto a Cozy Kitchen / Modern Hall / Island y Terraced Houses; candidata a observar juntas/reflejos, materiales y vidrio. El tamaño indicado en el catálogo es aprox. 24 MB, pero debe verificarse **contenido ZIP, recursos y cámara** antes de caracterizarla.
+- Clasificación **desarrollo/calibración**, no holdout. Al inspeccionarla deja de ser una escena ciega. Reservar futuras escenas de otro autor/estilo para test fuera de muestra.
+- [Workflow](../../.github/workflows/acd-b1-barcelona-smoke.yml): descargar ZIP sin publicarlo, registrar SHA256 y número/tamaño de entradas, controlar zip-slip, extraer en /tmp, localizar un .blend exacto, rechazar dependencias faltantes, abrir con Blender 5.2.4 --disable-autoexec, render Cycles CPU 192×192 **4 spp** sin denoising y conservar solo metadatos y PNG de smoke. No usar este smoke como medición de denoising ni compararlo con OIDN. Archivo fuente permanece fuera de Git y de los artifacts.
+- **Aceptación:** SHA ZIP, estructura documentada, dependencias resolubles, cámara/materiales, Cycles smoke exitoso. Si no, registrar rechazo y pasar a otro candidato sin inventar texturas ni alterar escena.
+- Si pasa, fijar SHA en un segundo commit y diseñar B2 piloto 512–960px con escalera de 128/256/512 spp antes de plantear 1920px y referencias múltiples. El coste de 1920 y muchas muestras solo se aprueba tras una estimación obtenida de render de prueba. Comparar coste temporal frente a aumentar spp.
+- Otras fuentes públicas **no inspeccionadas aún**: Blender Cycles Italian Flat (Flavio Della Tommasa, CC-BY, 368 MB), Flat Archviz (Marek Moravec, 368 MB) y Classroom (Christophe Seux, CC0), esta última condicionada por anomalía de seeds de E0007. La disponibilidad de un enlace no significa aprobación de licencia/recursos o aptitud para nuestro test.
+
+**Estado al crear:** no hay descarga del ZIP validada, cámara/render ni benchmark B1.

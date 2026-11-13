@@ -23,3 +23,9 @@
 - **Role:** withheld nighttime architectural exterior: emissive windows/streetlights, simple materials, without image-texture dependencies. Different failure modes from Cozy Kitchen; **not** a fine-texture quality test.
 - **State:** original binary imported only after SHA/source/Blender5 Cycles-smoke validation via `.github/workflows/acd-import-terraced-houses.yml`. For verified hash/manifest read `terraced_houses.audit.json` after job succeeds; until then this is a planned fixture.
 - The original professional scene of the user stays excluded.
+
+
+## B1 Barcelona Pavilion (candidato, no versionado)
+
+- Fuente oficial: [Blender Demo Files](https://www.blender.org/download/demo-files/), sección Cycles, Barcelona Pavillion, **eMirage**, **CC-BY (versión no especificada en el catálogo)**. Descarga histórica publicada en Blender: https://download.blender.org/demo/test/pabellon_barcelona_v1.scene_.zip . Se conservará licencia y atribución por separado; NO redistribuir el .blend hasta verificar sus contenidos y condiciones.
+- Razonamiento: escena arquitectónica realista de autor distinto a Cozy Kitchen / Modern Hall / Island y Terraced Houses; candidata a observar juntas/reflejos, materiales y vidrio. El tamaño indicado en el catálogo es aprox. 24 MB, pero debe verificarse **contenido ZIP, recursos y cámara** antes de caracterizarla.
