@@ -706,3 +706,7 @@ No merge of experimental M1 as a production denoiser unless empirical and API te
 
 ## E0030 — Low-Poly Island E0029 visual crops from saved EXRs
 - Reference-selected diagnostic ROIs, same display curve and unmodified E0027 Emission50/100 parameters, derived MIT eight-panel crops in benchmarks/results/island_e0030/. No rerender, no claim of perceptual quality until inspected.
+
+## E0034 result archive (2026-11-13)
+
+- Recovered E0033 run 43416607737 exact JSON and existing EXR, generated no new Cycles renders. Fixed gitignore staging failure; numerical JSON and tracked report staged explicitly. Published 1:1 full image and disjoint reference-selected ROI PNG in benchmarks/results/hall_e0034/README.md; kept original .blend out. Frozen Emission50 worse global RMSE/border than OIDN in Modern Hall; no integration.

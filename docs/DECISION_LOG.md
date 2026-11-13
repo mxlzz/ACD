@@ -583,3 +583,7 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 ## 2026-11-13 — E0034 publication staging correction
 - E0034 run 43451223536 generated the postprocessed PNG and verified original E0033 EXRs, but the git-add phase was blocked again by the broad nested-ignore rule for docs/experiments. No new render or scientific results. Fix the root ignore mismatch with an explicit documentation exception and force-stage both numeric JSON and tracked report, while retaining broad exclusions for .blend/.exr assets. This is a packaging fix, not algorithm adjustment.
+
+## E0034 result archive (2026-11-13)
+
+- Recovered E0033 run 43416607737 exact JSON and existing EXR, generated no new Cycles renders. Fixed gitignore staging failure; numerical JSON and tracked report staged explicitly. Published 1:1 full image and disjoint reference-selected ROI PNG in benchmarks/results/hall_e0034/README.md; kept original .blend out. Frozen Emission50 worse global RMSE/border than OIDN in Modern Hall; no integration.

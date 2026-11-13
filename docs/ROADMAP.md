@@ -248,3 +248,7 @@ Al cerrar una etapa o cambiar de dirección, actualizar **STATUS**, este roadmap
 > E0028 import: Low-Poly Island MIT by Yunus Emre Karaman, 2.62MB, source pinned and smoke Cycles validated (see benchmarks/scenes/low_poly_island.audit.json); unexamined as ACD denoiser benchmark at this commit. Quality test to follow.
 
 > E0030 reference-controlled Island MIT eight-panel emission diagnostics stored in benchmarks/results/island_e0030; numerical regional checks and ROI in analysis.json; no OCIO or perceptual claim.
+
+## E0034 result archive (2026-11-13)
+
+- Recovered E0033 run 43416607737 exact JSON and existing EXR, generated no new Cycles renders. Fixed gitignore staging failure; numerical JSON and tracked report staged explicitly. Published 1:1 full image and disjoint reference-selected ROI PNG in benchmarks/results/hall_e0034/README.md; kept original .blend out. Frozen Emission50 worse global RMSE/border than OIDN in Modern Hall; no integration.
