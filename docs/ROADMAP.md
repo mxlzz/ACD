@@ -1,3 +1,5 @@
+> E0038 version-isolated OIDN 2.5.0 vs 2.5.1 over frozen E0037 PFMs; Blender 5.2/5.3 source pins 2.5.0. Run pre-registered, no render, await verification.
+
 > E0037 standalone official 2.5.1 guide-prefilter controlled workflow committed; original E0035 EXR and SHA verified; experiment will run on this workflow path, results pending.
 
 > E0037 OIDN 2.5.1 fixed E0035 inputs/guide prefilter: code+unit tests pre-registered. Standalone vs compositor not measured yet; workflow to execute next.

@@ -1,3 +1,10 @@
+## 2026-11-13 — E0038 control versión OIDN 2.5.0 vs 2.5.1
+
+- Fuente Blender v5.2.4/v5.3.0 build_files/build_environment/cmake/versions.cmake establece OIDN_VERSION 2.5.0. E0037 usó standalone 2.5.1 y no igualó al compositor, incluso con guías prefiltradas. El release OIDN 2.5.0 x86_64 linux tiene digest SHA256 254a8355856f8cd433edb7dd832b5fb02e7157d073f7d22e331ce06533fb491f según GitHub release asset.
+- E0038 compara ambos binarios oficiales sobre PFM idénticos y misma configuración; verifica hashes de E0035/E0037, y separa distancia versión vs distancia Blender. **No mide calidad**. El workflow se inicia con este commit.
+
+---
+
 ## 2026-11-13 — E0037 workflow ingresado
 
 - Archivo .github/workflows/acd-e0037-oidn-cli-guides.yml dispara un único run que recupera E0035 artifacts, verifica SHA256 fuente y release OIDN 2.5.1, evalúa variantes raw_aux / accurate_like y archiva métricas permanentes. No se hace render ni comparación perceptual. El reporte de calidad aún no existe al momento del commit.
