@@ -144,7 +144,7 @@
     }
   },
   "reference_pair_disagreement": {
-    "log1p_luminance_rmse": 0.043036182111052014,
+    "log1p_luminance_rmse": 0.04303618211105202,
     "pixel_rmse_p95": 0.12408914231688029,
     "mae_linear": 0.03365128502617905,
     "rmse_linear": 0.055491923813307524,

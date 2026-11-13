@@ -413,3 +413,7 @@ Analysis JSON: [E0042_RESULTS.json](../../../docs/experiments/E0042_RESULTS.json
 ## E0043 recovered existing EXRs — scene quarantine (2026-11-13)
 
 No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.
+
+## E0043 recovered existing EXRs — scene quarantine (2026-11-13)
+
+No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.
