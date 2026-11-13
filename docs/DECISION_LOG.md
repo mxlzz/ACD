@@ -730,3 +730,16 @@ Resultados numéricos, hashes y flags: [E0038_RESULTS.json](E0038_RESULTS.json).
 
 - [Run 43491904780](https://github.com/mxlzz/ACD/actions/runs/43491904780) abortó antes de renderizar al exigir RLayers Noisy Image; Blender5.2.4 expuso Image y los AOV Denoising Albedo/Normal, pero no Noisy Image al tener denoising de Cycles desactivado. El baseline usa Image en ese caso, no se debe inventar socket.
 - Corrección estrictamente de contrato E0039: capturar RLayers Image como ResolvedRaw (misma imagen de partida que usa compositor), Albedo y Normal sin modificar; comparar con multilayer EXR del mismo render. El pipeline estándar no cambia. Reintento activado por cambio de workflow.
+
+## E0039 socket/AOV contract result (2026-11-13)
+
+Blender 5.2.4 LTS, 128×96, 16 spp, una ejecución Cycles. Exports de sockets del compositor y AOV de mismo render. No ranking de calidad.
+
+| Señal | RMSE socket vs AOV | Max absoluto |
+|---|---:|---:|
+| ResolvedRaw | 0.000000000 | 0.000000000 |
+| Albedo | 0.000000000 | 0.000000000 |
+| Normal | 0.000000000 | 0.000000000 |
+
+Si las guías no coinciden, el EXR archivado no reproduce exactamente los inputs del nodo. Si coinciden, revisar otros estados de filtro/buffer/versiones. Sin ground truth convergente.
+[JSON completo](E0039_RESULTS.json).

@@ -867,3 +867,16 @@ Blender 5.2.4/5.3.0 CMake version pins OIDN 2.5.0. Ambos binarios standalone ofi
 
 La cercanía entre outputs no demuestra calidad superior. Si persisten diferencias con Blender con OIDN 2.5.0, revisar la identidad del socket de guía y la ruta de prefiltrado antes de atribuirlas al motor.
 Resultados numéricos, hashes y flags: [E0038_RESULTS.json](E0038_RESULTS.json).
+
+## E0039 socket/AOV contract result (2026-11-13)
+
+Blender 5.2.4 LTS, 128×96, 16 spp, una ejecución Cycles. Exports de sockets del compositor y AOV de mismo render. No ranking de calidad.
+
+| Señal | RMSE socket vs AOV | Max absoluto |
+|---|---:|---:|
+| ResolvedRaw | 0.000000000 | 0.000000000 |
+| Albedo | 0.000000000 | 0.000000000 |
+| Normal | 0.000000000 | 0.000000000 |
+
+Si las guías no coinciden, el EXR archivado no reproduce exactamente los inputs del nodo. Si coinciden, revisar otros estados de filtro/buffer/versiones. Sin ground truth convergente.
+[JSON completo](E0039_RESULTS.json).
