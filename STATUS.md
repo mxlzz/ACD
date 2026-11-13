@@ -1,3 +1,11 @@
+
+## 2026-11-13 — E0039 primera corrida: falta socket Noisy Image con Cycles denoising desactivado
+
+- [Run 43491904780](https://github.com/mxlzz/ACD/actions/runs/43491904780) abortó antes de renderizar al exigir RLayers Noisy Image; Blender5.2.4 expuso Image y los AOV Denoising Albedo/Normal, pero no Noisy Image al tener denoising de Cycles desactivado. El baseline usa Image en ese caso, no se debe inventar socket.
+- Corrección estrictamente de contrato E0039: capturar RLayers Image como ResolvedRaw (misma imagen de partida que usa compositor), Albedo y Normal sin modificar; comparar con multilayer EXR del mismo render. El pipeline estándar no cambia. Reintento activado por cambio de workflow.
+
+---
+
 ## 2026-11-13 — E0039: identidad de guías comprobable
 
 - E0038 confirmó que la versión 2.5.0 vs 2.5.1 aporta RMSE ~2e-6, mientras CLI vs Blender sigue ~0.04035 en guías prefiltradas: divergencia sin explicar.

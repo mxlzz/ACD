@@ -16,7 +16,7 @@ def analyze(root):
         raise ValueError("E0039 must use pinned real Blender 5.2.4 tiny source")
     aov=read_arrays(root/"raw_multilayer.exr",layer=meta["view_layer"])
     mapping={
-        "NoisyImage": ("SOCKET_NoisyImage","image"),
+        "ResolvedRaw": ("SOCKET_ResolvedRaw","image"),
         "Albedo": ("SOCKET_Albedo","denoising_albedo"),
         "Normal": ("SOCKET_Normal","denoising_normal"),
     }
@@ -39,8 +39,8 @@ def analyze(root):
         }
     raw=rgb(read_arrays(root/"acd_compare_Raw.exr")["image"])
     native=rgb(read_arrays(root/"acd_compare_NATIVE_COMP_OIDN.exr")["image"])
-    report["Raw_vs_socket_NoisyImage"]=compare_images(
-        raw,read_arrays(root/"acd_compare_SOCKET_NoisyImage.exr")["image"])
+    report["Raw_vs_socket_ResolvedRaw"]=compare_images(
+        raw,read_arrays(root/"acd_compare_SOCKET_ResolvedRaw.exr")["image"])
     return {
         "experiment":"E0039",
         "blender":meta["blender"],"input_spp":meta["samples"],
@@ -62,7 +62,7 @@ def main():
     write_report(args.output,result)
     print("E0039_GUIDE_CONTRACT",json.dumps({
         k:{"rmse":v["aov_vs_socket"]["rmse_linear"],"max_abs":v["max_abs"]}
-        for k,v in result["passes"].items() if k in ("NoisyImage","Albedo","Normal")},sort_keys=True))
+        for k,v in result["passes"].items() if k in ("ResolvedRaw","Albedo","Normal")},sort_keys=True))
 
 
 if __name__=="__main__":main()

@@ -723,3 +723,10 @@ Resultados numéricos, hashes y flags: [E0038_RESULTS.json](E0038_RESULTS.json).
 - E0038 confirmó que la versión 2.5.0 vs 2.5.1 aporta RMSE ~2e-6, mientras CLI vs Blender sigue ~0.04035 en guías prefiltradas: divergencia sin explicar.
 - El código de Blender 5.2.4 node_composite_denoise.cc usa OIDN RT y filtros auxiliares separados; para comprobar si son idénticas las señales, E0039 exportará en el mismo render los sockets Noisy Image, Denoising Albedo y Denoising Normal y comparará contra EXR multilayer, sin usar referencias para ranking. También invalida un supuesto si esas guías no coinciden.
 - Cambio de blender_compare_smoke.py limitado a bandera opt-in ACD_E0039_CAPTURE_SOCKETS; flujo estándar intacto. Workflow E0039 dispara y publica reportes si pasa.
+
+
+
+## 2026-11-13 — E0039 primera corrida: falta socket Noisy Image con Cycles denoising desactivado
+
+- [Run 43491904780](https://github.com/mxlzz/ACD/actions/runs/43491904780) abortó antes de renderizar al exigir RLayers Noisy Image; Blender5.2.4 expuso Image y los AOV Denoising Albedo/Normal, pero no Noisy Image al tener denoising de Cycles desactivado. El baseline usa Image en ese caso, no se debe inventar socket.
+- Corrección estrictamente de contrato E0039: capturar RLayers Image como ResolvedRaw (misma imagen de partida que usa compositor), Albedo y Normal sin modificar; comparar con multilayer EXR del mismo render. El pipeline estándar no cambia. Reintento activado por cambio de workflow.

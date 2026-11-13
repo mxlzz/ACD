@@ -76,7 +76,7 @@ jobs:
                  "", "Blender 5.2.4 LTS, 128×96, 16 spp, una ejecución Cycles. Exports de sockets del compositor y AOV de mismo render. No ranking de calidad.",
                  "", "| Señal | RMSE socket vs AOV | Max absoluto |",
                  "|---|---:|---:|"]
-          for k in ("NoisyImage","Albedo","Normal"):
+          for k in ("ResolvedRaw","Albedo","Normal"):
             v=d["passes"][k]
             lines.append(f'| {k} | {v["aov_vs_socket"]["rmse_linear"]:.9f} | {v["max_abs"]:.9f} |')
           lines += ["", "Si las guías no coinciden, el EXR archivado no reproduce exactamente los inputs del nodo. Si coinciden, revisar otros estados de filtro/buffer/versiones. Sin ground truth convergente.",

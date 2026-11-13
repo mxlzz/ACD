@@ -1,3 +1,5 @@
+> E0039 first run 43491904780 failed before render: RLayers lacks Noisy Image when Cycles internal denoising is OFF. Capture Image as actual Raw input; guide sockets remain. Re-running.
+
 > E0039 prepared to inspect real RLayers Noisy Image, Denoising Albedo/Normal sockets against multilayer AOV within same render; CI opt-in, results pending.
 
 > E0038 version-isolated OIDN 2.5.0 vs 2.5.1 over frozen E0037 PFMs; Blender 5.2/5.3 source pins 2.5.0. Run pre-registered, no render, await verification.
