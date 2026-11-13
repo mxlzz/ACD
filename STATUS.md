@@ -1,3 +1,11 @@
+## 2026-11-13 — E0039: identidad de guías comprobable
+
+- E0038 confirmó que la versión 2.5.0 vs 2.5.1 aporta RMSE ~2e-6, mientras CLI vs Blender sigue ~0.04035 en guías prefiltradas: divergencia sin explicar.
+- El código de Blender 5.2.4 node_composite_denoise.cc usa OIDN RT y filtros auxiliares separados; para comprobar si son idénticas las señales, E0039 exportará en el mismo render los sockets Noisy Image, Denoising Albedo y Denoising Normal y comparará contra EXR multilayer, sin usar referencias para ranking. También invalida un supuesto si esas guías no coinciden.
+- Cambio de blender_compare_smoke.py limitado a bandera opt-in ACD_E0039_CAPTURE_SOCKETS; flujo estándar intacto. Workflow E0039 dispara y publica reportes si pasa.
+
+---
+
 ## 2026-11-13 — E0038 control versión OIDN 2.5.0 vs 2.5.1
 
 - Fuente Blender v5.2.4/v5.3.0 build_files/build_environment/cmake/versions.cmake establece OIDN_VERSION 2.5.0. E0037 usó standalone 2.5.1 y no igualó al compositor, incluso con guías prefiltradas. El release OIDN 2.5.0 x86_64 linux tiene digest SHA256 254a8355856f8cd433edb7dd832b5fb02e7157d073f7d22e331ce06533fb491f según GitHub release asset.

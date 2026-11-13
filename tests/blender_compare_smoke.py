@@ -307,6 +307,21 @@ try:
         fileout.file_output_items.new("RGBA", "STANDARD_emission_preserved")
         tree.links.new(emission_protected, fileout.inputs["STANDARD_emission_preserved"])
 
+    # E0039 only: export what the compositor RLayers sockets actually expose.
+    # This allows an exact comparison to EXR multi-layer denoising passes.
+    # Do not enable this outside the diagnostic workflow.
+    if os.environ.get("ACD_E0039_CAPTURE_SOCKETS", "0") == "1":
+        if not native_comp_selected or not capture_aov:
+            raise RuntimeError("E0039 requires compositor OIDN and multilayer AOV capture")
+        for key, socket_key in (
+            ("SOCKET_NoisyImage", "Noisy Image"),
+            ("SOCKET_Albedo", "Denoising Albedo"),
+            ("SOCKET_Normal", "Denoising Normal"),
+        ):
+            signal = addon.render_socket(layers, socket_key)
+            fileout.file_output_items.new("RGBA", key)
+            tree.links.new(signal, fileout.inputs[key])
+
     scene.compositing_node_group = tree
     scene.render.use_compositing = True
     result = bpy.ops.render.render(write_still=True)

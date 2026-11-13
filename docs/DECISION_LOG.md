@@ -716,3 +716,10 @@ Blender 5.2.4/5.3.0 CMake version pins OIDN 2.5.0. Ambos binarios standalone ofi
 
 La cercanía entre outputs no demuestra calidad superior. Si persisten diferencias con Blender con OIDN 2.5.0, revisar la identidad del socket de guía y la ruta de prefiltrado antes de atribuirlas al motor.
 Resultados numéricos, hashes y flags: [E0038_RESULTS.json](E0038_RESULTS.json).
+
+
+## 2026-11-13 — E0039: identidad de guías comprobable
+
+- E0038 confirmó que la versión 2.5.0 vs 2.5.1 aporta RMSE ~2e-6, mientras CLI vs Blender sigue ~0.04035 en guías prefiltradas: divergencia sin explicar.
+- El código de Blender 5.2.4 node_composite_denoise.cc usa OIDN RT y filtros auxiliares separados; para comprobar si son idénticas las señales, E0039 exportará en el mismo render los sockets Noisy Image, Denoising Albedo y Denoising Normal y comparará contra EXR multilayer, sin usar referencias para ranking. También invalida un supuesto si esas guías no coinciden.
+- Cambio de blender_compare_smoke.py limitado a bandera opt-in ACD_E0039_CAPTURE_SOCKETS; flujo estándar intacto. Workflow E0039 dispara y publica reportes si pasa.
