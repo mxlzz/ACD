@@ -50,7 +50,9 @@ def analyze(source,refroot,manifest42,output):
     refsmeta=json.loads(manifest42.read_text())
     if m["experiment"]!="E0043" or m["resolution"]!=[640,400] or m["seed"]!=539 or m["samples"]!=32 or not m["single_render"]:
         raise ValueError("Wrong new experiment")
-    if refsmeta["experiment"]!="E0042" or refsmeta["camera"]!=m["camera"] or refsmeta["resolution"]!=m["resolution"] or refsmeta["source_sha256"]!=m["source_sha256"]:
+    if (refsmeta["experiment"]!="E0042" or refsmeta["camera"]!=m["camera"]
+        or not refsmeta["source"].startswith("Italian Flat")
+        or any(row["resolution"]!=[640,400] for row in refsmeta["renders"])):
         raise ValueError("Reference provenance mismatch")
     images={}
     for n in NAMES:
@@ -85,7 +87,9 @@ def analyze(source,refroot,manifest42,output):
             **data,"visual":"e0043_guides_1to1.png",
             "convergence_proven":False,"new_algorithm_tested":False,
             "decision_gate":"Investigate only a visually meaningful, predeclared tile failing with both references and margin against reference disagreement; otherwise stop this line.",
-            "limitation":"Single 32 spp noisy render and 128 spp unconverged references cannot substantiate a quality winner."}
+            "missing_external_ies":"IES_profiles/three-lobe-vee.ies",
+            "scene_lighting_fidelity_validated":False,
+            "limitation":"Single 32 spp and finite 128 spp refs cannot rank quality. All Italian Flat renders logged missing external IES profile. Original architectural illumination is not reproduced faithfully; experimental images are diagnostic only."}
     write_report(output/"e0043_results.json",result)
     print("E0043_GUIDE_SCREEN",json.dumps({"flagged":data["tentative_guide_regression_tiles"],
         "reference_rmse":data["reference_pair_disagreement"]["rmse_linear"],

@@ -1,3 +1,5 @@
+> **Stop gate tras E0043:** guías integradas de OIDN mejoran de modo esperado, sin regiones con regresión diagnosticable. Refs 128spp no convergidas; Italian Flat tiene IES externo faltante en E0042/E0043, por lo que está en cuarentena. No más experimentos sobre ese fixture, ni nuevos filtros sin fallo verificable. Auditor IES corregido; próxima prueba solo en fixture completamente auditable.
+
 > E0043 refocus: no more reference ladders until a specific failing OIDN detail is identified. Built-in guide ablation 3 modes / one 32spp same input on Italian Flat, compare two already-rendered nonconverged 128spp refs, fixed 4x4 tiles. Pre-registered reject-if-inconclusive; no method promotion. Workflow submitted.
 
 > E0041 finite-reference/cost pilot on Italian Flat 320px passed; spread 0.249/0.173/0.119 at spp8/16/32, approximately sqrt2 noise decrease, not converged. E0042 640x400 spp32/64/128 x 2 seeds with 1:1 gallery prepared, no denoiser; awaiting Action results.
@@ -407,3 +409,7 @@ Two seeds 8819 and 8922 at 32, 64 and 128 spp each. Source CC-BY © Flavio Della
 Combined actual rendering+write wall seconds: 456.1. Peak process RSS (Linux KB): 11002956.
 This comparison evaluates remaining Monte Carlo sample noise, NOT denoising quality. Two finite references are not converged ground truth and may have correlated random streams. Preview transfer not Blender OCIO/AgX.
 Analysis JSON: [E0042_RESULTS.json](../../../docs/experiments/E0042_RESULTS.json).
+
+## E0043 recovered existing EXRs — scene quarantine (2026-11-13)
+
+No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.

@@ -1,3 +1,12 @@
+## 2026-11-13 — E0043 guía diagnóstica sin hallazgo + cuarentena IES de Italian Flat
+
+- [E0043 run 43511696293](https://github.com/mxlzz/ACD/actions/runs/43511696293) produjo cuatro salidas de un único render y falló en el postproceso por leer campos inexistentes en E0042_RESULTS.json. [Recovery run 43512797293](https://github.com/mxlzz/ACD/actions/runs/43512797293) reutilizó EXRs, **sin renderizar otra vez**, publicó [resultado E0043](docs/experiments/E0043_RESULTS.json) y [galería](benchmarks/results/italian_flat_e0043/README.md).
+- Raw RMSE ref1 ≈0.09171, OIDN RGB ≈0.04354, Albedo ≈0.04305 y Albedo+Normal ≈0.04230; segundo ref coincide en orden. Referencias 128spp entre sí RMSE ≈0.05549. **Cero regiones de 16** superaron criterio preregistrado de regresión por guías. Tampoco fue probado visualmente un mecanismo nuevo; la mejora por guías es comportamiento ya documentado por Intel.
+- Revisando logs se encontró **ERROR Could not read IES file .../IES_profiles/three-lobe-vee.ies** en todos los seis renders E0042 y E0043. Auditor B1 revisaba imágenes, no archivos IES: aceptación anterior incompleta. Italian Flat no puede considerarse fixture fiel/autosuficiente. Se corrigió el auditor para rechazar ShaderNodeTexIES externos faltantes **antes** del render. No sustituir por perfiles ajenos por igualdad de nombre.
+- **Decisión:** cerrar ablation de guías de Italian Flat sin más tuning ni nuevos spp. No integrar algoritmos ni modificar addon. Siguiente puerta científica: verificar dependencias de un caso representativo **sin render pesado**, identificar un defecto concreto respecto de OIDN y su anterioridad; si no aparece, solicitar un par concreto de imágenes Raw/OIDN o una escena completa que lo muestre antes de invertir más cómputo.
+
+---
+
 ## 2026-11-13 — E0043: retorno al problema de calidad sin repetir anterioridad
 
 - **Decisión de enfoque:** tras E0042 (RMSE interseed 128spp ≈0,05549), NO prolongar la escalera de referencias y NO inventar un nuevo filtro. Intel OIDN y Blender ya conocen variaciones sin guía / albedo / albedo+normal y prefilter; las comparaciones se usan solo para detectar una falla reproducible que pueda justificar investigación causal.
@@ -993,3 +1002,7 @@ Two seeds 8819 and 8922 at 32, 64 and 128 spp each. Source CC-BY © Flavio Della
 Combined actual rendering+write wall seconds: 456.1. Peak process RSS (Linux KB): 11002956.
 This comparison evaluates remaining Monte Carlo sample noise, NOT denoising quality. Two finite references are not converged ground truth and may have correlated random streams. Preview transfer not Blender OCIO/AgX.
 Analysis JSON: [E0042_RESULTS.json](../../../docs/experiments/E0042_RESULTS.json).
+
+## E0043 recovered existing EXRs — scene quarantine (2026-11-13)
+
+No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.

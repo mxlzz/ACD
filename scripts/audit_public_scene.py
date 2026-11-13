@@ -43,12 +43,32 @@ missing = [
     and not Path(bpy.path.abspath(img.filepath, library=img.library)).is_file()
 ]
 libraries = [lib.name for lib in bpy.data.libraries]
+
+# IES photometric profiles affect lighting but do not appear in bpy.data.images.
+# A valid render fixture must not silently omit them.
+missing_ies = []
+shader_trees = [x.node_tree for collection in (bpy.data.materials,bpy.data.worlds,bpy.data.lights)
+                for x in collection if x.use_nodes and x.node_tree]
+shader_trees += [x for x in bpy.data.node_groups if x.bl_idname == "ShaderNodeTree"]
+seen = set()
+for tree in shader_trees:
+    if tree.as_pointer() in seen:
+        continue
+    seen.add(tree.as_pointer())
+    for node in tree.nodes:
+        if node.bl_idname == "ShaderNodeTexIES" and node.mode == "EXTERNAL":
+            path = Path(bpy.path.abspath(node.filepath)) if node.filepath else None
+            if path is None or not path.is_file():
+                missing_ies.append({"node_tree":tree.name, "node":node.name,
+                                    "filepath":node.filepath})
 if not scene.camera:
     raise RuntimeError("No active camera; cannot publish an unverified benchmark scene")
 if missing:
     raise RuntimeError("Missing unbundled texture resources: " + repr(missing[:20]))
 if libraries:
     raise RuntimeError("Linked external .blend libraries not packaged: " + repr(libraries))
+if missing_ies:
+    raise RuntimeError("Missing external photometric IES profiles: " + repr(missing_ies[:15]))
 if not bpy.data.materials:
     raise RuntimeError("No materials found")
 
@@ -84,6 +104,7 @@ report = {
     "asset_path_remaps": asset_path_remaps,
     "unbundled_missing_images": len(missing),
     "external_blend_libraries": len(libraries),
+    "missing_ies_profiles": missing_ies,
     "smoke_render": "192x192; 4 spp; Cycles CPU; no denoising; only functional validation",
     "smoke_render_success": True,
     "not_a_quality_benchmark": True
