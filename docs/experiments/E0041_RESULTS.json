@@ -1,0 +1,150 @@
+{
+  "experiment": "E0041",
+  "source": "Italian Flat, Flavio Della Tommasa, CC-BY Blender official demo",
+  "source_sha256": "0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25",
+  "camera": "Cam Kitchen Table",
+  "blender": "5.2.4 LTS",
+  "sampling_method": "Cycles independent seeds 8819/8922, adaptive OFF, CPU, no denoising",
+  "reference_interseed_by_spp": {
+    "8": {
+      "interseed_difference": {
+        "log1p_luminance_rmse": 0.17461712888085537,
+        "pixel_rmse_p95": 0.5963769574720983,
+        "mae_linear": 0.11952939889274179,
+        "rmse_linear": 0.249001641027048,
+        "relative_rmse": 1.049062735353618,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "identical_references": false,
+      "ratio_to_previous_spp": null
+    },
+    "16": {
+      "interseed_difference": {
+        "log1p_luminance_rmse": 0.12845750150256227,
+        "pixel_rmse_p95": 0.37109663375028606,
+        "mae_linear": 0.0940824515717534,
+        "rmse_linear": 0.17253317549403602,
+        "relative_rmse": 0.8583902427895793,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "identical_references": false,
+      "ratio_to_previous_spp": 0.6928997527180734
+    },
+    "32": {
+      "interseed_difference": {
+        "log1p_luminance_rmse": 0.09074313613526627,
+        "pixel_rmse_p95": 0.27528417089170054,
+        "mae_linear": 0.0693321021234843,
+        "rmse_linear": 0.11853154167487297,
+        "relative_rmse": 0.6593603520990157,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "identical_references": false,
+      "ratio_to_previous_spp": 0.687007245623728
+    }
+  },
+  "render_manifest": [
+    {
+      "file": "ref_320x200_8spp_seed8819.exr",
+      "resolution": [
+        320,
+        200
+      ],
+      "samples": 8,
+      "seed": 8819,
+      "render_and_write_wall_seconds": 30.166036583999997,
+      "bytes": 744312,
+      "sha256": "8824ebf0866cf757923d02c8db7397e997fbdabd27d38a1605312e60646921e7",
+      "cpu_peak_rss_kb": 10429064
+    },
+    {
+      "file": "ref_320x200_8spp_seed8922.exr",
+      "resolution": [
+        320,
+        200
+      ],
+      "samples": 8,
+      "seed": 8922,
+      "render_and_write_wall_seconds": 30.13608791300001,
+      "bytes": 744350,
+      "sha256": "bbb9c8f4ea0fbde5823c86c654c4e8b3752ee8344d9c3a292ef41f9a175974bb",
+      "cpu_peak_rss_kb": 10567568
+    },
+    {
+      "file": "ref_320x200_16spp_seed8819.exr",
+      "resolution": [
+        320,
+        200
+      ],
+      "samples": 16,
+      "seed": 8819,
+      "render_and_write_wall_seconds": 31.420265488000013,
+      "bytes": 771422,
+      "sha256": "9c9494c11eb6171709e630c2d008d5e8bf2e5bc94c63e493d81e359f3dff4415",
+      "cpu_peak_rss_kb": 10907212
+    },
+    {
+      "file": "ref_320x200_16spp_seed8922.exr",
+      "resolution": [
+        320,
+        200
+      ],
+      "samples": 16,
+      "seed": 8922,
+      "render_and_write_wall_seconds": 30.98697920500001,
+      "bytes": 772155,
+      "sha256": "37e27e8fedd6ce5d1a28877d7a18aacdb5c9fe844b5e94e7957a1af02e163fb7",
+      "cpu_peak_rss_kb": 10942468
+    },
+    {
+      "file": "ref_320x200_32spp_seed8819.exr",
+      "resolution": [
+        320,
+        200
+      ],
+      "samples": 32,
+      "seed": 8819,
+      "render_and_write_wall_seconds": 33.780927859,
+      "bytes": 775444,
+      "sha256": "8cb81cd13e892f84449f5a07afd36ccfec3e2b1ae76156783d9f308a0b6d0b18",
+      "cpu_peak_rss_kb": 10962512
+    },
+    {
+      "file": "ref_320x200_32spp_seed8922.exr",
+      "resolution": [
+        320,
+        200
+      ],
+      "samples": 32,
+      "seed": 8922,
+      "render_and_write_wall_seconds": 33.15996085499998,
+      "bytes": 775523,
+      "sha256": "8f851954875038f19b7ad5a6df2ab693a128d7baa743a53627927f8de0d3ed54",
+      "cpu_peak_rss_kb": 10964560
+    },
+    {
+      "file": "ref_640x400_8spp_seed8819.exr",
+      "resolution": [
+        640,
+        400
+      ],
+      "samples": 8,
+      "seed": 8819,
+      "render_and_write_wall_seconds": 33.319394235999994,
+      "bytes": 2949064,
+      "sha256": "3b3a490377865c3274d0e7d1a9f7dead885056135fe3af6af8c78b2dc166a57b",
+      "cpu_peak_rss_kb": 10968480
+    }
+  ],
+  "resolution_time_ratio_640x400_vs_320x200_at_8spp": 1.1045333762431533,
+  "independent_sampling_proven": false,
+  "reference_convergence_proven": false,
+  "quality_ranking_performed": false,
+  "interpretation": "Interseed RMSE should generally decrease with higher spp, but non-monotonicity and correlation are possible. This finite low-res pilot cannot certify convergence or extrapolate render cost accurately to 1080p."
+}

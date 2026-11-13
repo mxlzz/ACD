@@ -804,3 +804,20 @@ Gallery: benchmarks/results/italian_flat_e0040/README.md. 7 author cameras, Blen
 
 - Source Italian Flat CC-BY already audited SHA256 `0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25`. E0040 7 cameras completed [run 43494967820](https://github.com/mxlzz/ACD/actions/runs/43494967820) and [gallery](benchmarks/results/italian_flat_e0040/README.md). Each 4 spp 320×200 render ~27s CPU; camera chosen **Cam Kitchen Table** on architectural content, before benchmark metrics.
 - E0041 pre-registered: two seeds 8819/8922 at 8,16,32 spp and 320×200; one 640×400 8spp cost check. No denoiser, no training, no high-res/costly reference, not proof of convergence. Source download SHA checked, only EXR in 14-day Actions artifact; numerical outputs permanent. Results pending execution.
+
+## E0041 completed — Italian Flat CPU cost and finite-spp reference spread
+
+Fuente original eMirage no; **Italian Flat © Flavio Della Tommasa, CC-BY**, Blender oficial. Cámara elegida antes de medir: Cam Kitchen Table.
+Blender 5.2.4 LTS. Cuatro pasos: 320×200, 8/16/32 spp, seeds8819 y 8922; y 640×400 8spp en seed8819.
+
+| spp (320×200) | RMSE entre semillas |
+|---|---:|
+| 8 | 0.24900164 |
+| 16 | 0.17253318 |
+| 32 | 0.11853154 |
+
+Ratio de tiempos al cuadruplicar píxeles (640×400, 8spp vs 320×200, 8spp): 1.105.
+Tiempo CPU total de los 7 renders (incluye escritura y costes de escena tras carga): 223.0 segundos.
+No hay denoiser ni ground truth en esta prueba. Menor error entre semillas no garantiza referencia convergida; independencia estadística no acreditada. No extrapolar linealmente a 1080p sin otro piloto.
+
+[JSON completo](E0041_RESULTS.json).

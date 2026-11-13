@@ -944,3 +944,20 @@ Next: pin hash; convergence/cost pilot before large renders.
 ## E0040 original Italian Flat camera gallery, four-spp previews
 
 Gallery: benchmarks/results/italian_flat_e0040/README.md. 7 author cameras, Blender5.2.4, render-time measured; only 4spp, no convergence/denoiser ranking. Original 368MB .blend excluded.
+
+## E0041 completed — Italian Flat CPU cost and finite-spp reference spread
+
+Fuente original eMirage no; **Italian Flat © Flavio Della Tommasa, CC-BY**, Blender oficial. Cámara elegida antes de medir: Cam Kitchen Table.
+Blender 5.2.4 LTS. Cuatro pasos: 320×200, 8/16/32 spp, seeds8819 y 8922; y 640×400 8spp en seed8819.
+
+| spp (320×200) | RMSE entre semillas |
+|---|---:|
+| 8 | 0.24900164 |
+| 16 | 0.17253318 |
+| 32 | 0.11853154 |
+
+Ratio de tiempos al cuadruplicar píxeles (640×400, 8spp vs 320×200, 8spp): 1.105.
+Tiempo CPU total de los 7 renders (incluye escritura y costes de escena tras carga): 223.0 segundos.
+No hay denoiser ni ground truth en esta prueba. Menor error entre semillas no garantiza referencia convergida; independencia estadística no acreditada. No extrapolar linealmente a 1080p sin otro piloto.
+
+[JSON completo](E0041_RESULTS.json).
