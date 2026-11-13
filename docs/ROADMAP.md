@@ -363,3 +363,7 @@ Meshes 476, materials 109, images 81
 Missing resources 0, linked libraries 0
 Cycles CPU, 192×192, 4spp functional smoke passed; NOT a denoising quality result.
 Next: pin hash; convergence/cost pilot before large renders.
+
+## E0040 original Italian Flat camera gallery, four-spp previews
+
+Gallery: benchmarks/results/italian_flat_e0040/README.md. 7 author cameras, Blender5.2.4, render-time measured; only 4spp, no convergence/denoiser ranking. Original 368MB .blend excluded.
