@@ -1,3 +1,5 @@
+> E0034 #43451534590 success: E0033 exact JSON and 5 PNG variants preserved. Central viewer index benchmarks/results/README.md links saved previews from all major scenes, distinguishes Git PNG from expiring EXR Actions artifacts. No algorithm or addon changes.
+
 > E0034 generated image comparisons successfully from archived E0033 EXR in run 43451223536; only git add failed due docs/experiments ignore. Correcting root .gitignore exception and explicitly staging both E0033 MD/JSON. Re-run publication only (no new Blender render).
 
 > E0033 43416607737 render+metrics OK; Git publish failed due recursive .gitignore experiments/. OIDN RMSE 0.022238 / 0.022156 vs Emission50 0.022302 / 0.022215 (regression global), refs differ 0.021531. E0034 recovers original EXR and publishes viewable gallery without rerender, pending run.

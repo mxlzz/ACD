@@ -2,6 +2,10 @@
 
 An **experimental** multi-pass denoising research system for Blender/Cycles, with an independent numerical evaluation lab. It is not a verified commercial SID 5.3 replica or a proven universal improvement over native OIDN.
 
+## Ver los experimentos
+
+[**Galería de imágenes de denoising (PNG permanentes)**](benchmarks/results/README.md): comparación de Raw, OIDN, Emission50, ACD High/Super y referencias en las escenas de prueba. Los EXR lineales completos quedan en artifacts temporales de Actions, con caducidad explícita; consultar el índice antes de perderlos.
+
 ## Research and persistent plan
 
 - [Research foundations and source-to-hypothesis matrix](docs/research_foundations.md): original papers/source code, assumptions, licensing and ACD H-01 to H-06.
