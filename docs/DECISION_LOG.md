@@ -617,3 +617,9 @@ Regla: una entrada por cambio/commit posterior a la instauración del protocolo.
 
 - [Actions run 43480476666](https://github.com/mxlzz/ACD/actions/runs/43480476666): **ambos jobs fallaron** tras pasar tests, SHA256 oficial, Blender --version y enumeración API. En el paso de render se produjo abort 134 con mensaje **libEGL.so.1: cannot open shared object file**; Blender 5.3 además advirtió que el backend Vulkan no se inicializaba. Esto indica una dependencia runtime del runner, no prueba de defecto del denoiser ni de incompatibilidad del addon.
 - Corrección limitada a CI: instalar libegl1/libgl1-mesa-dri/libopengl0/libxkbcommon0 y verificar ldconfig antes de render; repetir igual fixture/configuración. No modificar el método, reference spp o addon. Resultado del segundo intento pendiente.
+
+
+## 2026-11-13 — E0035 real success; archival validation triggered
+
+- [Run 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352) dos jobs **success**. Blender oficiales 5.2.4 LTS (build cd5dc428cce1) y 5.3.0 (02f0899d78e3), verificación SHA256/tiny Cycles 128×96, 16 spp, misma beauty raw/AOV delta=0, Standard vs OIDN compositor delta=0 en cada versión. Ninguna de estas cifras indica calidad real.
+- Se agregó pipeline E0035 archive que recupera EXR/reportes **ya generados** y mide diferencias pixel/guías entre versiones, publica JSON pequeño en docs/experiments. **Su ejecución pendiente**. El denoiser integrado de Cycles todavía no fue evaluado; pasar a B0b después de registrar deltas.
