@@ -76,6 +76,18 @@ try:
         print("ACD EXTERNAL BLEND LOADED", bpy.data.filepath, "scene", scene.name)
     elif scene_variant != "factory":
         raise ValueError("Unknown ACD_SCENE: " + scene_variant)
+    # E0060 is an *existing* architectural camera. No geometry or source mutation.
+    camera_override = os.environ.get("ACD_E0060_CAMERA")
+    if camera_override:
+        if scene_variant != "external" or scene.name != "Scene":
+            raise RuntimeError("E0060 requires pinned external Scene")
+        candidate = bpy.data.objects.get(camera_override)
+        if candidate is None or candidate.type != "CAMERA" or candidate.name not in scene.objects:
+            raise RuntimeError("E0060 missing original source camera " + camera_override)
+        scene.camera = candidate
+        if scene.camera.name != camera_override:
+            raise RuntimeError("E0060 camera override failed")
+        print("E0060_SELECTED_CAMERA",camera_override,flush=True)
     scene.render.engine = "CYCLES"
     device = os.environ.get("ACD_DEVICE", "CPU").upper()
     if device not in {"CPU", "CUDA", "OPTIX"}:
@@ -489,6 +501,7 @@ try:
         "source_blend": str(bpy.data.filepath) if scene_variant == "external" else None,
         "source_blend_sha256": blend_hash,
         "scene_name": scene.name,
+        "active_camera": scene.camera.name if scene.camera else None,
         "view_layer": view_layer.name,
         "frame": scene.frame_current,
         "render_device": device,

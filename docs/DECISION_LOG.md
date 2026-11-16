@@ -1049,3 +1049,7 @@ After E0054 Raw gain ~0.78-0.79 and OIDN gain ~0.74-0.75 while source ref pair d
 ## E0059 cross-reference reference-selection isolation
 
 E0059 cross-reference scored Cozy E0054 frozen EXRs, OIDN gradient regression in both ref directions and all 3 seeds? False. No new renderer/denoiser, finite references uncertain. docs/experiments/E0059.md.
+
+## 2026-11-16 — E0060 preregistered internal source cost/reference pilot
+
+E0059 Cozy held-out-reference crossfit failed to find a broad OIDN Raw-relative edge error regression; avoid ungrounded sharpening. E0058 CAM Office source produced substantial seed variation; still not independent or public legal holdout. E0060 tiny 256x144 8spp + two64spp refs on original CAM Office measures real CPU wall and reference disagreement before expensive test, keeps no previews due underlying building rights. No new denoiser / no quality ranking. See docs/experiments/E0060_PLAN.md.
