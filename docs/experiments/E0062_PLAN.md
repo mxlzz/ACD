@@ -19,3 +19,7 @@ No fusionar ni modificar addon; PR #10 draft; evitar reabrir High/Super, sharpen
 ## Corrección de identidad de fuente anterior al smoke
 
 El primer run 43947290538 descargó el archivo desde Blender, pero se detuvo en la comparación del tamaño tomado del índice: no hubo smoke ni aceptación. El tamaño del listado web no se tratará como hash de identidad. El siguiente run comprobará cabecera binaria BLENDER, bytes en un intervalo razonable, origen oficial (solo dos URLs permitidas), registrará SHA256 real y auditará cámara, recursos, IES y render. **El SHA256 adquirido quedará inmutable para ejecuciones futuras**; un cambio posterior de bytes exigirá volver a auditar. Este ajuste no relaja la aceptación de materiales ausentes ni reemplaza el .blend.
+
+## Corrección documentada de las dos ejecuciones previas
+
+E0062 run 43947290538 descargó el archivo oficial y pasó el tamaño (33.452.252 bytes), pero **el test de cabecera sin comprimir falló**, no el tamaño: la inferencia anterior fue errónea. Run 43947639039 registró explícitamente `size=33452252`, `magic=28 b5 2f fd` (Zstandard). Blender 3.0+ admite .blend comprimidos con Zstandard; consultar manual https://docs.blender.org/manual/en/5.2/files/blend/open_save.html . Se aceptan ahora exactamente cabeceras nativas BLENDER, ZSTD o gzip, manteniendo tamaño exacto y haciendo que Blender 5.2.4 sea quien valide/descomprima el contenido en la auditoría. **Ambos runs se detuvieron antes de abrir/renderizar Blender y no tienen resultado de calidad**. No se transforma ni modifica el archivo fuente.

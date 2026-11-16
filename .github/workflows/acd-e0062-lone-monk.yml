@@ -44,8 +44,12 @@ jobs:
           size=p.stat().st_size
           with p.open("rb") as f:
               magic=f.read(7)
-          if magic!=b"BLENDER" or not 1_000_000 < size < 80_000_000:
-              raise RuntimeError(f"Unexpected Blender binary: size={size}, magic={magic!r}")
+          is_blender_raw=magic==b"BLENDER"
+          is_blender_zstd=magic[:4]==bytes.fromhex("28 b5 2f fd")
+          is_blender_gzip=magic[:2]==bytes.fromhex("1f 8b")
+          if size!=33452252 or not (is_blender_raw or is_blender_zstd or is_blender_gzip):
+              raise RuntimeError(f"Unexpected Blender source: size={size}, magic={magic!r}")
+          print("VERIFIED_BLEND_SOURCE_FORMAT", "zstd" if is_blender_zstd else "gzip" if is_blender_gzip else "plain")
           print("VERIFIED_OFFICIAL_LONE_MONK_BYTES",size)
           print("VERIFIED_OFFICIAL_LONE_MONK_SHA256",hashlib.sha256(p.read_bytes()).hexdigest())
           PY
