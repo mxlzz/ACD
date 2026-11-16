@@ -1019,3 +1019,7 @@ No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchm
 ## E0043 recovered existing EXRs — scene quarantine (2026-11-13)
 
 No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.
+
+## E0044 current Blender 5.2.4 detail diagnosis
+
+ Blender 5.2.4 LTS, 320x240, 24 spp seed539, 2 refs 1024 spp seeds8819/8922. Sin assets externos, sin nuevos métodos. El fixture contiene 52 lamas, juntas de azulejos, vidrio, metal y bump procedural. Compositor OIDN High/Accurate/HDR con guías albedo/normal. Metrics in docs/experiments/E0044_RESULTS.json and gallery benchmarks/results/detail_current_e0044/. No algorithm change, interpret tile screen as descriptive only.

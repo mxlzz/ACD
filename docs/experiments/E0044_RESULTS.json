@@ -1,0 +1,577 @@
+{
+  "experiment": "E0044",
+  "classification": "targeted real Blender5.2.4 detail failure diagnostic",
+  "metadata": {
+    "blender": "5.2.4 LTS",
+    "scene": "detail_target",
+    "source_blend": null,
+    "source_blend_sha256": null,
+    "scene_name": "Scene",
+    "view_layer": "ViewLayer",
+    "frame": 1,
+    "render_device": "CPU",
+    "capture_aov": true,
+    "color_management": {
+      "view_transform": "AgX",
+      "look": "None",
+      "exposure": 0.0,
+      "gamma": 1.0,
+      "display_device": "sRGB"
+    },
+    "cycles": {
+      "max_bounces": 12,
+      "use_adaptive_sampling": false,
+      "use_denoising": false
+    },
+    "samples": 24,
+    "seed": 539,
+    "reference_samples": 1024,
+    "reference_seed": 8819,
+    "second_reference": true,
+    "second_reference_seed": 8922,
+    "extra_input_seeds": [],
+    "resolution": [
+      320,
+      240
+    ],
+    "source_original_resolution": null,
+    "source_original_pixel_aspect": null,
+    "compositional_methods": [],
+    "sid_reference_methods": [],
+    "sid_reference_source_commit": null,
+    "sid_reference_equivalence_verified": false,
+    "native_compositor_oidn": {
+      "prefilter": "Accurate",
+      "quality": "High",
+      "hdr": true,
+      "not_equated_to_cycles_internal_denoiser": true
+    },
+    "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
+    "emission_ablation": false,
+    "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",
+    "files": [
+      "acd_compare_NATIVE_COMP_OIDN.exr",
+      "acd_compare_Raw.exr",
+      "acd_compare_RawRecomposed.exr",
+      "raw_multilayer.exr"
+    ]
+  },
+  "current_blender": "5.2.4 LTS",
+  "methods": [
+    "Raw",
+    "NATIVE_COMP_OIDN"
+  ],
+  "source": "fully procedural 52 slats + tile joints + glass + microbump, no external assets",
+  "old_e0016_descriptive_baseline": {
+    "blender": "5.0.1",
+    "oidn_hdr_rmse": 0.0608849,
+    "oidn_edge_gradient_rmse": 0.0721193,
+    "warning": "different source renders and different seeds aggregate: do not measure backend quality delta"
+  },
+  "reference_disagreement": {
+    "log1p_luminance_rmse": 0.020368090829587324,
+    "pixel_rmse_p95": 0.08690461879783813,
+    "mae_linear": 0.02476444683303097,
+    "rmse_linear": 0.04081857430887757,
+    "relative_rmse": 0.03186868173517761,
+    "psnr_db": null,
+    "psnr_data_range": null,
+    "exact_match": false
+  },
+  "whole_image": {
+    "Raw": {
+      "ref1": {
+        "color": {
+          "log1p_luminance_rmse": 0.09958119614455409,
+          "pixel_rmse_p95": 0.443192706400102,
+          "mae_linear": 0.12467956805956233,
+          "rmse_linear": 0.2217694641544798,
+          "relative_rmse": 0.17314422640633226,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "detail": {
+          "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+          "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+          "edge_fraction": 0.2,
+          "flat_fraction": 0.5,
+          "eligible_pair_count": 153040,
+          "edge_pair_count": 26331,
+          "flat_pair_count": 76520,
+          "edge_threshold": 0.04825435521031612,
+          "flat_threshold": 0.013160375982626902,
+          "edge_gradient_rmse": 0.25347908189425755,
+          "edge_gradient_mae": 0.18533560179032793,
+          "edge_contrast_ratio": 1.8780127654976289,
+          "flat_gradient_rmse": 0.12451234233036182,
+          "flat_gradient_mae": 0.05490888840277372,
+          "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+        }
+      },
+      "ref2": {
+        "color": {
+          "log1p_luminance_rmse": 0.09941976145983616,
+          "pixel_rmse_p95": 0.44358605378286614,
+          "mae_linear": 0.124357936798558,
+          "rmse_linear": 0.22134015086751646,
+          "relative_rmse": 0.17287827507116485,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "detail": {
+          "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+          "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+          "edge_fraction": 0.2,
+          "flat_fraction": 0.5,
+          "eligible_pair_count": 153040,
+          "edge_pair_count": 26331,
+          "flat_pair_count": 76520,
+          "edge_threshold": 0.048167179776299494,
+          "flat_threshold": 0.013229970347827906,
+          "edge_gradient_rmse": 0.25416501488701515,
+          "edge_gradient_mae": 0.18501467351275094,
+          "edge_contrast_ratio": 1.872604186208845,
+          "flat_gradient_rmse": 0.1251521493371195,
+          "flat_gradient_mae": 0.055151203237708134,
+          "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+        }
+      }
+    },
+    "NATIVE_COMP_OIDN": {
+      "ref1": {
+        "color": {
+          "log1p_luminance_rmse": 0.021892218997238682,
+          "pixel_rmse_p95": 0.0858112751692127,
+          "mae_linear": 0.02548050352341766,
+          "rmse_linear": 0.053997236877436974,
+          "relative_rmse": 0.042157786884089575,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "detail": {
+          "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+          "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+          "edge_fraction": 0.2,
+          "flat_fraction": 0.5,
+          "eligible_pair_count": 153040,
+          "edge_pair_count": 26331,
+          "flat_pair_count": 76520,
+          "edge_threshold": 0.04825435521031612,
+          "flat_threshold": 0.013160375982626902,
+          "edge_gradient_rmse": 0.0695720993257528,
+          "edge_gradient_mae": 0.05551231337298146,
+          "edge_contrast_ratio": 0.6859369742637825,
+          "flat_gradient_rmse": 0.0099195323021066,
+          "flat_gradient_mae": 0.0042985204353453085,
+          "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+        }
+      },
+      "ref2": {
+        "color": {
+          "log1p_luminance_rmse": 0.021867413311129014,
+          "pixel_rmse_p95": 0.08567958710923204,
+          "mae_linear": 0.02542369464912183,
+          "rmse_linear": 0.05348984545382723,
+          "relative_rmse": 0.041778376763715985,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "detail": {
+          "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+          "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+          "edge_fraction": 0.2,
+          "flat_fraction": 0.5,
+          "eligible_pair_count": 153040,
+          "edge_pair_count": 26331,
+          "flat_pair_count": 76520,
+          "edge_threshold": 0.048167179776299494,
+          "flat_threshold": 0.013229970347827906,
+          "edge_gradient_rmse": 0.06975525244145078,
+          "edge_gradient_mae": 0.05572224856974583,
+          "edge_contrast_ratio": 0.6837478914214953,
+          "flat_gradient_rmse": 0.010282169826233565,
+          "flat_gradient_mae": 0.004313195218276004,
+          "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+        }
+      }
+    }
+  },
+  "tiles": [
+    {
+      "xywh": [
+        0,
+        0,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.051636778884429614,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.0833755970192644,
+          "raw_hdr_rmse": 0.30693390100364015,
+          "native_edge_gradient_rmse": 0.06460341262036226,
+          "raw_edge_gradient_rmse": 0.2570210891064465,
+          "native_edge_contrast_ratio": 0.9182415488718871
+        },
+        {
+          "native_hdr_rmse": 0.0819928800298829,
+          "raw_hdr_rmse": 0.30570609683515887,
+          "native_edge_gradient_rmse": 0.06387191556841935,
+          "raw_edge_gradient_rmse": 0.2540572685829112,
+          "native_edge_contrast_ratio": 0.9150407439237559
+        }
+      ],
+      "requires_visual_review": false
+    },
+    {
+      "xywh": [
+        80,
+        0,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.040981039226993414,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.06928446401992268,
+          "raw_hdr_rmse": 0.24093450137374053,
+          "native_edge_gradient_rmse": 0.05108021253043614,
+          "raw_edge_gradient_rmse": 0.20320296416378758,
+          "native_edge_contrast_ratio": 0.9304795794817661
+        },
+        {
+          "native_hdr_rmse": 0.07002640559672668,
+          "raw_hdr_rmse": 0.24184770445176648,
+          "native_edge_gradient_rmse": 0.05029243795070711,
+          "raw_edge_gradient_rmse": 0.19700521396590792,
+          "native_edge_contrast_ratio": 0.9318682912741336
+        }
+      ],
+      "requires_visual_review": false
+    },
+    {
+      "xywh": [
+        160,
+        0,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.03372950768946199,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.04506733388201401,
+          "raw_hdr_rmse": 0.18464750078235578,
+          "native_edge_gradient_rmse": 0.0703352559026795,
+          "raw_edge_gradient_rmse": 0.2403654068641446,
+          "native_edge_contrast_ratio": 0.826263312098778
+        },
+        {
+          "native_hdr_rmse": 0.04484770133872221,
+          "raw_hdr_rmse": 0.184200081474628,
+          "native_edge_gradient_rmse": 0.07234617384668858,
+          "raw_edge_gradient_rmse": 0.24249643871905874,
+          "native_edge_contrast_ratio": 0.8170578112324342
+        }
+      ],
+      "requires_visual_review": false
+    },
+    {
+      "xywh": [
+        240,
+        0,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.01574429908006061,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.017541009117127578,
+          "raw_hdr_rmse": 0.07737938114983778,
+          "native_edge_gradient_rmse": 0.04475480300583599,
+          "raw_edge_gradient_rmse": 0.1961139590596927,
+          "native_edge_contrast_ratio": 0.6716937946436595
+        },
+        {
+          "native_hdr_rmse": 0.017317500704560024,
+          "raw_hdr_rmse": 0.07726438222017165,
+          "native_edge_gradient_rmse": 0.04480826410433096,
+          "raw_edge_gradient_rmse": 0.19399315342283385,
+          "native_edge_contrast_ratio": 0.6791709166413961
+        }
+      ],
+      "requires_visual_review": true
+    },
+    {
+      "xywh": [
+        0,
+        80,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.05837561062718128,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.04781593519543169,
+          "raw_hdr_rmse": 0.3106324982696571,
+          "native_edge_gradient_rmse": 0.04644506720069262,
+          "raw_edge_gradient_rmse": 0.2406170366773924,
+          "native_edge_contrast_ratio": 0.36943887442058376
+        },
+        {
+          "native_hdr_rmse": 0.046782771428415144,
+          "raw_hdr_rmse": 0.30985070699636935,
+          "native_edge_gradient_rmse": 0.04550667429885774,
+          "raw_edge_gradient_rmse": 0.2339559723893742,
+          "native_edge_contrast_ratio": 0.3671508305030974
+        }
+      ],
+      "requires_visual_review": true
+    },
+    {
+      "xywh": [
+        80,
+        80,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.03748386286011667,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.03864253938810712,
+          "raw_hdr_rmse": 0.18963152299316965,
+          "native_edge_gradient_rmse": 0.052799021150982055,
+          "raw_edge_gradient_rmse": 0.1846576199902973,
+          "native_edge_contrast_ratio": 0.7428046936797238
+        },
+        {
+          "native_hdr_rmse": 0.03884407040536317,
+          "raw_hdr_rmse": 0.18965502113897473,
+          "native_edge_gradient_rmse": 0.05335341513092412,
+          "raw_edge_gradient_rmse": 0.1875999806018108,
+          "native_edge_contrast_ratio": 0.7399376725837506
+        }
+      ],
+      "requires_visual_review": true
+    },
+    {
+      "xywh": [
+        160,
+        80,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.04897159706552239,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.09488358171205818,
+          "raw_hdr_rmse": 0.2811956223061261,
+          "native_edge_gradient_rmse": 0.10319759523518217,
+          "raw_edge_gradient_rmse": 0.3016093208657777,
+          "native_edge_contrast_ratio": 0.7728040034283437
+        },
+        {
+          "native_hdr_rmse": 0.09394490232134767,
+          "raw_hdr_rmse": 0.2818553312383724,
+          "native_edge_gradient_rmse": 0.105488853506822,
+          "raw_edge_gradient_rmse": 0.3001939001932756,
+          "native_edge_contrast_ratio": 0.7693891044992148
+        }
+      ],
+      "requires_visual_review": false
+    },
+    {
+      "xywh": [
+        240,
+        80,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.015902284078754943,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.05706115406355459,
+          "raw_hdr_rmse": 0.09045443887360351,
+          "native_edge_gradient_rmse": 0.08759989558030706,
+          "raw_edge_gradient_rmse": 0.19713926625022468,
+          "native_edge_contrast_ratio": 0.7736482602070897
+        },
+        {
+          "native_hdr_rmse": 0.054967024199618485,
+          "raw_hdr_rmse": 0.08938276211650828,
+          "native_edge_gradient_rmse": 0.08350062256032624,
+          "raw_edge_gradient_rmse": 0.19906963777798858,
+          "native_edge_contrast_ratio": 0.7782799022992811
+        }
+      ],
+      "requires_visual_review": false
+    },
+    {
+      "xywh": [
+        0,
+        160,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.04629936870711146,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.0380848638926209,
+          "raw_hdr_rmse": 0.24140059209795783,
+          "native_edge_gradient_rmse": 0.06856172669571693,
+          "raw_edge_gradient_rmse": 0.2951915723913206,
+          "native_edge_contrast_ratio": 0.3585713336629071
+        },
+        {
+          "native_hdr_rmse": 0.038359188456887044,
+          "raw_hdr_rmse": 0.24124046568733412,
+          "native_edge_gradient_rmse": 0.06814610603554343,
+          "raw_edge_gradient_rmse": 0.2991785151455185,
+          "native_edge_contrast_ratio": 0.3623891606688489
+        }
+      ],
+      "requires_visual_review": true
+    },
+    {
+      "xywh": [
+        80,
+        160,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.049194510134853084,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.04013809774180201,
+          "raw_hdr_rmse": 0.2578082111703912,
+          "native_edge_gradient_rmse": 0.06260887837761478,
+          "raw_edge_gradient_rmse": 0.26856149459194956,
+          "native_edge_contrast_ratio": 0.2785003731185225
+        },
+        {
+          "native_hdr_rmse": 0.04033071258735511,
+          "raw_hdr_rmse": 0.2556775676482544,
+          "native_edge_gradient_rmse": 0.06318464058131232,
+          "raw_edge_gradient_rmse": 0.2646470148750719,
+          "native_edge_contrast_ratio": 0.27715235029141067
+        }
+      ],
+      "requires_visual_review": true
+    },
+    {
+      "xywh": [
+        160,
+        160,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.044421990141629265,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.03967143873362959,
+          "raw_hdr_rmse": 0.21590590164243614,
+          "native_edge_gradient_rmse": 0.06924375337793251,
+          "raw_edge_gradient_rmse": 0.25238306373156444,
+          "native_edge_contrast_ratio": 0.3480265147663803
+        },
+        {
+          "native_hdr_rmse": 0.03890292366932844,
+          "raw_hdr_rmse": 0.21505288568372774,
+          "native_edge_gradient_rmse": 0.06839081727837518,
+          "raw_edge_gradient_rmse": 0.24463726390299478,
+          "native_edge_contrast_ratio": 0.34572768914885466
+        }
+      ],
+      "requires_visual_review": true
+    },
+    {
+      "xywh": [
+        240,
+        160,
+        80,
+        80
+      ],
+      "ref_disagreement_rmse": 0.01617437862246209,
+      "against_refs": [
+        {
+          "native_hdr_rmse": 0.014967119898462338,
+          "raw_hdr_rmse": 0.08234012436457305,
+          "native_edge_gradient_rmse": 0.042643845852334675,
+          "raw_edge_gradient_rmse": 0.2514098841036674,
+          "native_edge_contrast_ratio": 0.5193488479033153
+        },
+        {
+          "native_hdr_rmse": 0.015501021936459091,
+          "raw_hdr_rmse": 0.0826295707470797,
+          "native_edge_gradient_rmse": 0.04492514486105771,
+          "raw_edge_gradient_rmse": 0.25371438470016894,
+          "native_edge_contrast_ratio": 0.5087092246696
+        }
+      ],
+      "requires_visual_review": true
+    }
+  ],
+  "potential_low_edge_contrast_tiles": [
+    [
+      240,
+      0,
+      80,
+      80
+    ],
+    [
+      0,
+      80,
+      80,
+      80
+    ],
+    [
+      80,
+      80,
+      80,
+      80
+    ],
+    [
+      0,
+      160,
+      80,
+      80
+    ],
+    [
+      80,
+      160,
+      80,
+      80
+    ],
+    [
+      160,
+      160,
+      80,
+      80
+    ],
+    [
+      240,
+      160,
+      80,
+      80
+    ]
+  ],
+  "selection_is_predeclared": true,
+  "warnings": [
+    "Edge contrast below 0.75 is a screening threshold, not proof of blur or ground-truth geometry.",
+    "Reference gradients include 1024-spp sampling noise; independence and convergence unproven.",
+    "Do not infer version causality from E0016: source ray samples and denoising passes may differ."
+  ],
+  "source_exr_sha256": {
+    "reference_check.exr": "8d35b6ebf9dbdc831b3ff1854c996801e8403bf1b4841db1af2877b8c358faba",
+    "acd_compare_Raw.exr": "87c839159dcb507ff10b74f82a550c6101a3e2b9fc6d5b49423073626383fb96",
+    "raw_multilayer.exr": "9dfe14203ff08caa93616539a242d4a8bae0d4b971da224d588daf200a3323d3",
+    "reference.exr": "7d864c0f35b5c82210e620f3f1e1be7c184a2bdc423d474c80dd1cc9892d7191",
+    "acd_compare_NATIVE_COMP_OIDN.exr": "54a27f0fdcb1f5fc34e48b70a8e9faa9cf9e30db7425bcb23c362d2c8a02c8cc",
+    "acd_compare_RawRecomposed.exr": "20d99b2351d4a5bf1216a66e51a410053946cac8951c0584639f975310e71543"
+  },
+  "new_algorithm_tested": false,
+  "convergence_proven": false
+}

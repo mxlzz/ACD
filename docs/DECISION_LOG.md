@@ -875,3 +875,7 @@ No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchm
 - Decisión: [E0044_PLAN](docs/experiments/E0044_PLAN.md) **un solo** fixture procedural conocido (52 lamas, juntas, vidrio, bump), Blender 5.2.4, 24spp seed539, refs1024×2, sin High/Super ni variantes previas. 4×3 regiones 80² y métricas HDR/gradientes, galería PNG 1:1; sin nueva técnica. CI manual después del primer push del workflow.
 - No se usa Italian Flat porque tiene IES ausente. Si el defecto no supera ruido de referencias/criterio visual, descartar otra mejora por pases. Cualquier cambio real de algoritmo requiere prueba causal con escena retenida y evaluación de coste. El addon estable y PR draft permanecen sin integración.
 - **Estado en este commit:** implementación preparada, ejecución y métricas **todavía no verificadas**.
+
+## E0044 current Blender 5.2.4 detail diagnosis
+
+ Blender 5.2.4 LTS, 320x240, 24 spp seed539, 2 refs 1024 spp seeds8819/8922. Sin assets externos, sin nuevos métodos. El fixture contiene 52 lamas, juntas de azulejos, vidrio, metal y bump procedural. Compositor OIDN High/Accurate/HDR con guías albedo/normal. Metrics in docs/experiments/E0044_RESULTS.json and gallery benchmarks/results/detail_current_e0044/. No algorithm change, interpret tile screen as descriptive only.
