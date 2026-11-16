@@ -1208,3 +1208,7 @@ E0059 cross-reference scored Cozy E0054 frozen EXRs, OIDN gradient regression in
 ## 2026-11-16 — E0060 preregistered internal source cost/reference pilot
 
 E0059 Cozy held-out-reference crossfit failed to find a broad OIDN Raw-relative edge error regression; avoid ungrounded sharpening. E0058 CAM Office source produced substantial seed variation; still not independent or public legal holdout. E0060 tiny 256x144 8spp + two64spp refs on original CAM Office measures real CPU wall and reference disagreement before expensive test, keeps no previews due underlying building rights. No new denoiser / no quality ranking. See docs/experiments/E0060_PLAN.md.
+
+## E0060 internal architecture quality-reference cost pilot
+
+E0060 Surat CAM Office tiny 256x144 8spp+2x64spp ref cost=35s, rawAOV delta=0.0, ref_ref_rmse=0.11039902667585488. No quality ranking or rights clearance. docs/experiments/E0060.md.
