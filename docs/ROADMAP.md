@@ -464,3 +464,7 @@ STOP: Raw changed; no same-input causal inference. Raw identical=False. See docs
 ## E0050 frozen Raw offline OIDN replay (2026-11-16)
 
 STOP: offline native-guide replay not equivalent to original compositor; native replay verified=False. No new denoiser/merge. See docs/experiments/E0050_RESULTS.json.
+
+## 2026-11-16 — Explicit historical trace repair before E0052
+
+Commits \`d6edc548bf6996c053e7b2e465cfca9a9a902e9a\` and \`204cc9d71cffca1e359e09fcc0cc21fccc6d0200\` updated only experiment documentation and violated the per-commit obligation to update STATUS.md / ROADMAP.md / DECISION_LOG.md. To preserve referenced commit hashes, check_development_trace.py now allows only these two exact immutable hashes when their complete changed-file sets match documented expected paths. All later commits still require all three files in the same commit. This is a transparent repair, not evidence of experiment validity.
