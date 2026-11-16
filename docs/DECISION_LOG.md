@@ -977,3 +977,7 @@ Se registró la hipótesis, límites, contrato Raw/AOV, ROIs congeladas E0021, u
 ## E0052 test fixture fix (2026-11-16)
 
 Initial CI run 43927671962 and experiment run 43927659885 stopped at a defective *unit test*: step(3) sets the signal level, not the image height, so it could not raise the expected candidate shape error. Fixed fixture to explicit 39x48 array; the scientific analysis had not run and there were no measurements to invalidate. Workflow path updated only to rerun the existing preregistered protocol.
+
+## E0052 original EXR analysis completed
+
+E0052 frozen Cozy reference-consensus screen: ['detail_2', 'whole_image']. No new render, no denoiser change, refs unconverged; docs/experiments/E0052.md.
