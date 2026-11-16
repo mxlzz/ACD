@@ -867,3 +867,11 @@ No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchm
 ## E0043 recovered existing EXRs — scene quarantine (2026-11-13)
 
 No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.
+
+
+## 2026-11-16 — E0044 prior-art gate: reevaluar detalle con Cycles 5.2.4
+
+- Blender integró PR [#154988](https://projects.blender.org/blender/blender/pulls/154988) en marzo 2026, suavizando transiciones en guías denoising; E0016 estaba en 5.0.1 y no justifica inventar una corrección para 5.2 LTS sin comprobar. Intel OIDN ya resuelve prefiltrado y hit especular en su API.
+- Decisión: [E0044_PLAN](docs/experiments/E0044_PLAN.md) **un solo** fixture procedural conocido (52 lamas, juntas, vidrio, bump), Blender 5.2.4, 24spp seed539, refs1024×2, sin High/Super ni variantes previas. 4×3 regiones 80² y métricas HDR/gradientes, galería PNG 1:1; sin nueva técnica. CI manual después del primer push del workflow.
+- No se usa Italian Flat porque tiene IES ausente. Si el defecto no supera ruido de referencias/criterio visual, descartar otra mejora por pases. Cualquier cambio real de algoritmo requiere prueba causal con escena retenida y evaluación de coste. El addon estable y PR draft permanecen sin integración.
+- **Estado en este commit:** implementación preparada, ejecución y métricas **todavía no verificadas**.

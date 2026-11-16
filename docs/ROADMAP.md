@@ -1,3 +1,5 @@
+> 2026-11-16 E0044: Current Blender5.2.4 OIDN detail test vs two independent refs on no-dependency procedural geometry. Blender 5.1 smoothed denoising guide passes, E0016 5.0.1 is dated; no novel algorithm until current version demonstrates specific loss. Workflow pending.
+
 > **Stop gate tras E0043:** guías integradas de OIDN mejoran de modo esperado, sin regiones con regresión diagnosticable. Refs 128spp no convergidas; Italian Flat tiene IES externo faltante en E0042/E0043, por lo que está en cuarentena. No más experimentos sobre ese fixture, ni nuevos filtros sin fallo verificable. Auditor IES corregido; próxima prueba solo en fixture completamente auditable.
 
 > E0043 refocus: no more reference ladders until a specific failing OIDN detail is identified. Built-in guide ablation 3 modes / one 32spp same input on Italian Flat, compare two already-rendered nonconverged 128spp refs, fixed 4x4 tiles. Pre-registered reject-if-inconclusive; no method promotion. Workflow submitted.

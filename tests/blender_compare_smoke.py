@@ -106,6 +106,9 @@ try:
         width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
         height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
     assert input_spp > 0 and 8 <= width <= 4096 and 8 <= height <= 4096
+    # E0044 diagnostic only: enforce the requested spp in every pixel.
+    if os.environ.get("ACD_E0044_ADAPTIVE_OFF") == "1":
+        scene.cycles.use_adaptive_sampling = False
     scene.cycles.samples = input_spp
     scene.cycles.seed = input_seed
     scene.cycles.use_denoising = False
