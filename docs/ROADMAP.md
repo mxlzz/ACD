@@ -540,3 +540,7 @@ E0057 source and smoke passed 18 cameras, 105 materials, missing assets 0. E0058
 ## E0058 independent source interior camera noise gate
 
 E0058 Surat CAM Office, 96x54 16spp 539/911 same configuration, relative RMSE 0.24478499048792587, changed 5148/5184, measurable=True. No denoiser or converged reference. Architectural rights unresolved. docs/experiments/E0058.md.
+
+## 2026-11-16 — E0059 cross-reference heldout edge scoring prepared
+
+After E0054 Raw gain ~0.78-0.79 and OIDN gain ~0.74-0.75 while source ref pair diverges (RMSE0.077947), no trustworthy OIDN-specific 25% detail loss. E0058 new internal CAM Office source shows measurable raw variation but not rights or statistical independence. E0059 reuses exact E0054 EXRs before expiry, refA selects edge mask refB evaluates Raw/OIDN gradients then swap, 3 noisy seeds, same input and hashes; no render, filter, training, or new quality ranking. If no consistent Raw-relative heldout gradient regression, do not pursue sharpening. See docs/experiments/E0059_PLAN.md.
