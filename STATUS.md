@@ -1128,3 +1128,7 @@ Commits \`d6edc548bf6996c053e7b2e465cfca9a9a902e9a\` and \`204cc9d71cffca1e359e0
 ## 2026-11-16 — E0052 preinscrito: diagnóstico de bordes coherentes en Cozy Kitchen
 
 Se registró la hipótesis, límites, contrato Raw/AOV, ROIs congeladas E0021, umbrales de descarte y la acción offline a ejecutar sobre los EXR originales antes de su vencimiento. Experimento sin renders nuevos ni cambios al addon. Ver docs/experiments/E0052_PLAN.md y scripts/analyze_cozy_consensus_e0052.py. Tras la ejecución solo una señal persistente justificaría estudiar un fallo real a mayor resolución/escena retenida; no afirmar superioridad por contraste de borde.
+
+## E0052 test fixture fix (2026-11-16)
+
+Initial CI run 43927671962 and experiment run 43927659885 stopped at a defective *unit test*: step(3) sets the signal level, not the image height, so it could not raise the expected candidate shape error. Fixed fixture to explicit 39x48 array; the scientific analysis had not run and there were no measurements to invalidate. Workflow path updated only to rerun the existing preregistered protocol.

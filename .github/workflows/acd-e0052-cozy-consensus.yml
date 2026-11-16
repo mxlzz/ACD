@@ -1,4 +1,5 @@
 name: ACD E0052 Cozy original EXR reference-consensus edge diagnostic
+# Re-run on test contract correction: previous test used level=3, not 3-row image.
 
 on:
   push:

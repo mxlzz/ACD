@@ -38,4 +38,4 @@ def test_roi_and_alignment_are_strict():
     with pytest.raises(ValueError,match="ROI"):
         inspect_region(ref,ref,candidates(ref,ref),(10,10,48,40))
     with pytest.raises(ValueError,match="candidate shape"):
-        inspect_region(ref,ref,candidates(step(3),step(3)),(0,0,48,40))
+        inspect_region(ref,ref,candidates(np.zeros((39,48,3),np.float32),np.zeros((39,48,3),np.float32)),(0,0,48,40))
