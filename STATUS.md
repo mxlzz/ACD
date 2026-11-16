@@ -1,3 +1,11 @@
+## 2026-11-16 — E0051: revisión crítica y cierre de línea de guías nativas
+
+- [E0048](docs/experiments/E0048.md): Cycles follow-reflections predeterminado es mejor sobre el mismo Raw, pero ya existe upstream; no agrega ACD.
+- [E0049](docs/experiments/E0049.md): Raw cambia 0.077223; aborta causalidad. [E0050](docs/experiments/E0050.md): Raw replay exacto pero OIDN replay original difiere 0.034577, de modo que el swap de guías offline no replica el baseline; no se recomienda mejora.
+- La revisión concluye que continuar ajustando toggles/recombinaciones sería redundante. Siguiente [E0051_HANDOFF](docs/experiments/E0051_HANDOFF.md): fuente arquitectónica completa con defecto verificable, luego hipótesis de algoritmo nueva. `Prueba ACD.blend` no figura accesible en los archivos de este chat y no se inventa contenido. Addon estable intacto; PR#10 draft.
+
+---
+
 ## 2026-11-16 — E0050 verificación offline de mismo Raw, compositor nativo
 
 - Workflow E0050 agregado: EXRs E0046/E0049 se recuperan por ID, Blender 5.2.4 carga Raw fijo y AOVs originales/alternativos como CompositorNodeImage, denoise High/Accurate/HDR. Dos controles estrictos: Raw passthrough max<=1e-5 y replay original vs OIDN nativo max<=1e-4. Si fallan, se archiva stop y NO se atribuye mejora a guías. Este ensayo no entrena ni cambia filtros.
