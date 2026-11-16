@@ -1188,3 +1188,7 @@ Previous E0056 Classroom on Blender5.2.4 still yields only 4/5184 pixel differen
 ## E0057 public architectural scene source acceptance
 
 E0057 architectural source acceptance PASS; no OIDN or quality benchmark; architecture rights unresolved. docs/experiments/E0057.md.
+
+## 2026-11-16 — E0058 Surat CAM Office original source seed diversity gate
+
+E0057 source and smoke passed 18 cameras, 105 materials, missing assets 0. E0058 preregistered to verify interior CAM Office native TABULATED_SOBOL Cycles5.2.4 16spp seed539/911 from separate processes, with rights constraint: no image or model published. No denoiser tested; if identical, stop, if distinct, candidate only pending reference convergence and legal/representative holdout acceptance. See docs/experiments/E0058_PLAN.md.

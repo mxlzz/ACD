@@ -24,6 +24,18 @@ if scene_variant == "interior":
     fixture.make_interior(scene)
 elif scene_variant != "external":
     raise ValueError("Expected ACD_PROBE_SCENE=external or interior")
+# Optional source-pinned interior-camera probe; no effect on E0007/E0056.
+camera_name = os.environ.get("ACD_PROBE_CAMERA", "")
+if camera_name:
+    if scene_variant != "external":
+        raise RuntimeError("ACD_PROBE_CAMERA requires a loaded external .blend")
+    selected = bpy.data.objects.get(camera_name)
+    if selected is None or selected.type != "CAMERA" or selected.name not in scene.objects:
+        raise RuntimeError("Missing scene camera: " + camera_name)
+    scene.camera = selected
+    if scene.camera.name != camera_name:
+        raise RuntimeError("Camera assignment not effective")
+    print("ACD_PROBE_SELECTED_CAMERA",camera_name,flush=True)
 seed = int(os.environ["ACD_PROBE_SEED"])
 offset = int(os.environ.get("ACD_PROBE_OFFSET", "0"))
 label = os.environ.get("ACD_PROBE_LABEL", str(seed))
@@ -76,6 +88,7 @@ for s in bpy.data.scenes:
     })
 metadata = {
     "active_scene": scene.name,
+    "active_camera": scene.camera.name if scene.camera else None,
     "active_view_layer": bpy.context.view_layer.name,
     "requested_seed": seed,
     "scene_variant": scene_variant,
