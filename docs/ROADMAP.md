@@ -1,3 +1,5 @@
+> E0048 controlled native Cycles follow-reflections workflow added and triggers one small 24spp crop only. Checks original SHA and Raw pixel identity before guide/OIDN ROI attribution. Results pending.
+
 > E0048 pre-registered: toggle native Cycles5.2.4 denoising-pass follow-reflections on existing production-density crop; one same-seed 24spp, reuse E0046 EXRs and refs; causal gate Raw exact then guides must change. Script+tests ready, workflow pending; no algorithm innovation claim.
 
 > E0047 first run 43885689112: 6 tests passed, artifact downloaded, Bash escaped array caused failure before analysis. Remove backslashes before Bash ${#files[@]} and ${files[0]}; retry identical input without Cycles.

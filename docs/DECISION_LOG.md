@@ -918,3 +918,8 @@ Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide repo
 
 - En la revisión de E0044–E0047 se confirmó que E0045 corrigió la escala sub-Nyquist; E0047 mostró contraste tras vidrio ~0.50 frente a directo ~0.91, pero no causalidad ni convergencia. Fuente Cycles5.2.4 incorpora `denoising_pass_follow_reflections` (True por defecto) y OIDN ya documenta el mecanismo. No reinventar guías.
 - [E0048_PLAN](docs/experiments/E0048_PLAN.md), cambio de script opt-in, analizador fail-closed y tests agregados. **Aún sin resultados reales:** siguiente commit habilita un workflow de un solo render 24spp, contra EXR congelados E0046, con Raw idéntico como condición excluyente. Ningún addon modificado.
+
+
+## 2026-11-16 — E0048 workflow de intervención guiada
+
+- E0048 workflow recupera EXRs congelados E0046, ejecuta solo una renderización 24spp siguiendo=False, garantiza identidad Raw con seed539 o descarta, mide efecto real en guías/ROI. El workflow publica el JSON y la lámina 1:1 únicamente tras las validaciones. **Resultados pendientes de GitHub Actions**. No añade algoritmo ni cambia el addon.
