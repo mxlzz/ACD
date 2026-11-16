@@ -496,3 +496,7 @@ E0053 cost/contract pilot passed with 66s for 8spp + two 32spp references, but r
 ## E0054 Cozy high-density reference result
 
 E0054 Cozy 512px render crop at virtual1920, 24spp x3, refs512spp x2, wall=699s, reference_ref_rmse=0.077947, OIDN_rmse=0.092270, ref_disagreement/oidn=0.845, edge_screen=True. No new algorithm or perceptual validation. docs/experiments/E0054.md.
+
+## 2026-11-16 — B1 independent living-room-3 preregistered
+
+E0054 Cozy: raw edge gain 0.780-0.792, OIDN gain 0.741-0.753, 512spp ref discrepancy RMSE 0.077947 vs native RMSE 0.092270. A full 25% OIDN-only loss is not established; no new algorithm justified. Start read-only small-source acceptance of independently authored cuteday living-room-3, sha1 pinned, original author/converted license NOT verified; no holdout or denoiser ranking. Plan docs/experiments/B1_LIVING_ROOM3_PLAN.md.
