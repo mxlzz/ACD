@@ -902,3 +902,9 @@ Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp referen
 
 - E0046 [run 43883209135](https://github.com/mxlzz/ACD/actions/runs/43883209135) **success** en Blender5.2.4: crop512×512 sobre FOV1920×1440, zona320×320, 24spp seed539 y refs512 spp seed8819/8922. OIDN RMSE ref1/ref2 0.068401/0.068275 vs Raw 0.339882/0.340153; refs entre sí 0.079222 (mayor que RMSE OIDN: falta convergencia). OIDN ratio de contraste de borde ~0.665 en ambas refs. [Imagen 1:1](benchmarks/results/detail_crop_e0046/e0046_cropped_slats_1to1.png).
 - Observación visual tentativa: franjas tras vidrio aparentan más suavizadas que lamas directas. [E0047_PLAN](docs/experiments/E0047_PLAN.md) fija dos rectángulos antes de medir, utiliza EXR y guías de E0046 por SHA exacto, evalúa correlación gradiente entre refs y ratios OIDN; **sin nuevo render, sin filtro nuevo**. El resultado no prueba causalidad del vidrio ni validez estadística. Si no hay patrón apoyado, no insistir con este caso.
+
+
+## 2026-11-16 — E0047 retry sin Cycles: escape de Bash en download
+
+- [Run 43885689112](https://github.com/mxlzz/ACD/actions/runs/43885689112) pasó 6 pruebas sintéticas y descargó E0046 original correctamente, pero falló antes de analizar imágenes: `test: ${#files[@]}: integer expression expected` porque workflow serializó literalmente `\${#files[@]}` (barra inversa antes de expansión de array Bash). Es **defecto de workflow**, no experimento ni método.
+- Se retiraron exactamente los dos escapes de expansión Bash en el paso de recuperación `files`; todos los hashes, ROI 80x160 y criterios previos se conservan sin modificación. El workflow se ejecuta de nuevo sin renderizar. Resultado científico pendiente.

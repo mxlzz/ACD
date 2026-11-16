@@ -1,3 +1,5 @@
+> E0047 first run 43885689112: 6 tests passed, artifact downloaded, Bash escaped array caused failure before analysis. Remove backslashes before Bash ${#files[@]} and ${files[0]}; retry identical input without Cycles.
+
 > E0046 1920px-density crop succeeded, OIDN ref1 RMSE 0.0684 vs 24spp Raw0.3399, reference disagreement0.0792 => no convergence; projected slat detail physically resolvable, OIDN edge ratio0.665. E0047 postprocess only, two geometry predeclared glass/direct ROIs, no new rendering or algorithms; pending.
 
 > E0046 production-density crop 1920x1440 camera, only 512x512 border, 96px margin, two 512spp refs / 24spp input. Non-converged still, but slat pitch 8–10px testable. One focused smoke+quality; results pending. No addon change.

@@ -39,8 +39,8 @@ jobs:
             -n acd-e0046-hires-density-crop-exr -D /tmp/e0047-source
           for name in metadata.json acd_compare_Raw.exr acd_compare_NATIVE_COMP_OIDN.exr raw_multilayer.exr reference.exr reference_check.exr; do
             mapfile -t files < <(find /tmp/e0047-source -type f -name "$name")
-            test "\${#files[@]}" -eq 1 || { echo "Missing or ambiguous $name"; exit 1; }
-            cp -- "\${files[0]}" "/tmp/e0047-flat/$name"
+            test "${#files[@]}" -eq 1 || { echo "Missing or ambiguous $name"; exit 1; }
+            cp -- "${files[0]}" "/tmp/e0047-flat/$name"
           done
           test -f docs/experiments/E0046_RESULTS.json
       - name: Only numerical postprocess and static ROI 1:1 image
