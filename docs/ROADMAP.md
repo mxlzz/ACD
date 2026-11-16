@@ -458,3 +458,7 @@ DIAGNOSTIC only: native guide setting changed output, inspect against both finit
 ## E0049 existing Cycles roughness-feature toggle (2026-11-16)
 
 STOP: Raw changed; no same-input causal inference. Raw identical=False. See docs/experiments/E0049_RESULTS.json; no new model or algorithm.
+
+## E0050 frozen Raw offline OIDN replay (2026-11-16)
+
+STOP: offline native-guide replay not equivalent to original compositor; native replay verified=False. No new denoiser/merge. See docs/experiments/E0050_RESULTS.json.

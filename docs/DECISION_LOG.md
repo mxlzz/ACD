@@ -954,3 +954,7 @@ STOP: Raw changed; no same-input causal inference. Raw identical=False. See docs
 
 - Workflow E0050 agregado: EXRs E0046/E0049 se recuperan por ID, Blender 5.2.4 carga Raw fijo y AOVs originales/alternativos como CompositorNodeImage, denoise High/Accurate/HDR. Dos controles estrictos: Raw passthrough max<=1e-5 y replay original vs OIDN nativo max<=1e-4. Si fallan, se archiva stop y NO se atribuye mejora a guías. Este ensayo no entrena ni cambia filtros.
 - Eliminada la inspección frágil de enum de colorspace en el script; se registra valor que Blender proporciona. Resultados pendientes.
+
+## E0050 frozen Raw offline OIDN replay (2026-11-16)
+
+STOP: offline native-guide replay not equivalent to original compositor; native replay verified=False. No new denoiser/merge. See docs/experiments/E0050_RESULTS.json.
