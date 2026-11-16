@@ -1164,3 +1164,7 @@ B1 living-room-3 pinned candidate functional smoke: FAIL; scene origin/conversio
 ## E0056 planned — Classroom CC0 original seed anomaly in current Blender
 
 Independent converted living-room-3 in B1 failed (three missing textures: _unnamed_14, _unnamed_7, _unnamed_9; conversion identity/license unverified), so do not use as holdout or invent replacement resources. New targeted gate reuses existing E0007 Blender Classroom CC0 exact source and 96x54/16spp TABULATED_SOBOL 539/911 independent-process test, but on Blender5.2.4. A pass only establishes changed samples, not statistical independence or OIDN quality. No new denoiser. docs/experiments/E0056_PLAN.md.
+
+## 2026-11-16 — E0056 source retrieval correction, not a new scientific run
+
+First E0056 attempt run 43934413187 stopped before any Blender render because https://download.blender.org/demo/test/classroom.zip returned HTTP 403. Only the download host changes to Blender's officially linked mirror.blender.org; ZIP size 70,279,690 bytes and SHA256 0f0ecc58... remain exact. No alteration of samples, seeds, renderer, hypothesis or quality criteria. If mirror unavailable, stop this source gate instead of arbitrary retries.
