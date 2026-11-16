@@ -1,3 +1,10 @@
+## 2026-11-16 — E0047 ROI para distinguir lamas tras vidrio y sin vidrio, sin render adicional
+
+- E0046 [run 43883209135](https://github.com/mxlzz/ACD/actions/runs/43883209135) **success** en Blender5.2.4: crop512×512 sobre FOV1920×1440, zona320×320, 24spp seed539 y refs512 spp seed8819/8922. OIDN RMSE ref1/ref2 0.068401/0.068275 vs Raw 0.339882/0.340153; refs entre sí 0.079222 (mayor que RMSE OIDN: falta convergencia). OIDN ratio de contraste de borde ~0.665 en ambas refs. [Imagen 1:1](benchmarks/results/detail_crop_e0046/e0046_cropped_slats_1to1.png).
+- Observación visual tentativa: franjas tras vidrio aparentan más suavizadas que lamas directas. [E0047_PLAN](docs/experiments/E0047_PLAN.md) fija dos rectángulos antes de medir, utiliza EXR y guías de E0046 por SHA exacto, evalúa correlación gradiente entre refs y ratios OIDN; **sin nuevo render, sin filtro nuevo**. El resultado no prueba causalidad del vidrio ni validez estadística. Si no hay patrón apoyado, no insistir con este caso.
+
+---
+
 ## 2026-11-16 — E0046: crop de lamas a densidad de píxel de producción
 
 - [E0045](docs/experiments/E0045.md) demostró que lamas a 320px están bajo Nyquist (paso mínimo1.304px) y juntas <0.4px. No continuar interpretando esa pérdida de contraste como fallo del denoiser.

@@ -1,3 +1,5 @@
+> E0046 1920px-density crop succeeded, OIDN ref1 RMSE 0.0684 vs 24spp Raw0.3399, reference disagreement0.0792 => no convergence; projected slat detail physically resolvable, OIDN edge ratio0.665. E0047 postprocess only, two geometry predeclared glass/direct ROIs, no new rendering or algorithms; pending.
+
 > E0046 production-density crop 1920x1440 camera, only 512x512 border, 96px margin, two 512spp refs / 24spp input. Non-converged still, but slat pitch 8–10px testable. One focused smoke+quality; results pending. No addon change.
 
 > E0045 sampling-gate: 320px fixture under-resolves slats (1.304–1.678px pitch) and grout (0.362–0.401px thick). E0044 native OIDN ratio 0.686 cannot be interpreted as recoverable-detail failure. No filter changes; target small same-FOV crop at 1920px density, verify geometry first.
