@@ -154,6 +154,15 @@ try:
     view_layer = bpy.context.view_layer
     view_layer.cycles.use_denoising = False
     scene.acd_volumes = True if scene_variant == "external" else scene.acd_volumes
+    if os.environ.get("ACD_E0048_FOLLOW_REFLECTIONS") == "0":
+        if scene_variant != "detail_target" or os.environ.get("ACD_E0046_CROP") != "slats":
+            raise RuntimeError("E0048 restricted to existing E0046 crop fixture")
+        if view_layer.cycles.denoising_pass_follow_reflections is not True:
+            raise RuntimeError("Expected native follow-reflections True")
+        view_layer.cycles.denoising_pass_follow_reflections = False
+        if view_layer.cycles.denoising_pass_follow_reflections is not False:
+            raise RuntimeError("Native follow-reflections control ignored")
+        print("E0048_NATIVE_FOLLOW_REFLECTIONS_FALSE", flush=True)
     addon.enable_passes(view_layer, scene)
 
     tree = bpy.data.node_groups.new("ACD comparison (same noisy input)", "CompositorNodeTree")
@@ -466,6 +475,7 @@ try:
         "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "e0046_crop": e0046_crop,
+        "e0048_follow_reflections": bool(view_layer.cycles.denoising_pass_follow_reflections),
         "source_original_resolution": source_resolution if scene_variant == "external" else None,
         "source_original_pixel_aspect": [scene.render.pixel_aspect_x, scene.render.pixel_aspect_y] if scene_variant == "external" else None,
         "compositional_methods": [name for _, _, name, _ in methods],

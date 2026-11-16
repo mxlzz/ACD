@@ -912,3 +912,9 @@ Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp referen
 ## E0047 original-source glass/direct detail diagnosis (2026-11-16)
 
 Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide report docs/experiments/E0047_RESULTS.json; visual benchmarks/results/detail_glass_e0047/. Check whether reference edge correlations are high before causal experiment. No addon promotion.
+
+
+## 2026-11-16 — E0048 diseño técnico preregistrado
+
+- En la revisión de E0044–E0047 se confirmó que E0045 corrigió la escala sub-Nyquist; E0047 mostró contraste tras vidrio ~0.50 frente a directo ~0.91, pero no causalidad ni convergencia. Fuente Cycles5.2.4 incorpora `denoising_pass_follow_reflections` (True por defecto) y OIDN ya documenta el mecanismo. No reinventar guías.
+- [E0048_PLAN](docs/experiments/E0048_PLAN.md), cambio de script opt-in, analizador fail-closed y tests agregados. **Aún sin resultados reales:** siguiente commit habilita un workflow de un solo render 24spp, contra EXR congelados E0046, con Raw idéntico como condición excluyente. Ningún addon modificado.
