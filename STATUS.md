@@ -1124,3 +1124,7 @@ STOP: offline native-guide replay not equivalent to original compositor; native 
 ## 2026-11-16 — Explicit historical trace repair before E0052
 
 Commits \`d6edc548bf6996c053e7b2e465cfca9a9a902e9a\` and \`204cc9d71cffca1e359e09fcc0cc21fccc6d0200\` updated only experiment documentation and violated the per-commit obligation to update STATUS.md / ROADMAP.md / DECISION_LOG.md. To preserve referenced commit hashes, check_development_trace.py now allows only these two exact immutable hashes when their complete changed-file sets match documented expected paths. All later commits still require all three files in the same commit. This is a transparent repair, not evidence of experiment validity.
+
+## 2026-11-16 — E0052 preinscrito: diagnóstico de bordes coherentes en Cozy Kitchen
+
+Se registró la hipótesis, límites, contrato Raw/AOV, ROIs congeladas E0021, umbrales de descarte y la acción offline a ejecutar sobre los EXR originales antes de su vencimiento. Experimento sin renders nuevos ni cambios al addon. Ver docs/experiments/E0052_PLAN.md y scripts/analyze_cozy_consensus_e0052.py. Tras la ejecución solo una señal persistente justificaría estudiar un fallo real a mayor resolución/escena retenida; no afirmar superioridad por contraste de borde.
