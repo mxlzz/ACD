@@ -442,3 +442,7 @@ Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp referen
 ## E0047 original-source glass/direct detail diagnosis (2026-11-16)
 
 Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide report docs/experiments/E0047_RESULTS.json; visual benchmarks/results/detail_glass_e0047/. Check whether reference edge correlations are high before causal experiment. No addon promotion.
+
+## E0048 existing Cycles reflection-feature toggle (2026-11-16)
+
+DIAGNOSTIC only: native guide setting changed output, inspect against both finite references. Raw identical=True. See docs/experiments/E0048_RESULTS.json; no new model or algorithm.

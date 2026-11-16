@@ -923,3 +923,7 @@ Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide repo
 ## 2026-11-16 — E0048 workflow de intervención guiada
 
 - E0048 workflow recupera EXRs congelados E0046, ejecuta solo una renderización 24spp siguiendo=False, garantiza identidad Raw con seed539 o descarta, mide efecto real en guías/ROI. El workflow publica el JSON y la lámina 1:1 únicamente tras las validaciones. **Resultados pendientes de GitHub Actions**. No añade algoritmo ni cambia el addon.
+
+## E0048 existing Cycles reflection-feature toggle (2026-11-16)
+
+DIAGNOSTIC only: native guide setting changed output, inspect against both finite references. Raw identical=True. See docs/experiments/E0048_RESULTS.json; no new model or algorithm.
