@@ -141,6 +141,33 @@ try:
     elif os.environ.get("ACD_E0046_CROP"):
         raise RuntimeError("Unsupported E0046 crop variant")
 
+    # E0053: real Cozy source at high virtual full-frame density; crop only.
+    # Never silently permit this contract on another .blend or camera.
+    e0053_crop = None
+    if os.environ.get("ACD_E0053_CROP") == "cozy_detail_2":
+        if scene_variant != "external" or e0046_crop is not None:
+            raise RuntimeError("E0053 requires exclusive external source mode")
+        if scene.name != "Main" or scene.camera is None or scene.camera.name != "CAM-wide":
+            raise RuntimeError("E0053 requires exact Cozy Kitchen scene Main / camera CAM-wide")
+        crop_spec = importlib.util.spec_from_file_location(
+            "acd_e0053_crop", root / "scripts" / "cozy_crop_e0053.py")
+        crop_module = importlib.util.module_from_spec(crop_spec)
+        crop_spec.loader.exec_module(crop_module)
+        filehash = hashlib.sha256(Path(bpy.data.filepath).read_bytes()).hexdigest()
+        if filehash != crop_module.SOURCE_SHA:
+            raise RuntimeError("E0053 does not recognize original Cozy .blend hash")
+        e0053_crop = crop_module.contract(width, height)
+        b = e0053_crop["normalized_border"]
+        scene.render.use_border = True
+        scene.render.use_crop_to_border = True
+        scene.render.border_min_x = b["min_x"]
+        scene.render.border_max_x = b["max_x"]
+        scene.render.border_min_y = b["min_y"]
+        scene.render.border_max_y = b["max_y"]
+        print("E0053_COZY_REAL_PIXEL_DENSITY_CROP", e0053_crop, flush=True)
+    elif os.environ.get("ACD_E0053_CROP"):
+        raise RuntimeError("Unsupported E0053 crop variant")
+
     capture_aov = os.environ.get("ACD_CAPTURE_AOV", "0") == "1"
     if capture_aov:
         scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
@@ -487,6 +514,7 @@ try:
         "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "e0046_crop": e0046_crop,
+        "e0053_crop": e0053_crop,
         "e0048_follow_reflections": bool(view_layer.cycles.denoising_pass_follow_reflections),
         "e0049_roughness_weighting": bool(view_layer.cycles.denoising_pass_use_albedo_roughness_weighting),
         "source_original_resolution": source_resolution if scene_variant == "external" else None,

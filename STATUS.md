@@ -1136,3 +1136,7 @@ Initial CI run 43927671962 and experiment run 43927659885 stopped at a defective
 ## E0052 original EXR analysis completed
 
 E0052 frozen Cozy reference-consensus screen: ['detail_2', 'whole_image']. No new render, no denoiser change, refs unconverged; docs/experiments/E0052.md.
+
+## E0053 planned — Cozy high-density single-crop functional/cost pilot (2026-11-16)
+
+Follows E0052 consistent OIDN attenuation screen in ROI detail_2 (gain 0.726-0.755), but no quality winner. Source-pinned CC BY-SA Cozy Kitchen, Blender5.2.4, virtual1920x1808 with exact512px crop and center360px ROI, CPU8spp + two32spp references. Strict camera, scene, SHA, AOV and elapsed-wall controls. This phase measures feasibility, *not* image quality. Original scene and addon stable unchanged. See docs/experiments/E0053_PLAN.md.
