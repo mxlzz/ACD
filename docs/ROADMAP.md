@@ -516,3 +516,7 @@ First E0056 attempt run 43934413187 stopped before any Blender render because ht
 ## 2026-11-16 — E0056 checksum transcription defect corrected
 
 The mirror.blender.org download step in run 43934663447 returned an archive, but sha256sum rejected the provided checksum line as malformed: its typed digest was 62 hex characters, not 64. Corrected to 0f0ecc58d45f12b2f4272a53e2d8e69135518e16e956b118f10c20d8dcfdf5e6 (64 hex) from external Classroom CC0 source catalog; added explicit checksum-length unit test. Re-run is still source acquisition validation, not sample/render result. Do not treat the two failed attempts as denoiser failures.
+
+## 2026-11-16 — E0056 linked library audit false rejection corrected
+
+Run 43934933318 downloaded hash-verified official Classroom and loaded 11 linked libraries from extracted /tmp/e0056-source/classroom/assets, but general audit_public_scene.py rejected all linked libraries by name. Corrected this validation bug with opt-in ACD_AUDIT_LIBRARY_ROOT: only real existing files within verified archive root allowed; symlink escaping/missing external files rejected. Added pure-Python unit tests and documented precondition. No sample/render result was produced yet, no relaxation for unverified archives or other scene audits.

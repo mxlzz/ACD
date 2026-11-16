@@ -43,6 +43,18 @@ missing = [
     and not Path(bpy.path.abspath(img.filepath, library=img.library)).is_file()
 ]
 libraries = [lib.name for lib in bpy.data.libraries]
+verified_archive_libraries = []
+if libraries and os.environ.get("ACD_AUDIT_LIBRARY_ROOT"):
+    # Exact source ZIP hash is checked by caller before setting this root.
+    # Never accept arbitrary linked libraries or paths escaping that root.
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from scripts.verify_archived_libraries import verify_archived_libraries
+    verified_archive_libraries = verify_archived_libraries(
+        [bpy.path.abspath(lib.filepath) for lib in bpy.data.libraries],
+        Path(os.environ["ACD_AUDIT_LIBRARY_ROOT"])
+    )
+    libraries = []
 
 # IES photometric profiles affect lighting but do not appear in bpy.data.images.
 # A valid render fixture must not silently omit them.
@@ -104,6 +116,7 @@ report = {
     "asset_path_remaps": asset_path_remaps,
     "unbundled_missing_images": len(missing),
     "external_blend_libraries": len(libraries),
+    "verified_linked_libraries_inside_archive": verified_archive_libraries,
     "missing_ies_profiles": missing_ies,
     "smoke_render": "192x192; 4 spp; Cycles CPU; no denoising; only functional validation",
     "smoke_render_success": True,
