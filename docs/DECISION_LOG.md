@@ -1001,3 +1001,7 @@ E0054 Cozy 512px render crop at virtual1920, 24spp x3, refs512spp x2, wall=699s,
 ## 2026-11-16 — B1 independent living-room-3 preregistered
 
 E0054 Cozy: raw edge gain 0.780-0.792, OIDN gain 0.741-0.753, 512spp ref discrepancy RMSE 0.077947 vs native RMSE 0.092270. A full 25% OIDN-only loss is not established; no new algorithm justified. Start read-only small-source acceptance of independently authored cuteday living-room-3, sha1 pinned, original author/converted license NOT verified; no holdout or denoiser ranking. Plan docs/experiments/B1_LIVING_ROOM3_PLAN.md.
+
+## B1 living-room-3 audited
+
+B1 living-room-3 pinned candidate functional smoke: FAIL; scene origin/conversion license UNVERIFIED; no holdout, model or denoiser comparison. docs/experiments/B1_LIVING_ROOM3_AUDIT.md.

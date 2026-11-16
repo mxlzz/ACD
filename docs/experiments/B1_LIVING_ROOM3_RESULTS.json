@@ -1,0 +1,29 @@
+{
+  "experiment": "B1_LIVING_ROOM3",
+  "source_commit": "4271a729fdc7b8db23ad1c2f8a8f530c74f6a63c",
+  "source_git_blob": "466772ffbebf19a5f7fad52a4313420a1207edb7",
+  "source_bytes": 96421460,
+  "source_sha256": "416ef903e6a07b680379b005008ec3e5a87a058743988a70efd5c89aee7cb2b0",
+  "source_redistributed": false,
+  "origin_and_conversion_license_verified": false,
+  "smoke_success": false,
+  "audit": null,
+  "failure_log_tail": [
+    "00:00.448  blend            | Read blend: \"/tmp/acd-b1-living3/living-room-3.blend\"",
+    "/home/runner/work/ACD/ACD/scripts/audit_public_scene.py:51: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0",
+    "  for x in collection if x.use_nodes and x.node_tree]",
+    "/home/runner/work/ACD/ACD/scripts/audit_public_scene.py:51: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0",
+    "  for x in collection if x.use_nodes and x.node_tree]",
+    "Traceback (most recent call last):",
+    "  File \"/home/runner/work/ACD/ACD/scripts/audit_public_scene.py\", line 67, in <module>",
+    "    raise RuntimeError(\"Missing unbundled texture resources: \" + repr(missing[:20]))",
+    "RuntimeError: Missing unbundled texture resources: ['_unnamed_14', '_unnamed_7', '_unnamed_9']",
+    "",
+    "Error: script failed, file: 'scripts/audit_public_scene.py', exiting.",
+    "Blender 5.2.4 LTS (hash cd5dc428cce1 built 2026-11-10 01:31:47)",
+    "",
+    "Blender quit"
+  ],
+  "quality_benchmark": false,
+  "new_denoiser": false
+}
