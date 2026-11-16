@@ -14,3 +14,11 @@
 **Reanudación cuando exista la entrada:** (1) fuente, SHA, licencia, cámara y dependencias verificadas; smoke CPU 192px×4spp; (2) recorte a densidad 1080/1920 con detalle físicamente representable; (3) OIDN y cualquier variante sobre Raw idéntico, referencias con incertidumbre suficiente; (4) localizar error residual que OIDN/Cycles no resuelven y comprobar anterioridad; (5) solo entonces prueba de nueva corrección falsable, validación en holdout y coste vs aumentar spp. La fuente privada no se subirá al repo público sin autorización.
 
 No entrenamiento/fork/merge ahora; PR#10 draft y addon estable intactos. El bloqueo es de **evidencia representativa**, no de capacidad de ejecutar otra acción.
+
+## Verificación de acceso a fuente original (16-11-2026)
+
+Se localizó un registro privado de `Prueba ACD.blend` en la biblioteca asociada al proyecto (166.912.086 bytes; 12-11-2026). **Solo se recuperó el metadato**, no el contenido binario: el intento de obtener una copia de trabajo devolvió «This Project file does not have an authorized raw-byte materialization path». En consecuencia, no se ha abierto con Blender, no se ha comprobado su integridad ni se ha observado su contenido. No afirmar que la escena esté disponible para ejecutar benchmarks.
+
+**Intervención mínima necesaria:** volver a adjuntar el `.blend` en el chat activo o facilitar un enlace de descarga autorizado al archivo completo. Si la escena depende de imágenes, bibliotecas o IES externos, adjuntar también esas dependencias o empaquetarlas previamente. Mantener la escena privada; no publicarla en GitHub. Una vez disponible, seguir la puerta de aceptación y el protocolo de comparación definidos arriba. Sin nuevos renders ni cambios al addon a partir de la mera existencia del metadato.
+
+**Corrección de auditoría:** en la descripción archivada de E0049 aparecía `follow=False` por un error del generador de informes; el workflow fija únicamente `ACD_E0049_ROUGHNESS_WEIGHTING=0` y el script de Blender exige `follow_reflections=True`. Se corrigió la interpretación documental, sin alterar los resultados numéricos ni repetir el experimento.
