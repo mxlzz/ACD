@@ -1,3 +1,5 @@
+> E0050 offline Blender Compositor guide-swap on frozen E0046 Raw and E0046/E0049 AOV; require raw passthrough and original OIDN replay near-exact before attributing guide differences. Script/tests ready, workflow next, no Cycles render or training.
+
 > E0049 workflow trigger path corrected to its actual filename; render protocol unchanged. First action pending.
 
 > E0048 showed Cycles default follow_reflections=True helps; E0049 final native guide ablation roughness-weighted albedo True vs False on same E0046 seed/crop with Raw identity gate, reused refs. No new denoiser, stop tuning guide flags if no strong gain; workflow submitted.

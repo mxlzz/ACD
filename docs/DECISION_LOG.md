@@ -942,3 +942,9 @@ DIAGNOSTIC only: native guide setting changed output, inspect against both finit
 ## E0049 existing Cycles roughness-feature toggle (2026-11-16)
 
 STOP: Raw changed; no same-input causal inference. Raw identical=False. See docs/experiments/E0049_RESULTS.json; no new model or algorithm.
+
+
+## 2026-11-16 — E0050: reconstrucción del compositor con Raw idéntico y dos juegos de guías
+
+- E0049 no permitió inferencia: al desactivar albedo roughness weighting, Raw max delta0.077223. Nueva prueba [E0050_PLAN](docs/experiments/E0050_PLAN.md): **sin render Cycles** se leen EXRs E0046/E0049 SHA controlados, dos pares AOV y se aplica el nodo OIDN de Blender 5.2.4 a la misma beauty E0046. Primero verificar que paso Raw sea igual y replay de guías originales reproduzca OIDN original; si no, detener y documentar.
+- Solo si ambas igualdades pasan comparar las guías alternativas frente a refs512spp y ROI E0047. Método de combinación conocido, sin nuevo algoritmo, entrenamiento, referencias o cambios en addon. Scripts y tests de fail-closed añadidos; workflow de ejecución se agrega después. Sin conclusión numérica todavía.

@@ -1,3 +1,10 @@
+## 2026-11-16 — E0050: reconstrucción del compositor con Raw idéntico y dos juegos de guías
+
+- E0049 no permitió inferencia: al desactivar albedo roughness weighting, Raw max delta0.077223. Nueva prueba [E0050_PLAN](docs/experiments/E0050_PLAN.md): **sin render Cycles** se leen EXRs E0046/E0049 SHA controlados, dos pares AOV y se aplica el nodo OIDN de Blender 5.2.4 a la misma beauty E0046. Primero verificar que paso Raw sea igual y replay de guías originales reproduzca OIDN original; si no, detener y documentar.
+- Solo si ambas igualdades pasan comparar las guías alternativas frente a refs512spp y ROI E0047. Método de combinación conocido, sin nuevo algoritmo, entrenamiento, referencias o cambios en addon. Scripts y tests de fail-closed añadidos; workflow de ejecución se agrega después. Sin conclusión numérica todavía.
+
+---
+
 ## 2026-11-16 — E0049 corrección de ruta de disparo CI
 
 - El workflow E0049 se había creado como `acd-e0049-roughness-weighting.yml` mientras el filtro paths de su trigger apuntaba a `acd-e0049-roughness-guides.yml`. Corrección de un único literal de configuración para que el push dispare el workflow correspondiente, sin modificar modelo, imagen, seed, control de Raw ni método. Ejecución pendiente.
