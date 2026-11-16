@@ -1,3 +1,11 @@
+## 2026-11-16 — E0046: crop de lamas a densidad de píxel de producción
+
+- [E0045](docs/experiments/E0045.md) demostró que lamas a 320px están bajo Nyquist (paso mínimo1.304px) y juntas <0.4px. No continuar interpretando esa pérdida de contraste como fallo del denoiser.
+- [E0046_PLAN](docs/experiments/E0046_PLAN.md) especifica **único crop** 512×512 a resolución virtual1920×1440, camera/FOV intactos, un noisy24spp seed539, refs512spp x2. Evalúa solamente centro320×320 con margen96px. Nativo OIDN vs Raw, sin variante/entrenamiento.
+- Debe fallar si Blender devuelve imagen de tamaño inesperado o fuentes/guías no idénticas. Si pasa, examinar imagen 1:1 y diferencia en bordes; si no hay problema claro o referencias siguen inseguras, detener esta hipótesis. Addon intacto; **run pendiente** en este commit.
+
+---
+
 ## 2026-11-16 — E0045: descubierto límite de resolución del fixture previo
 
 - [E0044](docs/experiments/E0044.md) pasó en Blender5.2.4 LTS [run 43880565752](https://github.com/mxlzz/ACD/actions/runs/43880565752): OIDN RMSE 0.053997/0.053490 (2 referencias1024), Raw RMSE 0.221769/0.221340, error de gradientes OIDN ~0.06957; ratio contraste borde OIDN ~0.686, 7/12 tiles con ratio <0.75. Referencias entre sí RMSE 0.040819. No convergencia probada.

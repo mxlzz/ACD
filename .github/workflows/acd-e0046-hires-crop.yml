@@ -1,0 +1,122 @@
+name: ACD E0046 1920px-density slat crop vs OIDN without rendering full frame
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0046-hires-crop.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  focused-crop:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      ACD_BENCH_DIR: /tmp/acd-e0046
+      ACD_SCENE: detail_target
+      ACD_DEVICE: CPU
+      ACD_WIDTH: "1920"
+      ACD_HEIGHT: "1440"
+      ACD_E0046_CROP: slats
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_REFERENCE_SPP: "512"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_EXTRA_SEEDS: ""
+      ACD_METHODS: NATIVE_COMP_OIDN
+      ACD_CAPTURE_AOV: "1"
+      ACD_E0044_ADAPTIVE_OFF: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install scientific dependencies and test fixed-crop contracts
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install "Pillow>=10,<13"
+          python -m pytest -q tests/test_detail_crop_e0046.py tests/test_detail_projection_e0045.py
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Download SHA verified Blender when no official cache exists
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          FILE=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$FILE -o "$FILE"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$FILE" official.sha256 | sha256sum -c -
+          tar -xf "$FILE"
+      - name: Prepare headless rendering libraries
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Render one 512x512 crop at correct 1920x1440 camera FOV and 2 references
+        run: |
+          ./blender-5.2.4-linux-x64/blender -b --factory-startup --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Validate crop dimension and original guide identity; score interior
+        run: |
+          python -m scripts.analyze_detail_crop_e0046 --directory /tmp/acd-e0046 --output /tmp/acd-e0046-report
+      - name: Archive metrics and PNG with transparent sampling and edge limits
+        run: |
+          mkdir -p docs/experiments benchmarks/results/detail_crop_e0046
+          cp /tmp/acd-e0046-report/E0046_RESULTS.json docs/experiments/E0046_RESULTS.json
+          cp /tmp/acd-e0046-report/e0046_cropped_slats_1to1.png benchmarks/results/detail_crop_e0046/
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("docs/experiments/E0046_RESULTS.json").read_text())
+          rows=[
+            "# E0046 — Lamas a escala real de píxel (crop, no frame completo)",
+            "", "Blender 5.2.4 LTS: camera 1920×1440 px, 512×512 px render border, interior evaluado 320×320 (margen 96px). Misma cámara y geometría original.",
+            "24 spp seed539 Raw y OIDN compositor High/Accurate/HDR; referencias 512 spp seeds 8819/8922. No hay algoritmo nuevo.",
+            "", "![Crop central 1:1 con ruido, OIDN y dos referencias](../../benchmarks/results/detail_crop_e0046/e0046_cropped_slats_1to1.png)",
+            "", "| Método | RMSE ref1 | RMSE ref2 | Error gradientes ref1 | Contraste bordes ref1 |",
+            "|---|---:|---:|---:|---:|"
+          ]
+          for name in ("Raw","NATIVE_COMP_OIDN"):
+            a=r["full_interior_metrics"][name]["ref1"];b=r["full_interior_metrics"][name]["ref2"]
+            rows.append(f'| {name} | {a["color"]["rmse_linear"]:.8f} | {b["color"]["rmse_linear"]:.8f} | {a["detail"]["edge_gradient_rmse"]:.8f} | {a["detail"]["edge_contrast_ratio"]:.4f} |')
+          rows += ["", "Referencia↔referencia RMSE: "+str(r["reference_pair_difference"]["rmse_linear"])+".",
+            "El período de las lamas es ahora ~8–10 px, frente a 1.3–1.7 px en E0044. La comparación no es causal entre resoluciones: cambian ruido, píxeles y campo de filtro.",
+            "El OIDN ve solo el crop: 96 px de margen para reducir artefactos de borde, no para eliminarlos con garantía.",
+            "No se demuestra convergencia ni se propone una nueva técnica; cualquier hallazgo visual debe ser explicado y comprobado en otra escena.",
+            "", "[JSON con cuatro regiones interiores](E0046_RESULTS.json)."
+          ]
+          Path("docs/experiments/E0046.md").write_text("\n".join(rows)+"\n")
+          trace="\n## E0046 completed — actual same-FOV 1920px-density 512px crop, no new filter\n\n"+\
+            "Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp references. "+\
+            "Result docs/experiments/E0046_RESULTS.json, preview benchmarks/results/detail_crop_e0046/. "+\
+            "No quality or addon promotion. Receptive-field border caveat.\\n"
+          for p in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+            with Path(p).open("a",encoding="utf-8") as f:f.write(trace)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0046_RESULTS.json docs/experiments/E0046.md
+          git add benchmarks/results/detail_crop_e0046/ STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0046): archive real-pixel-density architectural slat crop and paired references"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Save original EXRs temporarily; no source BLEND redistributed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0046-hires-density-crop-exr
+          retention-days: 14
+          if-no-files-found: warn
+          compression-level: 1
+          path: /tmp/acd-e0046/

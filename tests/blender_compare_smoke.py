@@ -115,6 +115,32 @@ try:
     scene.render.resolution_x = width
     scene.render.resolution_y = height
     scene.render.resolution_percentage = 100
+    # E0046 single targeted *render-border crop* at 1920x1440 pixel density.
+    # Crop coordinates are specified in top-left pixels and converted to
+    # Blender's bottom-left normalized border. The camera FOV is unchanged.
+    # Central 320x320 ROI has >=96px margin to reduce tile edge artifacts.
+    e0046_crop = None
+    if os.environ.get("ACD_E0046_CROP") == "slats":
+        if (width, height) != (1920, 1440):
+            raise RuntimeError("E0046 crop requires 1920x1440 full-frame size")
+        x0, y0, crop_size = 928, 320, 512
+        scene.render.use_border = True
+        scene.render.use_crop_to_border = True
+        scene.render.border_min_x = x0 / width
+        scene.render.border_max_x = (x0 + crop_size) / width
+        scene.render.border_min_y = 1 - (y0 + crop_size) / height
+        scene.render.border_max_y = 1 - y0 / height
+        e0046_crop = {
+            "name": "slats",
+            "full_frame_resolution": [width, height],
+            "top_left_origin_rect": [x0, y0, crop_size, crop_size],
+            "interior_margin_pixels": 96,
+            "expected_cropped_resolution": [crop_size, crop_size],
+            "evaluation_interior_xywh": [96, 96, 320, 320],
+        }
+    elif os.environ.get("ACD_E0046_CROP"):
+        raise RuntimeError("Unsupported E0046 crop variant")
+
     capture_aov = os.environ.get("ACD_CAPTURE_AOV", "0") == "1"
     if capture_aov:
         scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
@@ -439,6 +465,7 @@ try:
         "second_reference_seed": reference_seed + 103 if second_reference else None,
         "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
+        "e0046_crop": e0046_crop,
         "source_original_resolution": source_resolution if scene_variant == "external" else None,
         "source_original_pixel_aspect": [scene.render.pixel_aspect_x, scene.render.pixel_aspect_y] if scene_variant == "external" else None,
         "compositional_methods": [name for _, _, name, _ in methods],
