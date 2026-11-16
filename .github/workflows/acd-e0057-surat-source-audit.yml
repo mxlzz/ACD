@@ -1,0 +1,139 @@
+name: ACD E0057 Surat architectural release source smoke only
+
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths:
+      - .github/workflows/acd-e0057-surat-source-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  checksum-and-smoke:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      OMP_NUM_THREADS: "4"
+      ACD_AUDIT_SOURCE: "Surat Diamond Bourse CC0 model contribution; actual architectural design rights NOT cleared"
+      ACD_AUDIT_RENDER: /tmp/acd-e0057-smoke.png
+      ACD_AUDIT_OUTPUT: /tmp/acd-e0057-audit.json
+      ACD_AUDIT_LIBRARY_ROOT: /tmp/acd-e0057-source
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Fetch fixed GitHub release asset and verify published SHA256
+        run: |
+          mkdir -p /tmp/acd-e0057-source
+          gh release download v1.0.1 -R gitfalconhub/surat-diamond-bourse-gujarat-india -p surat-diamond-bourse-model-v1.0.1.zip -D /tmp
+          test "$(stat -c%s /tmp/surat-diamond-bourse-model-v1.0.1.zip)" -eq 166627773
+          echo "721e77b401fba0fa5c3b9df13b09279c6d05781af865f2b63945e7e032e991a8  /tmp/surat-diamond-bourse-model-v1.0.1.zip" | sha256sum -c -
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          root=Path("/tmp/acd-e0057-source")
+          with ZipFile("/tmp/surat-diamond-bourse-model-v1.0.1.zip") as archive:
+              for member in archive.infolist():
+                  p=Path(member.filename)
+                  if p.is_absolute() or ".." in p.parts:
+                      raise RuntimeError("Unsafe archive path")
+              archive.extractall(root)
+          files=[f for f in root.rglob("Surat Diamond Bourse.blend") if f.is_file()]
+          if len(files)!=1:
+              raise RuntimeError(f"Expected one exact scene BLEND; got {len(files)}")
+          Path("/tmp/acd-e0057-source-path").write_text(str(files[0]))
+          print("E0057_SCENE_FILE",files[0],"bytes",files[0].stat().st_size)
+          PY
+      - uses: actions/cache@v4
+        id: blender
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Download checksum-verified official Blender when cache absent
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Install headless libraries
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Try read-only camera/material/resource audit and 4spp smoke
+        run: |
+          set +e
+          SOURCE="$(cat /tmp/acd-e0057-source-path)"
+          ./blender-5.2.4-linux-x64/blender --disable-autoexec -b "$SOURCE" \
+            --python-exit-code 1 --python scripts/audit_public_scene.py > /tmp/acd-e0057-smoke.log 2>&1
+          CODE=$?
+          echo "$CODE" > /tmp/acd-e0057-exit.txt
+          tail -n 25 /tmp/acd-e0057-smoke.log
+          exit 0
+      - name: Archive accepted or rejected source without image/scene
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          status=int(Path("/tmp/acd-e0057-exit.txt").read_text().strip())
+          report=Path("/tmp/acd-e0057-audit.json")
+          image=Path("/tmp/acd-e0057-smoke.png")
+          success=status==0 and report.is_file() and image.is_file()
+          audit=json.loads(report.read_text()) if success else None
+          failure_tail=None if success else Path("/tmp/acd-e0057-smoke.log").read_text(errors="replace").splitlines()[-25:]
+          result={"experiment":"E0057","source_repo":"gitfalconhub/surat-diamond-bourse-gujarat-india",
+                  "source_tag":"v1.0.1","release_asset":"surat-diamond-bourse-model-v1.0.1.zip",
+                  "release_sha256":"721e77b401fba0fa5c3b9df13b09279c6d05781af865f2b63945e7e032e991a8","release_bytes":166627773,
+                  "source_original_model_contribution_license":"CC0",
+                  "underlying_architectural_design_rights_cleared":False,
+                  "source_scene_redistributed":False,"derived_render_published":False,
+                  "audit":audit,"smoke_success":success,
+                  "failure_log_tail":failure_tail,
+                  "new_denoiser":False,"benchmark_quality":False,"valid_holdout":False}
+          out=Path("docs/experiments")
+          (out/"E0057_RESULTS.json").write_text(json.dumps(result,indent=2)+"\n")
+          lines=["# E0057 — Surat Diamond Bourse public-scene functional acceptance","",
+                 "Source exact GitHub release v1.0.1, checksum/bytes verified; rights limited to contributor's original CC0 model, not the real building's design.",
+                 "Blender5.2.4 Cycles CPU 192x192 4spp; no denoiser, no scene modification or source redistribution.",
+                 "Source audit: "+("PASS" if success else "FAIL"),
+                 "Legal/holdout gate: NOT ACCEPTED for public redistribution or a denoiser quality ranking."]
+          if success:
+              lines+=["","Scene "+audit["scene"]+", camera "+audit["active_camera"],
+                      "Objects "+str(audit["objects"])+", meshes "+str(audit["meshes"]),
+                      "Materials "+str(audit["materials"])+", images "+str(audit["images"]),
+                      "Missing images "+str(audit["unbundled_missing_images"]),
+                      "Verified packaged linked libraries "+str(len(audit["verified_linked_libraries_inside_archive"]))]
+          else:
+              lines+=["","Failure log tail:","~~~",*(failure_tail or []),"~~~"]
+          (out/"E0057.md").write_text("\n".join(lines)+"\n")
+          note="E0057 architectural source acceptance "+("PASS" if success else "FAIL")+"; no OIDN or quality benchmark; architecture rights unresolved. docs/experiments/E0057.md."
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(path).open("a",encoding="utf-8") as f:f.write("\n## E0057 public architectural scene source acceptance\n\n"+note+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0057.md docs/experiments/E0057_RESULTS.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "testdata(E0057): archive archviz source-only pass or rejection"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Fail closed after publishing any rejected source
+        run: |
+          test "$(cat /tmp/acd-e0057-exit.txt)" -eq 0
+      - name: Temporary audit text only, no generated images or original art
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0057-source-audit-text
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            /tmp/acd-e0057-audit.json
+            /tmp/acd-e0057-smoke.log
+            /tmp/acd-e0057-exit.txt

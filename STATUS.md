@@ -1180,3 +1180,7 @@ Run 43934933318 downloaded hash-verified official Classroom and loaded 11 linked
 ## E0056 Classroom seed diagnosis
 
 E0056 Classroom CC0 old E0007 seed anomaly on Blender5.2.4, separate Cycles 96x54/16spp processes 539/911 TABULATED_SOBOL, RMSE=1.3351280257644384e-06, relative=3.278046123412548e-06, measurable=False. No reference or denoiser; not proof of independence. docs/experiments/E0056.md.
+
+## 2026-11-16 — E0057 source-only architecture audit preregistered
+
+Previous E0056 Classroom on Blender5.2.4 still yields only 4/5184 pixel differences, RMSE1.335e-6 /relative3.278e-6 across seeds539/911; cannot be used as independent multiseed holdout. E0057 evaluates a published modern architectural scene Surat Diamond Bourse model contributor's CC0 release v1.0.1 SHA256 721e77..., without redistributing the underlying building model or derived render (architectural design rights explicitly unresolved). Hash and packed resources first; only tiny 192px4spp read-only Cycles smoke. No denoiser or quality comparison; plan docs/experiments/E0057_PLAN.md.

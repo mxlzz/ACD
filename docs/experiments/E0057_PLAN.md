@@ -1,0 +1,11 @@
+# B1 — E0057: auditoría funcional de escena arquitectónica pública Surat Diamond Bourse
+
+**Fecha y propósito:** 16-11-2026. Investigar únicamente la integridad de una escena Blender contemporánea con geometría arquitectónica exterior/interior, materiales y texturas empaquetadas. Es un control para formar un corpus de validación independiente, NO una comparación de calidad ni un nuevo método ACD.
+
+Fuente: gitfalconhub/surat-diamond-bourse-gujarat-india, release v1.0.1, archivo surat-diamond-bourse-model-v1.0.1.zip, 166.627.773 bytes, SHA256 721e77b401fba0fa5c3b9df13b09279c6d05781af865f2b63945e7e032e991a8, digest verificado en GitHub Release API. El repositorio indica Blender 5.2.1 y archivos de textura empaquetados. Licencia: CC0 solo de aportes originales del creador; RIGHTS.md reserva derechos de terceros sobre el proyecto arquitectónico real. Usar solo para auditoría técnica interna y no redistribuir .blend ni previews hasta aclarar derechos.
+
+Protocolo: descargar release exacta a /tmp, comprobar tamaño y SHA256 antes de extraer; zip-slip rechazado, localizar exactamente un archivo llamado Surat Diamond Bourse.blend. Abrir Blender 5.2.4 LTS con --disable-autoexec y nunca guardar la escena. Reutilizar audit_public_scene.py para detectar cámara/materiales, imágenes externas faltantes, IES ausentes, y bibliotecas vinculadas que no se encuentren dentro de la extracción verificada. Solo si pasa, Cycles CPU 192x192 a 4spp, sin denoise. Registrar metadatos, SHA del ZIP y estado PASS/FAIL, sin subir arte/escena y sin evaluar OIDN.
+
+Puerta: un smoke aprobado solo autoriza considerar una escena para pruebas de rendimiento/convergencia. Aceptar para holdout exige confirmación de que la imagen es representativa de detalles arquitectónicos y resolver condiciones de difusión; esta auditoría NO basta. Un error se archiva como rechazo sin inventar texturas ni optimizar materiales.
+
+Alineación: E0054 confirmó que Raw también pierde amplitud en máscara de referencia, por lo que no se puede atribuir a OIDN un 25 % total. E0056 comprobó que Classroom sigue sin variación apreciable entre semillas en Blender 5.2.4. La creación de un corpus realmente diverso es precondición de nuevas hipótesis. Ningún filtro High/Super ni modelo nuevo se ejecuta. PR #10 draft; addon estable sin cambios.
