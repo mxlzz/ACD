@@ -572,3 +572,7 @@ Run 43947290538 descargó ~31.9 MiB del host oficial pero abortó en tamaño exa
 ## 2026-11-16 — E0062 root cause: valid Zstandard-compressed Blender source
 
 Correcting earlier misdiagnosis: official source is **exactly** 33,452,252 bytes (not a size mismatch). Two runs 43947290538 and 43947639039 stopped at overly restrictive BLENDER uncompressed-magic checks before any Cycles run. Second log reveals first4 28B52FFD = Blender's native Zstandard compressed .blend format, documented since Blender3.0. Fixed to accept BLENDER/ZSTD/gzip source header while retaining exact byte check and requiring Blender5.2.4 to decode and pass strict camera/resource/IES/render checks. No scene modifications, no quality results from those failed runs. Source remains unaccepted pending true smoke.
+
+## E0062 independent-source acceptance
+
+E0062 official Lone Monk source SHA=eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b, smoke=PASS. Strict resources/camera/IES audit; no denoiser quality or addon change. See docs/experiments/E0062.md.

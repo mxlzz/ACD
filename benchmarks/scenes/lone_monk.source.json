@@ -1,0 +1,11 @@
+{
+  "id": "lone_monk_official",
+  "source_url": "https://mirror.blender.org/demo/cycles/lone-monk_cycles_and_exposure-node_demo.blend",
+  "source_sha256": "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b",
+  "source_bytes": 33452252,
+  "license": "CC BY",
+  "author": "Carlo Bergonzini/Monorender",
+  "accepted_for_development_smoke": true,
+  "quality_holdout": false,
+  "redistribute_blend": false
+}
