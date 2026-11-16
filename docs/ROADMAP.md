@@ -504,3 +504,7 @@ E0054 Cozy: raw edge gain 0.780-0.792, OIDN gain 0.741-0.753, 512spp ref discrep
 ## B1 living-room-3 audited
 
 B1 living-room-3 pinned candidate functional smoke: FAIL; scene origin/conversion license UNVERIFIED; no holdout, model or denoiser comparison. docs/experiments/B1_LIVING_ROOM3_AUDIT.md.
+
+## E0056 planned — Classroom CC0 original seed anomaly in current Blender
+
+Independent converted living-room-3 in B1 failed (three missing textures: _unnamed_14, _unnamed_7, _unnamed_9; conversion identity/license unverified), so do not use as holdout or invent replacement resources. New targeted gate reuses existing E0007 Blender Classroom CC0 exact source and 96x54/16spp TABULATED_SOBOL 539/911 independent-process test, but on Blender5.2.4. A pass only establishes changed samples, not statistical independence or OIDN quality. No new denoiser. docs/experiments/E0056_PLAN.md.
