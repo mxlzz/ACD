@@ -576,3 +576,7 @@ Correcting earlier misdiagnosis: official source is **exactly** 33,452,252 bytes
 ## E0062 independent-source acceptance
 
 E0062 official Lone Monk source SHA=eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b, smoke=PASS. Strict resources/camera/IES audit; no denoiser quality or addon change. See docs/experiments/E0062.md.
+
+## 2026-11-16 — E0063 pinned Lone Monk raw seed variation pre-registered
+
+E0062 official arch Cycles scene functional audit PASS: original 33,452,252-byte file SHA256 eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b, Blender5.2.4 original daylight/cam.001, 1368 objects, 35 materials, no missing images/IES, 192px4spp smoke. E0063 now screens source-pinned separate-process 96x54 16spp seeds539/911 TABULATED_SOBOL, saves only numeric input-variation metrics, not renders. Independent samples/quality/convergence NOT proven by that smoke. No addon change; next after pass = architecture ROI at delivery scale and uncertain references, not another low-res render. docs/experiments/E0063_PLAN.md.

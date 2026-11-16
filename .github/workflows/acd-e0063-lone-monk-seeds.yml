@@ -1,0 +1,102 @@
+name: ACD E0063 Lone Monk pinned public Cycles source two-process raw seed diversity
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths: [.github/workflows/acd-e0063-lone-monk-seeds.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  real-source-seed-gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      OMP_NUM_THREADS: "4"
+      ACD_PROBE_SCENE: external
+      ACD_PROBE_DIR: /tmp/e0063
+      ACD_PROBE_PATTERN: TABULATED_SOBOL
+      ACD_PROBE_OFFSET: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check metadata fixture and numerical seed metrics
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_lone_monk_seeds_e0063.py tests/test_surat_seed_e0058.py
+      - name: Get and hash-check identical accepted official compressed BLEND
+        run: |
+          mkdir -p /tmp/e0063
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://mirror.blender.org/demo/cycles/lone-monk_cycles_and_exposure-node_demo.blend -o /tmp/lone-monk.blend
+          test "$(stat -c%s /tmp/lone-monk.blend)" -eq 33452252
+          echo "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b  /tmp/lone-monk.blend" | sha256sum -c -
+      - uses: actions/cache@v4
+        id: blender
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Get SHA-verified Blender 5.2.4 on cache miss
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Headless runtime
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: First fresh-process original-scene Raw 16 spp seed539
+        env:
+          ACD_PROBE_SEED: "539"
+          ACD_PROBE_LABEL: monk_seed539
+        run: |
+          ./blender-5.2.4-linux-x64/blender -b --disable-autoexec /tmp/lone-monk.blend --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Second fresh-process, identical camera 16 spp seed911
+        env:
+          ACD_PROBE_SEED: "911"
+          ACD_PROBE_LABEL: monk_seed911
+        run: |
+          ./blender-5.2.4-linux-x64/blender -b --disable-autoexec /tmp/lone-monk.blend --python-exit-code 1 --python tests/blender_seed_probe.py
+      - name: Compare unfiltered Raw and record acceptance gate, no denoise
+        run: |
+          python -m scripts.analyze_lone_monk_seeds_e0063 --source /tmp/lone-monk.blend --directory /tmp/e0063 --output /tmp/e0063-report
+      - name: Persist independent-scene seed gate and source manifest
+        run: |
+          cp /tmp/e0063-report/E0063.md docs/experiments/E0063.md
+          cp /tmp/e0063-report/E0063_RESULTS.json docs/experiments/E0063_RESULTS.json
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          d=json.loads(Path("docs/experiments/E0063_RESULTS.json").read_text())
+          source=Path("benchmarks/scenes/lone_monk.source.json")
+          m=json.loads(source.read_text())
+          m["seed_variation_screen_e0063"]="PASS" if d["measurably_distinct"] else "FAIL"
+          m["seed_variation_source_run"]="E0063"
+          m["seed_statistical_independence_proven"]=False
+          m["denoiser_quality_benchmark_ready"]=False
+          source.write_text(json.dumps(m,indent=2)+"\n")
+          msg=(f"E0063 pinned official Lone Monk source, two fresh Cycles processes 16spp seeds539/911: "
+               f"measurably_distinct={d['measurably_distinct']}, "
+               f"relative_RMSE={d['raw_seed_variation']['relative_rmse']:.8f}; "
+               "no denoiser or reference; no quality ranking. "
+               "Source SHA pinned in benchmarks/scenes/lone_monk.source.json; docs/experiments/E0063.md.")
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(path).open("a",encoding="utf-8") as f:
+                  f.write("\n## E0063 independent arch Cycles seed gate\n\n"+msg+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0063.md docs/experiments/E0063_RESULTS.json benchmarks/scenes/lone_monk.source.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0063): archive pinned Lone Monk two-process seed variation"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Never publish original .blend or Raw EXR imagery
+        if: always()
+        run: echo "Only provenance and numerical metrics committed."
