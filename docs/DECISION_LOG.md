@@ -893,3 +893,7 @@ No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchm
 - [E0045](docs/experiments/E0045.md) demostró que lamas a 320px están bajo Nyquist (paso mínimo1.304px) y juntas <0.4px. No continuar interpretando esa pérdida de contraste como fallo del denoiser.
 - [E0046_PLAN](docs/experiments/E0046_PLAN.md) especifica **único crop** 512×512 a resolución virtual1920×1440, camera/FOV intactos, un noisy24spp seed539, refs512spp x2. Evalúa solamente centro320×320 con margen96px. Nativo OIDN vs Raw, sin variante/entrenamiento.
 - Debe fallar si Blender devuelve imagen de tamaño inesperado o fuentes/guías no idénticas. Si pasa, examinar imagen 1:1 y diferencia en bordes; si no hay problema claro o referencias siguen inseguras, detener esta hipótesis. Addon intacto; **run pendiente** en este commit.
+
+## E0046 completed — actual same-FOV 1920px-density 512px crop, no new filter
+
+Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp references. Result docs/experiments/E0046_RESULTS.json, preview benchmarks/results/detail_crop_e0046/. No quality or addon promotion. Receptive-field border caveat.\n

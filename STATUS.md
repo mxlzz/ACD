@@ -1039,3 +1039,7 @@ No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchm
 ## E0044 current Blender 5.2.4 detail diagnosis
 
  Blender 5.2.4 LTS, 320x240, 24 spp seed539, 2 refs 1024 spp seeds8819/8922. Sin assets externos, sin nuevos métodos. El fixture contiene 52 lamas, juntas de azulejos, vidrio, metal y bump procedural. Compositor OIDN High/Accurate/HDR con guías albedo/normal. Metrics in docs/experiments/E0044_RESULTS.json and gallery benchmarks/results/detail_current_e0044/. No algorithm change, interpret tile screen as descriptive only.
+
+## E0046 completed — actual same-FOV 1920px-density 512px crop, no new filter
+
+Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp references. Result docs/experiments/E0046_RESULTS.json, preview benchmarks/results/detail_crop_e0046/. No quality or addon promotion. Receptive-field border caveat.\n
