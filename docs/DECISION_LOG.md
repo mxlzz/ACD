@@ -1065,3 +1065,7 @@ E0059 no encuentra regresión global Raw-relativa del gradiente bajo su test, pe
 ## 2026-11-16 — E0062 official Blender Cycles architectural source acceptance preregistered
 
 After E0059/60 stopped any speculative OIDN sharpness tuning, chose original *Lone Monk* Romanesque architectural interior, Carlo Bergonzini / Monorender CC BY, from Blender's official Cycles demo 33,452,252 bytes. Audit CPU Blender5.2.4 192px 4spp with strict camera/materials/image/IES/linked-library gates and source SHA256. Either PASS or FAIL permanently archived; no quality conclusion, no addon change, no original binary redistributed. Plan docs/experiments/E0062_PLAN.md. Next if PASS = actual seed-diversity screen, not another denoiser algorithm.
+
+## 2026-11-16 — E0062 adquisición oficial: control de tamaño de índice rechazado, sin abrir Blender
+
+Run 43947290538 descargó ~31.9 MiB del host oficial pero abortó en tamaño exacto del catálogo 33.452.252 bytes; por lo tanto no se ejecutó el smoke ni existe aceptación. El tamaño de índice no autentica el archivo. Se corrige la etapa de identificación para leer la cabecera BLENDER, controlar un rango de tamaño y registrar SHA256 del archivo oficial, luego aplicar la misma auditoría estricta de recursos, cámara, IES, Cycles sin guardar. El SHA se fija en manifest si pasa y se comprobará inmutable en tests posteriores. No se modificó el addon ni se reemplazaron recursos.

@@ -15,3 +15,7 @@ Lone Monk, Carlo Bergonzini / Monorender, escena interior de edificio románico.
 Si pasa, es **escena nueva de desarrollo** con autor independiente de Cozy Kitchen y complejidad arquitectónica. Aún NO es holdout de calidad, no se midieron seeds, convergencia ni resoluciones de entrega. Próximo control relevante: verificar que distintas semillas Cycles producen Raw distinto en esa cámara y version; luego fijar regiones materiales/geométricas a densidad de 1080–1920 antes de realizar un benchmark controlado con OIDN y dos referencias de error estimado. Si falla, descartar sin insistir en un ajuste específico de esta fuente.
 
 No fusionar ni modificar addon; PR #10 draft; evitar reabrir High/Super, sharpen u otras variantes ya examinadas. La salida solo establece si esta escena sirve como fixture experimental reproducible.
+
+## Corrección de identidad de fuente anterior al smoke
+
+El primer run 43947290538 descargó el archivo desde Blender, pero se detuvo en la comparación del tamaño tomado del índice: no hubo smoke ni aceptación. El tamaño del listado web no se tratará como hash de identidad. El siguiente run comprobará cabecera binaria BLENDER, bytes en un intervalo razonable, origen oficial (solo dos URLs permitidas), registrará SHA256 real y auditará cámara, recursos, IES y render. **El SHA256 adquirido quedará inmutable para ejecuciones futuras**; un cambio posterior de bytes exigirá volver a auditar. Este ajuste no relaja la aceptación de materiales ausentes ni reemplaza el .blend.

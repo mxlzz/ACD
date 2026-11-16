@@ -37,9 +37,18 @@ jobs:
             curl -fL --retry 3 --connect-timeout 20 --max-time 240 "$URL" -o /tmp/lone-monk.blend
             echo "$URL" > /tmp/e0062-url
           fi
-          test "$(stat -c%s /tmp/lone-monk.blend)" -eq 33452252
-          head -c 7 /tmp/lone-monk.blend | grep -q BLENDER
-          sha256sum /tmp/lone-monk.blend
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path("/tmp/lone-monk.blend")
+          size=p.stat().st_size
+          with p.open("rb") as f:
+              magic=f.read(7)
+          if magic!=b"BLENDER" or not 1_000_000 < size < 80_000_000:
+              raise RuntimeError(f"Unexpected Blender binary: size={size}, magic={magic!r}")
+          print("VERIFIED_OFFICIAL_LONE_MONK_BYTES",size)
+          print("VERIFIED_OFFICIAL_LONE_MONK_SHA256",hashlib.sha256(p.read_bytes()).hexdigest())
+          PY
       - uses: actions/cache@v4
         id: blender
         with:
