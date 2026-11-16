@@ -520,3 +520,7 @@ The mirror.blender.org download step in run 43934663447 returned an archive, but
 ## 2026-11-16 — E0056 linked library audit false rejection corrected
 
 Run 43934933318 downloaded hash-verified official Classroom and loaded 11 linked libraries from extracted /tmp/e0056-source/classroom/assets, but general audit_public_scene.py rejected all linked libraries by name. Corrected this validation bug with opt-in ACD_AUDIT_LIBRARY_ROOT: only real existing files within verified archive root allowed; symlink escaping/missing external files rejected. Added pure-Python unit tests and documented precondition. No sample/render result was produced yet, no relaxation for unverified archives or other scene audits.
+
+## E0056 Classroom seed diagnosis
+
+E0056 Classroom CC0 old E0007 seed anomaly on Blender5.2.4, separate Cycles 96x54/16spp processes 539/911 TABULATED_SOBOL, RMSE=1.3351280257644384e-06, relative=3.278046123412548e-06, measurable=False. No reference or denoiser; not proof of independence. docs/experiments/E0056.md.
