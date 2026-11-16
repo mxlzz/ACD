@@ -993,3 +993,7 @@ E0053 source-pinned Cozy crop 512 at virtual1920, 8spp+two32spp refs, wall=66s, 
 ## 2026-11-16 — E0054 preregistered: real high-density Cozy references
 
 E0053 cost/contract pilot passed with 66s for 8spp + two 32spp references, but reference RMSE 0.332715 is too noisy for fidelity. E0054 now compares 24spp x3 and 512spp refs x2 in identical frozen original source/crop (real Blender 5.2.4). ROI only reference-derived, original addon unchanged. The run must stop on input mismatch, and no benchmark ranks a new denoiser. See docs/experiments/E0054_PLAN.md.
+
+## E0054 Cozy high-density reference result
+
+E0054 Cozy 512px render crop at virtual1920, 24spp x3, refs512spp x2, wall=699s, reference_ref_rmse=0.077947, OIDN_rmse=0.092270, ref_disagreement/oidn=0.845, edge_screen=True. No new algorithm or perceptual validation. docs/experiments/E0054.md.
