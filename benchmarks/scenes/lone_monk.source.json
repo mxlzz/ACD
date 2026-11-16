@@ -7,5 +7,9 @@
   "author": "Carlo Bergonzini/Monorender",
   "accepted_for_development_smoke": true,
   "quality_holdout": false,
-  "redistribute_blend": false
+  "redistribute_blend": false,
+  "seed_variation_screen_e0063": "PASS",
+  "seed_variation_source_run": "E0063",
+  "seed_statistical_independence_proven": false,
+  "denoiser_quality_benchmark_ready": false
 }

@@ -1236,3 +1236,7 @@ E0062 official Lone Monk source SHA=eea2bbfb3f9271050f523c8351fca40f2f559ce84b42
 ## 2026-11-16 — E0063 pinned Lone Monk raw seed variation pre-registered
 
 E0062 official arch Cycles scene functional audit PASS: original 33,452,252-byte file SHA256 eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b, Blender5.2.4 original daylight/cam.001, 1368 objects, 35 materials, no missing images/IES, 192px4spp smoke. E0063 now screens source-pinned separate-process 96x54 16spp seeds539/911 TABULATED_SOBOL, saves only numeric input-variation metrics, not renders. Independent samples/quality/convergence NOT proven by that smoke. No addon change; next after pass = architecture ROI at delivery scale and uncertain references, not another low-res render. docs/experiments/E0063_PLAN.md.
+
+## E0063 independent arch Cycles seed gate
+
+E0063 pinned official Lone Monk source, two fresh Cycles processes 16spp seeds539/911: measurably_distinct=True, relative_RMSE=0.37215735; no denoiser or reference; no quality ranking. Source SHA pinned in benchmarks/scenes/lone_monk.source.json; docs/experiments/E0063.md.
