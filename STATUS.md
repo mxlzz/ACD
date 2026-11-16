@@ -1090,3 +1090,7 @@ Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide repo
 ## E0048 existing Cycles reflection-feature toggle (2026-11-16)
 
 DIAGNOSTIC only: native guide setting changed output, inspect against both finite references. Raw identical=True. See docs/experiments/E0048_RESULTS.json; no new model or algorithm.
+
+## E0049 existing Cycles roughness-feature toggle (2026-11-16)
+
+STOP: Raw changed; no same-input causal inference. Raw identical=False. See docs/experiments/E0049_RESULTS.json; no new model or algorithm.

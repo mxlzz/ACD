@@ -1,0 +1,20 @@
+{
+  "experiment": "E0049",
+  "source_run": 43883209135,
+  "algorithm_new": false,
+  "setting": "native Cycles roughness weighted albedo: True to False; follow reflections stays True",
+  "reference_convergence_proven": false,
+  "metrics": {
+    "raw_max_abs": 0.07722318172454834,
+    "raw_identical": false,
+    "causal_interpretation_allowed": false,
+    "guide_effect": {},
+    "scores": {},
+    "decision": "STOP: Raw changed; no same-input causal inference"
+  },
+  "source_hashes": {
+    "acd_compare_Raw.exr": "71c884a267eedd3599e94faef376688e372689821443d3118d3712713934febc",
+    "acd_compare_NATIVE_COMP_OIDN.exr": "ff21339ecb4fae1a46d8c4a7fd82bddc75008c640ba36093cc2ba62b6dfbd6a4",
+    "raw_multilayer.exr": "436db1fb2cf024f615f608a94d99c346ff7465c918d01dc05d1846e7b4bf1e78"
+  }
+}

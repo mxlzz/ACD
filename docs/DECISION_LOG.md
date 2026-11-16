@@ -938,3 +938,7 @@ DIAGNOSTIC only: native guide setting changed output, inspect against both finit
 ## 2026-11-16 — E0049 corrección de ruta de disparo CI
 
 - El workflow E0049 se había creado como `acd-e0049-roughness-weighting.yml` mientras el filtro paths de su trigger apuntaba a `acd-e0049-roughness-guides.yml`. Corrección de un único literal de configuración para que el push dispare el workflow correspondiente, sin modificar modelo, imagen, seed, control de Raw ni método. Ejecución pendiente.
+
+## E0049 existing Cycles roughness-feature toggle (2026-11-16)
+
+STOP: Raw changed; no same-input causal inference. Raw identical=False. See docs/experiments/E0049_RESULTS.json; no new model or algorithm.
