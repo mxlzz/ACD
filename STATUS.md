@@ -1184,3 +1184,7 @@ E0056 Classroom CC0 old E0007 seed anomaly on Blender5.2.4, separate Cycles 96x5
 ## 2026-11-16 — E0057 source-only architecture audit preregistered
 
 Previous E0056 Classroom on Blender5.2.4 still yields only 4/5184 pixel differences, RMSE1.335e-6 /relative3.278e-6 across seeds539/911; cannot be used as independent multiseed holdout. E0057 evaluates a published modern architectural scene Surat Diamond Bourse model contributor's CC0 release v1.0.1 SHA256 721e77..., without redistributing the underlying building model or derived render (architectural design rights explicitly unresolved). Hash and packed resources first; only tiny 192px4spp read-only Cycles smoke. No denoiser or quality comparison; plan docs/experiments/E0057_PLAN.md.
+
+## E0057 public architectural scene source acceptance
+
+E0057 architectural source acceptance PASS; no OIDN or quality benchmark; architecture rights unresolved. docs/experiments/E0057.md.
