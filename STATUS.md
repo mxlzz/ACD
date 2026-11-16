@@ -1,3 +1,11 @@
+## 2026-11-16 — E0045: descubierto límite de resolución del fixture previo
+
+- [E0044](docs/experiments/E0044.md) pasó en Blender5.2.4 LTS [run 43880565752](https://github.com/mxlzz/ACD/actions/runs/43880565752): OIDN RMSE 0.053997/0.053490 (2 referencias1024), Raw RMSE 0.221769/0.221340, error de gradientes OIDN ~0.06957; ratio contraste borde OIDN ~0.686, 7/12 tiles con ratio <0.75. Referencias entre sí RMSE 0.040819. No convergencia probada.
+- Revisión de fuente y proyecto: [E0045](docs/experiments/E0045.md) prueba que 52 lamas tienen paso proyectado 1.304–1.678px a 320 de ancho y juntas de 1cm solo 0.362–0.401px. Relevante: la reducción de contraste puede ser antialiasing/ruido, no fracaso del denoiser; no entrenar ni mezclar filtros para perseguir detalles subpíxel.
+- Se cancela la evaluación de fidelidad de juntas/lamas finas a 320px y se propone un pequeño crop a densidad de 1920px de **la misma cámara** antes de cualquier 1080p completo o nueva arquitectura. Cálculo por proyección ideal (pendiente verificación en Blender), sin consumir nuevos renders en E0045.
+
+---
+
 ## 2026-11-16 — E0044 prior-art gate: reevaluar detalle con Cycles 5.2.4
 
 - Blender integró PR [#154988](https://projects.blender.org/blender/blender/pulls/154988) en marzo 2026, suavizando transiciones en guías denoising; E0016 estaba en 5.0.1 y no justifica inventar una corrección para 5.2 LTS sin comprobar. Intel OIDN ya resuelve prefiltrado y hit especular en su API.

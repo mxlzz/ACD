@@ -879,3 +879,10 @@ No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchm
 ## E0044 current Blender 5.2.4 detail diagnosis
 
  Blender 5.2.4 LTS, 320x240, 24 spp seed539, 2 refs 1024 spp seeds8819/8922. Sin assets externos, sin nuevos métodos. El fixture contiene 52 lamas, juntas de azulejos, vidrio, metal y bump procedural. Compositor OIDN High/Accurate/HDR con guías albedo/normal. Metrics in docs/experiments/E0044_RESULTS.json and gallery benchmarks/results/detail_current_e0044/. No algorithm change, interpret tile screen as descriptive only.
+
+
+## 2026-11-16 — E0045: descubierto límite de resolución del fixture previo
+
+- [E0044](docs/experiments/E0044.md) pasó en Blender5.2.4 LTS [run 43880565752](https://github.com/mxlzz/ACD/actions/runs/43880565752): OIDN RMSE 0.053997/0.053490 (2 referencias1024), Raw RMSE 0.221769/0.221340, error de gradientes OIDN ~0.06957; ratio contraste borde OIDN ~0.686, 7/12 tiles con ratio <0.75. Referencias entre sí RMSE 0.040819. No convergencia probada.
+- Revisión de fuente y proyecto: [E0045](docs/experiments/E0045.md) prueba que 52 lamas tienen paso proyectado 1.304–1.678px a 320 de ancho y juntas de 1cm solo 0.362–0.401px. Relevante: la reducción de contraste puede ser antialiasing/ruido, no fracaso del denoiser; no entrenar ni mezclar filtros para perseguir detalles subpíxel.
+- Se cancela la evaluación de fidelidad de juntas/lamas finas a 320px y se propone un pequeño crop a densidad de 1920px de **la misma cámara** antes de cualquier 1080p completo o nueva arquitectura. Cálculo por proyección ideal (pendiente verificación en Blender), sin consumir nuevos renders en E0045.

@@ -1,3 +1,5 @@
+> E0045 sampling-gate: 320px fixture under-resolves slats (1.304–1.678px pitch) and grout (0.362–0.401px thick). E0044 native OIDN ratio 0.686 cannot be interpreted as recoverable-detail failure. No filter changes; target small same-FOV crop at 1920px density, verify geometry first.
+
 > 2026-11-16 E0044: Current Blender5.2.4 OIDN detail test vs two independent refs on no-dependency procedural geometry. Blender 5.1 smoothed denoising guide passes, E0016 5.0.1 is dated; no novel algorithm until current version demonstrates specific loss. Workflow pending.
 
 > **Stop gate tras E0043:** guías integradas de OIDN mejoran de modo esperado, sin regiones con regresión diagnosticable. Refs 128spp no convergidas; Italian Flat tiene IES externo faltante en E0042/E0043, por lo que está en cuarentena. No más experimentos sobre ese fixture, ni nuevos filtros sin fallo verificable. Auditor IES corregido; próxima prueba solo en fixture completamente auditable.
