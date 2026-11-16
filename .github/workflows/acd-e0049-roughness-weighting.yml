@@ -5,7 +5,7 @@ on:
     branches:
       - dev/acd-v2-oidn-detail-eval
     paths:
-      - .github/workflows/acd-e0049-roughness-guides.yml
+      - .github/workflows/acd-e0049-roughness-weighting.yml
   workflow_dispatch:
 
 permissions:

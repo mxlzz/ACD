@@ -1,3 +1,5 @@
+> E0049 workflow trigger path corrected to its actual filename; render protocol unchanged. First action pending.
+
 > E0048 showed Cycles default follow_reflections=True helps; E0049 final native guide ablation roughness-weighted albedo True vs False on same E0046 seed/crop with Raw identity gate, reused refs. No new denoiser, stop tuning guide flags if no strong gain; workflow submitted.
 
 > E0048 controlled native Cycles follow-reflections workflow added and triggers one small 24spp crop only. Checks original SHA and Raw pixel identity before guide/OIDN ROI attribution. Results pending.

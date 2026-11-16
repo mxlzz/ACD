@@ -1,3 +1,9 @@
+## 2026-11-16 — E0049 corrección de ruta de disparo CI
+
+- El workflow E0049 se había creado como `acd-e0049-roughness-weighting.yml` mientras el filtro paths de su trigger apuntaba a `acd-e0049-roughness-guides.yml`. Corrección de un único literal de configuración para que el push dispare el workflow correspondiente, sin modificar modelo, imagen, seed, control de Raw ni método. Ejecución pendiente.
+
+---
+
 ## 2026-11-16 — E0049 ponderación de albedo por rugosidad, último ensayo sobre guías nativas
 
 - E0048 validado: Raw exactamente igual; follow_reflections=True (default) mejora tras vidrio frente a False. No desarrollo de nuevo método. E0049 prueba una **segunda y última** opción de Cycles preexistente, albedo roughness weighting True→False con seguimiento de reflexiones mantenido True; mismo Raw/seed, crop, referencias y ROI congeladas E0046/E0047; una sola renderización24spp. Se aborta inferencia si Raw difiere; si default gana, detener por completo tuning de guías.
