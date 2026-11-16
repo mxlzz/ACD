@@ -1057,3 +1057,6 @@ No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchm
 ## E0046 completed — actual same-FOV 1920px-density 512px crop, no new filter
 
 Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp references. Result docs/experiments/E0046_RESULTS.json, preview benchmarks/results/detail_crop_e0046/. No quality or addon promotion. Receptive-field border caveat.\n
+## E0047 original-source glass/direct detail diagnosis (2026-11-16)
+
+Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide report docs/experiments/E0047_RESULTS.json; visual benchmarks/results/detail_glass_e0047/. Check whether reference edge correlations are high before causal experiment. No addon promotion.

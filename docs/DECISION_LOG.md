@@ -908,3 +908,7 @@ Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp referen
 
 - [Run 43885689112](https://github.com/mxlzz/ACD/actions/runs/43885689112) pasó 6 pruebas sintéticas y descargó E0046 original correctamente, pero falló antes de analizar imágenes: `test: ${#files[@]}: integer expression expected` porque workflow serializó literalmente `\${#files[@]}` (barra inversa antes de expansión de array Bash). Es **defecto de workflow**, no experimento ni método.
 - Se retiraron exactamente los dos escapes de expansión Bash en el paso de recuperación `files`; todos los hashes, ROI 80x160 y criterios previos se conservan sin modificación. El workflow se ejecuta de nuevo sin renderizar. Resultado científico pendiente.
+
+## E0047 original-source glass/direct detail diagnosis (2026-11-16)
+
+Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide report docs/experiments/E0047_RESULTS.json; visual benchmarks/results/detail_glass_e0047/. Check whether reference edge correlations are high before causal experiment. No addon promotion.
