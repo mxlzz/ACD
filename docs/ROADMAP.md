@@ -512,3 +512,7 @@ Independent converted living-room-3 in B1 failed (three missing textures: _unnam
 ## 2026-11-16 — E0056 source retrieval correction, not a new scientific run
 
 First E0056 attempt run 43934413187 stopped before any Blender render because https://download.blender.org/demo/test/classroom.zip returned HTTP 403. Only the download host changes to Blender's officially linked mirror.blender.org; ZIP size 70,279,690 bytes and SHA256 0f0ecc58... remain exact. No alteration of samples, seeds, renderer, hypothesis or quality criteria. If mirror unavailable, stop this source gate instead of arbitrary retries.
+
+## 2026-11-16 — E0056 checksum transcription defect corrected
+
+The mirror.blender.org download step in run 43934663447 returned an archive, but sha256sum rejected the provided checksum line as malformed: its typed digest was 62 hex characters, not 64. Corrected to 0f0ecc58d45f12b2f4272a53e2d8e69135518e16e956b118f10c20d8dcfdf5e6 (64 hex) from external Classroom CC0 source catalog; added explicit checksum-length unit test. Re-run is still source acquisition validation, not sample/render result. Do not treat the two failed attempts as denoiser failures.

@@ -11,7 +11,7 @@ from acd_lab.core import rgb, compare_images
 from acd_lab.io import read_arrays, write_report
 from acd_lab.seed_audit import verify_sample_variation
 
-ZIP_SHA = "0f0ecc58d45f12b2f4272a53e2d8e69135518e16e956b118f10c20d8dcf5e6"
+ZIP_SHA = "0f0ecc58d45f12b2f4272a53e2d8e69135518e16e956b118f10c20d8dcfdf5e6"
 SEEDS = ((539,"seed539_offset0"),(911,"seed911_offset0"))
 
 

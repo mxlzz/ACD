@@ -1,6 +1,10 @@
 import numpy as np
 import pytest
-from scripts.analyze_classroom_seed_e0056 import score
+from scripts.analyze_classroom_seed_e0056 import score, ZIP_SHA
+
+def test_source_checksum_has_full_64_hex_digits():
+    assert len(ZIP_SHA)==64
+    assert all(c in '0123456789abcdef' for c in ZIP_SHA)
 
 def test_distinct_randomized_images_pass_variation_gate():
     a=np.ones((54,96,3),dtype=np.float32)
