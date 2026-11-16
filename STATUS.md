@@ -1192,3 +1192,7 @@ E0057 architectural source acceptance PASS; no OIDN or quality benchmark; archit
 ## 2026-11-16 — E0058 Surat CAM Office original source seed diversity gate
 
 E0057 source and smoke passed 18 cameras, 105 materials, missing assets 0. E0058 preregistered to verify interior CAM Office native TABULATED_SOBOL Cycles5.2.4 16spp seed539/911 from separate processes, with rights constraint: no image or model published. No denoiser tested; if identical, stop, if distinct, candidate only pending reference convergence and legal/representative holdout acceptance. See docs/experiments/E0058_PLAN.md.
+
+## E0058 independent source interior camera noise gate
+
+E0058 Surat CAM Office, 96x54 16spp 539/911 same configuration, relative RMSE 0.24478499048792587, changed 5148/5184, measurable=True. No denoiser or converged reference. Architectural rights unresolved. docs/experiments/E0058.md.
