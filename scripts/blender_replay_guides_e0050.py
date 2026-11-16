@@ -31,7 +31,7 @@ tree.interface.new_socket(name="Image",in_out="OUTPUT",socket_type="NodeSocketCo
 
 def image_node(path,layer_name=None):
     image=bpy.data.images.load(str(path),check_existing=False)
-    image.colorspace_settings.name="Linear Rec.709" if "Linear Rec.709" in bpy.types.ColorManagedInputColorspaceSettings.bl_rna.properties["name"].enum_items else image.colorspace_settings.name
+    print("E0050_IMAGE_COLORSPACE", path.name, image.colorspace_settings.name, flush=True)
     node=tree.nodes.new("CompositorNodeImage")
     node.image=image
     if layer_name is not None:

@@ -1,3 +1,5 @@
+> E0050 compositor-only offline EXR replay protocol prepared and triggered. Same Raw+old/new guides, baseline native OIDN identity gate and finite references. No new Cycles reference renders.
+
 > E0050 offline Blender Compositor guide-swap on frozen E0046 Raw and E0046/E0049 AOV; require raw passthrough and original OIDN replay near-exact before attributing guide differences. Script/tests ready, workflow next, no Cycles render or training.
 
 > E0049 workflow trigger path corrected to its actual filename; render protocol unchanged. First action pending.

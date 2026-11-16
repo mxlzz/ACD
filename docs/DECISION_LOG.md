@@ -948,3 +948,9 @@ STOP: Raw changed; no same-input causal inference. Raw identical=False. See docs
 
 - E0049 no permitió inferencia: al desactivar albedo roughness weighting, Raw max delta0.077223. Nueva prueba [E0050_PLAN](docs/experiments/E0050_PLAN.md): **sin render Cycles** se leen EXRs E0046/E0049 SHA controlados, dos pares AOV y se aplica el nodo OIDN de Blender 5.2.4 a la misma beauty E0046. Primero verificar que paso Raw sea igual y replay de guías originales reproduzca OIDN original; si no, detener y documentar.
 - Solo si ambas igualdades pasan comparar las guías alternativas frente a refs512spp y ROI E0047. Método de combinación conocido, sin nuevo algoritmo, entrenamiento, referencias o cambios en addon. Scripts y tests de fail-closed añadidos; workflow de ejecución se agrega después. Sin conclusión numérica todavía.
+
+
+## 2026-11-16 — E0050 verificación offline de mismo Raw, compositor nativo
+
+- Workflow E0050 agregado: EXRs E0046/E0049 se recuperan por ID, Blender 5.2.4 carga Raw fijo y AOVs originales/alternativos como CompositorNodeImage, denoise High/Accurate/HDR. Dos controles estrictos: Raw passthrough max<=1e-5 y replay original vs OIDN nativo max<=1e-4. Si fallan, se archiva stop y NO se atribuye mejora a guías. Este ensayo no entrena ni cambia filtros.
+- Eliminada la inspección frágil de enum de colorspace en el script; se registra valor que Blender proporciona. Resultados pendientes.
