@@ -556,3 +556,7 @@ E0059 Cozy held-out-reference crossfit failed to find a broad OIDN Raw-relative 
 ## E0060 internal architecture quality-reference cost pilot
 
 E0060 Surat CAM Office tiny 256x144 8spp+2x64spp ref cost=35s, rawAOV delta=0.0, ref_ref_rmse=0.11039902667585488. No quality ranking or rights clearance. docs/experiments/E0060.md.
+
+## 2026-11-16 — B1 / E0061 keep-on-track audit (decision, no render)
+
+E0059 no encuentra regresión global Raw-relativa del gradiente bajo su test, pero no demuestra ausencia de pérdida física local. E0060 Surat 256x144 / 8spp / refs64 x2 validó Raw/AOV (max0), tiempo35s y ref-ref RMSE0.110399, insuficiente para fidelidad arquitectónica. Continuar pequeños pilotos por inercia sería desalineado. Se descartó House of Chores (Grease Pencil/EEVEE) y Room Replica como dataset redistribuible bajo licencias ambiguas de texturas; Blender3DArchitect anuncia CC0 pero requiere registro y no hay URL directa verificada. Próxima etapa = corpus arquitectónico Cycles independiente + medición fiable de error residual OIDN antes de cualquier método nuevo. Fuente y decisión: docs/experiments/B1_E0061_KEEP_ON_TRACK.md. Sin nuevo render, sin addon/PR merge.
