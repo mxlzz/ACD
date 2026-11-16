@@ -163,6 +163,18 @@ try:
         if view_layer.cycles.denoising_pass_follow_reflections is not False:
             raise RuntimeError("Native follow-reflections control ignored")
         print("E0048_NATIVE_FOLLOW_REFLECTIONS_FALSE", flush=True)
+    # E0049: independent native Cycles roughness-weighted-albedo ablation.
+    if os.environ.get("ACD_E0049_ROUGHNESS_WEIGHTING") == "0":
+        if scene_variant != "detail_target" or os.environ.get("ACD_E0046_CROP") != "slats":
+            raise RuntimeError("E0049 is restricted to the existing E0046 crop")
+        if view_layer.cycles.denoising_pass_follow_reflections is not True:
+            raise RuntimeError("E0049 requires follow-reflections unchanged TRUE")
+        if view_layer.cycles.denoising_pass_use_albedo_roughness_weighting is not True:
+            raise RuntimeError("E0049 requires original roughness-weighted default TRUE")
+        view_layer.cycles.denoising_pass_use_albedo_roughness_weighting = False
+        if view_layer.cycles.denoising_pass_use_albedo_roughness_weighting is not False:
+            raise RuntimeError("Cycles ignored roughness weighting switch")
+        print("E0049_NATIVE_ROUGHNESS_WEIGHTING_FALSE", flush=True)
     addon.enable_passes(view_layer, scene)
 
     tree = bpy.data.node_groups.new("ACD comparison (same noisy input)", "CompositorNodeTree")
@@ -476,6 +488,7 @@ try:
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "e0046_crop": e0046_crop,
         "e0048_follow_reflections": bool(view_layer.cycles.denoising_pass_follow_reflections),
+        "e0049_roughness_weighting": bool(view_layer.cycles.denoising_pass_use_albedo_roughness_weighting),
         "source_original_resolution": source_resolution if scene_variant == "external" else None,
         "source_original_pixel_aspect": [scene.render.pixel_aspect_x, scene.render.pixel_aspect_y] if scene_variant == "external" else None,
         "compositional_methods": [name for _, _, name, _ in methods],

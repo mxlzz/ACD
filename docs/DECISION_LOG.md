@@ -927,3 +927,9 @@ Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide repo
 ## E0048 existing Cycles reflection-feature toggle (2026-11-16)
 
 DIAGNOSTIC only: native guide setting changed output, inspect against both finite references. Raw identical=True. See docs/experiments/E0048_RESULTS.json; no new model or algorithm.
+
+
+## 2026-11-16 — E0049 ponderación de albedo por rugosidad, último ensayo sobre guías nativas
+
+- E0048 validado: Raw exactamente igual; follow_reflections=True (default) mejora tras vidrio frente a False. No desarrollo de nuevo método. E0049 prueba una **segunda y última** opción de Cycles preexistente, albedo roughness weighting True→False con seguimiento de reflexiones mantenido True; mismo Raw/seed, crop, referencias y ROI congeladas E0046/E0047; una sola renderización24spp. Se aborta inferencia si Raw difiere; si default gana, detener por completo tuning de guías.
+- Protocolo [E0049_PLAN](docs/experiments/E0049_PLAN.md). Workflow enviado, resultados pendientes. Addon sin cambios.

@@ -1,3 +1,5 @@
+> E0048 showed Cycles default follow_reflections=True helps; E0049 final native guide ablation roughness-weighted albedo True vs False on same E0046 seed/crop with Raw identity gate, reused refs. No new denoiser, stop tuning guide flags if no strong gain; workflow submitted.
+
 > E0048 controlled native Cycles follow-reflections workflow added and triggers one small 24spp crop only. Checks original SHA and Raw pixel identity before guide/OIDN ROI attribution. Results pending.
 
 > E0048 pre-registered: toggle native Cycles5.2.4 denoising-pass follow-reflections on existing production-density crop; one same-seed 24spp, reuse E0046 EXRs and refs; causal gate Raw exact then guides must change. Script+tests ready, workflow pending; no algorithm innovation claim.
