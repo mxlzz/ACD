@@ -1,0 +1,256 @@
+{
+  "experiment": "E0021",
+  "render_run_id": 43289852695,
+  "source_scene_sha256": "5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395",
+  "license": "Cozy Kitchen by Nicole Morena \u2014 CC BY-SA; derived previews preserve attribution",
+  "blender": "5.0.1",
+  "source_original_resolution": [
+    2655,
+    2500
+  ],
+  "resolution": [
+    512,
+    482
+  ],
+  "source_original_pixel_aspect": [
+    1.0,
+    1.0
+  ],
+  "samples": 24,
+  "reference_samples": 1024,
+  "seed_diversity_heuristic_passed": true,
+  "reference_disagreement_rmse": 0.035507696283813624,
+  "reference_disagreement_over_raw_error": 0.13526802663825194,
+  "convergence_proven": false,
+  "reference_ranking_per_seed_averages": {
+    "first": [
+      "STANDARD",
+      "NATIVE_COMP_OIDN",
+      "HIGH",
+      "SUPER",
+      "Raw"
+    ],
+    "second": [
+      "STANDARD",
+      "NATIVE_COMP_OIDN",
+      "HIGH",
+      "SUPER",
+      "Raw"
+    ]
+  },
+  "methods_vs_both_references": {
+    "first": {
+      "Raw": {
+        "mean_rmse_linear": 0.26460630259400536,
+        "mean_edge_gradient_rmse": 0.313170589724316,
+        "per_seed": [
+          {
+            "rmse_linear": 0.2630215637529008,
+            "edge_gradient_rmse": 0.31371155769325376
+          },
+          {
+            "rmse_linear": 0.26292140337307535,
+            "edge_gradient_rmse": 0.31234123199509845
+          },
+          {
+            "rmse_linear": 0.26787594065604003,
+            "edge_gradient_rmse": 0.3134589794845957
+          }
+        ]
+      },
+      "STANDARD": {
+        "mean_rmse_linear": 0.08339284045575344,
+        "mean_edge_gradient_rmse": 0.0896975144831026,
+        "per_seed": [
+          {
+            "rmse_linear": 0.08117398059436202,
+            "edge_gradient_rmse": 0.0891197583963908
+          },
+          {
+            "rmse_linear": 0.08352291859578942,
+            "edge_gradient_rmse": 0.09025440565180287
+          },
+          {
+            "rmse_linear": 0.08548162217710886,
+            "edge_gradient_rmse": 0.08971837940111417
+          }
+        ]
+      },
+      "HIGH": {
+        "mean_rmse_linear": 0.08607789842103945,
+        "mean_edge_gradient_rmse": 0.09029286730792145,
+        "per_seed": [
+          {
+            "rmse_linear": 0.0838934688341616,
+            "edge_gradient_rmse": 0.08940505731736081
+          },
+          {
+            "rmse_linear": 0.08619575987726633,
+            "edge_gradient_rmse": 0.09086822228254456
+          },
+          {
+            "rmse_linear": 0.08814446655169045,
+            "edge_gradient_rmse": 0.09060532232385898
+          }
+        ]
+      },
+      "SUPER": {
+        "mean_rmse_linear": 0.09711669200756512,
+        "mean_edge_gradient_rmse": 0.09622142079073971,
+        "per_seed": [
+          {
+            "rmse_linear": 0.09738011356098492,
+            "edge_gradient_rmse": 0.09586128229281508
+          },
+          {
+            "rmse_linear": 0.09564231633234987,
+            "edge_gradient_rmse": 0.09715104816932055
+          },
+          {
+            "rmse_linear": 0.0983276461293606,
+            "edge_gradient_rmse": 0.09565193191008353
+          }
+        ]
+      },
+      "NATIVE_COMP_OIDN": {
+        "mean_rmse_linear": 0.08339284045575344,
+        "mean_edge_gradient_rmse": 0.0896975144831026,
+        "per_seed": [
+          {
+            "rmse_linear": 0.08117398059436202,
+            "edge_gradient_rmse": 0.0891197583963908
+          },
+          {
+            "rmse_linear": 0.08352291859578942,
+            "edge_gradient_rmse": 0.09025440565180287
+          },
+          {
+            "rmse_linear": 0.08548162217710886,
+            "edge_gradient_rmse": 0.08971837940111417
+          }
+        ]
+      }
+    },
+    "second": {
+      "Raw": {
+        "mean_rmse_linear": 0.2651436072254986,
+        "mean_edge_gradient_rmse": 0.31382331870328045,
+        "per_seed": [
+          {
+            "rmse_linear": 0.2631754315498486,
+            "edge_gradient_rmse": 0.3154241802043034
+          },
+          {
+            "rmse_linear": 0.26343808732672164,
+            "edge_gradient_rmse": 0.31237267258616164
+          },
+          {
+            "rmse_linear": 0.2688173027999256,
+            "edge_gradient_rmse": 0.3136731033193764
+          }
+        ]
+      },
+      "STANDARD": {
+        "mean_rmse_linear": 0.08484520398514478,
+        "mean_edge_gradient_rmse": 0.08984904279240559,
+        "per_seed": [
+          {
+            "rmse_linear": 0.08225879258144252,
+            "edge_gradient_rmse": 0.0892796236428743
+          },
+          {
+            "rmse_linear": 0.08518767218741824,
+            "edge_gradient_rmse": 0.09059301735088114
+          },
+          {
+            "rmse_linear": 0.08708914718657358,
+            "edge_gradient_rmse": 0.08967448738346136
+          }
+        ]
+      },
+      "HIGH": {
+        "mean_rmse_linear": 0.08732687248729809,
+        "mean_edge_gradient_rmse": 0.09053677017962447,
+        "per_seed": [
+          {
+            "rmse_linear": 0.08475746270381306,
+            "edge_gradient_rmse": 0.0898240994873846
+          },
+          {
+            "rmse_linear": 0.08767850916163145,
+            "edge_gradient_rmse": 0.09118641549495422
+          },
+          {
+            "rmse_linear": 0.0895446455964498,
+            "edge_gradient_rmse": 0.09059979555653457
+          }
+        ]
+      },
+      "SUPER": {
+        "mean_rmse_linear": 0.09798799419820688,
+        "mean_edge_gradient_rmse": 0.0964974500079394,
+        "per_seed": [
+          {
+            "rmse_linear": 0.09788247917910779,
+            "edge_gradient_rmse": 0.0963572885284214
+          },
+          {
+            "rmse_linear": 0.09686212928985216,
+            "edge_gradient_rmse": 0.09743205609750101
+          },
+          {
+            "rmse_linear": 0.09921937412566068,
+            "edge_gradient_rmse": 0.09570300539789575
+          }
+        ]
+      },
+      "NATIVE_COMP_OIDN": {
+        "mean_rmse_linear": 0.08484520398514478,
+        "mean_edge_gradient_rmse": 0.08984904279240559,
+        "per_seed": [
+          {
+            "rmse_linear": 0.08225879258144252,
+            "edge_gradient_rmse": 0.0892796236428743
+          },
+          {
+            "rmse_linear": 0.08518767218741824,
+            "edge_gradient_rmse": 0.09059301735088114
+          },
+          {
+            "rmse_linear": 0.08708914718657358,
+            "edge_gradient_rmse": 0.08967448738346136
+          }
+        ]
+      }
+    }
+  },
+  "roi_selection": "Top asinh-RGB gradient windows of mean first+second reference, no method data",
+  "rois_px": [
+    [
+      192,
+      288,
+      96,
+      96
+    ],
+    [
+      320,
+      192,
+      96,
+      96
+    ],
+    [
+      288,
+      96,
+      96,
+      96
+    ]
+  ],
+  "roi_metrics_path": "region_metrics.json",
+  "visualization": "non-OCIO diagnostic compress+gamma mapping; 3x nearest-neighbor crops",
+  "previews": [
+    "reference_detail_crop_1.png",
+    "reference_detail_crop_2.png",
+    "reference_detail_crop_3.png"
+  ],
+  "warning": "Finite-spp reference not necessarily converged; reference-derived gradients may reflect reference noise; do not assert perceptual victory."
+}

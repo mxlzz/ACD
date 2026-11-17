@@ -1,0 +1,199 @@
+{
+  "experiment": "E0034",
+  "source_run_id": 43416607737,
+  "source_sha256": "b35b6694eb231d0d4d5d9ee9bbe63122218183fd519a05c7d5db0e62cbdaeca1",
+  "full": "hall_full_1to1.png",
+  "regions": [
+    {
+      "name": "brightest",
+      "bbox_xywh": [
+        22,
+        131,
+        128,
+        128
+      ],
+      "file": "hall_brightest_3x.png",
+      "seed539_local_rmse": {
+        "Raw": {
+          "ref1": 0.11739794724068198,
+          "ref2": 0.11743736884438714
+        },
+        "OIDN": {
+          "ref1": 0.03448200245962898,
+          "ref2": 0.034167977364984024
+        },
+        "STANDARD": {
+          "ref1": 0.03448200245962898,
+          "ref2": 0.034167977364984024
+        },
+        "ACD High": {
+          "ref1": 0.038519542607621395,
+          "ref2": 0.038097066895460566
+        },
+        "ACD Super": {
+          "ref1": 0.053362305531659084,
+          "ref2": 0.05321661211023368
+        },
+        "Emission50": {
+          "ref1": 0.03534751312878613,
+          "ref2": 0.03502796935206007
+        },
+        "Emission100": {
+          "ref1": 0.03871331885048171,
+          "ref2": 0.03840967069580148
+        },
+        "ConstantMatched50": {
+          "ref1": 0.03452598632210365,
+          "ref2": 0.03421712243402577
+        }
+      }
+    },
+    {
+      "name": "detail_1",
+      "bbox_xywh": [
+        192,
+        192,
+        128,
+        128
+      ],
+      "file": "hall_detail_1_3x.png",
+      "seed539_local_rmse": {
+        "Raw": {
+          "ref1": 0.10957246946952967,
+          "ref2": 0.10972263824357927
+        },
+        "OIDN": {
+          "ref1": 0.02951582823786356,
+          "ref2": 0.029300403292422717
+        },
+        "STANDARD": {
+          "ref1": 0.02951582823786356,
+          "ref2": 0.029300403292422717
+        },
+        "ACD High": {
+          "ref1": 0.03268391271876495,
+          "ref2": 0.03250603840699128
+        },
+        "ACD Super": {
+          "ref1": 0.04063081107706353,
+          "ref2": 0.040337788200693815
+        },
+        "Emission50": {
+          "ref1": 0.02951582823786356,
+          "ref2": 0.029300403292422717
+        },
+        "Emission100": {
+          "ref1": 0.02951582823786356,
+          "ref2": 0.029300403292422717
+        },
+        "ConstantMatched50": {
+          "ref1": 0.029525520684027293,
+          "ref2": 0.02931838429095461
+        }
+      }
+    },
+    {
+      "name": "detail_2",
+      "bbox_xywh": [
+        32,
+        288,
+        128,
+        128
+      ],
+      "file": "hall_detail_2_3x.png",
+      "seed539_local_rmse": {
+        "Raw": {
+          "ref1": 0.10968458677639772,
+          "ref2": 0.10992752662761336
+        },
+        "OIDN": {
+          "ref1": 0.036209271790869184,
+          "ref2": 0.03601182034113789
+        },
+        "STANDARD": {
+          "ref1": 0.036209271790869184,
+          "ref2": 0.03601182034113789
+        },
+        "ACD High": {
+          "ref1": 0.03813426066464797,
+          "ref2": 0.03807918668852771
+        },
+        "ACD Super": {
+          "ref1": 0.06276810924087604,
+          "ref2": 0.062730367449481
+        },
+        "Emission50": {
+          "ref1": 0.03614258166726935,
+          "ref2": 0.03592282734855105
+        },
+        "Emission100": {
+          "ref1": 0.036455588449629754,
+          "ref2": 0.036215973314628246
+        },
+        "ConstantMatched50": {
+          "ref1": 0.036228992909964154,
+          "ref2": 0.03604156049437293
+        }
+      }
+    },
+    {
+      "name": "detail_3",
+      "bbox_xywh": [
+        160,
+        320,
+        128,
+        128
+      ],
+      "file": "hall_detail_3_3x.png",
+      "seed539_local_rmse": {
+        "Raw": {
+          "ref1": 0.08733507645952207,
+          "ref2": 0.0873234505706215
+        },
+        "OIDN": {
+          "ref1": 0.0203955281518546,
+          "ref2": 0.02046787197748466
+        },
+        "STANDARD": {
+          "ref1": 0.0203955281518546,
+          "ref2": 0.02046787197748466
+        },
+        "ACD High": {
+          "ref1": 0.021052601831586474,
+          "ref2": 0.021011575801298466
+        },
+        "ACD Super": {
+          "ref1": 0.027805159914425517,
+          "ref2": 0.027799073570134444
+        },
+        "Emission50": {
+          "ref1": 0.0203955281518546,
+          "ref2": 0.02046787197748466
+        },
+        "Emission100": {
+          "ref1": 0.0203955281518546,
+          "ref2": 0.02046787197748466
+        },
+        "ConstantMatched50": {
+          "ref1": 0.020422062171434264,
+          "ref2": 0.02049302699688556
+        }
+      }
+    }
+  ],
+  "emission50": {
+    "scale": 0.25,
+    "max_raw_fraction": 0.5,
+    "mean_raw_weight": 0.010564712161779594,
+    "nonzero_emission_fraction": 0.02367401123046875,
+    "mean_emission_luminance": 0.07513570518235835,
+    "max_emission_luminance": 3.6526495439291,
+    "max_raw_weight_actual": 0.4679704778528095,
+    "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+    "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+  },
+  "roi_rule": "Reference mean strongest luminance and asinh-RGB gradient, all boxes disjoint",
+  "display": "same max(0,RGB)/(1+max(0,RGB))^(1/2.2), not Blender OCIO",
+  "credit": "Modern Hall by NewSee2l035, CC BY 3.0, via Bitterli/cuteday",
+  "limit": "Only seed539 PNG panels; 3-seed numeric summary separate. References not converged."
+}

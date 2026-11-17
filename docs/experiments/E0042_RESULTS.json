@@ -1,0 +1,146 @@
+{
+  "experiment": "E0042",
+  "source": "Italian Flat / CC-BY / original not distributed",
+  "blender": "5.2.4 LTS",
+  "camera": "Cam Kitchen Table",
+  "spp": [
+    32,
+    64,
+    128
+  ],
+  "seeds": [
+    8819,
+    8922
+  ],
+  "reference_pairs": {
+    "32": {
+      "interseed_metrics": {
+        "log1p_luminance_rmse": 0.08949933517516077,
+        "pixel_rmse_p95": 0.2704816625181138,
+        "mae_linear": 0.06809923808387691,
+        "rmse_linear": 0.11710424136772951,
+        "relative_rmse": 0.6506228188004565,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "exact_match": false,
+      "spread_ratio_to_previous": null
+    },
+    "64": {
+      "interseed_metrics": {
+        "log1p_luminance_rmse": 0.062399319501505644,
+        "pixel_rmse_p95": 0.18161851674691842,
+        "mae_linear": 0.048401073110006576,
+        "rmse_linear": 0.08073156764791378,
+        "relative_rmse": 0.47487967377134027,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "exact_match": false,
+      "spread_ratio_to_previous": 0.6893991772202457
+    },
+    "128": {
+      "interseed_metrics": {
+        "log1p_luminance_rmse": 0.043036182111052014,
+        "pixel_rmse_p95": 0.12408914231688029,
+        "mae_linear": 0.03365128502617905,
+        "rmse_linear": 0.055491923813307524,
+        "relative_rmse": 0.3367957237965021,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "exact_match": false,
+      "spread_ratio_to_previous": 0.6873633874585304
+    }
+  },
+  "renders": [
+    {
+      "file": "ref_640x400_32spp_seed8819.exr",
+      "resolution": [
+        640,
+        400
+      ],
+      "spp": 32,
+      "seed": 8819,
+      "wall_seconds": 49.19418947700001,
+      "file_sha256": "42ba910d65c26d06452a0aa0ea2b644de6606ecaa2be46c99d6505263585a951",
+      "bytes": 3080286,
+      "process_peak_rss_kb": 10427344
+    },
+    {
+      "file": "ref_640x400_32spp_seed8922.exr",
+      "resolution": [
+        640,
+        400
+      ],
+      "spp": 32,
+      "seed": 8922,
+      "wall_seconds": 48.76483705000001,
+      "file_sha256": "1db38150b184df62969b29dab07bc5ab1d7dcfac0d30f99bd4a5201827f1c92c",
+      "bytes": 3080424,
+      "process_peak_rss_kb": 10607032
+    },
+    {
+      "file": "ref_640x400_64spp_seed8819.exr",
+      "resolution": [
+        640,
+        400
+      ],
+      "spp": 64,
+      "seed": 8819,
+      "wall_seconds": 68.424670365,
+      "file_sha256": "66e87bfcb045b652bcd4864042161000f322c6093867117df6e0650d5ff7dd15",
+      "bytes": 3077063,
+      "process_peak_rss_kb": 10894756
+    },
+    {
+      "file": "ref_640x400_64spp_seed8922.exr",
+      "resolution": [
+        640,
+        400
+      ],
+      "spp": 64,
+      "seed": 8922,
+      "wall_seconds": 68.970758563,
+      "file_sha256": "b15efea5c8978868ec165b1f739b864626b0a2f7f2543a31d0fb7ab6cdaf1f4d",
+      "bytes": 3077061,
+      "process_peak_rss_kb": 10909644
+    },
+    {
+      "file": "ref_640x400_128spp_seed8819.exr",
+      "resolution": [
+        640,
+        400
+      ],
+      "spp": 128,
+      "seed": 8819,
+      "wall_seconds": 110.35224106199996,
+      "file_sha256": "9b13f8c8534bb6bfac47a85fb7fe5695c2a46ece1cc95d0783f36310874c791f",
+      "bytes": 3066857,
+      "process_peak_rss_kb": 11002956
+    },
+    {
+      "file": "ref_640x400_128spp_seed8922.exr",
+      "resolution": [
+        640,
+        400
+      ],
+      "spp": 128,
+      "seed": 8922,
+      "wall_seconds": 110.42045774400003,
+      "file_sha256": "61d6f9278879714ac80fac83ac756b432b66cb9a969e58e53fa6c91705e5d030",
+      "bytes": 3067086,
+      "process_peak_rss_kb": 11002956
+    }
+  ],
+  "cpu_total_wall_seconds": 456.127154261,
+  "peak_process_rss_kb": 11002956,
+  "viewer": "gallery/italian_reference_ladder.png",
+  "viewer_transfer": "Shared HDR diagnostic transform from existing ACD display_rgb, NOT Blender OCIO/AgX",
+  "reference_convergence_proven": false,
+  "quality_evaluation_performed": false,
+  "caveat": "Two seeds per sample level insufficient to prove sample stream independence, unbiasedness or convergence. The 128 spp images are not ground truth; no denoiser rankings."
+}

@@ -1,0 +1,116 @@
+{
+  "experiment": "E0040",
+  "blender": "5.2.4 LTS",
+  "source": "Italian Flat by Flavio Della Tommasa, official Blender Cycles CC-BY",
+  "source_sha256": "0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25",
+  "cameras": [
+    {
+      "index": 1,
+      "camera_name": "Cam Kitchen",
+      "png": "camera_01.png",
+      "camera_location": [
+        2.5632057189941406,
+        13.049861907958984,
+        1.100000023841858
+      ],
+      "lens_mm": 70.0,
+      "render_wall_seconds": 27.524225005999995,
+      "png_sha256": "1b4c5d5a2662f4b1cf98b79d64be83ce6739cdddf222e3cc65dcc33e65839179",
+      "original_scene_camera_changed_in_memory_only": true
+    },
+    {
+      "index": 2,
+      "camera_name": "Cam Kitchen Table",
+      "png": "camera_02.png",
+      "camera_location": [
+        -0.08251655846834183,
+        6.104949474334717,
+        0.8999999165534973
+      ],
+      "lens_mm": 50.0,
+      "render_wall_seconds": 26.719947383000004,
+      "png_sha256": "bd603395f6ae78ba9f53d2da0354084253e0188a517858b21318956ca5462664",
+      "original_scene_camera_changed_in_memory_only": true
+    },
+    {
+      "index": 3,
+      "camera_name": "Cam Living",
+      "png": "camera_03.png",
+      "camera_location": [
+        2.9473440647125244,
+        13.412710189819336,
+        0.8999998569488525
+      ],
+      "lens_mm": 50.0,
+      "render_wall_seconds": 26.952787590000014,
+      "png_sha256": "773432fc2e3cc97e7680b7362ca3f7c595f7c3529c838988c4a7b2d8f21de61e",
+      "original_scene_camera_changed_in_memory_only": true
+    },
+    {
+      "index": 4,
+      "camera_name": "Cam Pouf Details ",
+      "png": "camera_04.png",
+      "camera_location": [
+        3.5910468101501465,
+        11.430855751037598,
+        0.5943534970283508
+      ],
+      "lens_mm": 50.0,
+      "render_wall_seconds": 27.217886676999996,
+      "png_sha256": "3f929a1f0ceb0ecad3095e517130f8e9a81ef9596c60bff3dc310d8a125c8b71",
+      "original_scene_camera_changed_in_memory_only": true
+    },
+    {
+      "index": 5,
+      "camera_name": "Cam Sofa Back",
+      "png": "camera_05.png",
+      "camera_location": [
+        -3.6090757846832275,
+        0.4788762032985687,
+        0.9999997615814209
+      ],
+      "lens_mm": 70.0,
+      "render_wall_seconds": 27.347608029000014,
+      "png_sha256": "39b2d92258f858749bc17d4843f6de596cd3cd004d88c8d75420cc7523b39d3b",
+      "original_scene_camera_changed_in_memory_only": true
+    },
+    {
+      "index": 6,
+      "camera_name": "Cam Sofa Side",
+      "png": "camera_06.png",
+      "camera_location": [
+        1.5537651777267456,
+        12.598809242248535,
+        0.8589443564414978
+      ],
+      "lens_mm": 50.0,
+      "render_wall_seconds": 27.73639035499997,
+      "png_sha256": "13bdeb864592a0ad77de02b77751ac0d93d520b3333d317706cea05a2e53ddd9",
+      "original_scene_camera_changed_in_memory_only": true
+    },
+    {
+      "index": 7,
+      "camera_name": "Cam Table Details ",
+      "png": "camera_07.png",
+      "camera_location": [
+        0.7177774906158447,
+        -2.7263712882995605,
+        0.9991769194602966
+      ],
+      "lens_mm": 70.0,
+      "render_wall_seconds": 27.261721508999983,
+      "png_sha256": "06840fa307a0391d9ba36de2d7c4cdba9023db07f42212ae267280602f9dc603",
+      "original_scene_camera_changed_in_memory_only": true
+    }
+  ],
+  "resolution": [
+    320,
+    200
+  ],
+  "samples": 4,
+  "render_device": "CPU",
+  "denoising": false,
+  "original_blend_saved": false,
+  "image_quality_ranking": false,
+  "method": "Seven artist cameras; 4spp each; source-native display transform; these are preview thumbnails, not reference images"
+}

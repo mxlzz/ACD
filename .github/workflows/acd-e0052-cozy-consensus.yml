@@ -1,0 +1,74 @@
+name: ACD E0052 Cozy original EXR reference-consensus edge diagnostic
+# Re-run on test contract correction: previous test used level=3, not 3-row image.
+
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths:
+      - .github/workflows/acd-e0052-cozy-consensus.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  frozen-e0021-analysis:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install lab and test consensus mask contracts
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_cozy_consensus_e0052.py
+      - name: Recover original E0021 EXR and metadata artifacts
+        run: |
+          mkdir -p /tmp/e0052-source
+          gh run download 43289852695 -R mxlzz/ACD -n acd-e0021-cozy-exr -D /tmp/e0052-source
+          gh run download 43289852695 -R mxlzz/ACD -n acd-e0021-cozy-metrics -D /tmp/e0052-source
+          test -f /tmp/e0052-source/metadata.json
+          test -f /tmp/e0052-source/reference.exr
+          test -f /tmp/e0052-source/reference_check.exr
+          test -f /tmp/e0052-source/seed_911/acd_compare_NATIVE_COMP_OIDN.exr
+          test -f /tmp/e0052-source/seed_1337/acd_compare_NATIVE_COMP_OIDN.exr
+      - name: Analyze frozen 3-seed outputs against two references
+        run: |
+          python -m scripts.analyze_cozy_consensus_e0052 --directory /tmp/e0052-source --output /tmp/e0052-report
+      - name: Archive result, negative or positive, without republishing original EXRs
+        run: |
+          cp /tmp/e0052-report/E0052.md docs/experiments/E0052.md
+          cp /tmp/e0052-report/E0052_RESULTS.json docs/experiments/E0052_RESULTS.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("docs/experiments/E0052_RESULTS.json").read_text())
+          msg="E0052 frozen Cozy reference-consensus screen: "+repr(d["screens_positive"])+". No new render, no denoiser change, refs unconverged; docs/experiments/E0052.md."
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(path).open("a",encoding="utf-8") as stream:
+                  stream.write("\n## E0052 original EXR analysis completed\n\n"+msg+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0052.md docs/experiments/E0052_RESULTS.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0052): archive Cozy same-input reference-consensus screen"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Short-lived result artifact only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0052-result
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/e0052-report/

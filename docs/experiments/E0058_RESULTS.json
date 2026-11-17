@@ -1,0 +1,96 @@
+{
+  "experiment": "E0058",
+  "source": "Surat Diamond Bourse v1.0.1, CC0 contributor model only",
+  "source_zip_sha256": "721e77b401fba0fa5c3b9df13b09279c6d05781af865f2b63945e7e032e991a8",
+  "source_zip_bytes": 166627773,
+  "underlying_architecture_rights_cleared": false,
+  "scene": "Scene",
+  "camera": "CAM Office",
+  "blender": "5.2.4",
+  "input_seeds": [
+    539,
+    911
+  ],
+  "samples": 16,
+  "resolution": [
+    96,
+    54
+  ],
+  "sampler": "TABULATED_SOBOL",
+  "reference_rendered": false,
+  "denoiser_run": false,
+  "new_algorithm": false,
+  "source_or_render_redistributed": false,
+  "raw_seed_variation": {
+    "rmse": 0.24417287891257652,
+    "max_abs": 1.5731216669082642,
+    "changed_pixels_above_1e_minus_6": 5148,
+    "pixel_count": 5184,
+    "relative_rmse": 0.24478499048792587,
+    "measurably_distinct": true,
+    "independent_samples_proven": false
+  },
+  "source_metadata": {
+    "539": {
+      "sha256": "31af3bead4f80df69973efc14a0a08f974eb72f235cdaa22faf28ebc3d343a46",
+      "metadata": {
+        "active_scene": "Scene",
+        "active_camera": "CAM Office",
+        "active_view_layer": "ViewLayer",
+        "requested_seed": 539,
+        "scene_variant": "external",
+        "sample_offset": 0,
+        "sampling_pattern": "TABULATED_SOBOL",
+        "output_label": "surat_seed539",
+        "settings_all_scenes": [
+          {
+            "name": "Scene",
+            "seed": 539,
+            "samples": 16,
+            "pattern": "TABULATED_SOBOL",
+            "animated_seed": false,
+            "background_scene": null,
+            "layers": [
+              {
+                "name": "ViewLayer",
+                "samples": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "911": {
+      "sha256": "9f208c6e8c10a335d9fa7c722f784e035e7d2fb0b1cba9ca108b4d52f27a20a6",
+      "metadata": {
+        "active_scene": "Scene",
+        "active_camera": "CAM Office",
+        "active_view_layer": "ViewLayer",
+        "requested_seed": 911,
+        "scene_variant": "external",
+        "sample_offset": 0,
+        "sampling_pattern": "TABULATED_SOBOL",
+        "output_label": "surat_seed911",
+        "settings_all_scenes": [
+          {
+            "name": "Scene",
+            "seed": 911,
+            "samples": 16,
+            "pattern": "TABULATED_SOBOL",
+            "animated_seed": false,
+            "background_scene": null,
+            "layers": [
+              {
+                "name": "ViewLayer",
+                "samples": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "proven_independent_noise": false,
+  "heldout_scene_accepted": false,
+  "decision": "Raw varies in this internal camera; candidate for further technical validation. Need reference convergence and rights review before any external holdout."
+}

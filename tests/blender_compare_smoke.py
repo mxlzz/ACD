@@ -27,11 +27,22 @@ try:
     destination.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
     scene_variant = os.environ.get("ACD_SCENE", "factory")
-    if scene_variant in ("interior", "interior_emissive", "glass_lobby"):
+    if scene_variant in ("interior", "interior_emissive", "glass_lobby", "detail_target"):
         interior_spec = importlib.util.spec_from_file_location("acd_scene", root / "tests" / "scene_factory.py")
         interior = importlib.util.module_from_spec(interior_spec)
         interior_spec.loader.exec_module(interior)
-        if scene_variant == "interior_emissive":
+        if scene_variant == "detail_target":
+            import sys
+            sys.path.insert(0, str(root / "tests"))
+            try:
+                detail_spec = importlib.util.spec_from_file_location(
+                    "acd_detail_target", root / "tests" / "scene_detail_target.py")
+                detail_scene = importlib.util.module_from_spec(detail_spec)
+                detail_spec.loader.exec_module(detail_scene)
+                detail_scene.make_detail_target(scene)
+            finally:
+                sys.path.pop(0)
+        elif scene_variant == "interior_emissive":
             interior.make_interior_emissive(scene)
         elif scene_variant == "glass_lobby":
             lobby_spec = importlib.util.spec_from_file_location(
@@ -65,6 +76,18 @@ try:
         print("ACD EXTERNAL BLEND LOADED", bpy.data.filepath, "scene", scene.name)
     elif scene_variant != "factory":
         raise ValueError("Unknown ACD_SCENE: " + scene_variant)
+    # E0060 is an *existing* architectural camera. No geometry or source mutation.
+    camera_override = os.environ.get("ACD_E0060_CAMERA")
+    if camera_override:
+        if scene_variant != "external" or scene.name != "Scene":
+            raise RuntimeError("E0060 requires pinned external Scene")
+        candidate = bpy.data.objects.get(camera_override)
+        if candidate is None or candidate.type != "CAMERA" or candidate.name not in scene.objects:
+            raise RuntimeError("E0060 missing original source camera " + camera_override)
+        scene.camera = candidate
+        if scene.camera.name != camera_override:
+            raise RuntimeError("E0060 camera override failed")
+        print("E0060_SELECTED_CAMERA",camera_override,flush=True)
     scene.render.engine = "CYCLES"
     device = os.environ.get("ACD_DEVICE", "CPU").upper()
     if device not in {"CPU", "CUDA", "OPTIX"}:
@@ -84,15 +107,107 @@ try:
     scene.cycles.device = "CPU" if device == "CPU" else "GPU"
     input_spp = int(os.environ.get("ACD_INPUT_SPP", "16"))
     input_seed = int(os.environ.get("ACD_INPUT_SEED", "539"))
-    width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
-    height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
+    source_resolution = [scene.render.resolution_x, scene.render.resolution_y]
+    if scene_variant == "external" and os.environ.get("ACD_MAX_WIDTH"):
+        max_width = int(os.environ["ACD_MAX_WIDTH"])
+        if not 8 <= max_width <= 4096:
+            raise ValueError("ACD_MAX_WIDTH must be in [8, 4096]")
+        width = min(source_resolution[0], max_width)
+        height = max(8, round(source_resolution[1] * width / source_resolution[0]))
+    else:
+        width = int(os.environ.get("ACD_WIDTH", str(scene.render.resolution_x if scene_variant == "external" else 48)))
+        height = int(os.environ.get("ACD_HEIGHT", str(scene.render.resolution_y if scene_variant == "external" else 40)))
     assert input_spp > 0 and 8 <= width <= 4096 and 8 <= height <= 4096
+    # E0044 diagnostic only: enforce the requested spp in every pixel.
+    if os.environ.get("ACD_E0044_ADAPTIVE_OFF") == "1":
+        scene.cycles.use_adaptive_sampling = False
     scene.cycles.samples = input_spp
     scene.cycles.seed = input_seed
     scene.cycles.use_denoising = False
     scene.render.resolution_x = width
     scene.render.resolution_y = height
     scene.render.resolution_percentage = 100
+    # E0046 single targeted *render-border crop* at 1920x1440 pixel density.
+    # Crop coordinates are specified in top-left pixels and converted to
+    # Blender's bottom-left normalized border. The camera FOV is unchanged.
+    # Central 320x320 ROI has >=96px margin to reduce tile edge artifacts.
+    e0046_crop = None
+    if os.environ.get("ACD_E0046_CROP") == "slats":
+        if (width, height) != (1920, 1440):
+            raise RuntimeError("E0046 crop requires 1920x1440 full-frame size")
+        x0, y0, crop_size = 928, 320, 512
+        scene.render.use_border = True
+        scene.render.use_crop_to_border = True
+        scene.render.border_min_x = x0 / width
+        scene.render.border_max_x = (x0 + crop_size) / width
+        scene.render.border_min_y = 1 - (y0 + crop_size) / height
+        scene.render.border_max_y = 1 - y0 / height
+        e0046_crop = {
+            "name": "slats",
+            "full_frame_resolution": [width, height],
+            "top_left_origin_rect": [x0, y0, crop_size, crop_size],
+            "interior_margin_pixels": 96,
+            "expected_cropped_resolution": [crop_size, crop_size],
+            "evaluation_interior_xywh": [96, 96, 320, 320],
+        }
+    elif os.environ.get("ACD_E0046_CROP"):
+        raise RuntimeError("Unsupported E0046 crop variant")
+
+    # E0053: real Cozy source at high virtual full-frame density; crop only.
+    # Never silently permit this contract on another .blend or camera.
+    e0053_crop = None
+    if os.environ.get("ACD_E0053_CROP") == "cozy_detail_2":
+        if scene_variant != "external" or e0046_crop is not None:
+            raise RuntimeError("E0053 requires exclusive external source mode")
+        if scene.name != "Main" or scene.camera is None or scene.camera.name != "CAM-wide":
+            raise RuntimeError("E0053 requires exact Cozy Kitchen scene Main / camera CAM-wide")
+        crop_spec = importlib.util.spec_from_file_location(
+            "acd_e0053_crop", root / "scripts" / "cozy_crop_e0053.py")
+        crop_module = importlib.util.module_from_spec(crop_spec)
+        crop_spec.loader.exec_module(crop_module)
+        filehash = hashlib.sha256(Path(bpy.data.filepath).read_bytes()).hexdigest()
+        if filehash != crop_module.SOURCE_SHA:
+            raise RuntimeError("E0053 does not recognize original Cozy .blend hash")
+        e0053_crop = crop_module.contract(width, height)
+        b = e0053_crop["normalized_border"]
+        scene.render.use_border = True
+        scene.render.use_crop_to_border = True
+        scene.render.border_min_x = b["min_x"]
+        scene.render.border_max_x = b["max_x"]
+        scene.render.border_min_y = b["min_y"]
+        scene.render.border_max_y = b["max_y"]
+        print("E0053_COZY_REAL_PIXEL_DENSITY_CROP", e0053_crop, flush=True)
+    elif os.environ.get("ACD_E0053_CROP"):
+        raise RuntimeError("Unsupported E0053 crop variant")
+
+    # E0065: original Lone Monk portal, ROI fixed from unfiltered E0064 preview.
+    # Research-only opt-in; no addons, geometry or source .blend changes.
+    e0065_crop = None
+    if os.environ.get("ACD_E0065_CROP") == "monk_portal":
+        if scene_variant != "external" or e0046_crop is not None or e0053_crop is not None:
+            raise RuntimeError("E0065 source/crop mode must be exclusive")
+        if scene.name != "daylight" or scene.camera is None or scene.camera.name != "cam.001":
+            raise RuntimeError("E0065 requires original daylight / cam.001")
+        crop_spec = importlib.util.spec_from_file_location(
+            "e0065_contract", root / "scripts" / "lone_monk_crop_e0065.py")
+        crop_module = importlib.util.module_from_spec(crop_spec)
+        crop_spec.loader.exec_module(crop_module)
+        if hashlib.sha256(Path(bpy.data.filepath).read_bytes()).hexdigest() != crop_module.SOURCE_SHA:
+            raise RuntimeError("E0065 wrong source binary SHA256")
+        if tuple(source_resolution) != crop_module.SOURCE_RES:
+            raise RuntimeError("E0065 original camera source resolution changed")
+        e0065_crop = crop_module.contract(width, height)
+        bounds = e0065_crop["normalized_border"]
+        scene.render.use_border = True
+        scene.render.use_crop_to_border = True
+        scene.render.border_min_x = bounds["min_x"]
+        scene.render.border_max_x = bounds["max_x"]
+        scene.render.border_min_y = bounds["min_y"]
+        scene.render.border_max_y = bounds["max_y"]
+        print("ACD_E0065_LOCKED_ARCHITECTURE_PORTAL", e0065_crop, flush=True)
+    elif os.environ.get("ACD_E0065_CROP"):
+        raise RuntimeError("Unsupported E0065 crop request")
+
     capture_aov = os.environ.get("ACD_CAPTURE_AOV", "0") == "1"
     if capture_aov:
         scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
@@ -106,6 +221,27 @@ try:
     view_layer = bpy.context.view_layer
     view_layer.cycles.use_denoising = False
     scene.acd_volumes = True if scene_variant == "external" else scene.acd_volumes
+    if os.environ.get("ACD_E0048_FOLLOW_REFLECTIONS") == "0":
+        if scene_variant != "detail_target" or os.environ.get("ACD_E0046_CROP") != "slats":
+            raise RuntimeError("E0048 restricted to existing E0046 crop fixture")
+        if view_layer.cycles.denoising_pass_follow_reflections is not True:
+            raise RuntimeError("Expected native follow-reflections True")
+        view_layer.cycles.denoising_pass_follow_reflections = False
+        if view_layer.cycles.denoising_pass_follow_reflections is not False:
+            raise RuntimeError("Native follow-reflections control ignored")
+        print("E0048_NATIVE_FOLLOW_REFLECTIONS_FALSE", flush=True)
+    # E0049: independent native Cycles roughness-weighted-albedo ablation.
+    if os.environ.get("ACD_E0049_ROUGHNESS_WEIGHTING") == "0":
+        if scene_variant != "detail_target" or os.environ.get("ACD_E0046_CROP") != "slats":
+            raise RuntimeError("E0049 is restricted to the existing E0046 crop")
+        if view_layer.cycles.denoising_pass_follow_reflections is not True:
+            raise RuntimeError("E0049 requires follow-reflections unchanged TRUE")
+        if view_layer.cycles.denoising_pass_use_albedo_roughness_weighting is not True:
+            raise RuntimeError("E0049 requires original roughness-weighted default TRUE")
+        view_layer.cycles.denoising_pass_use_albedo_roughness_weighting = False
+        if view_layer.cycles.denoising_pass_use_albedo_roughness_weighting is not False:
+            raise RuntimeError("Cycles ignored roughness weighting switch")
+        print("E0049_NATIVE_ROUGHNESS_WEIGHTING_FALSE", flush=True)
     addon.enable_passes(view_layer, scene)
 
     tree = bpy.data.node_groups.new("ACD comparison (same noisy input)", "CompositorNodeTree")
@@ -288,6 +424,21 @@ try:
         fileout.file_output_items.new("RGBA", "STANDARD_emission_preserved")
         tree.links.new(emission_protected, fileout.inputs["STANDARD_emission_preserved"])
 
+    # E0039 only: export the exact RLayers socket inputs to the compositor.
+    # This allows an exact comparison to EXR multi-layer denoising passes.
+    # Do not enable this outside the diagnostic workflow.
+    if os.environ.get("ACD_E0039_CAPTURE_SOCKETS", "0") == "1":
+        if not native_comp_selected or not capture_aov:
+            raise RuntimeError("E0039 requires compositor OIDN and multilayer AOV capture")
+        for key, socket_key in (
+            ("SOCKET_ResolvedRaw", "Image"),
+            ("SOCKET_Albedo", "Denoising Albedo"),
+            ("SOCKET_Normal", "Denoising Normal"),
+        ):
+            signal = addon.render_socket(layers, socket_key)
+            fileout.file_output_items.new("RGBA", key)
+            tree.links.new(signal, fileout.inputs[key])
+
     scene.compositing_node_group = tree
     scene.render.use_compositing = True
     result = bpy.ops.render.render(write_still=True)
@@ -349,7 +500,13 @@ try:
         scene.render.use_compositing = True
         scene.cycles.samples = input_spp
         scene.cycles.seed = extra_seed
-        scene.render.filepath = str(extra_dir / "composite.exr")
+        if capture_aov:
+            # Independent inputs require their own guides; never reuse seed-539 AOVs.
+            scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
+            scene.render.image_settings.file_format = "OPEN_EXR_MULTILAYER"
+            scene.render.filepath = str(extra_dir / "raw_multilayer.exr")
+        else:
+            scene.render.filepath = str(extra_dir / "composite.exr")
         fileout.directory = str(extra_dir)
         repeated_result = bpy.ops.render.render(write_still=True)
         assert "FINISHED" in repeated_result
@@ -372,6 +529,7 @@ try:
         "source_blend": str(bpy.data.filepath) if scene_variant == "external" else None,
         "source_blend_sha256": blend_hash,
         "scene_name": scene.name,
+        "active_camera": scene.camera.name if scene.camera else None,
         "view_layer": view_layer.name,
         "frame": scene.frame_current,
         "render_device": device,
@@ -396,6 +554,13 @@ try:
         "second_reference_seed": reference_seed + 103 if second_reference else None,
         "extra_input_seeds": extra_seeds,
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
+        "e0046_crop": e0046_crop,
+        "e0053_crop": e0053_crop,
+        "e0065_crop": e0065_crop,
+        "e0048_follow_reflections": bool(view_layer.cycles.denoising_pass_follow_reflections),
+        "e0049_roughness_weighting": bool(view_layer.cycles.denoising_pass_use_albedo_roughness_weighting),
+        "source_original_resolution": source_resolution if scene_variant == "external" else None,
+        "source_original_pixel_aspect": [scene.render.pixel_aspect_x, scene.render.pixel_aspect_y] if scene_variant == "external" else None,
         "compositional_methods": [name for _, _, name, _ in methods],
         "sid_reference_methods": sid_selected,
         "sid_reference_source_commit": (

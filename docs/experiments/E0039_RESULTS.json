@@ -1,0 +1,101 @@
+{
+  "experiment": "E0039",
+  "blender": "5.2.4 LTS",
+  "input_spp": 16,
+  "resolution": [
+    128,
+    96
+  ],
+  "input_seed": 539,
+  "source": "one Blender Cycles render, own file output sockets and original multilayer EXR",
+  "passes": {
+    "ResolvedRaw": {
+      "aov_vs_socket": {
+        "log1p_luminance_rmse": 0.0,
+        "pixel_rmse_p95": 0.0,
+        "mae_linear": 0.0,
+        "rmse_linear": 0.0,
+        "relative_rmse": 0.0,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": true
+      },
+      "max_abs": 0.0,
+      "p99_abs": 0.0,
+      "nonzero_channel_fraction": 0.0,
+      "aov_sample_00": [
+        0.03999999910593033,
+        0.04500000923871994,
+        0.05000000819563866
+      ],
+      "socket_sample_00": [
+        0.03999999910593033,
+        0.04500000923871994,
+        0.05000000819563866
+      ]
+    },
+    "Albedo": {
+      "aov_vs_socket": {
+        "log1p_luminance_rmse": 0.0,
+        "pixel_rmse_p95": 0.0,
+        "mae_linear": 0.0,
+        "rmse_linear": 0.0,
+        "relative_rmse": 0.0,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": true
+      },
+      "max_abs": 0.0,
+      "p99_abs": 0.0,
+      "nonzero_channel_fraction": 0.0,
+      "aov_sample_00": [
+        0.03999999910593033,
+        0.04500000923871994,
+        0.05000000819563866
+      ],
+      "socket_sample_00": [
+        0.03999999910593033,
+        0.04500000923871994,
+        0.05000000819563866
+      ]
+    },
+    "Normal": {
+      "aov_vs_socket": {
+        "log1p_luminance_rmse": 0.0,
+        "pixel_rmse_p95": 0.0,
+        "mae_linear": 0.0,
+        "rmse_linear": 0.0,
+        "relative_rmse": 0.0,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": true
+      },
+      "max_abs": 0.0,
+      "p99_abs": 0.0,
+      "nonzero_channel_fraction": 0.0,
+      "aov_sample_00": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "socket_sample_00": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "Raw_vs_socket_ResolvedRaw": {
+      "log1p_luminance_rmse": 0.0,
+      "pixel_rmse_p95": 0.0,
+      "mae_linear": 0.0,
+      "rmse_linear": 0.0,
+      "relative_rmse": 0.0,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": true
+    }
+  },
+  "native_renders": true,
+  "quality_reference": false,
+  "warning": "AOV-to-socket consistency only; different scene seed/build from archived E0035, not an algorithm winner."
+}

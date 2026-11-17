@@ -1,0 +1,38 @@
+{
+  "experiment": "E0060",
+  "source": "Surat Diamond Bourse model release v1.0.1",
+  "archive_sha256": "721e77b401fba0fa5c3b9df13b09279c6d05781af865f2b63945e7e032e991a8",
+  "source_blend_sha256": "d2a7df9139538929190ceb20860ccc2459d65b1dac745de844353a785f997d59",
+  "contributor_model_cc0_only": true,
+  "underlying_architecture_rights_cleared": false,
+  "scene": "Scene",
+  "camera": "CAM Office",
+  "blender": "5.2.4 LTS",
+  "resolution": [
+    256,
+    144
+  ],
+  "noisy_spp": 8,
+  "reference_spp": 64,
+  "input_seed": 539,
+  "reference_seeds": [
+    8819,
+    8922
+  ],
+  "raw_beauty_AOV_max_abs": 0.0,
+  "reference_pair_rmse": 0.11039902667585488,
+  "original_albedo_normal_guides_available": true,
+  "total_wall_seconds_including_load_and_write": 35,
+  "file_sha256": {
+    "acd_compare_Raw.exr": "6528f82f0cae834cb2e9992a6f9d37f43819a9c64c7ed8e12811fca79f1b56da",
+    "acd_compare_NATIVE_COMP_OIDN.exr": "5e6c228b512e17ace86b4b9b7a52140fcbe5834c92f55cf78c6eea181d2e04e4",
+    "reference.exr": "72d6021d1ad246ab32d0830728f9b0ccd02892293f60611d466dc416db9da12a",
+    "reference_check.exr": "4a8c4f8672ace563c7bff55f28309881595984e775b9cea63467c43fc80f7e54",
+    "raw_multilayer.exr": "5e1dd59edc5564a3fff1877050496052c119a803e078698b2a7106d79549b5c1"
+  },
+  "new_denoiser": false,
+  "reference_convergence_proven": false,
+  "quality_ranking_allowed": false,
+  "render_or_model_redistributed": false,
+  "decision": "Feasibility only: do not infer OIDN detail fidelity or compare to other scenes with finite64spp references. Assess scene suitability, rights and cost before high-resolution source independent validation."
+}

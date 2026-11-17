@@ -1,0 +1,111 @@
+name: ACD E0040 Italian Flat camera audit and contact sheet (4spp only)
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0040-italian-cameras.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture-author-camera-previews:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      ACD_E0040_DIR: /tmp/acd-e0040
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "4"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download exactly verified official Italian Flat source, outside repository
+        run: |
+          mkdir -p /tmp/acd-e0040-source
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 --connect-timeout 30 \
+            https://download.blender.org/demo/cycles/flat-archiviz.blend \
+            -o /tmp/acd-e0040-source/flat-archiviz.blend
+          test "$(stat -c%s /tmp/acd-e0040-source/flat-archiviz.blend)" -eq 367972724
+          echo "0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25  /tmp/acd-e0040-source/flat-archiviz.blend" | sha256sum -c -
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Download SHA-verified Blender 5.2.4 when cache missing
+        if: steps.blender-cache.outputs.cache-hit != 'true'
+        run: |
+          F=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 \
+            https://download.blender.org/release/Blender5.2/$F -o "$F"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 \
+            https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$F" official.sha256 | sha256sum -c -
+          tar -xf "$F"
+      - name: Set headless EGL/OpenGL runtime
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+            libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Render only 7 tiny non-denoised 4spp source camera previews
+        run: |
+          ./blender-5.2.4-linux-x64/blender --factory-startup --disable-autoexec \
+            -b /tmp/acd-e0040-source/flat-archiviz.blend \
+            --python-exit-code 1 --python scripts/blender_italian_cameras_e0040.py
+      - name: Build contact sheet and validate image provenance
+        run: |
+          python -m pip install "Pillow>=10,<13"
+          python -m scripts.collect_italian_cameras_e0040 \
+            --input /tmp/acd-e0040 --output /tmp/acd-e0040-gallery
+      - name: Publish tiny gallery with artist credits (no BLEND)
+        run: |
+          mkdir -p benchmarks/results/italian_flat_e0040 docs/experiments
+          cp /tmp/acd-e0040-gallery/*.png benchmarks/results/italian_flat_e0040/
+          cp /tmp/acd-e0040-gallery/e0040_camera_audit.json docs/experiments/E0040_CAMERA_AUDIT.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("docs/experiments/E0040_CAMERA_AUDIT.json").read_text())
+          lines=[
+            "# E0040 — Italian Flat camera previews (4 spp, no denoising)",
+            "", "Source: Flavio Della Tommasa, official Blender Cycles demo, CC-BY (version unspecified). Original source not redistributed.",
+            "Blender 5.2.4 LTS, CPU, 320×200 and 4 spp; artist's scene camera choices. Preview images are not denoiser quality evidence.",
+            "",
+            "![Italian Flat seven-camera preview contact sheet](italian_camera_contact_sheet.png)",
+          ]
+          for cam in d["cameras"]:
+            lines += ["", "## "+cam["camera_name"].replace("|","-"),
+                      "![Camera source preview]("+cam["png"]+")",
+                      "4-spp CPU wall time: "+str(round(cam["render_wall_seconds"],2))+" seconds"]
+          Path("benchmarks/results/italian_flat_e0040/README.md").write_text("\n".join(lines)+"\n")
+          note="\n## E0040 original Italian Flat camera gallery, four-spp previews\n\n"+\
+              "Gallery: benchmarks/results/italian_flat_e0040/README.md. "+\
+              str(len(d["cameras"]))+" author cameras, Blender5.2.4, render-time measured; "+\
+              "only 4spp, no convergence/denoiser ranking. Original 368MB .blend excluded.\n"
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+            with Path(path).open("a",encoding="utf-8") as f:f.write(note)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0040_CAMERA_AUDIT.json
+          git add benchmarks/results/italian_flat_e0040/ STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0040): archive Italian Flat seven-camera diagnostic previews without denoising"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Retain originals of preview PNG and nonprivate metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0040-italian-camera-previews
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd-e0040-gallery/

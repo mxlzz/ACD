@@ -1,0 +1,257 @@
+{
+  "experiment": "E0054",
+  "source": "Cozy Kitchen \u00a9 Nicole Morena CC BY-SA",
+  "source_sha256": "5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395",
+  "blender": "5.2.4 LTS",
+  "source_output_resolution": [
+    1920,
+    1808
+  ],
+  "actual_render_crop": {
+    "name": "cozy_detail_2",
+    "full_frame_resolution": [
+      1920,
+      1808
+    ],
+    "top_left_origin_rect": [
+      1124,
+      644,
+      512,
+      512
+    ],
+    "interior_relative_xywh": [
+      76,
+      76,
+      360,
+      360
+    ],
+    "source_e0021_roi": [
+      320,
+      192,
+      96,
+      96
+    ],
+    "expected_crop_resolution": [
+      512,
+      512
+    ],
+    "pixel_scale_from_e0021": [
+      3.75,
+      3.7510373443983402
+    ],
+    "normalized_border": {
+      "min_x": 0.5854166666666667,
+      "max_x": 0.8520833333333333,
+      "min_y": 0.3606194690265486,
+      "max_y": 0.6438053097345133
+    },
+    "caveats": [
+      "The 512px E0021 source was rounded from a different full aspect ratio; no pixelwise cross-resolution parity.",
+      "76px crop margin reduces but cannot prove absence of OIDN receptive-field border effects.",
+      "This ROI was already observed in E0021/E0052 and is development, not holdout."
+    ]
+  },
+  "samples": 24,
+  "input_seeds": [
+    539,
+    911,
+    1337
+  ],
+  "reference_samples": 512,
+  "reference_seeds": [
+    8819,
+    8922
+  ],
+  "same_seed_raw_AOV_and_native_baseline_verified": true,
+  "reference_pair_rmse_in_center": 0.07794731720509844,
+  "mean_native_rmse_to_two_refs_in_center": 0.0922701259365703,
+  "reference_disagreement_relative_to_native_rmse": 0.8447730661891818,
+  "mean_native_rmse_per_ref": [
+    0.09185339358716028,
+    0.09268685828598032
+  ],
+  "center": {
+    "rect_xywh": [
+      76,
+      76,
+      360,
+      360
+    ],
+    "agreeing_gradient_pairs": 153647,
+    "selected_reference_consensus_pairs": 18828,
+    "reference_threshold": 0.05083121922538169,
+    "reference_gradient_rms": 0.19883996239013554,
+    "reference_gradient_disagreement_rms": 0.04238911572528789,
+    "relative_reference_disagreement": 0.21318207474872675,
+    "scores": {
+      "539": {
+        "Raw": {
+          "projected_edge_gain": 0.7803158466034813,
+          "edge_gradient_rmse": 0.3951772585082658,
+          "rmse_ref1": 0.3442781426125219,
+          "rmse_ref2": 0.3441866809183907
+        },
+        "STANDARD": {
+          "projected_edge_gain": 0.740881565196803,
+          "edge_gradient_rmse": 0.08950583304803307,
+          "rmse_ref1": 0.09107191729034038,
+          "rmse_ref2": 0.09212618266735188
+        },
+        "NATIVE_COMP_OIDN": {
+          "projected_edge_gain": 0.740881565196803,
+          "edge_gradient_rmse": 0.08950583304803307,
+          "rmse_ref1": 0.09107191729034038,
+          "rmse_ref2": 0.09212618266735188
+        }
+      },
+      "911": {
+        "Raw": {
+          "projected_edge_gain": 0.7918842340642523,
+          "edge_gradient_rmse": 0.40189785043164594,
+          "rmse_ref1": 0.34800982787815427,
+          "rmse_ref2": 0.347278585623909
+        },
+        "STANDARD": {
+          "projected_edge_gain": 0.7528289573110326,
+          "edge_gradient_rmse": 0.08900480759415622,
+          "rmse_ref1": 0.09376018181910277,
+          "rmse_ref2": 0.09356077477539124
+        },
+        "NATIVE_COMP_OIDN": {
+          "projected_edge_gain": 0.7528289573110326,
+          "edge_gradient_rmse": 0.08900480759415622,
+          "rmse_ref1": 0.09376018181910277,
+          "rmse_ref2": 0.09356077477539124
+        }
+      },
+      "1337": {
+        "Raw": {
+          "projected_edge_gain": 0.7897507633831892,
+          "edge_gradient_rmse": 0.3936023982592504,
+          "rmse_ref1": 0.34381498161119367,
+          "rmse_ref2": 0.34471274581686234
+        },
+        "STANDARD": {
+          "projected_edge_gain": 0.7507744024209833,
+          "edge_gradient_rmse": 0.08918806474848032,
+          "rmse_ref1": 0.09072808165203772,
+          "rmse_ref2": 0.09237361741519783
+        },
+        "NATIVE_COMP_OIDN": {
+          "projected_edge_gain": 0.7507744024209833,
+          "edge_gradient_rmse": 0.08918806474848032,
+          "rmse_ref1": 0.09072808165203772,
+          "rmse_ref2": 0.09237361741519783
+        }
+      }
+    },
+    "persistent_attenuation_screen": true
+  },
+  "full_crop": {
+    "rect_xywh": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "agreeing_gradient_pairs": 310031,
+    "selected_reference_consensus_pairs": 37871,
+    "reference_threshold": 0.04473979137189523,
+    "reference_gradient_rms": 0.17843310320876501,
+    "reference_gradient_disagreement_rms": 0.03798944040117709,
+    "relative_reference_disagreement": 0.21290578776030034,
+    "scores": {
+      "539": {
+        "Raw": {
+          "projected_edge_gain": 0.7860293459545244,
+          "edge_gradient_rmse": 0.35721678964548315,
+          "rmse_ref1": 0.3000516995324961,
+          "rmse_ref2": 0.3002568908222582
+        },
+        "STANDARD": {
+          "projected_edge_gain": 0.7485976024375152,
+          "edge_gradient_rmse": 0.07990605772205954,
+          "rmse_ref1": 0.08274791072851415,
+          "rmse_ref2": 0.08379126568038794
+        },
+        "NATIVE_COMP_OIDN": {
+          "projected_edge_gain": 0.7485976024375152,
+          "edge_gradient_rmse": 0.07990605772205954,
+          "rmse_ref1": 0.08274791072851415,
+          "rmse_ref2": 0.08379126568038794
+        }
+      },
+      "911": {
+        "Raw": {
+          "projected_edge_gain": 0.8081077886328513,
+          "edge_gradient_rmse": 0.36199796064682077,
+          "rmse_ref1": 0.30279238276020265,
+          "rmse_ref2": 0.30202297097986053
+        },
+        "STANDARD": {
+          "projected_edge_gain": 0.7596790121753975,
+          "edge_gradient_rmse": 0.07878984682219038,
+          "rmse_ref1": 0.08393125936588727,
+          "rmse_ref2": 0.08397802958672519
+        },
+        "NATIVE_COMP_OIDN": {
+          "projected_edge_gain": 0.7596790121753975,
+          "edge_gradient_rmse": 0.07878984682219038,
+          "rmse_ref1": 0.08393125936588727,
+          "rmse_ref2": 0.08397802958672519
+        }
+      },
+      "1337": {
+        "Raw": {
+          "projected_edge_gain": 0.7875672767682131,
+          "edge_gradient_rmse": 0.35521922216926755,
+          "rmse_ref1": 0.29926011580329714,
+          "rmse_ref2": 0.29998938394081376
+        },
+        "STANDARD": {
+          "projected_edge_gain": 0.7514859029210585,
+          "edge_gradient_rmse": 0.0804943051421894,
+          "rmse_ref1": 0.08417491855909683,
+          "rmse_ref2": 0.08526562793779432
+        },
+        "NATIVE_COMP_OIDN": {
+          "projected_edge_gain": 0.7514859029210585,
+          "edge_gradient_rmse": 0.0804943051421894,
+          "rmse_ref1": 0.08417491855909683,
+          "rmse_ref2": 0.08526562793779432
+        }
+      }
+    },
+    "persistent_attenuation_screen": true
+  },
+  "elapsed_wall_seconds": 699,
+  "hashes": {
+    "references": {
+      "reference.exr": "8a6f07e8f3007408ad240e70e84fbd4f0f7f68c558b3d853482ebe3d6bd54c3a",
+      "reference_check.exr": "0b42a6f37c384a2b8304b53e40a1837ffaf1fb00e1dbb6fe34e79cf78cff943c"
+    },
+    "539": {
+      "acd_compare_Raw.exr": "b33ce49da6301d12e4f1ee6f23734a2c6e577f5fb311a0b8d3d2fa62a5935675",
+      "acd_compare_STANDARD.exr": "60c01a525d94623408569be888c875e43dd6ab87066a5c764fdb48e9baa036d8",
+      "acd_compare_NATIVE_COMP_OIDN.exr": "60c01a525d94623408569be888c875e43dd6ab87066a5c764fdb48e9baa036d8",
+      "raw_multilayer.exr": "d77ab85d1e3c97eb08dbdd7e169c4c1924b99572d94099bf5e49cb7701ea6ff1"
+    },
+    "911": {
+      "acd_compare_Raw.exr": "8c657ffd58db922ba46f2de406a58b5ea8b38c1376b6704c5e15ec8fd5a5881d",
+      "acd_compare_STANDARD.exr": "066badccdd7c71ee7681892d6c0ae2352938448ebeebe3b21164b73a4440a78d",
+      "acd_compare_NATIVE_COMP_OIDN.exr": "066badccdd7c71ee7681892d6c0ae2352938448ebeebe3b21164b73a4440a78d",
+      "raw_multilayer.exr": "58ff15ade917a052ae99c931bfcdc28a4b836fe3fa32e044c7e672a1380b8047"
+    },
+    "1337": {
+      "acd_compare_Raw.exr": "16f8af4cf2ebf2a22354b5b9c5f64081ec33c174a6ff48564d9d97361c4325d2",
+      "acd_compare_STANDARD.exr": "ee79fd2ce30d31a963402ee6e77657321e42aeeae1f5ef7e7ce42e6714d87f0e",
+      "acd_compare_NATIVE_COMP_OIDN.exr": "ee79fd2ce30d31a963402ee6e77657321e42aeeae1f5ef7e7ce42e6714d87f0e",
+      "raw_multilayer.exr": "c50838ba06f8f31d886ab02c131d3331c0b7ba30d7702c2e840595e1c3de08f2"
+    }
+  },
+  "new_denoiser": false,
+  "reference_convergence_proven": false,
+  "perceptual_quality_established": false,
+  "valid_generalization_to_unseen_scene": false,
+  "conclusion": "DESCRIPTIVE only. Two finite references and one already-observed stylized scene do not establish quality superiority; select next independent representative scene or improve reference confidence before new algorithm."
+}

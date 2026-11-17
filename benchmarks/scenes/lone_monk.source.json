@@ -1,0 +1,28 @@
+{
+  "id": "lone_monk_official",
+  "source_url": "https://mirror.blender.org/demo/cycles/lone-monk_cycles_and_exposure-node_demo.blend",
+  "source_sha256": "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b",
+  "source_bytes": 33452252,
+  "license": "CC BY",
+  "author": "Carlo Bergonzini/Monorender",
+  "accepted_for_development_smoke": true,
+  "quality_holdout": false,
+  "redistribute_blend": false,
+  "seed_variation_screen_e0063": "PASS",
+  "seed_variation_source_run": "E0063",
+  "seed_statistical_independence_proven": false,
+  "denoiser_quality_benchmark_ready": false,
+  "framing_e0064_sha256": "22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7",
+  "framing_resolution_e0064": [
+    960,
+    720
+  ],
+  "framing_usable_e0064": true,
+  "physical_portal_roi_e0065": [
+    700,
+    430,
+    512,
+    512
+  ],
+  "physical_portal_context_margin_e0065": 64
+}

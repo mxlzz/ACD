@@ -38,6 +38,23 @@ def aggregate_seed_reports(directory: str | Path) -> dict:
                 "per_seed": values,
             }
 
+    # Detail comparisons are descriptive; selection depends only on the shared
+    # reference and spatial topology (never candidate sharpening).
+    detail_fields = ("edge_gradient_rmse", "flat_gradient_rmse", "edge_contrast_ratio")
+    detail_by_method = {}
+    for method in methods:
+        detail_by_method[method] = {}
+        for field in detail_fields:
+            vals = [report["measurements"][method].get("detail", {}).get(field)
+                    for report in reports]
+            if all(v is not None for v in vals):
+                detail_by_method[method][field] = {
+                    "mean": statistics.fmean(float(v) for v in vals),
+                    "per_seed": [float(v) for v in vals],
+                }
+            else:
+                detail_by_method[method][field] = None
+
     from .seed_audit import audit_noisy_seed_diversity
     has_raw = (root / "acd_compare_Raw.exr").is_file()
     diversity = audit_noisy_seed_diversity(root) if has_raw else None
@@ -63,6 +80,12 @@ def aggregate_seed_reports(directory: str | Path) -> dict:
             "Uncertainty of reference and other scenes is not sampled by this aggregate."
         ),
         "methods": per_method,
+        "detail_methods": detail_by_method,
+        "detail_warning": "Descriptive asinh-RGB gradient diagnostics; shared finite reference, never compare contrast ratio alone",
+        "rank_by_mean_edge_gradient_rmse": (sorted(
+            (method for method in methods if detail_by_method[method]["edge_gradient_rmse"] is not None),
+            key=lambda method: detail_by_method[method]["edge_gradient_rmse"]["mean"]
+        ) or None) if diversity_validated else None,
         "rank_by_mean_rmse": (sorted(
             methods, key=lambda name: per_method[name]["rmse_linear"]["mean"]
         ) if diversity_validated else None),

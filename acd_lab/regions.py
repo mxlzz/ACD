@@ -15,6 +15,7 @@ from collections.abc import Mapping
 import numpy as np
 
 from .core import FAMILIES, ADDITIVE, compare_images, rgb
+from .detail import detail_fidelity
 
 _LUMA = np.array([0.2126, 0.7152, 0.0722], dtype=np.float64)
 
@@ -142,8 +143,10 @@ def assess_regions(
             raise ValueError(f"{name}: expected a boolean mask with image dimensions")
         count = int(mask.sum())
         metrics = (
-            {method: compare_images(target[mask][None, :, :], candidate[mask][None, :, :])
-             for method, candidate in normalized_candidates.items()}
+            {method: {
+                **compare_images(target[mask][None, :, :], candidate[mask][None, :, :]),
+                "detail": detail_fidelity(target, candidate, mask=mask),
+             } for method, candidate in normalized_candidates.items()}
             if count else None
         )
         results[name] = {

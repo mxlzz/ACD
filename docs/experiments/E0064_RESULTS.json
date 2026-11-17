@@ -1,0 +1,34 @@
+{
+  "experiment": "E0064",
+  "source_sha256": "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b",
+  "license": "CC BY, Carlo Bergonzini / Monorender",
+  "source_camera": "cam.001",
+  "source_scene": "daylight",
+  "source_resolution": [
+    1440,
+    1080
+  ],
+  "preview_resolution": [
+    960,
+    720
+  ],
+  "preview_samples": 8,
+  "preview_seed": 539,
+  "preview_render_wall_seconds": 16.73,
+  "preview_sha256": "22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7",
+  "preview_bytes": 1296987,
+  "luma_p01_p50_p99": [
+    0.0,
+    0.008677,
+    0.892001
+  ],
+  "luma_98pct_range": 0.892001,
+  "usable_framing_preview": true,
+  "raw_exr_produced": false,
+  "denoiser_evaluated": false,
+  "new_algorithm": false,
+  "reference_available": false,
+  "representative_roi_selected": false,
+  "quality_claim_allowed": false,
+  "next_gate": "Inspect architectural features in original camera preview. Preregister ROI prior to higher-spp reference or native OIDN benchmark."
+}

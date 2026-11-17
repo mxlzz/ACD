@@ -1,0 +1,100 @@
+name: ACD E0047 glass-versus-direct slats diagnosis from existing E0046 EXRs
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0047-glass-regions.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  reanalyse-only:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR and run fixed ROI contract tests
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install "Pillow>=10,<13"
+          python -m pytest -q tests/test_glass_regions_e0047.py tests/test_detail_crop_e0046.py
+      - name: Recover SHA-controlled original EXR/AOV from E0046 without rendering
+        run: |
+          mkdir -p /tmp/e0047-source /tmp/e0047-flat
+          gh run download 43883209135 -R mxlzz/ACD \
+            -n acd-e0046-hires-density-crop-exr -D /tmp/e0047-source
+          for name in metadata.json acd_compare_Raw.exr acd_compare_NATIVE_COMP_OIDN.exr raw_multilayer.exr reference.exr reference_check.exr; do
+            mapfile -t files < <(find /tmp/e0047-source -type f -name "$name")
+            test "${#files[@]}" -eq 1 || { echo "Missing or ambiguous $name"; exit 1; }
+            cp -- "${files[0]}" "/tmp/e0047-flat/$name"
+          done
+          test -f docs/experiments/E0046_RESULTS.json
+      - name: Only numerical postprocess and static ROI 1:1 image
+        run: |
+          python -m scripts.analyze_glass_regions_e0047 \
+            --directory /tmp/e0047-flat \
+            --source-json docs/experiments/E0046_RESULTS.json \
+            --output /tmp/e0047-report
+      - name: Publish permanent result without invented algorithmic improvement
+        run: |
+          mkdir -p benchmarks/results/detail_glass_e0047 docs/experiments
+          cp /tmp/e0047-report/E0047_RESULTS.json docs/experiments/E0047_RESULTS.json
+          cp /tmp/e0047-report/e0047_roi_comparison.png benchmarks/results/detail_glass_e0047/
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("docs/experiments/E0047_RESULTS.json").read_text())
+          rows=[
+            "# E0047 — Lamas detrás del vidrio vs lamas sin vidrio (diagnóstico)",
+            "", "Regiones fijadas antes de calcular; extraídas de EXR originales E0046 sin volver a renderizar ni probar nuevos filtros.",
+            "Fuente: fixture procedural Blender 5.2.4, crop FOV 1920px, 24spp Raw/OIDN y dos refs512spp.",
+            "",
+            "![Raw/OIDN/refs y AOV por zona](../../benchmarks/results/detail_glass_e0047/e0047_roi_comparison.png)",
+            "",
+            "| Región | Corr. gradiente horizontal refs | Ratio de gradientes OIDN (ref1 / ref2) | RMSE refs |",
+            "|---|---:|---|---:|"]
+          for name,data in d["regions"].items():
+            rs=[data["method_scores"]["oidn"][f"ref{i}"]["detail"]["edge_contrast_ratio"] for i in (1,2)]
+            rows.append(f'| {name} | {data["ref_horizontal_luma_gradient_corr"]:.5f} | {rs[0]:.5f} / {rs[1]:.5f} | {data["ref_ref_rmse"]:.6f} |')
+          rows += ["",
+            "La zona bajo vidrio y la zona sin vidrio tienen contenido/iluminación diferentes. La correlación y los ratios no demuestran que el vidrio *cause* la diferencia.",
+            "El objetivo es localizar un posible patrón que sobreviva en ambos refs y no en OIDN. No se implementó un algoritmo.",
+            "Refs finitas 512spp, margenes 96px no excluyen artefactos del procesamiento sobre crop.",
+            "", "[JSON con guías originales, errores por referencia y ROIs](E0047_RESULTS.json)."
+          ]
+          Path("docs/experiments/E0047.md").write_text("\n".join(rows)+"\n")
+          trace="\n## E0047 original-source glass/direct detail diagnosis (2026-11-16)\n\n"+\
+                "Existing E0046 EXRs reused; no Cycles render and no new denoiser. "+\
+                "ROI/guide report docs/experiments/E0047_RESULTS.json; visual benchmarks/results/detail_glass_e0047/. "+\
+                "Check whether reference edge correlations are high before causal experiment. No addon promotion.\n"
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+            with Path(path).open("a",encoding="utf-8") as f:f.write(trace)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0047_RESULTS.json docs/experiments/E0047.md
+          git add benchmarks/results/detail_glass_e0047/ STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0047): locate glass-overlap slat contrast with fixed EXR ROI and native guides"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Archive small derived inputs temporarily
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0047-glass-region-analysis
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/e0047-report/

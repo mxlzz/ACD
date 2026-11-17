@@ -1,0 +1,118 @@
+name: ACD E0044 current LTS detail failure check — reuse procedural geometry, no new filter
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0044-current-detail.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-current-oidn-detail:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      ACD_BENCH_DIR: /tmp/acd-e0044
+      ACD_SCENE: detail_target
+      ACD_DEVICE: CPU
+      ACD_WIDTH: "320"
+      ACD_HEIGHT: "240"
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_REFERENCE_SPP: "1024"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_EXTRA_SEEDS: ""
+      ACD_METHODS: NATIVE_COMP_OIDN
+      ACD_CAPTURE_AOV: "1"
+      ACD_E0044_ADAPTIVE_OFF: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check evaluation code and EXR requirements
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install "Pillow>=10,<13"
+          python -m pytest -q tests/test_current_detail_e0044.py tests/test_detail.py tests/test_reference_audit.py
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Official Blender 5.2.4 LTS with official SHA when uncached
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          FILE=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$FILE -o "$FILE"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$FILE" official.sha256 | sha256sum -c -
+          tar -xf "$FILE"
+      - name: Install headless EGL libraries
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Render current OIDN on existing procedural detail fixture, exactly two references
+        run: |
+          ./blender-5.2.4-linux-x64/blender -b --factory-startup --python-exit-code 1 \
+            --python tests/blender_compare_smoke.py
+      - name: Check true 24 spp, two reference edges and produce four-image gallery
+        run: |
+          python -m scripts.analyze_current_detail_e0044 \
+            --directory /tmp/acd-e0044 --output /tmp/acd-e0044-report
+      - name: Preserve compact observations, no algorithm promotion
+        run: |
+          mkdir -p docs/experiments benchmarks/results/detail_current_e0044
+          cp /tmp/acd-e0044-report/E0044_RESULTS.json docs/experiments/E0044_RESULTS.json
+          cp /tmp/acd-e0044-report/e0044_reference_comparison.png benchmarks/results/detail_current_e0044/
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("docs/experiments/E0044_RESULTS.json").read_text())
+          header=[
+            "# E0044 — OIDN actual en detalles arquitectónicos procedurales",
+            "", "Blender 5.2.4 LTS, 320x240, 24 spp seed539, 2 refs 1024 spp seeds8819/8922. Sin assets externos, sin nuevos métodos.",
+            "El fixture contiene 52 lamas, juntas de azulejos, vidrio, metal y bump procedural. Compositor OIDN High/Accurate/HDR con guías albedo/normal.",
+            "", "![Raw vs OIDN y dos referencias, transferencia diagnóstica común](../../benchmarks/results/detail_current_e0044/e0044_reference_comparison.png)",
+            "", "| Método | RMSE ref1 | RMSE ref2 | Edge RMSE ref1 | Ratio de contraste de borde ref1 |",
+            "|---|---:|---:|---:|---:|"]
+          for name in ("Raw","NATIVE_COMP_OIDN"):
+            a,b=[d["whole_image"][name][f"ref{i}"] for i in (1,2)]
+            header.append(f'| {name} | {a["color"]["rmse_linear"]:.8f} | {b["color"]["rmse_linear"]:.8f} | {a["detail"]["edge_gradient_rmse"]:.8f} | {a["detail"]["edge_contrast_ratio"]:.5f} |')
+          header += ["", "Referencia contra referencia RMSE: "+str(d["reference_disagreement"]["rmse_linear"])+".",
+              "Tiles con contraste reducido en ambas referencias (<0.75): "+str(d["potential_low_edge_contrast_tiles"])+". La pérdida de contraste por sí sola NO es un fallo confirmado ni una ventaja de otro filtro.",
+              "El experimento E0016 (Blender 5.0.1) tiene otros renders de entrada; la diferencia numérica entre ambos experimentos no aísla un cambio de backend OIDN.",
+              "Sin convergencia probada ni calidad perceptual certificada. No se promueve ninguna modificación al addon.",
+              "", "[Datos y 12 regiones fijas](E0044_RESULTS.json)."]
+          Path("docs/experiments/E0044.md").write_text("\n".join(header)+"\n")
+          note="\n## E0044 current Blender 5.2.4 detail diagnosis\n\n"+" ".join(header[1:4])+" Metrics in docs/experiments/E0044_RESULTS.json and gallery benchmarks/results/detail_current_e0044/. No algorithm change, interpret tile screen as descriptive only.\n"
+          for p in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+            with Path(p).open("a",encoding="utf-8") as f:f.write(note)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0044_RESULTS.json docs/experiments/E0044.md
+          git add benchmarks/results/detail_current_e0044/ STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0044): archive Blender 5.2.4 OIDN fine-detail diagnostic"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Keep raw input/ref EXRs for 14 days, not original geometry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0044-current-detail-exr
+          retention-days: 14
+          if-no-files-found: warn
+          compression-level: 1
+          path: /tmp/acd-e0044/

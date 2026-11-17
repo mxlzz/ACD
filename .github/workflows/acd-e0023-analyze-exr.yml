@@ -1,0 +1,83 @@
+name: ACD E0023 diagnose emissive HDR outliers from saved EXRs
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0023-analyze-exr.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  interpret-noisy-vs-oidn:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR diagnostics and numerical tests
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install Pillow
+          python -m pytest -q tests/test_error_concentration.py tests/test_region_cli.py tests/test_cozy_e0021_analysis.py
+      - name: Restore exact verified held-out EXRs from E0023
+        run: |
+          mkdir -p /tmp/acd_terraced_e0023
+          gh run download 43291659387 -R mxlzz/ACD -n acd-e0023-terraced-exr -D /tmp/acd_terraced_e0023
+          gh run download 43291659387 -R mxlzz/ACD -n acd-e0023-terraced-metrics -D /tmp/acd_terraced_e0023
+          test -f /tmp/acd_terraced_e0023/raw_multilayer.exr
+          test -f /tmp/acd_terraced_e0023/reference_check.exr
+          test -f /tmp/acd_terraced_e0023/seed_911/acd_compare_NATIVE_COMP_OIDN.exr
+      - name: Compute per-pixel squared-error concentration and AOV profiles
+        run: |
+          python -m scripts.analyze_terraced_e0023 \
+            --directory /tmp/acd_terraced_e0023 \
+            --output /tmp/acd_terraced_e0023/analysis
+      - name: Publish derived MIT comparisons, metrics, and scientific interpretation
+        run: |
+          mkdir -p benchmarks/results/terraced_e0023 docs/experiments
+          cp /tmp/acd_terraced_e0023/analysis/E0023.md docs/experiments/E0023.md
+          cp /tmp/acd_terraced_e0023/analysis/reference_selected_crop_*.png benchmarks/results/terraced_e0023/
+          cp /tmp/acd_terraced_e0023/analysis/analysis.json benchmarks/results/terraced_e0023/
+          cp /tmp/acd_terraced_e0023/analysis/reference_rois.json benchmarks/results/terraced_e0023/
+          {
+            echo
+            echo "## E0023 — Exterior nocturno, discrepancia entre errores, diagnóstico archivado"
+            echo "- Run 43291659387 valida 320×240 24spp x3 y 512spp refs x2, nativo OIDN RMSE más alto que Raw pero MAE y gradiente menores. Informe E0023 y comparativas: docs/experiments/E0023.md, benchmarks/results/terraced_e0023. EXR fuente conservados temporalmente en Actions."
+            echo "- Se midió concentración SSE peor 1% y errores por AOV emission/glossy sobre primera seed, contra mismas refs sin alterar algoritmos. Esta escena fue observada: requiere otra escena final ciega para evaluar un candidato entrenado."
+          } >> STATUS.md
+          {
+            echo
+            echo "> E0023 reporte permanente: exterior nocturno Terraced Houses MIT, discrepancia Raw/OIDN en RMSE vs MAE; concentración de error HDR y AOV más 3 recortes desde referencias en [E0023](experiments/E0023.md). Ninguna mejora de denoiser probada."
+          } >> docs/ROADMAP.md
+          {
+            echo
+            echo "## 2026-11-12 — E0023 auditoría de outliers y AOV a partir de mismo EXR"
+            echo "- Reprocesados los datos exactos de Actions 43291659387 sin volver a renderizar. Error cuadrático concentrado peor 1%, AOV emisión/glossy, tres ROIs de referencias, tres seeds vs dos referencias. Fuente original MIT Yunus Emre Karaman y copyright intacto."
+            echo "- No asignar causalidad a emisión solo por máscara de energía AOV ni elegir parámetros a partir de esta escena ya examinada. Una nueva escena no observada será necesaria para test final."
+          } >> docs/DECISION_LOG.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0023.md benchmarks/results/terraced_e0023/*
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0023): archive HDR outlier and AOV diagnostic from actual night renders"
+          git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
+      - name: Temporary complete diagnostic copy
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0023-terraced-analysis
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd_terraced_e0023/analysis/

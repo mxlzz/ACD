@@ -1,0 +1,222 @@
+{
+  "experiment": "E0033",
+  "source_blend_sha256": "b35b6694eb231d0d4d5d9ee9bbe63122218183fd519a05c7d5db0e62cbdaeca1",
+  "source_license": "Origin Modern Hall by NewSee2l035, CC BY 3.0; intermediary conversion cuteday/Bitterli; binary NOT republished",
+  "samples": 24,
+  "reference_samples": 1024,
+  "seeds": 3,
+  "resolution": [
+    512,
+    512
+  ],
+  "reference_disagreement_rmse": 0.021531219220329034,
+  "input_seed_diversity_heuristic_passed": true,
+  "convergence_proven": false,
+  "emission_aov_stats_by_seed": [
+    {
+      "seed": "acd-e0033-hall",
+      "aov_raw_delta_max": 0.0,
+      "Emission50": {
+        "scale": 0.25,
+        "max_raw_fraction": 0.5,
+        "mean_raw_weight": 0.010564712161779594,
+        "nonzero_emission_fraction": 0.02367401123046875,
+        "mean_emission_luminance": 0.07513570518235835,
+        "max_emission_luminance": 3.6526495439291,
+        "max_raw_weight_actual": 0.4679704778528095,
+        "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+        "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+      },
+      "Emission100": {
+        "scale": 0.25,
+        "max_raw_fraction": 1.0,
+        "mean_raw_weight": 0.021129424323559187,
+        "nonzero_emission_fraction": 0.02367401123046875,
+        "mean_emission_luminance": 0.07513570518235835,
+        "max_emission_luminance": 3.6526495439291,
+        "max_raw_weight_actual": 0.935940955705619,
+        "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+        "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+      }
+    },
+    {
+      "seed": "seed_1337",
+      "aov_raw_delta_max": 0.0,
+      "Emission50": {
+        "scale": 0.25,
+        "max_raw_fraction": 0.5,
+        "mean_raw_weight": 0.010569328189011186,
+        "nonzero_emission_fraction": 0.0236663818359375,
+        "mean_emission_luminance": 0.07514163469926963,
+        "max_emission_luminance": 3.6526495439291,
+        "max_raw_weight_actual": 0.4679704778528095,
+        "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+        "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+      },
+      "Emission100": {
+        "scale": 0.25,
+        "max_raw_fraction": 1.0,
+        "mean_raw_weight": 0.021138656378022373,
+        "nonzero_emission_fraction": 0.0236663818359375,
+        "mean_emission_luminance": 0.07514163469926963,
+        "max_emission_luminance": 3.6526495439291,
+        "max_raw_weight_actual": 0.935940955705619,
+        "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+        "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+      }
+    },
+    {
+      "seed": "seed_911",
+      "aov_raw_delta_max": 0.0,
+      "Emission50": {
+        "scale": 0.25,
+        "max_raw_fraction": 0.5,
+        "mean_raw_weight": 0.010559610528517008,
+        "nonzero_emission_fraction": 0.02364349365234375,
+        "mean_emission_luminance": 0.07513413999220331,
+        "max_emission_luminance": 3.6526495439291,
+        "max_raw_weight_actual": 0.4679704778528095,
+        "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+        "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+      },
+      "Emission100": {
+        "scale": 0.25,
+        "max_raw_fraction": 1.0,
+        "mean_raw_weight": 0.021119221057034017,
+        "nonzero_emission_fraction": 0.02364349365234375,
+        "mean_emission_luminance": 0.07513413999220331,
+        "max_emission_luminance": 3.6526495439291,
+        "max_raw_weight_actual": 0.935940955705619,
+        "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+        "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+      }
+    }
+  ],
+  "frozen_inference": {
+    "scale": 0.25,
+    "max_raw_fraction": [
+      0.5,
+      1.0
+    ],
+    "constant_control": "same-seed Emission50 mean Raw weight"
+  },
+  "first_and_second_reference_mean_metrics_over_three_seeds": {
+    "ref1": {
+      "Raw": {
+        "rmse_hdr": 0.0950480725823873,
+        "mae_hdr": 0.06503764917129529,
+        "edge_gradient_rmse": 0.11651659421063458,
+        "brightest_1pct_rmse": 0.0014326796301838277,
+        "outside_brightest_1pct_rmse": 0.09552684982630859
+      },
+      "OIDN": {
+        "rmse_hdr": 0.022238038719391246,
+        "mae_hdr": 0.013563463631057315,
+        "edge_gradient_rmse": 0.0344569016844243,
+        "brightest_1pct_rmse": 0.011979592828175947,
+        "outside_brightest_1pct_rmse": 0.022317581913544587
+      },
+      "STANDARD": {
+        "rmse_hdr": 0.022238038719391246,
+        "mae_hdr": 0.013563463631057315,
+        "edge_gradient_rmse": 0.0344569016844243,
+        "brightest_1pct_rmse": 0.011979592828175947,
+        "outside_brightest_1pct_rmse": 0.022317581913544587
+      },
+      "ACD High": {
+        "rmse_hdr": 0.023718722106493877,
+        "mae_hdr": 0.014040951649047069,
+        "edge_gradient_rmse": 0.03661137717370795,
+        "brightest_1pct_rmse": 0.016180555925963746,
+        "outside_brightest_1pct_rmse": 0.023782635002107925
+      },
+      "ACD Super": {
+        "rmse_hdr": 0.03184713324185279,
+        "mae_hdr": 0.015899694541305052,
+        "edge_gradient_rmse": 0.04467988238609152,
+        "brightest_1pct_rmse": 0.016251984994618062,
+        "outside_brightest_1pct_rmse": 0.03196582777209366
+      },
+      "Emission50": {
+        "rmse_hdr": 0.022302386417907254,
+        "mae_hdr": 0.013533127370939244,
+        "edge_gradient_rmse": 0.03455457754698805,
+        "brightest_1pct_rmse": 0.006432892217335556,
+        "outside_brightest_1pct_rmse": 0.02240541458439868
+      },
+      "Emission100": {
+        "rmse_hdr": 0.022801329556446325,
+        "mae_hdr": 0.013566226492357059,
+        "edge_gradient_rmse": 0.035083155218045274,
+        "brightest_1pct_rmse": 0.0016838305149146045,
+        "outside_brightest_1pct_rmse": 0.022915503121787775
+      },
+      "ConstantMatched50": {
+        "rmse_hdr": 0.022269244170040836,
+        "mae_hdr": 0.013591569729930487,
+        "edge_gradient_rmse": 0.03449128616613791,
+        "brightest_1pct_rmse": 0.011853237067275098,
+        "outside_brightest_1pct_rmse": 0.022349671683418695
+      }
+    },
+    "ref2": {
+      "Raw": {
+        "rmse_hdr": 0.0950552096946426,
+        "mae_hdr": 0.06502338456226686,
+        "edge_gradient_rmse": 0.1161921943766776,
+        "brightest_1pct_rmse": 0.0023211961418582437,
+        "outside_brightest_1pct_rmse": 0.09553387449863932
+      },
+      "OIDN": {
+        "rmse_hdr": 0.022155989264609422,
+        "mae_hdr": 0.013528846408205916,
+        "edge_gradient_rmse": 0.03429763020491928,
+        "brightest_1pct_rmse": 0.012942988414156802,
+        "outside_brightest_1pct_rmse": 0.022229575411576313
+      },
+      "STANDARD": {
+        "rmse_hdr": 0.022155989264609422,
+        "mae_hdr": 0.013528846408205916,
+        "edge_gradient_rmse": 0.03429763020491928,
+        "brightest_1pct_rmse": 0.012942988414156802,
+        "outside_brightest_1pct_rmse": 0.022229575411576313
+      },
+      "ACD High": {
+        "rmse_hdr": 0.0236615720241639,
+        "mae_hdr": 0.014017289896008237,
+        "edge_gradient_rmse": 0.03654874584494056,
+        "brightest_1pct_rmse": 0.01709084002950889,
+        "outside_brightest_1pct_rmse": 0.023718626893463865
+      },
+      "ACD Super": {
+        "rmse_hdr": 0.03176431037953593,
+        "mae_hdr": 0.015867870253774247,
+        "edge_gradient_rmse": 0.044589657017276914,
+        "brightest_1pct_rmse": 0.017185592818011478,
+        "outside_brightest_1pct_rmse": 0.03187753672942944
+      },
+      "Emission50": {
+        "rmse_hdr": 0.022215001330501374,
+        "mae_hdr": 0.013498910940878206,
+        "edge_gradient_rmse": 0.03437778800937191,
+        "brightest_1pct_rmse": 0.007107211793068412,
+        "outside_brightest_1pct_rmse": 0.022315495298720584
+      },
+      "Emission100": {
+        "rmse_hdr": 0.02271041379075649,
+        "mae_hdr": 0.013531959918594091,
+        "edge_gradient_rmse": 0.03487340142651645,
+        "brightest_1pct_rmse": 0.002424871640967378,
+        "outside_brightest_1pct_rmse": 0.022823465668239548
+      },
+      "ConstantMatched50": {
+        "rmse_hdr": 0.022188501284309593,
+        "mae_hdr": 0.013556820218110171,
+        "edge_gradient_rmse": 0.0343344713273471,
+        "brightest_1pct_rmse": 0.01280929132627334,
+        "outside_brightest_1pct_rmse": 0.022263088669921452
+      }
+    }
+  },
+  "caveat": "New artist versus E0023/E0029. Finite sample references and heuristic seed diversity; quality requires visual inspection at scale. The emitted results are not an endorsement of any denoiser."
+}

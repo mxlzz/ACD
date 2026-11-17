@@ -1,0 +1,130 @@
+name: ACD E0065 Lone Monk preselected stone portal 1920px OIDN finite-reference fidelity
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths: [.github/workflows/acd-e0065-lone-monk-portal.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  source-fixed-architecture:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+      ACD_SCENE: external
+      ACD_E0065_CROP: monk_portal
+      ACD_BENCH_DIR: /tmp/e0065
+      ACD_DEVICE: CPU
+      ACD_WIDTH: "1920"
+      ACD_HEIGHT: "1440"
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_REFERENCE_SPP: "512"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_EXTRA_SEEDS: "911,1337"
+      ACD_METHODS: STANDARD,NATIVE_COMP_OIDN
+      ACD_CAPTURE_AOV: "1"
+      ACD_E0044_ADAPTIVE_OFF: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Numerical contracts, source pin, ROIs, prior seed test
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install "Pillow>=10,<13"
+          python -m pytest -q \
+            tests/test_lone_monk_portal_e0065.py \
+            tests/test_lone_monk_framing_e0064.py \
+            tests/test_lone_monk_seeds_e0063.py
+      - name: Verify unchanged original official Cycles source
+        run: |
+          mkdir -p /tmp/e0065
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 \
+            https://mirror.blender.org/demo/cycles/lone-monk_cycles_and_exposure-node_demo.blend \
+            -o /tmp/lone-monk.blend
+          test "$(stat -c%s /tmp/lone-monk.blend)" -eq 33452252
+          echo "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b  /tmp/lone-monk.blend" | sha256sum -c -
+      - uses: actions/cache@v4
+        id: blender
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Download checksum-verified Blender if cache misses
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Headless Blender EGL runtime
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Cycles CPU native-portal same-raw 3x24spp and 2x512spp refs
+        run: |
+          start=$(date +%s)
+          ./blender-5.2.4-linux-x64/blender \
+            -b --disable-autoexec /tmp/lone-monk.blend \
+            --python-exit-code 1 --python tests/blender_compare_smoke.py
+          echo "$(( $(date +%s) - start ))" > /tmp/e0065/wall_seconds.txt
+      - name: Compare fixed physical ROI HDR, gradients, finite-reference uncertainty
+        run: |
+          python -m scripts.analyze_lone_monk_portal_e0065 \
+            --directory /tmp/e0065 --output /tmp/e0065-report
+      - name: Archive exact evidence and source attribution without new algorithm
+        run: |
+          mkdir -p benchmarks/results/lone_monk_e0065
+          cp /tmp/e0065-report/E0065.md docs/experiments/E0065.md
+          cp /tmp/e0065-report/E0065_RESULTS.json docs/experiments/E0065_RESULTS.json
+          cp /tmp/e0065-report/E0065_1to1.png benchmarks/results/lone_monk_e0065/
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          d=json.loads(Path("docs/experiments/E0065_RESULTS.json").read_text())
+          src=Path("benchmarks/scenes/lone_monk.source.json")
+          manifest=json.loads(src.read_text())
+          if manifest["source_sha256"]!=d["original_source_sha256"]:
+              raise RuntimeError("Pinned source manifest changed")
+          manifest["physical_portal_roi_e0065"]=d["roi_contract"]["crop_top_left_xywh"]
+          manifest["physical_portal_context_margin_e0065"]=64
+          manifest["denoiser_quality_benchmark_ready"]=False
+          src.write_text(json.dumps(manifest,indent=2)+"\n")
+          r=d["regions"]["portal_architecture"]
+          note=(f"E0065 source-locked Lone Monk true1920px-density stone portal, "
+                f"3x24spp Raw+native OIDN, two512spp refs, wall={d['actual_wall_seconds']}s; "
+                f"ref/ref RMSE={r['reference_pair_rmse_linear']:.6f}, "
+                f"native/ref RMSE={r['native_oidn_mean_linear_rmse_to_finite_refs']:.6f}, "
+                f"ref spread/error={r['reference_spread_over_native_linear_error']:.3f}. "
+                "No convergence demonstrated, no algorithm/new product/holdout. "
+                "See docs/experiments/E0065.md.")
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(path).open("a",encoding="utf-8") as file:
+                  file.write("\n## E0065 original physical architectural portal baseline and finite references\n\n"+note+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0065.md docs/experiments/E0065_RESULTS.json
+          git add benchmarks/results/lone_monk_e0065/E0065_1to1.png benchmarks/scenes/lone_monk.source.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0065): archive held-fixed real stone portal native OIDN and dual references"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Preserve original high-bit-depth EXRs briefly for falsification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0065-original-portal-exr
+          retention-days: 7
+          if-no-files-found: warn
+          compression-level: 1
+          path: /tmp/e0065/

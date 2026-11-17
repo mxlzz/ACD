@@ -1,0 +1,95 @@
+{
+  "experiment": "E0036",
+  "blender": "5.2.4 LTS",
+  "shared_render": true,
+  "input_seed": 539,
+  "sampling": 16,
+  "native_internal_setting": "OPENIMAGEDENOISE",
+  "compositor_setting": {
+    "prefilter": "Accurate",
+    "quality": "High",
+    "hdr": true
+  },
+  "metrics": {
+    "raw_vs_internal": {
+      "log1p_luminance_rmse": 0.11236726434236491,
+      "pixel_rmse_p95": 0.5136761764380491,
+      "mae_linear": 0.14281196691409706,
+      "rmse_linear": 0.2544771700358048,
+      "relative_rmse": 0.19874447258500574,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": false
+    },
+    "raw_vs_compositor": {
+      "log1p_luminance_rmse": 0.11236726692655649,
+      "pixel_rmse_p95": 0.5136762099405202,
+      "mae_linear": 0.14281198011240626,
+      "rmse_linear": 0.25447716631777373,
+      "relative_rmse": 0.19874446968125561,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": false
+    },
+    "internal_vs_compositor": {
+      "log1p_luminance_rmse": 4.559929367082796e-08,
+      "pixel_rmse_p95": 3.371747880871523e-07,
+      "mae_linear": 8.415152782011622e-08,
+      "rmse_linear": 1.4466098094000755e-07,
+      "relative_rmse": 1.1587794477573113e-07,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": false
+    },
+    "internal_compositor_max_abs_diff": 1.9073486328125e-06,
+    "internal_compositor_exact_match": false,
+    "no_ground_truth_used": true
+  },
+  "source_metadata": {
+    "experiment": "E0036",
+    "classification": "single-render input identity diagnostic, NOT reference quality",
+    "blender": "5.2.4 LTS",
+    "blender_build": "cd5dc428cce1",
+    "samples": 16,
+    "seed": 539,
+    "resolution": [
+      128,
+      96
+    ],
+    "scene": "procedural detail_target",
+    "cycles_scene_denoiser": "OPENIMAGEDENOISE",
+    "cycles_scene_use_denoising": true,
+    "cycles_view_layer_use_denoising": true,
+    "compositor": {
+      "prefilter": "Accurate",
+      "quality": "High",
+      "hdr": true
+    },
+    "raw_from_same_layers": true,
+    "methods": [
+      "Raw",
+      "CyclesInternal",
+      "CompositorOIDN"
+    ],
+    "files": {
+      "Raw": {
+        "path": "/tmp/acd-e0036/acd_e0036_Raw.exr",
+        "sha256": "30dedb26e6e0ceb62ee4edcd909dad17228928d02fbe445f6548268be645bf74",
+        "bytes": 130654
+      },
+      "CyclesInternal": {
+        "path": "/tmp/acd-e0036/acd_e0036_CyclesInternal.exr",
+        "sha256": "5c95dd62a7c63e2cd00b8cc11d81bd09cdf74edb8c122254bc9c002f2de273e1",
+        "bytes": 134574
+      },
+      "CompositorOIDN": {
+        "path": "/tmp/acd-e0036/acd_e0036_CompositorOIDN.exr",
+        "sha256": "af9f0901e62fe33a744de3aa09e51e358cfe658474afacbbe3058d7a31829b23",
+        "bytes": 134556
+      }
+    },
+    "reference_convergence_proven": false,
+    "caveat": "Both algorithms consume the same Cycles RLayers noisy pass on one render. Internal OIDN and compositor OIDN may use distinct guide handling; output difference is not a quality ranking."
+  },
+  "caveat": "Single-render difference isolates implementations on one noise realization; without a converged reference no quality winner or speed comparison."
+}

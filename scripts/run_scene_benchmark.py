@@ -32,6 +32,7 @@ def parser() -> argparse.ArgumentParser:
     argp.add_argument("--frame", type=int, help="Frame number (optional; default scene frame)")
     argp.add_argument("--width", type=int, help="Output width; default uses scene setting")
     argp.add_argument("--height", type=int, help="Output height; default uses scene setting")
+    argp.add_argument("--max-width", type=int, help="Cap original scene width and derive height preserving original aspect; incompatible with explicit --width/--height")
     argp.add_argument("--samples", type=int, default=64, help="Samples per pixel, noisy render")
     argp.add_argument("--reference-samples", type=int, default=2048, help="Samples for high-spp reference")
     argp.add_argument("--seed", type=int, default=539, help="Noisy Cycles seed")
@@ -66,7 +67,9 @@ def validate(args) -> tuple[Path, Path, Path]:
             raise ValueError("--second-reference is incompatible with an externally supplied reference")
     if args.regions and not args.regions.expanduser().is_file():
         raise ValueError("ROI file does not exist")
-    if any(v is not None and not 8 <= v <= 16384 for v in (args.width, args.height)):
+    if args.max_width is not None and (args.width is not None or args.height is not None):
+        raise ValueError("--max-width is mutually exclusive with --width and --height")
+    if any(v is not None and not 8 <= v <= 16384 for v in (args.width, args.height, args.max_width)):
         raise ValueError("Explicit resolution must be between 8 and 16384")
     if args.samples < 1 or args.reference_samples < 1:
         raise ValueError("Sample counts must be positive")
@@ -87,7 +90,8 @@ def validate(args) -> tuple[Path, Path, Path]:
 
 def make_command(args) -> tuple[list[str], dict[str, str]]:
     blender, blend, output = validate(args)
-    command = [str(blender), "-b", str(blend)]
+    # Third-party scenes must never auto-execute embedded Python or drivers.
+    command = [str(blender), "-b", "--disable-autoexec", str(blend)]
     if args.scene_name:
         command.extend(["-S", args.scene_name])
     command.extend(["-noaudio", "--python-exit-code", "1", "--python", str(BLENDER_SCRIPT)])
@@ -115,6 +119,10 @@ def make_command(args) -> tuple[list[str], dict[str, str]]:
         env["ACD_HEIGHT"] = str(args.height)
     else:
         env.pop("ACD_HEIGHT", None)
+    if args.max_width is not None:
+        env["ACD_MAX_WIDTH"] = str(args.max_width)
+    else:
+        env.pop("ACD_MAX_WIDTH", None)
     if args.frame is not None:
         env["ACD_FRAME"] = str(args.frame)
     else:

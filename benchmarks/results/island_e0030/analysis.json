@@ -1,0 +1,199 @@
+{
+  "experiment": "E0030",
+  "scene_sha256": "0fceb72489873a1ebbdf8210c435713e5fee1b3c58ffa4105187023f6896b701",
+  "render_run_id": 43309302172,
+  "roi_selection": "maximum luminance of mean finite-spp references and reference-only gradient regions",
+  "coords_px": [
+    [
+      128,
+      115,
+      80,
+      80
+    ],
+    [
+      130,
+      78,
+      80,
+      80
+    ],
+    [
+      26,
+      78,
+      80,
+      80
+    ],
+    [
+      26,
+      182,
+      80,
+      80
+    ]
+  ],
+  "crops": [
+    "island_e0030_1_reference_brightest.png",
+    "island_e0030_2_reference_detail_1.png",
+    "island_e0030_3_reference_detail_2.png",
+    "island_e0030_4_reference_detail_3.png"
+  ],
+  "local_rmse": [
+    {
+      "tag": "reference_brightest",
+      "bbox": [
+        128,
+        115,
+        80,
+        80
+      ],
+      "Raw": {
+        "rmse_first": 0.15169077750612117,
+        "rmse_second": 0.15321418377490745
+      },
+      "OIDN": {
+        "rmse_first": 0.17294370418687316,
+        "rmse_second": 0.17299839713858714
+      },
+      "Emission50": {
+        "rmse_first": 0.15048933133011588,
+        "rmse_second": 0.1513607561117375
+      },
+      "Emission100": {
+        "rmse_first": 0.14722265610362636,
+        "rmse_second": 0.14893511747762778
+      },
+      "ACD High": {
+        "rmse_first": 0.3257727618523389,
+        "rmse_second": 0.32578463109815037
+      },
+      "ACD Super": {
+        "rmse_first": 0.32197004584697764,
+        "rmse_second": 0.3220099299982148
+      }
+    },
+    {
+      "tag": "reference_detail_1",
+      "bbox": [
+        130,
+        78,
+        80,
+        80
+      ],
+      "Raw": {
+        "rmse_first": 0.13419466317524611,
+        "rmse_second": 0.1333471215355908
+      },
+      "OIDN": {
+        "rmse_first": 0.1399577324392492,
+        "rmse_second": 0.14046860860686217
+      },
+      "Emission50": {
+        "rmse_first": 0.11581687987480387,
+        "rmse_second": 0.11570216645994538
+      },
+      "Emission100": {
+        "rmse_first": 0.12838683084160887,
+        "rmse_second": 0.12761974266150228
+      },
+      "ACD High": {
+        "rmse_first": 0.3328564906471323,
+        "rmse_second": 0.33472218591761754
+      },
+      "ACD Super": {
+        "rmse_first": 0.3318773288018924,
+        "rmse_second": 0.33372128705853715
+      }
+    },
+    {
+      "tag": "reference_detail_2",
+      "bbox": [
+        26,
+        78,
+        80,
+        80
+      ],
+      "Raw": {
+        "rmse_first": 0.024162043567133643,
+        "rmse_second": 0.02420252364807488
+      },
+      "OIDN": {
+        "rmse_first": 0.014326312851256228,
+        "rmse_second": 0.014494306247234374
+      },
+      "Emission50": {
+        "rmse_first": 0.014326312851256228,
+        "rmse_second": 0.014494306247234374
+      },
+      "Emission100": {
+        "rmse_first": 0.014326312851256228,
+        "rmse_second": 0.014494306247234374
+      },
+      "ACD High": {
+        "rmse_first": 0.014609138642486646,
+        "rmse_second": 0.014774777743213178
+      },
+      "ACD Super": {
+        "rmse_first": 0.01648441929593148,
+        "rmse_second": 0.016624119255981805
+      }
+    },
+    {
+      "tag": "reference_detail_3",
+      "bbox": [
+        26,
+        182,
+        80,
+        80
+      ],
+      "Raw": {
+        "rmse_first": 0.02351110969472096,
+        "rmse_second": 0.023736420884865803
+      },
+      "OIDN": {
+        "rmse_first": 0.013988976342802202,
+        "rmse_second": 0.014081842442041857
+      },
+      "Emission50": {
+        "rmse_first": 0.013988976342802202,
+        "rmse_second": 0.014081842442041857
+      },
+      "Emission100": {
+        "rmse_first": 0.013988976342802202,
+        "rmse_second": 0.014081842442041857
+      },
+      "ACD High": {
+        "rmse_first": 0.013928441097095982,
+        "rmse_second": 0.014029922988280947
+      },
+      "ACD Super": {
+        "rmse_first": 0.015837721966352608,
+        "rmse_second": 0.015985389027755374
+      }
+    }
+  ],
+  "emission_inference_weights": {
+    "half": {
+      "scale": 0.25,
+      "max_raw_fraction": 0.5,
+      "mean_raw_weight": 0.0003755077352048914,
+      "nonzero_emission_fraction": 0.001091452205882353,
+      "mean_emission_luminance": 0.004156044464435567,
+      "max_emission_luminance": 41.751497830200194,
+      "max_raw_weight_actual": 0.49702391565878584,
+      "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+      "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+    },
+    "full": {
+      "scale": 0.25,
+      "max_raw_fraction": 1.0,
+      "mean_raw_weight": 0.0007510154704097828,
+      "nonzero_emission_fraction": 0.001091452205882353,
+      "mean_emission_luminance": 0.004156044464435567,
+      "max_emission_luminance": 41.751497830200194,
+      "max_raw_weight_actual": 0.9940478313175717,
+      "input_policy": "Raw/OIDN/Emission AOV of the same render and seed; no reference",
+      "warning": "AOV data may contain noise; this does not preserve denoised light transport exactly; not validated."
+    }
+  },
+  "source_license": "MIT, Yunus Emre Karaman",
+  "display": "shared linear RGB max(0,x)/(1+max(0,x)) ^(1/2.2), equal for every panel; NOT Blender OCIO",
+  "caveat": "Finite refs, 320px aliasing, non-color-managed illustrative crops; visual inspection required before product claim."
+}

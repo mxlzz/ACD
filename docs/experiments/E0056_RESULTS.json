@@ -1,0 +1,156 @@
+{
+  "experiment": "E0056",
+  "purpose": "Reprobe E0007 Classroom seed anomaly on Blender 5.2.4",
+  "source": "Christophe Seux Classroom, official Blender demo, CC0",
+  "source_zip_sha256": "0f0ecc58d45f12b2f4272a53e2d8e69135518e16e956b118f10c20d8dcfdf5e6",
+  "source_bytes": 70279690,
+  "rendering": "two separate Blender5.2.4 processes, Cycles CPU, 96x54, 16spp",
+  "sampler": "TABULATED_SOBOL",
+  "input_seeds": [
+    539,
+    911
+  ],
+  "sample_offset": 0,
+  "source_metadata": [
+    {
+      "active_scene": "_mainScene",
+      "active_view_layer": "interior",
+      "requested_seed": 539,
+      "scene_variant": "external",
+      "sample_offset": 0,
+      "sampling_pattern": "TABULATED_SOBOL",
+      "output_label": "seed539_offset0",
+      "settings_all_scenes": [
+        {
+          "name": "_mainScene",
+          "seed": 539,
+          "samples": 16,
+          "pattern": "TABULATED_SOBOL",
+          "animated_seed": false,
+          "background_scene": null,
+          "layers": [
+            {
+              "name": "interior",
+              "samples": 0
+            }
+          ]
+        },
+        {
+          "name": "dustParticules",
+          "seed": 0,
+          "samples": 10,
+          "pattern": "TABULATED_SOBOL",
+          "animated_seed": false,
+          "background_scene": null,
+          "layers": [
+            {
+              "name": "RenderLayer",
+              "samples": 0
+            }
+          ]
+        },
+        {
+          "name": "volumeLight",
+          "seed": 3,
+          "samples": 400,
+          "pattern": "TABULATED_SOBOL",
+          "animated_seed": false,
+          "background_scene": null,
+          "layers": [
+            {
+              "name": "windows_volumeLight",
+              "samples": 0
+            },
+            {
+              "name": "blackboardLamp_volumeLight",
+              "samples": 0
+            },
+            {
+              "name": "Viewport",
+              "samples": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "active_scene": "_mainScene",
+      "active_view_layer": "interior",
+      "requested_seed": 911,
+      "scene_variant": "external",
+      "sample_offset": 0,
+      "sampling_pattern": "TABULATED_SOBOL",
+      "output_label": "seed911_offset0",
+      "settings_all_scenes": [
+        {
+          "name": "_mainScene",
+          "seed": 911,
+          "samples": 16,
+          "pattern": "TABULATED_SOBOL",
+          "animated_seed": false,
+          "background_scene": null,
+          "layers": [
+            {
+              "name": "interior",
+              "samples": 0
+            }
+          ]
+        },
+        {
+          "name": "dustParticules",
+          "seed": 0,
+          "samples": 10,
+          "pattern": "TABULATED_SOBOL",
+          "animated_seed": false,
+          "background_scene": null,
+          "layers": [
+            {
+              "name": "RenderLayer",
+              "samples": 0
+            }
+          ]
+        },
+        {
+          "name": "volumeLight",
+          "seed": 3,
+          "samples": 400,
+          "pattern": "TABULATED_SOBOL",
+          "animated_seed": false,
+          "background_scene": null,
+          "layers": [
+            {
+              "name": "windows_volumeLight",
+              "samples": 0
+            },
+            {
+              "name": "blackboardLamp_volumeLight",
+              "samples": 0
+            },
+            {
+              "name": "Viewport",
+              "samples": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "source_hashes": {
+    "seed539_offset0": "5b261ce7d517072e5b473531a3f011989861810d2c724dd39e0f89053193aeea",
+    "seed911_offset0": "30bef7b3696545102dd122b062122a076bc11088d08052f222d6bd1ad31c5a5a"
+  },
+  "test": {
+    "rmse": 1.3351280257644384e-06,
+    "max_abs": 0.00012577325105667114,
+    "changed_pixels_above_1e_minus_6": 4,
+    "pixel_count": 5184,
+    "relative_rmse": 3.278046123412548e-06,
+    "measurably_distinct": false,
+    "independent_samples_proven": false
+  },
+  "reference_rendered": false,
+  "denoiser_run": false,
+  "algorithm_modified": false,
+  "decision": "STOP: Classroom raw outputs still effectively identical under different seeds; do not use as multiseed validation",
+  "warning": "Measured variation does not prove independent Monte Carlo sequences or source correctness. This test may not isolate Blender version if other sampler settings differ from E0007."
+}

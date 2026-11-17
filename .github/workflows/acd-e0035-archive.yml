@@ -1,0 +1,117 @@
+name: ACD E0035 archive 5.2/5.3 baseline contracts (existing EXRs only)
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0035-archive.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR tools for same-input and cross-version comparison
+        run: |
+          python -m pip install -e ".[dev,exr]"
+      - name: Download exact immutable outputs from successful E0035
+        run: |
+          mkdir -p /tmp/acd-e0035-52 /tmp/acd-e0035-53
+          gh run download 43480823352 -R mxlzz/ACD \
+            -n acd-e0035-blender-5.2.4 -D /tmp/acd-e0035-52
+          gh run download 43480823352 -R mxlzz/ACD \
+            -n acd-e0035-blender-5.3.0 -D /tmp/acd-e0035-53
+          test -f /tmp/acd-e0035-52/acd-e0035-report.json
+          test -f /tmp/acd-e0035-53/acd-e0035-report.json
+      - name: Compare exact raw pixels and denoising guides across Blender versions
+        run: |
+          mkdir -p docs/experiments
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from acd_lab.io import read_arrays
+          from acd_lab.core import compare_images
+          paths=[Path("/tmp/acd-e0035-52"),Path("/tmp/acd-e0035-53")]
+          reports=[json.loads((p/"acd-e0035-report.json").read_text()) for p in paths]
+          if not reports[0]["blender"].startswith("5.2.4") or not reports[1]["blender"].startswith("5.3.0"):
+              raise ValueError("Wrong source build/artifact")
+          for r in reports:
+              assert r["raw_multilayer_max_abs_delta"]<=1e-5
+              assert r["standard_vs_native_compositor_rmse"]==0
+              assert r["cycles_internal_output_compared"] is False
+          def locate(p,name):
+              found=list(p.rglob(name))
+              if len(found)!=1:raise ValueError(f"Expected one {name} under {p}, found {len(found)}")
+              return found[0]
+          a,b=[read_arrays(locate(p,"acd_compare_Raw.exr"))["image"] for p in paths]
+          raw=compare_images(a,b)
+          layers=[]
+          for p in paths:
+              md=json.loads(locate(p,"metadata.json").read_text())
+              layers.append(read_arrays(locate(p,"raw_multilayer.exr"),layer=md["view_layer"]))
+          differences={
+              name:compare_images(layers[0][name],layers[1][name]) for name in
+              ("image","denoising_albedo","denoising_normal")
+          }
+          result={"experiment":"E0035","source_run":43480823352,
+                  "source_commit":"3b7352a868e962a510b5b7f43dab07b08b2edc0e",
+                  "reports_by_version":{"5.2.4":reports[0],"5.3.0":reports[1]},
+                  "cross_version_raw_pixel_differences":raw,
+                  "cross_version_multilayer_pass_differences":differences,
+                  "within_each_build_same_raw_aov":True,
+                  "standard_matches_native_compositor_both_builds":True,
+                  "cycles_internal_measured":False,"convergence_proven":False,
+                  "caution":"Different Blender renderers may generate different raw pixels/AOV; no OIDN version quality ranking from this fixture."}
+          Path("docs/experiments/E0035_RESULTS.json").write_text(json.dumps(result,indent=2,allow_nan=False)+"\n")
+          print("E0035_ARCHIVED",json.dumps({
+              "blenders":[r["blender"] for r in reports],
+              "raw_cross_version_rmse":raw["rmse_linear"],
+              "guide_differences":{n:s["rmse_linear"] for n,s in differences.items()}}))
+          PY
+      - name: Commit compact permanent results with honest limitations
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("docs/experiments/E0035_RESULTS.json").read_text())
+          def result(n):
+              r=d["reports_by_version"][n]
+              return n+" (build "+r["api"]["build_hash"]+"): Raw/AOV delta "+str(r["raw_multilayer_max_abs_delta"])+", Standard/OIDN delta "+str(r["standard_vs_native_compositor_rmse"])
+          differences=d["cross_version_multilayer_pass_differences"]
+          note=(
+              "## E0035 — Blender 5.2.4 LTS vs 5.3.0: API + mismo input (2026-11-13)\n\n"
+              "- [Successful workflow 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352), initial EGL runtime failure in [43480476666](https://github.com/mxlzz/ACD/actions/runs/43480476666) corrected by installing libegl1. Both official Blender archives passed published SHA256.\n"
+              "- Procedural detail_target, 128x96, 16 spp noisy seed 539, 64 spp reference seed 8819. This is an API/smoke contract; reference NOT converged and no visual superiority claim.\n"
+              "- "+result("5.2.4")+".\n"
+              "- "+result("5.3.0")+".\n"
+              "- Cross-version **Raw beauty** RMSE "+str(d["cross_version_raw_pixel_differences"]["rmse_linear"])+". Denoising Albedo RMSE "+str(differences["denoising_albedo"]["rmse_linear"])+", Denoising Normal RMSE "+str(differences["denoising_normal"]["rmse_linear"])+". Changes across Blender versions combine renderer/guide/backend effects; must use fixed EXR to isolate denoiser.\n"
+              "- Cycles-internal denoising is configured/available in API, but **not measured**; 5.3.0 reports compositor API deprecation slated for Blender6.0; add compatibility planning, not algorithm tuning.\n"
+              "- [Exact JSON](E0035_RESULTS.json). Original EXRs/actions artifacts expire after 14 days. Addon stable untouched.\n"
+          )
+          Path("docs/experiments/E0035.md").write_text(note)
+          trace="\n## E0035 completed — B0a contracts verified (2026-11-13)\n\n"+note
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(path).open("a",encoding="utf-8") as f:f.write(trace)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0035.md docs/experiments/E0035_RESULTS.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0035): archive Blender 5.2/5.3 actual contracts and cross-version raw/AOV deltas"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval

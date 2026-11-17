@@ -1,0 +1,103 @@
+name: ACD E0053 Cozy 1920px-density 512px crop feasibility CPU pilot
+
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths:
+      - .github/workflows/acd-e0053-cozy-crop-pilot.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  source-pinned-cost-pilot:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      ACD_SCENE: external
+      ACD_E0053_CROP: cozy_detail_2
+      ACD_DEVICE: CPU
+      ACD_BENCH_DIR: /tmp/e0053
+      ACD_WIDTH: "1920"
+      ACD_HEIGHT: "1808"
+      ACD_INPUT_SPP: "8"
+      ACD_INPUT_SEED: "539"
+      ACD_REFERENCE_SPP: "32"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_EXTRA_SEEDS: ""
+      ACD_METHODS: NATIVE_COMP_OIDN
+      ACD_CAPTURE_AOV: "1"
+      ACD_E0044_ADAPTIVE_OFF: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test crop contract and pinned original scene
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_cozy_crop_e0053.py tests/test_cozy_consensus_e0052.py
+          echo "5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395  benchmarks/scenes/cozy_kitchen.blend" | sha256sum -c -
+      - uses: actions/cache@v4
+        id: blender
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Fetch checksum-verified Blender if cache misses
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Install headless Blender EGL runtime
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Render source-pinned 512 square border at virtual width 1920
+        run: |
+          mkdir -p /tmp/e0053
+          start=$(date +%s)
+          ./blender-5.2.4-linux-x64/blender -b --disable-autoexec benchmarks/scenes/cozy_kitchen.blend --python-exit-code 1 --python tests/blender_compare_smoke.py
+          echo "$(( $(date +%s) - start ))" > /tmp/e0053/wall_seconds.txt
+      - name: Fail closed on shape, AOV and source mismatch
+        run: |
+          python -m scripts.analyze_cozy_pilot_e0053 --directory /tmp/e0053 --output /tmp/e0053-report
+      - name: Archive feasibility result and exact duration, no denoiser ranking
+        run: |
+          cp /tmp/e0053-report/E0053.md docs/experiments/E0053.md
+          cp /tmp/e0053-report/E0053_RESULTS.json docs/experiments/E0053_RESULTS.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("docs/experiments/E0053_RESULTS.json").read_text())
+          note=f"E0053 source-pinned Cozy crop 512 at virtual1920, 8spp+two32spp refs, wall={r['elapsed_wall_seconds_including_scene_load_and_output']}s, AOV delta={r['same_seed_raw_AOV_max_abs']}. Diagnostic only; references not converged. docs/experiments/E0053.md."
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(path).open("a",encoding="utf-8") as f:
+                  f.write("\n## E0053 real-Cozy high-density pixel crop pilot\n\n"+note+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0053.md docs/experiments/E0053_RESULTS.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0053): archive high-density Cozy crop cost/contract smoke"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Temporary EXR images only, not original blend
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0053-pilot-exr
+          retention-days: 7
+          if-no-files-found: warn
+          compression-level: 1
+          path: /tmp/e0053/

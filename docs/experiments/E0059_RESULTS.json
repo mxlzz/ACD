@@ -1,0 +1,208 @@
+{
+  "experiment": "E0059",
+  "source_experiment": "E0054",
+  "source_run": 43930780340,
+  "source_blender": "5.2.4 LTS",
+  "scene": "Cozy Kitchen, Nicole Morena, CC BY-SA",
+  "source_sha256": "5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395",
+  "input_seeds": [
+    539,
+    911,
+    1337
+  ],
+  "input_spp": 24,
+  "references": [
+    8819,
+    8922
+  ],
+  "reference_spp": 512,
+  "same_raw_per_method_verified_from_E0054": true,
+  "input_integrity_rechecked": true,
+  "new_cycles_render": false,
+  "new_denoiser": false,
+  "reference_convergence_proven": false,
+  "algorithms_compared": [
+    "Raw",
+    "NATIVE_COMP_OIDN"
+  ],
+  "method": "Select top 20% nonzero asinh-luma gradients from first finite reference only; score heldout second, and swap roles. No denoiser outputs used in selection.",
+  "regions": {
+    "detail_2_interior": {
+      "select_ref_8819_evaluate_8922": {
+        "reference_selection_quantile": 0.8,
+        "selected_pair_count": 51696,
+        "source_gradient_threshold": 0.06344495550857025,
+        "heldout_reference_disagreement_rmse": 0.11324818215388091,
+        "539": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.39257573871793083,
+            "heldout_linear_rgb_rmse": 0.3441866809183907
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08802157381711388,
+            "heldout_linear_rgb_rmse": 0.09212618266735188
+          }
+        },
+        "911": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.3945641921740178,
+            "heldout_linear_rgb_rmse": 0.347278585623909
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08816757977275984,
+            "heldout_linear_rgb_rmse": 0.09356077477539124
+          }
+        },
+        "1337": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.3897414389424394,
+            "heldout_linear_rgb_rmse": 0.34471274581686234
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08818426814691024,
+            "heldout_linear_rgb_rmse": 0.09237361741519783
+          }
+        },
+        "oidn_worse_than_raw_in_all_three_seeds": false,
+        "oidn_worse_per_seed": [
+          false,
+          false,
+          false
+        ]
+      },
+      "select_ref_8922_evaluate_8819": {
+        "reference_selection_quantile": 0.8,
+        "selected_pair_count": 51696,
+        "source_gradient_threshold": 0.06381010860657715,
+        "heldout_reference_disagreement_rmse": 0.1131540409597623,
+        "539": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.39269269982770294,
+            "heldout_linear_rgb_rmse": 0.3442781426125219
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08856223505626361,
+            "heldout_linear_rgb_rmse": 0.09107191729034038
+          }
+        },
+        "911": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.39279951008163644,
+            "heldout_linear_rgb_rmse": 0.34800982787815427
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08836142439194473,
+            "heldout_linear_rgb_rmse": 0.09376018181910277
+          }
+        },
+        "1337": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.38784790335121716,
+            "heldout_linear_rgb_rmse": 0.34381498161119367
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08854847393987941,
+            "heldout_linear_rgb_rmse": 0.09072808165203772
+          }
+        },
+        "oidn_worse_than_raw_in_all_three_seeds": false,
+        "oidn_worse_per_seed": [
+          false,
+          false,
+          false
+        ]
+      },
+      "consistent_oidn_gradient_regression_screen": false
+    },
+    "full_render_crop": {
+      "select_ref_8819_evaluate_8922": {
+        "reference_selection_quantile": 0.8,
+        "selected_pair_count": 104653,
+        "source_gradient_threshold": 0.05559616860533417,
+        "heldout_reference_disagreement_rmse": 0.10416502946848608,
+        "539": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.3582405674541892,
+            "heldout_linear_rgb_rmse": 0.3002568908222582
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08018536790616959,
+            "heldout_linear_rgb_rmse": 0.08379126568038794
+          }
+        },
+        "911": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.35990500711540035,
+            "heldout_linear_rgb_rmse": 0.30202297097986053
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.07982850900892051,
+            "heldout_linear_rgb_rmse": 0.08397802958672519
+          }
+        },
+        "1337": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.35491457111457786,
+            "heldout_linear_rgb_rmse": 0.29998938394081376
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08082329548135805,
+            "heldout_linear_rgb_rmse": 0.08526562793779432
+          }
+        },
+        "oidn_worse_than_raw_in_all_three_seeds": false,
+        "oidn_worse_per_seed": [
+          false,
+          false,
+          false
+        ]
+      },
+      "select_ref_8922_evaluate_8819": {
+        "reference_selection_quantile": 0.8,
+        "selected_pair_count": 104653,
+        "source_gradient_threshold": 0.055599329319316874,
+        "heldout_reference_disagreement_rmse": 0.10405703907095416,
+        "539": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.35731160790559047,
+            "heldout_linear_rgb_rmse": 0.3000516995324961
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08048199234836577,
+            "heldout_linear_rgb_rmse": 0.08274791072851415
+          }
+        },
+        "911": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.35902081224965454,
+            "heldout_linear_rgb_rmse": 0.30279238276020265
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08016726851352039,
+            "heldout_linear_rgb_rmse": 0.08393125936588727
+          }
+        },
+        "1337": {
+          "Raw": {
+            "heldout_gradient_rmse": 0.3540582791991025,
+            "heldout_linear_rgb_rmse": 0.29926011580329714
+          },
+          "NATIVE_COMP_OIDN": {
+            "heldout_gradient_rmse": 0.08119646415831362,
+            "heldout_linear_rgb_rmse": 0.08417491855909683
+          }
+        },
+        "oidn_worse_than_raw_in_all_three_seeds": false,
+        "oidn_worse_per_seed": [
+          false,
+          false,
+          false
+        ]
+      },
+      "consistent_oidn_gradient_regression_screen": false
+    }
+  },
+  "global_oidn_gradient_regression_screen": false,
+  "warning": "Reference A and B remain noisy and can share bias; cross-fitting reduces selection leakage but does not establish true edges, perceptual fidelity or algorithm superiority. Raw is not a new denoiser; OIDN removing raw noise can outperform it while still suppressing some true edges.",
+  "decision": "Do not propose a correction from edge amplitude alone. Only if consistent heldout gradient regression appears, inspect physical edges and reference uncertainty. New algorithm needs independent author holdout and cost comparison."
+}

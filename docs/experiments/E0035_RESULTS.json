@@ -1,0 +1,168 @@
+{
+  "experiment": "E0035",
+  "source_run": 43480823352,
+  "source_commit": "3b7352a868e962a510b5b7f43dab07b08b2edc0e",
+  "reports_by_version": {
+    "5.2.4": {
+      "experiment": "E0035",
+      "classification": "real Blender 128x96 compatibility smoke, not a quality ranking",
+      "blender": "5.2.4 LTS",
+      "api": {
+        "blender": "5.2.4 LTS",
+        "build_hash": "cd5dc428cce1",
+        "build_branch": "blender-v5.2-release",
+        "cycles_scene_use_denoising": "True",
+        "cycles_view_layer_use_denoising": "True",
+        "cycles_scene_denoiser": "OPENIMAGEDENOISE",
+        "cycles_view_layer_denoiser": null,
+        "compositor_node_group_supported": true,
+        "node_type": "CompositorNodeDenoise",
+        "denoise_inputs": [
+          "Image",
+          "Albedo",
+          "Normal",
+          "HDR",
+          "Prefilter",
+          "Quality"
+        ],
+        "denoise_outputs": [
+          "Image"
+        ],
+        "cycles_internal_output_compared": false
+      },
+      "resolution": [
+        128,
+        96
+      ],
+      "samples": 16,
+      "reference_samples": 64,
+      "seed": 539,
+      "raw_multilayer_max_abs_delta": 0.0,
+      "standard_vs_native_compositor_rmse": 0.0,
+      "standard_vs_native_compositor_max_abs_delta": 0.0,
+      "exploratory_rmse_vs_unconverged_reference": {
+        "Raw": 0.3013611033913339,
+        "OIDN_compositor": 0.15160408390962807,
+        "ACD_Standard": 0.15160408390962807,
+        "ACD_High": 0.1534506146209433,
+        "ACD_Super": 0.15378777966541576
+      },
+      "sha256_exr": {
+        "acd_compare_HIGH.exr": "6bc085810f35b726858ad4cfaceb5ad0cfdd597f062a4b332f304abbfed05a00",
+        "acd_compare_NATIVE_COMP_OIDN.exr": "b8c2793b66b129fbe6d6a8879ce17d55759d98e38917f33087bc87033300ef9a",
+        "acd_compare_Raw.exr": "74526f4848b2ace68452bd1e21c5938cab947acce0a2adbc06549cb6f07c8689",
+        "acd_compare_RawRecomposed.exr": "e573cbb790884ee85e0162f0dff7478ca60967fa5960cafd54936ab769f47fd2",
+        "acd_compare_STANDARD.exr": "b8c2793b66b129fbe6d6a8879ce17d55759d98e38917f33087bc87033300ef9a",
+        "acd_compare_SUPER.exr": "822b33129cf37b0f6e3ce95f474e6ce2aa3aa9248a29fa0a269d226ffdf7b2a9",
+        "raw_multilayer.exr": "69238ed54a79ad6805e064424bcf04ec28b1d9672bf1335a0173e5344356419d",
+        "reference.exr": "8e20b6314caa767228c7d338d54ccb03ddd8f90ce511d9485b0f6aa0a9addc27"
+      },
+      "cycles_internal_output_compared": false,
+      "limits": "64 spp reference unconverged. 5.2 and 5.3 noisy beauty/AOV can differ: do not attribute cross-version RMSE changes to OIDN."
+    },
+    "5.3.0": {
+      "experiment": "E0035",
+      "classification": "real Blender 128x96 compatibility smoke, not a quality ranking",
+      "blender": "5.3.0",
+      "api": {
+        "blender": "5.3.0",
+        "build_hash": "02f0899d78e3",
+        "build_branch": "blender-v5.3-release",
+        "cycles_scene_use_denoising": "True",
+        "cycles_view_layer_use_denoising": "True",
+        "cycles_scene_denoiser": "OPENIMAGEDENOISE",
+        "cycles_view_layer_denoiser": null,
+        "compositor_node_group_supported": true,
+        "node_type": "CompositorNodeDenoise",
+        "denoise_inputs": [
+          "Image",
+          "Albedo",
+          "Normal",
+          "HDR",
+          "Prefilter",
+          "Quality"
+        ],
+        "denoise_outputs": [
+          "Image"
+        ],
+        "cycles_internal_output_compared": false
+      },
+      "resolution": [
+        128,
+        96
+      ],
+      "samples": 16,
+      "reference_samples": 64,
+      "seed": 539,
+      "raw_multilayer_max_abs_delta": 0.0,
+      "standard_vs_native_compositor_rmse": 0.0,
+      "standard_vs_native_compositor_max_abs_delta": 0.0,
+      "exploratory_rmse_vs_unconverged_reference": {
+        "Raw": 0.3012929970688369,
+        "OIDN_compositor": 0.15160992886544283,
+        "ACD_Standard": 0.15160992886544283,
+        "ACD_High": 0.15345777831110244,
+        "ACD_Super": 0.1537690108886508
+      },
+      "sha256_exr": {
+        "acd_compare_HIGH.exr": "8100746b68f72a54e5e90e7fb8226280341f36a188cf6dd3e05fa29778ff4690",
+        "acd_compare_NATIVE_COMP_OIDN.exr": "2f3fe697f580d136c8b44836f0315427caf36573a153ef5a0c95834fd6783175",
+        "acd_compare_Raw.exr": "32873f81f1380682b4a7cf655675a124ed5d228c9b1631cd071aa217ba88fab2",
+        "acd_compare_RawRecomposed.exr": "968e4c144c88ac5ca8e0633884035d07e77ed7baa465aa555868a70b6ec93e17",
+        "acd_compare_STANDARD.exr": "2f3fe697f580d136c8b44836f0315427caf36573a153ef5a0c95834fd6783175",
+        "acd_compare_SUPER.exr": "e5e1e7756b30d32140e5e2f9cdc94679aed9c75e6144ef0c33d3e1c7d2b2779b",
+        "raw_multilayer.exr": "bfb8f1e862e839d921dae204d48e81f5ac9fc7b770c42449a7ef5df5c1e80511",
+        "reference.exr": "ea94cf35306cce375c4a36773323efd70e3d0ca11a54b103647a576aeb34a472"
+      },
+      "cycles_internal_output_compared": false,
+      "limits": "64 spp reference unconverged. 5.2 and 5.3 noisy beauty/AOV can differ: do not attribute cross-version RMSE changes to OIDN."
+    }
+  },
+  "cross_version_raw_pixel_differences": {
+    "log1p_luminance_rmse": 0.0038756498106086766,
+    "pixel_rmse_p95": 9.659285005101142e-05,
+    "mae_linear": 0.00013489895594729105,
+    "rmse_linear": 0.006166062714630608,
+    "relative_rmse": 0.00481564160062853,
+    "psnr_db": null,
+    "psnr_data_range": null,
+    "exact_match": false
+  },
+  "cross_version_multilayer_pass_differences": {
+    "image": {
+      "log1p_luminance_rmse": 0.0038756498106086766,
+      "pixel_rmse_p95": 9.659285005101142e-05,
+      "mae_linear": 0.00013489895594729105,
+      "rmse_linear": 0.006166062714630608,
+      "relative_rmse": 0.00481564160062853,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": false
+    },
+    "denoising_albedo": {
+      "log1p_luminance_rmse": 0.00024378685425749004,
+      "pixel_rmse_p95": 5.341321953926863e-05,
+      "mae_linear": 2.0863804466999783e-05,
+      "rmse_linear": 0.00032205058212830514,
+      "relative_rmse": 0.0005666117370473861,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": false
+    },
+    "denoising_normal": {
+      "log1p_luminance_rmse": 0.0003498908911608334,
+      "pixel_rmse_p95": 2.3771296606088414e-06,
+      "mae_linear": 7.416031087684472e-06,
+      "rmse_linear": 0.0004913281671895542,
+      "relative_rmse": 0.000972034387713361,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": false
+    }
+  },
+  "within_each_build_same_raw_aov": true,
+  "standard_matches_native_compositor_both_builds": true,
+  "cycles_internal_measured": false,
+  "convergence_proven": false,
+  "caution": "Different Blender renderers may generate different raw pixels/AOV; no OIDN version quality ranking from this fixture."
+}

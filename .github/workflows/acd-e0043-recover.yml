@@ -1,0 +1,107 @@
+name: ACD E0043 recover already-rendered guide outputs (no new Cycles render)
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0043-recover.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  postprocess-exact-outputs:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate scientific comparison contracts
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install "Pillow>=10,<13"
+          python -m pytest -q tests/test_guides_e0043.py
+      - name: Reuse EXRs from failed archiving step and exact E0042 references
+        run: |
+          mkdir -p /tmp/e0043-old /tmp/e0043-flat /tmp/e0043-refs
+          gh run download 43511696293 -R mxlzz/ACD \
+            -n acd-e0043-one-render-guide-outputs -D /tmp/e0043-old
+          gh run download 43497486691 -R mxlzz/ACD \
+            -n acd-e0042-italian-640-exr -D /tmp/e0043-refs
+          for name in e0043_manifest.json e0043_Raw.exr e0043_OIDN_RGB.exr e0043_OIDN_Albedo.exr e0043_OIDN_Both.exr; do
+            mapfile -t files < <(find /tmp/e0043-old -type f -name "$name")
+            test "${#files[@]}" -eq 1 || { echo "Missing or ambiguous $name"; exit 1; }
+            cp -- "${files[0]}" "/tmp/e0043-flat/$name"
+          done
+          test -f docs/experiments/E0042_RESULTS.json
+      - name: Compare methods and generate same-seed PNG without new rendering
+        run: |
+          python -m scripts.analyze_guides_e0043 \
+            --source /tmp/e0043-flat \
+            --refs /tmp/e0043-refs \
+            --manifest42 docs/experiments/E0042_RESULTS.json \
+            --output /tmp/e0043-report
+      - name: Archive results with explicit missing IES quarantine
+        run: |
+          mkdir -p docs/experiments benchmarks/results/italian_flat_e0043
+          cp /tmp/e0043-report/e0043_results.json docs/experiments/E0043_RESULTS.json
+          cp /tmp/e0043-report/e0043_guides_1to1.png benchmarks/results/italian_flat_e0043/italian_guides.png
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("docs/experiments/E0043_RESULTS.json").read_text())
+          lines=[
+            "# E0043 — OIDN native guide ablation: diagnostic only",
+            "",
+            "Source: Italian Flat by Flavio Della Tommasa, Blender Cycles CC-BY; scene loaded on Blender 5.2.4 LTS.",
+            "**Scene quarantined:** its external IES profile `IES_profiles/three-lobe-vee.ies` was missing in all E0042/E0043 runs; original photometric lighting was not preserved. Comparisons describe these incomplete renders only.",
+            "32 spp seed539 on a single Cycles RenderLayer; same noisy RGB with three built-in OIDN modes (RGB, Albedo, Albedo+Normal), High / Accurate / HDR.",
+            "Two existing 128 spp references are unconverged, both with the same missing IES. No new denoiser or algorithm tested.",
+            "",
+            "![Four same-input outputs and both finite references](italian_guides.png)",
+            "",
+            "| Candidate | RMSE vs reference8819 | RMSE vs reference8922 |",
+            "|---|---:|---:|",
+          ]
+          for name in ("Raw","OIDN_RGB","OIDN_Albedo","OIDN_Both"):
+              x=r["global_errors"][name]
+              lines.append(f'| {name} | {x["ref8819"]["rmse_linear"]:.7f} | {x["ref8922"]["rmse_linear"]:.7f} |')
+          lines += ["",
+              "Reference-reference RMSE: "+str(r["reference_pair_disagreement"]["rmse_linear"])+".",
+              "Reference-screened 4×4 possible guide regressions: "+str(r["tentative_guide_regression_tiles"])+". Screening does not prove perceptual damage.",
+              "**Decision gate:** this fixture cannot substantiate an improvement or represent the intended lighting. Do not tune OIDN or integrate ACD from this result. A complete fixture and more reliable references are needed before proposing a new algorithm.",
+              "[Exact measurements](../../../docs/experiments/E0043_RESULTS.json)."]
+          Path("benchmarks/results/italian_flat_e0043/README.md").write_text("\n".join(lines)+"\n",encoding="utf-8")
+          docs="\n".join(lines).replace("](italian_guides.png)","](../../benchmarks/results/italian_flat_e0043/italian_guides.png)")
+          Path("docs/experiments/E0043.md").write_text(docs+"\n",encoding="utf-8")
+          note=("\n## E0043 recovered existing EXRs — scene quarantine (2026-11-13)\n\n"
+              +"No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. "
+              +"Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.\n")
+          for p in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(p).open("a",encoding="utf-8") as f:f.write(note)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0043_RESULTS.json docs/experiments/E0043.md
+          git add benchmarks/results/italian_flat_e0043/ STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0043): archive existing guide diagnostic, flag incomplete IES source"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Preserve derived gallery even if publishing fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0043-recovered-report
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/e0043-report/

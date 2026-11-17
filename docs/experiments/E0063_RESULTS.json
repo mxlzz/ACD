@@ -1,0 +1,96 @@
+{
+  "experiment": "E0063",
+  "source": "Official Blender Lone Monk, Carlo Bergonzini/Monorender CC BY",
+  "source_sha256": "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b",
+  "source_bytes": 33452252,
+  "source_url": "https://mirror.blender.org/demo/cycles/lone-monk_cycles_and_exposure-node_demo.blend",
+  "scene": "daylight",
+  "camera": "cam.001",
+  "blender": "5.2.4",
+  "resolution": [
+    96,
+    54
+  ],
+  "samples": 16,
+  "sampler": "TABULATED_SOBOL",
+  "seed_values": [
+    539,
+    911
+  ],
+  "raw_seed_variation": {
+    "rmse": 0.5982197534849001,
+    "max_abs": 12.678613543510437,
+    "changed_pixels_above_1e_minus_6": 4664,
+    "pixel_count": 5184,
+    "relative_rmse": 0.3721573481408071,
+    "measurably_distinct": true,
+    "independent_samples_proven": false
+  },
+  "sources": {
+    "539": {
+      "output_sha256": "2ff47f9806c4558f869801d7bfde6aef025ab517336b10b4af9db6a820d50271",
+      "metadata": {
+        "active_scene": "daylight",
+        "active_camera": "cam.001",
+        "active_view_layer": "View Layer",
+        "requested_seed": 539,
+        "scene_variant": "external",
+        "sample_offset": 0,
+        "sampling_pattern": "TABULATED_SOBOL",
+        "output_label": "monk_seed539",
+        "settings_all_scenes": [
+          {
+            "name": "daylight",
+            "seed": 539,
+            "samples": 16,
+            "pattern": "TABULATED_SOBOL",
+            "animated_seed": false,
+            "background_scene": null,
+            "layers": [
+              {
+                "name": "View Layer",
+                "samples": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "911": {
+      "output_sha256": "dc64561c2709635853e85cc6fd75a2be55c2734889157e148983dcaa41365dbb",
+      "metadata": {
+        "active_scene": "daylight",
+        "active_camera": "cam.001",
+        "active_view_layer": "View Layer",
+        "requested_seed": 911,
+        "scene_variant": "external",
+        "sample_offset": 0,
+        "sampling_pattern": "TABULATED_SOBOL",
+        "output_label": "monk_seed911",
+        "settings_all_scenes": [
+          {
+            "name": "daylight",
+            "seed": 911,
+            "samples": 16,
+            "pattern": "TABULATED_SOBOL",
+            "animated_seed": false,
+            "background_scene": null,
+            "layers": [
+              {
+                "name": "View Layer",
+                "samples": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "measurably_distinct": true,
+  "statistical_independence_proven": false,
+  "reference_convergence_proven": false,
+  "oidn_or_acd_tested": false,
+  "quality_holdout": false,
+  "new_algorithm": false,
+  "decision": "PASS first noisy-input diversity gate. Source is usable for next pre-registered development benchmark after adequate reference uncertainty and architecture ROI protocol."
+}

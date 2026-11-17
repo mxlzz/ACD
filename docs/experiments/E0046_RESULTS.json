@@ -1,0 +1,348 @@
+{
+  "experiment": "E0046",
+  "classification": "real Blender 5.2.4 targeted crop, physically resolvable slat pitch",
+  "source_metadata": {
+    "blender": "5.2.4 LTS",
+    "scene": "detail_target",
+    "source_blend": null,
+    "source_blend_sha256": null,
+    "scene_name": "Scene",
+    "view_layer": "ViewLayer",
+    "frame": 1,
+    "render_device": "CPU",
+    "capture_aov": true,
+    "color_management": {
+      "view_transform": "AgX",
+      "look": "None",
+      "exposure": 0.0,
+      "gamma": 1.0,
+      "display_device": "sRGB"
+    },
+    "cycles": {
+      "max_bounces": 12,
+      "use_adaptive_sampling": false,
+      "use_denoising": false
+    },
+    "samples": 24,
+    "seed": 539,
+    "reference_samples": 512,
+    "reference_seed": 8819,
+    "second_reference": true,
+    "second_reference_seed": 8922,
+    "extra_input_seeds": [],
+    "resolution": [
+      1920,
+      1440
+    ],
+    "e0046_crop": {
+      "name": "slats",
+      "full_frame_resolution": [
+        1920,
+        1440
+      ],
+      "top_left_origin_rect": [
+        928,
+        320,
+        512,
+        512
+      ],
+      "interior_margin_pixels": 96,
+      "expected_cropped_resolution": [
+        512,
+        512
+      ],
+      "evaluation_interior_xywh": [
+        96,
+        96,
+        320,
+        320
+      ]
+    },
+    "source_original_resolution": null,
+    "source_original_pixel_aspect": null,
+    "compositional_methods": [],
+    "sid_reference_methods": [],
+    "sid_reference_source_commit": null,
+    "sid_reference_equivalence_verified": false,
+    "native_compositor_oidn": {
+      "prefilter": "Accurate",
+      "quality": "High",
+      "hdr": true,
+      "not_equated_to_cycles_internal_denoiser": true
+    },
+    "other_output": "RawRecomposed: mathematical node-graph pass sum without denoising",
+    "emission_ablation": false,
+    "comparison": "one shared Cycles render + independent high-sample reference (not convergence-verified)",
+    "files": [
+      "acd_compare_NATIVE_COMP_OIDN.exr",
+      "acd_compare_Raw.exr",
+      "acd_compare_RawRecomposed.exr",
+      "raw_multilayer.exr"
+    ]
+  },
+  "output_sha256": {
+    "acd_compare_NATIVE_COMP_OIDN.exr": "1b6375e68b291e187ca2ca1bab49fbe693c1d522188d5f4903bb4fdb719fe65a",
+    "acd_compare_Raw.exr": "88b94895b4dc4e17d6b60235a69e291dfabca2ad8452831ad6ef90c7a82a0723",
+    "acd_compare_RawRecomposed.exr": "39d2386e675cd60c50f41780fa1119e30f5ff01c314d4e730bc37cc81b47c0a6",
+    "raw_multilayer.exr": "991427f8ee79b95bf70f442ab6357524921710b3dc6cc4763072d16472c82fba",
+    "reference.exr": "820510a39e82859e5588662f7790da06644ac40721b818145f900199a386ca2a",
+    "reference_check.exr": "41b7dc5040980be93df82d03982b128eb9b099fef5f96d8af5bcfcb8290533d2"
+  },
+  "geometry_projection": "E0045 full-frame slat pitch min7.825px at 1920px width",
+  "full_interior_metrics": {
+    "Raw": {
+      "ref1": {
+        "color": {
+          "log1p_luminance_rmse": 0.1641677813550728,
+          "pixel_rmse_p95": 0.678000254584902,
+          "mae_linear": 0.2079177926484742,
+          "rmse_linear": 0.3398820522191042,
+          "relative_rmse": 0.4377159963749848,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "detail": {
+          "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+          "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+          "edge_fraction": 0.2,
+          "flat_fraction": 0.5,
+          "eligible_pair_count": 204160,
+          "edge_pair_count": 40832,
+          "flat_pair_count": 102080,
+          "edge_threshold": 0.10208039311364414,
+          "flat_threshold": 0.044138606510169875,
+          "edge_gradient_rmse": 0.3453215641504732,
+          "edge_gradient_mae": 0.24753685115872137,
+          "edge_contrast_ratio": 1.4699735131920662,
+          "flat_gradient_rmse": 0.2884825650666045,
+          "flat_gradient_mae": 0.18711068579356552,
+          "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+        }
+      },
+      "ref2": {
+        "color": {
+          "log1p_luminance_rmse": 0.16426388353115035,
+          "pixel_rmse_p95": 0.6778208833082406,
+          "mae_linear": 0.2080916390595826,
+          "rmse_linear": 0.3401533044495226,
+          "relative_rmse": 0.4381327545578181,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "detail": {
+          "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+          "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+          "edge_fraction": 0.2,
+          "flat_fraction": 0.5,
+          "eligible_pair_count": 204160,
+          "edge_pair_count": 40832,
+          "flat_pair_count": 102080,
+          "edge_threshold": 0.1016162889026501,
+          "flat_threshold": 0.044009910748674524,
+          "edge_gradient_rmse": 0.34216416169169467,
+          "edge_gradient_mae": 0.24537511038276996,
+          "edge_contrast_ratio": 1.4619704482025717,
+          "flat_gradient_rmse": 0.2895140915645416,
+          "flat_gradient_mae": 0.1874354119971602,
+          "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+        }
+      }
+    },
+    "NATIVE_COMP_OIDN": {
+      "ref1": {
+        "color": {
+          "log1p_luminance_rmse": 0.03769154791676249,
+          "pixel_rmse_p95": 0.13734426935585545,
+          "mae_linear": 0.04778162677835212,
+          "rmse_linear": 0.06840104352873161,
+          "relative_rmse": 0.08809006161339333,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "detail": {
+          "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+          "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+          "edge_fraction": 0.2,
+          "flat_fraction": 0.5,
+          "eligible_pair_count": 204160,
+          "edge_pair_count": 40832,
+          "flat_pair_count": 102080,
+          "edge_threshold": 0.10208039311364414,
+          "flat_threshold": 0.044138606510169875,
+          "edge_gradient_rmse": 0.10922771341566162,
+          "edge_gradient_mae": 0.09076575466159108,
+          "edge_contrast_ratio": 0.6654586867396581,
+          "flat_gradient_rmse": 0.03061369097407245,
+          "flat_gradient_mae": 0.022859849430251062,
+          "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+        }
+      },
+      "ref2": {
+        "color": {
+          "log1p_luminance_rmse": 0.03766786609616232,
+          "pixel_rmse_p95": 0.13651617522763,
+          "mae_linear": 0.04775306314215224,
+          "rmse_linear": 0.0682745233720745,
+          "relative_rmse": 0.08794065675633661,
+          "psnr_db": null,
+          "psnr_data_range": null,
+          "exact_match": false
+        },
+        "detail": {
+          "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+          "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+          "edge_fraction": 0.2,
+          "flat_fraction": 0.5,
+          "eligible_pair_count": 204160,
+          "edge_pair_count": 40832,
+          "flat_pair_count": 102080,
+          "edge_threshold": 0.1016162889026501,
+          "flat_threshold": 0.044009910748674524,
+          "edge_gradient_rmse": 0.10869302186354429,
+          "edge_gradient_mae": 0.09049639191703139,
+          "edge_contrast_ratio": 0.6658305167158504,
+          "flat_gradient_rmse": 0.03067901505812329,
+          "flat_gradient_mae": 0.02287442495762739,
+          "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+        }
+      }
+    }
+  },
+  "reference_pair_difference": {
+    "log1p_luminance_rmse": 0.04516155882598196,
+    "pixel_rmse_p95": 0.1652408864918603,
+    "mae_linear": 0.055849262897091495,
+    "rmse_linear": 0.07922160379956453,
+    "relative_rmse": 0.10202528499267886,
+    "psnr_db": null,
+    "psnr_data_range": null,
+    "exact_match": false
+  },
+  "quadrants": [
+    {
+      "xywh_relative_interior": [
+        0,
+        0,
+        160,
+        160
+      ],
+      "reference_pair_rmse": 0.08748704581062942,
+      "native_rmse": [
+        0.07968080398459851,
+        0.07934981206708841
+      ],
+      "raw_rmse": [
+        0.4290452153930676,
+        0.4292944740378304
+      ],
+      "native_edge_ratio": [
+        0.6387372255683087,
+        0.6326409606595275
+      ],
+      "native_edge_rmse": [
+        0.11144059043087465,
+        0.11215744854363391
+      ]
+    },
+    {
+      "xywh_relative_interior": [
+        160,
+        0,
+        160,
+        160
+      ],
+      "reference_pair_rmse": 0.08141003425800568,
+      "native_rmse": [
+        0.0735074859733566,
+        0.07366167515529914
+      ],
+      "raw_rmse": [
+        0.38074922172606884,
+        0.3801565200300226
+      ],
+      "native_edge_ratio": [
+        0.8091868483547321,
+        0.8121219692747215
+      ],
+      "native_edge_rmse": [
+        0.10721489851693389,
+        0.10587658642297519
+      ]
+    },
+    {
+      "xywh_relative_interior": [
+        0,
+        160,
+        160,
+        160
+      ],
+      "reference_pair_rmse": 0.07615023052211357,
+      "native_rmse": [
+        0.06002737774476568,
+        0.059495955034462436
+      ],
+      "raw_rmse": [
+        0.2688733577163333,
+        0.2701953186637102
+      ],
+      "native_edge_ratio": [
+        0.36305182725537,
+        0.3686441499769891
+      ],
+      "native_edge_rmse": [
+        0.11481929250890276,
+        0.11274512967798064
+      ]
+    },
+    {
+      "xywh_relative_interior": [
+        160,
+        160,
+        160,
+        160
+      ],
+      "reference_pair_rmse": 0.07087887952817001,
+      "native_rmse": [
+        0.057958122179809515,
+        0.05816733137686434
+      ],
+      "raw_rmse": [
+        0.2464479427715586,
+        0.24697944595285684
+      ],
+      "native_edge_ratio": [
+        0.7058502007444533,
+        0.7044898258936012
+      ],
+      "native_edge_rmse": [
+        0.10205464903700677,
+        0.10278069367812596
+      ]
+    }
+  ],
+  "crop_xywh": [
+    928,
+    320,
+    512,
+    512
+  ],
+  "evaluation_interior_xywh": [
+    96,
+    96,
+    320,
+    320
+  ],
+  "convergence_proven": false,
+  "denoiser_border_effects_eliminated": false,
+  "warnings": [
+    "512spp references are finite and might be noisy/correlated.",
+    "OIDN receives cropped image; 96px margin reduces but cannot prove absence of receptive-field border effects.",
+    "Edge-gradient strength is not proof of true geometry reconstruction."
+  ],
+  "not_a_quality_ranking": true,
+  "algorithm_modified": false,
+  "next_decision": "Investigate optical path behind glass only on visibly coherent losses exceeding reference uncertainty; else stop rather than tuning."
+}

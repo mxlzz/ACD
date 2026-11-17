@@ -1,0 +1,126 @@
+name: ACD B1 living-room-3 provenance and Cycles smoke audit
+
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths:
+      - .github/workflows/acd-b1-living-room3-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  source-and-smoke:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      OMP_NUM_THREADS: "4"
+      ACD_AUDIT_SOURCE: "cuteday living-room-3 converted source, original attribution/license not fully verified"
+      ACD_AUDIT_RENDER: /tmp/acd_b1_living3_smoke.png
+      ACD_AUDIT_OUTPUT: /tmp/acd_b1_living3_audit.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Recover pinned converted scene outside repository
+        run: |
+          mkdir -p /tmp/acd-b1-living3
+          curl -fL --retry 3 --retry-all-errors --retry-delay 5 --connect-timeout 30 \
+            https://raw.githubusercontent.com/cuteday/scenes_blender/4271a729fdc7b8db23ad1c2f8a8f530c74f6a63c/living-room-3.blend \
+            -o /tmp/acd-b1-living3/living-room-3.blend
+          test "$(stat -c%s /tmp/acd-b1-living3/living-room-3.blend)" -eq 96421460
+          test "$(git hash-object /tmp/acd-b1-living3/living-room-3.blend)" = "466772ffbebf19a5f7fad52a4313420a1207edb7"
+          sha256sum /tmp/acd-b1-living3/living-room-3.blend | tee /tmp/acd-b1-living3/sha256.txt
+      - uses: actions/cache@v4
+        id: blender
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Obtain SHA-verified Blender 5.2.4 if cache missing
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Install headless EGL dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Try read-only resource audit and 4spp smoke, preserve failure status
+        run: |
+          set +e
+          ./blender-5.2.4-linux-x64/blender --disable-autoexec \
+            -b /tmp/acd-b1-living3/living-room-3.blend --python-exit-code 1 \
+            --python scripts/audit_public_scene.py > /tmp/acd-b1-living3/smoke.log 2>&1
+          CODE=$?
+          echo "$CODE" > /tmp/acd-b1-living3/smoke-exit.txt
+          tail -n 30 /tmp/acd-b1-living3/smoke.log
+          exit 0
+      - name: Permanently archive source audit or failure without copying .blend
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path("/tmp/acd-b1-living3")
+          status=int((path/"smoke-exit.txt").read_text().strip())
+          audit=Path("/tmp/acd_b1_living3_audit.json")
+          preview=Path("/tmp/acd_b1_living3_smoke.png")
+          success=status==0 and audit.is_file() and preview.is_file()
+          data=json.loads(audit.read_text()) if success else None
+          tail=(path/"smoke.log").read_text(errors="replace").splitlines()[-25:]
+          summary={"experiment":"B1_LIVING_ROOM3","source_commit":"4271a729fdc7b8db23ad1c2f8a8f530c74f6a63c",
+                   "source_git_blob":"466772ffbebf19a5f7fad52a4313420a1207edb7",
+                   "source_bytes":96421460,
+                   "source_sha256":(path/"sha256.txt").read_text().split()[0],
+                   "source_redistributed":False,"origin_and_conversion_license_verified":False,
+                   "smoke_success":success,"audit":data,
+                   "failure_log_tail":None if success else tail,
+                   "quality_benchmark":False,"new_denoiser":False}
+          out=Path("docs/experiments")
+          (out/"B1_LIVING_ROOM3_RESULTS.json").write_text(json.dumps(summary,indent=2)+"\n")
+          lines=["# B1 living-room-3 — read-only independent-scene smoke","",
+                 "Candidate converted scene from cuteday/scenes_blender, pinned Git blob; original .blend not copied to ACD.",
+                 "Blender 5.2.4, Cycles CPU 192x192 4 spp, no denoising.",
+                 "Source SHA256: "+summary["source_sha256"],
+                 "Smoke result: "+("PASS" if success else "FAIL"),
+                 "Original identity and converted scene license: NOT YET VERIFIED, therefore NOT an accepted holdout.",
+                 "No algorithm / fidelity conclusion."]
+          if success:
+              lines+=["","Scene: "+data["scene"]+" / camera: "+data["active_camera"],
+                      "Objects: "+str(data["objects"])+", materials: "+str(data["materials"]),
+                      "Missing images: "+str(data["unbundled_missing_images"])+", missing IES: "+str(len(data["missing_ies_profiles"]))]
+          else:
+              lines+=["","Failure log tail:","~~~",*tail,"~~~"]
+          (out/"B1_LIVING_ROOM3_AUDIT.md").write_text("\n".join(lines)+"\n")
+          trace="B1 living-room-3 pinned candidate functional smoke: "+("PASS" if success else "FAIL")+"; scene origin/conversion license UNVERIFIED; no holdout, model or denoiser comparison. docs/experiments/B1_LIVING_ROOM3_AUDIT.md."
+          for name in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(name).open("a",encoding="utf-8") as f:f.write("\n## B1 living-room-3 audited\n\n"+trace+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/B1_LIVING_ROOM3_RESULTS.json docs/experiments/B1_LIVING_ROOM3_AUDIT.md
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "testdata(B1): publish pinned living-room-3 smoke outcome"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Fail closed after archiving negative smoke
+        run: |
+          test "$(cat /tmp/acd-b1-living3/smoke-exit.txt)" -eq 0
+      - name: Temporary audit, smoke preview and logs; never original scene
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-b1-living-room3-audit
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            /tmp/acd_b1_living3_smoke.png
+            /tmp/acd_b1_living3_audit.json
+            /tmp/acd-b1-living3/sha256.txt
+            /tmp/acd-b1-living3/smoke.log
+            /tmp/acd-b1-living3/smoke-exit.txt

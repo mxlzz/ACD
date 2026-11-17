@@ -1,0 +1,354 @@
+{
+  "experiment": "E0023",
+  "fixture": "Terraced Houses",
+  "creator": "Yunus Emre Karaman",
+  "license": "MIT",
+  "original_source_sha256": "37b39be2ae1fc8624110f57bf5dd38f77a0420139b4c9a89946a2db35dffab84",
+  "render_run_id": 43291659387,
+  "resolution": [
+    320,
+    240
+  ],
+  "original_resolution": [
+    4000,
+    3000
+  ],
+  "samples": 24,
+  "reference_samples": 512,
+  "seed_diversity_passed": true,
+  "reference_disagreement_rmse": 0.020934307353763112,
+  "reference_disagreement_over_raw": 0.1700696150383383,
+  "scores_vs_both_refs_three_seeds": {
+    "ref1": {
+      "Raw": {
+        "mean_rmse_linear": 0.12013592234984105,
+        "mean_edge_gradient_rmse": 0.12109425404519608,
+        "per_seed": [
+          {
+            "rmse_linear": 0.12382584856892764,
+            "edge_gradient_rmse": 0.11919643253764027
+          },
+          {
+            "rmse_linear": 0.11972657805073823,
+            "edge_gradient_rmse": 0.11916777106516996
+          },
+          {
+            "rmse_linear": 0.11685534042985726,
+            "edge_gradient_rmse": 0.12491855853277803
+          }
+        ]
+      },
+      "STANDARD": {
+        "mean_rmse_linear": 0.16778486780361232,
+        "mean_edge_gradient_rmse": 0.0679478158702096,
+        "per_seed": [
+          {
+            "rmse_linear": 0.1650403927395602,
+            "edge_gradient_rmse": 0.06732141150509129
+          },
+          {
+            "rmse_linear": 0.1717811442341063,
+            "edge_gradient_rmse": 0.06651879457321987
+          },
+          {
+            "rmse_linear": 0.1665330664371704,
+            "edge_gradient_rmse": 0.07000324153231763
+          }
+        ]
+      },
+      "HIGH": {
+        "mean_rmse_linear": 0.1590020766880249,
+        "mean_edge_gradient_rmse": 0.06937082293632481,
+        "per_seed": [
+          {
+            "rmse_linear": 0.1506770103398748,
+            "edge_gradient_rmse": 0.06775374733724644
+          },
+          {
+            "rmse_linear": 0.159488312512399,
+            "edge_gradient_rmse": 0.0673714881253541
+          },
+          {
+            "rmse_linear": 0.16684090721180092,
+            "edge_gradient_rmse": 0.07298723334637391
+          }
+        ]
+      },
+      "SUPER": {
+        "mean_rmse_linear": 0.1601172270728448,
+        "mean_edge_gradient_rmse": 0.06982276101945174,
+        "per_seed": [
+          {
+            "rmse_linear": 0.15177257678696093,
+            "edge_gradient_rmse": 0.06801602153737772
+          },
+          {
+            "rmse_linear": 0.16061897113172757,
+            "edge_gradient_rmse": 0.06785445842095085
+          },
+          {
+            "rmse_linear": 0.16796013329984588,
+            "edge_gradient_rmse": 0.07359780310002667
+          }
+        ]
+      },
+      "NATIVE_COMP_OIDN": {
+        "mean_rmse_linear": 0.16778486780361232,
+        "mean_edge_gradient_rmse": 0.0679478158702096,
+        "per_seed": [
+          {
+            "rmse_linear": 0.1650403927395602,
+            "edge_gradient_rmse": 0.06732141150509129
+          },
+          {
+            "rmse_linear": 0.1717811442341063,
+            "edge_gradient_rmse": 0.06651879457321987
+          },
+          {
+            "rmse_linear": 0.1665330664371704,
+            "edge_gradient_rmse": 0.07000324153231763
+          }
+        ]
+      }
+    },
+    "ref2": {
+      "Raw": {
+        "mean_rmse_linear": 0.12029019104725686,
+        "mean_edge_gradient_rmse": 0.12107946725332121,
+        "per_seed": [
+          {
+            "rmse_linear": 0.12324709876304857,
+            "edge_gradient_rmse": 0.11887053300902144
+          },
+          {
+            "rmse_linear": 0.12085250391858542,
+            "edge_gradient_rmse": 0.11994003274437759
+          },
+          {
+            "rmse_linear": 0.11677097046013657,
+            "edge_gradient_rmse": 0.12442783600656461
+          }
+        ]
+      },
+      "STANDARD": {
+        "mean_rmse_linear": 0.16797775151502273,
+        "mean_edge_gradient_rmse": 0.06836589751532428,
+        "per_seed": [
+          {
+            "rmse_linear": 0.16551337885798023,
+            "edge_gradient_rmse": 0.06699869110681682
+          },
+          {
+            "rmse_linear": 0.1720486041160994,
+            "edge_gradient_rmse": 0.06787644505426349
+          },
+          {
+            "rmse_linear": 0.16637127157098858,
+            "edge_gradient_rmse": 0.07022255638489253
+          }
+        ]
+      },
+      "HIGH": {
+        "mean_rmse_linear": 0.1588792776869823,
+        "mean_edge_gradient_rmse": 0.0695354072936196,
+        "per_seed": [
+          {
+            "rmse_linear": 0.15055166001971185,
+            "edge_gradient_rmse": 0.06712275912303457
+          },
+          {
+            "rmse_linear": 0.15946605802373842,
+            "edge_gradient_rmse": 0.0682540213029025
+          },
+          {
+            "rmse_linear": 0.16662011501749657,
+            "edge_gradient_rmse": 0.0732294414549217
+          }
+        ]
+      },
+      "SUPER": {
+        "mean_rmse_linear": 0.1600090496419856,
+        "mean_edge_gradient_rmse": 0.07002909339657969,
+        "per_seed": [
+          {
+            "rmse_linear": 0.15167363859073296,
+            "edge_gradient_rmse": 0.06746015561758538
+          },
+          {
+            "rmse_linear": 0.16057131718602918,
+            "edge_gradient_rmse": 0.06873081473524702
+          },
+          {
+            "rmse_linear": 0.16778219314919463,
+            "edge_gradient_rmse": 0.07389630983690668
+          }
+        ]
+      },
+      "NATIVE_COMP_OIDN": {
+        "mean_rmse_linear": 0.16797775151502273,
+        "mean_edge_gradient_rmse": 0.06836589751532428,
+        "per_seed": [
+          {
+            "rmse_linear": 0.16551337885798023,
+            "edge_gradient_rmse": 0.06699869110681682
+          },
+          {
+            "rmse_linear": 0.1720486041160994,
+            "edge_gradient_rmse": 0.06787644505426349
+          },
+          {
+            "rmse_linear": 0.16637127157098858,
+            "edge_gradient_rmse": 0.07022255638489253
+          }
+        ]
+      }
+    }
+  },
+  "rankings": {
+    "ref1": [
+      "Raw",
+      "HIGH",
+      "SUPER",
+      "STANDARD",
+      "NATIVE_COMP_OIDN"
+    ],
+    "ref2": [
+      "Raw",
+      "HIGH",
+      "SUPER",
+      "STANDARD",
+      "NATIVE_COMP_OIDN"
+    ]
+  },
+  "error_concentration_first_seed_vs_ref1": {
+    "Raw": {
+      "top_fraction_requested": 0.01,
+      "top_pixel_count": 768,
+      "pixel_count": 76800,
+      "fraction_squared_error_in_top_pixels": 0.8323037193554902,
+      "max_pixel_rmse": 6.30020636629535,
+      "p99_pixel_rmse": 0.4678466764288111,
+      "linear_rgb_rmse": 0.12382584856892764,
+      "warning": "Descriptive error concentration; no causal attribution or perceptual quality."
+    },
+    "STANDARD": {
+      "top_fraction_requested": 0.01,
+      "top_pixel_count": 768,
+      "pixel_count": 76800,
+      "fraction_squared_error_in_top_pixels": 0.9202635197349643,
+      "max_pixel_rmse": 6.999125925672892,
+      "p99_pixel_rmse": 0.5496790347779277,
+      "linear_rgb_rmse": 0.1650403927395602,
+      "warning": "Descriptive error concentration; no causal attribution or perceptual quality."
+    },
+    "HIGH": {
+      "top_fraction_requested": 0.01,
+      "top_pixel_count": 768,
+      "pixel_count": 76800,
+      "fraction_squared_error_in_top_pixels": 0.8934473113374608,
+      "max_pixel_rmse": 6.695041085873513,
+      "p99_pixel_rmse": 0.5515829334266639,
+      "linear_rgb_rmse": 0.15067701033987482,
+      "warning": "Descriptive error concentration; no causal attribution or perceptual quality."
+    },
+    "SUPER": {
+      "top_fraction_requested": 0.01,
+      "top_pixel_count": 768,
+      "pixel_count": 76800,
+      "fraction_squared_error_in_top_pixels": 0.8904229409952191,
+      "max_pixel_rmse": 6.729167167152215,
+      "p99_pixel_rmse": 0.5570714087977872,
+      "linear_rgb_rmse": 0.15177257678696093,
+      "warning": "Descriptive error concentration; no causal attribution or perceptual quality."
+    },
+    "NATIVE_COMP_OIDN": {
+      "top_fraction_requested": 0.01,
+      "top_pixel_count": 768,
+      "pixel_count": 76800,
+      "fraction_squared_error_in_top_pixels": 0.9202635197349643,
+      "max_pixel_rmse": 6.999125925672892,
+      "p99_pixel_rmse": 0.5496790347779277,
+      "linear_rgb_rmse": 0.1650403927395602,
+      "warning": "Descriptive error concentration; no causal attribution or perceptual quality."
+    }
+  },
+  "aov_region_first_seed_vs_ref1": {
+    "aov_emission": {
+      "coverage": 0.0448046875,
+      "methods": {
+        "Raw": {
+          "rmse_linear": 0.551110596484791,
+          "mae_linear": 0.27504790743008983
+        },
+        "STANDARD": {
+          "rmse_linear": 0.7740866929142926,
+          "mae_linear": 0.3632789820553871
+        },
+        "HIGH": {
+          "rmse_linear": 0.7049149955950735,
+          "mae_linear": 0.35466267193789747
+        },
+        "SUPER": {
+          "rmse_linear": 0.7101295872911514,
+          "mae_linear": 0.3609143013336823
+        },
+        "NATIVE_COMP_OIDN": {
+          "rmse_linear": 0.7740866929142926,
+          "mae_linear": 0.3632789820553871
+        }
+      }
+    },
+    "aov_glossy": {
+      "coverage": 0.21014322916666667,
+      "methods": {
+        "Raw": {
+          "rmse_linear": 0.05251707364224456,
+          "mae_linear": 0.026305294997055043
+        },
+        "STANDARD": {
+          "rmse_linear": 0.023040050683758032,
+          "mae_linear": 0.006263037105482574
+        },
+        "HIGH": {
+          "rmse_linear": 0.02350622081947918,
+          "mae_linear": 0.006143206072669988
+        },
+        "SUPER": {
+          "rmse_linear": 0.023279812087491945,
+          "mae_linear": 0.006196206756230486
+        },
+        "NATIVE_COMP_OIDN": {
+          "rmse_linear": 0.023040050683758032,
+          "mae_linear": 0.006263037105482574
+        }
+      }
+    }
+  },
+  "reference_selected_rois_px": [
+    [
+      52,
+      26,
+      80,
+      80
+    ],
+    [
+      182,
+      26,
+      80,
+      80
+    ],
+    [
+      52,
+      130,
+      80,
+      80
+    ]
+  ],
+  "previews": [
+    "reference_selected_crop_1.png",
+    "reference_selected_crop_2.png",
+    "reference_selected_crop_3.png"
+  ],
+  "uncertainty": "Finite references, raw and denoiser have opposite RMSE/MAE ranking; no causal attribution.",
+  "holdout_policy": "Already observed; not a pristine heldout for subsequent model selection."
+}

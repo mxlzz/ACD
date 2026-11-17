@@ -1,0 +1,115 @@
+name: ACD B1 E0062 official Lone Monk Cycles architectural source acceptance
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths: [.github/workflows/acd-e0062-lone-monk.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  accept-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      OMP_NUM_THREADS: "4"
+      ACD_AUDIT_SOURCE: "Lone Monk: Carlo Bergonzini/Monorender CC-BY, Blender official Cycles demo"
+      ACD_AUDIT_RENDER: /tmp/e0062.png
+      ACD_AUDIT_OUTPUT: /tmp/e0062-audit.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download official source file (no license substitution)
+        run: |
+          set -euo pipefail
+          F=lone-monk_cycles_and_exposure-node_demo.blend
+          URL="https://download.blender.org/demo/cycles/$F"
+          if curl -fL --retry 3 --connect-timeout 20 --max-time 240 "$URL" -o /tmp/lone-monk.blend; then
+            echo "$URL" > /tmp/e0062-url
+          else
+            rm -f /tmp/lone-monk.blend
+            URL="https://mirror.blender.org/demo/cycles/$F"
+            curl -fL --retry 3 --connect-timeout 20 --max-time 240 "$URL" -o /tmp/lone-monk.blend
+            echo "$URL" > /tmp/e0062-url
+          fi
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path("/tmp/lone-monk.blend")
+          size=p.stat().st_size
+          with p.open("rb") as f:
+              magic=f.read(7)
+          is_blender_raw=magic==b"BLENDER"
+          is_blender_zstd=magic[:4]==bytes.fromhex("28 b5 2f fd")
+          is_blender_gzip=magic[:2]==bytes.fromhex("1f 8b")
+          if size!=33452252 or not (is_blender_raw or is_blender_zstd or is_blender_gzip):
+              raise RuntimeError(f"Unexpected Blender source: size={size}, magic={magic!r}")
+          print("VERIFIED_BLEND_SOURCE_FORMAT", "zstd" if is_blender_zstd else "gzip" if is_blender_gzip else "plain")
+          print("VERIFIED_OFFICIAL_LONE_MONK_BYTES",size)
+          print("VERIFIED_OFFICIAL_LONE_MONK_SHA256",hashlib.sha256(p.read_bytes()).hexdigest())
+          PY
+      - uses: actions/cache@v4
+        id: blender
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Get SHA-checked Blender 5.2.4 on cache miss
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Install headless OpenGL dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Asset, IES, camera, Cycles render smoke (original read-only)
+        run: |
+          set +e
+          ./blender-5.2.4-linux-x64/blender -b --disable-autoexec /tmp/lone-monk.blend --python-exit-code 1 --python scripts/audit_public_scene.py > /tmp/e0062.log 2>&1
+          echo "$?" > /tmp/e0062-exit
+          set -e
+          tail -55 /tmp/e0062.log
+      - name: Archive immutable source SHA and accurate acceptance/rejection
+        run: |
+          mkdir -p docs/experiments benchmarks/scenes
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("/tmp/lone-monk.blend")
+          digest=hashlib.sha256(p.read_bytes()).hexdigest()
+          code=int(Path("/tmp/e0062-exit").read_text().strip())
+          f=Path("/tmp/e0062-audit.json")
+          audit=json.loads(f.read_text()) if code==0 and f.exists() else None
+          ok=bool(code==0 and audit and audit.get("smoke_render_success") is True and audit.get("saved_file_untouched") is True and audit.get("unbundled_missing_images")==0 and audit.get("external_blend_libraries")==0 and not audit.get("missing_ies_profiles") and audit.get("materials",0)>0 and audit.get("cameras",0)>0)
+          result={"experiment":"E0062","source":"Official Blender Cycles Lone Monk, Carlo Bergonzini/Monorender","license":"CC BY","source_url":Path("/tmp/e0062-url").read_text().strip(),"source_sha256":digest,"source_bytes":p.stat().st_size,"blender":"5.2.4","functional_acceptance":"PASS" if ok else "FAIL","audit":audit,"audit_exit_code":code,"failure_log_tail":None if ok else "\n".join(Path("/tmp/e0062.log").read_text(errors="replace").splitlines()[-35:]),"quality_benchmark":False,"heldout_validated":False,"new_denoiser":False}
+          Path("docs/experiments/E0062_RESULTS.json").write_text(json.dumps(result,indent=2)+"\n")
+          manifest={"id":"lone_monk_official","source_url":result["source_url"],"source_sha256":digest,"source_bytes":p.stat().st_size,"license":"CC BY","author":"Carlo Bergonzini/Monorender","accepted_for_development_smoke":ok,"quality_holdout":False,"redistribute_blend":False}
+          Path("benchmarks/scenes/lone_monk.source.json").write_text(json.dumps(manifest,indent=2)+"\n")
+          lines=["# E0062: Lone Monk original architectural Cycles source acceptance","","Author: Carlo Bergonzini / Monorender. License CC BY, Blender official demo.",f"Functional Blender5.2.4 CPU 192x192 4spp source audit: **{'PASS' if ok else 'FAIL'}**.",f"Source SHA256: {digest}. Size: {p.stat().st_size} bytes.",f"Source URL: {result['source_url']}.","No model, EXR or preview redistributed; no quality benchmark nor trained filter."]
+          if audit:lines += [f"Original camera: {audit.get('active_camera')}. Objects/materials: {audit.get('objects')}/{audit.get('materials')}. Images: {audit.get('images')} (packed {audit.get('packed_images')}).","All texture, IES and linked-library gates satisfied." if ok else "Strict audit did not pass."]
+          if not ok:lines += ["","Failure log:","","> " + " | ".join((result['failure_log_tail'] or '').splitlines()[-8:])]
+          lines += ["","Next: verify actual seed-diversity in this independent scene, then pre-register resolution-specific architecture ROI and reference convergence. No algorithm changes.",""]
+          Path("docs/experiments/E0062.md").write_text("\n".join(lines))
+          msg=f"E0062 official Lone Monk source SHA={digest}, smoke={'PASS' if ok else 'FAIL'}. Strict resources/camera/IES audit; no denoiser quality or addon change. See docs/experiments/E0062.md."
+          for name in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(name).open("a",encoding="utf-8") as file:
+                  file.write("\n## E0062 independent-source acceptance\n\n"+msg+"\n")
+          print("E0062_SOURCE_ACCEPTANCE",json.dumps({"pass":ok,"sha":digest}))
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0062.md docs/experiments/E0062_RESULTS.json benchmarks/scenes/lone_monk.source.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0062): pin official architectural scene source and smoke gate"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Do not upload or commit original model or smoke preview
+        if: always()
+        run: echo "Only metadata committed; no scene binary or image."

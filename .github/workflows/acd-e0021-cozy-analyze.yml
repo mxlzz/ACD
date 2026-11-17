@@ -1,0 +1,85 @@
+name: ACD E0021 analyze 1024-spp twin refs and high-frequency crops
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0021-cozy-analyze.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  postprocess-without-render:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install laboratory with OpenEXR, Pillow and tests
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install Pillow
+          python -m pytest -q tests/test_cozy_e0020_analysis.py tests/test_cozy_e0021_analysis.py tests/test_region_cli.py tests/test_detail.py
+      - name: Restore exact E0021 EXRs and metrics from completed original run
+        run: |
+          mkdir -p /tmp/acd_cozy_e0021
+          gh run download 43289852695 -R mxlzz/ACD -n acd-e0021-cozy-exr -D /tmp/acd_cozy_e0021
+          gh run download 43289852695 -R mxlzz/ACD -n acd-e0021-cozy-metrics -D /tmp/acd_cozy_e0021
+          test -f /tmp/acd_cozy_e0021/reference.exr
+          test -f /tmp/acd_cozy_e0021/reference_check.exr
+          test -f /tmp/acd_cozy_e0021/metadata.json
+          test -f /tmp/acd_cozy_e0021/seed_911/acd_compare_Native.x || test -f /tmp/acd_cozy_e0021/seed_911/acd_compare_NATIVE_COMP_OIDN.exr
+      - name: Analyze all 3 seeds against both references; select impartial regions
+        run: |
+          python -m scripts.analyze_cozy_exr \
+            --directory /tmp/acd_cozy_e0021 \
+            --output /tmp/acd_cozy_e0021/analysis \
+            --experiment E0021 --render-run 43289852695 --roi-size 96
+      - name: Persist E0021 scientific report and three CC BY-SA crops
+        run: |
+          mkdir -p benchmarks/results/cozy_e0021 docs/experiments
+          cp /tmp/acd_cozy_e0021/analysis/E0021.md docs/experiments/E0021.md
+          cp /tmp/acd_cozy_e0021/analysis/reference_detail_crop_*.png benchmarks/results/cozy_e0021/
+          cp /tmp/acd_cozy_e0021/analysis/analysis.json benchmarks/results/cozy_e0021/
+          cp /tmp/acd_cozy_e0021/analysis/reference_rois.json benchmarks/results/cozy_e0021/
+          {
+            echo
+            echo "## E0021 — Cozy Kitchen higher-reference quality archived (2026-11-12)"
+            echo "- Blender5.0.1 [run 43289852695](https://github.com/mxlzz/ACD/actions/runs/43289852695), 512x482, 24spp x3 and refs1024spp x2; refs spread/raw-error 13.53%, vs E0020 24.51%. OIDN compositor/Standard RMSE mean 0.0833928, High 0.0860779, Super 0.0971167; native best gradients. Two-ref + 3-seed detail table and crops [E0021](docs/experiments/E0021.md)."
+            echo "- Reused EXR original, no rerender; 3 reference-only ROIs and previews under benchmarks/results/cozy_e0021, derivatives of Nicole Morena Cozy Kitchen CC BY-SA. No perceputal superiority claim."
+          } >> STATUS.md
+          {
+            echo
+            echo "> **E0021 complete:** 512x482 preserves source ratio, 24spp×3 and refs1024spp×2; ref disagreement/raw ratio 13.5%, consistent rankings. Three ROI crops+2-reference averages stored at [E0021](experiments/E0021.md); native OIDN still benchmark leader. Not a F5 algorithm improvement."
+          } >> docs/ROADMAP.md
+          {
+            echo
+            echo "## 2026-11-12 — E0021 two-reference detail analysis preserved"
+            echo "- Reused exact EXR artifacts from run 43289852695, computed RMSE and reference-selected edge gradients on all three noisy seeds against both reference renders. Crops selected without candidate signals, tonemapping non-OCIO diagnostic. Attribution Nicole Morena CC BY-SA."
+            echo "- Result: Native compositor OIDN/Standard lower RMSE and edge-gradient error vs ACD High/Super on this development scene at 512x482. Reference discrepancy decreased relative to E0020 but convergence/independence still unproven. No algorithm trained or altered."
+          } >> docs/DECISION_LOG.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0021.md benchmarks/results/cozy_e0021/*
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0021): archive twin-ref 3-seed denoiser fidelity and detail crops"
+          git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
+      - name: Preserve metrics and comparisons in temporary downloadable artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0021-analysis
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd_cozy_e0021/analysis/

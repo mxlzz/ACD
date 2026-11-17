@@ -222,6 +222,8 @@ __marimo__/
 
 # ACD: never accidentally publish user scenes or experimental render outputs
 experiments/
+# Research reports are reviewed and safe to version; raw EXR and .blend remain excluded.
+!docs/experiments/
 *.blend
 *.blend1
 *.blend2

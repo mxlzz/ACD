@@ -1,0 +1,317 @@
+{
+  "experiment": "E0038",
+  "oidn_250_bin_sha256": "d15ad71760a245629ff7cdb019af4b9784c0939b095fc5c2f3350d3eab787985",
+  "oidn_251_bin_sha256": "1cb3a28ebc99b90d7548b0b8b16f70c163cb59abe8582458a254aa303338269c",
+  "original_e0037_source_run": 43480823352,
+  "versions": {
+    "5.2.4": {
+      "version": "5.2.4",
+      "original_blender": "5.2.4 LTS",
+      "modes": {
+        "raw_aux": {
+          "oidn250_vs_251": {
+            "log1p_luminance_rmse": 4.5069840662636077e-07,
+            "pixel_rmse_p95": 3.95309570494719e-06,
+            "mae_linear": 8.492634151480161e-07,
+            "rmse_linear": 1.9547979970572723e-06,
+            "relative_rmse": 1.5817818793168825e-06,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn250_vs_blender_compositor": {
+            "log1p_luminance_rmse": 0.01700491443925608,
+            "pixel_rmse_p95": 0.07090367985496956,
+            "mae_linear": 0.01993750324934101,
+            "rmse_linear": 0.046473076181213824,
+            "relative_rmse": 0.037605046603392506,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn251_vs_blender_compositor": {
+            "log1p_luminance_rmse": 0.017004931731010274,
+            "pixel_rmse_p95": 0.07090355063584719,
+            "mae_linear": 0.01993756005981595,
+            "rmse_linear": 0.04647311096462848,
+            "relative_rmse": 0.03760508071737148,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn250_max_abs_vs_blender": 1.0905933380126953,
+          "oidn250_sha256": "60cc5484a4aac2abe18d82ca9f9a9f09f39dc6156087ff9589d5509bdf46f707",
+          "oidn251_sha256": "906bede25feaeead27031e17c79893171258e2ce4850205065004ed5dd1d5fe1",
+          "commands": [
+            {
+              "args": [
+                "-d",
+                "cpu",
+                "--hdr",
+                "/tmp/e0038/out/5_2_4/color.pfm",
+                "--alb",
+                "/tmp/e0038/out/5_2_4/albedo.pfm",
+                "--nrm",
+                "/tmp/e0038/out/5_2_4/normal.pfm",
+                "-q",
+                "high",
+                "--threads",
+                "4",
+                "-o",
+                "/tmp/e0038/out/5_2_4/raw_aux.pfm"
+              ],
+              "wall_seconds": 0.03688655200000568,
+              "log_tail": "Initializing device\n  device=CPU, version=2.5.0, msec=3.13241\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=6.16605\n\nDenoising 0% \nDenoising 3% \nDenoising 7% \nDenoising 11% \nDenoising 14% \nDenoising 18% \nDenoising 22% \nDenoising 25% \nDenoising 29% \nDenoising 33% \nDenoising 37% \nDenoising 40% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 59% \nDenoising 62% \nDenoising 66% \nDenoising 70% \nDenoising 74% \nDenoising 77% \nDenoising 81% \nDenoising 85% \nDenoising 88% \nDenoising 92% \nDenoising 96% \nDenoising 100% \n  msec=20.5984\nSaving output\n\n"
+            }
+          ]
+        },
+        "accurate_like": {
+          "oidn250_vs_251": {
+            "log1p_luminance_rmse": 4.22100446640769e-07,
+            "pixel_rmse_p95": 3.967000796527703e-06,
+            "mae_linear": 9.075280457990528e-07,
+            "rmse_linear": 2.025577424015431e-06,
+            "relative_rmse": 1.6301836682603723e-06,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn250_vs_blender_compositor": {
+            "log1p_luminance_rmse": 0.011983149355039134,
+            "pixel_rmse_p95": 0.047487294770208445,
+            "mae_linear": 0.014663441683347224,
+            "rmse_linear": 0.04035019807189542,
+            "relative_rmse": 0.032473818639565354,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn251_vs_blender_compositor": {
+            "log1p_luminance_rmse": 0.01198314511492394,
+            "pixel_rmse_p95": 0.04748919656969648,
+            "mae_linear": 0.01466342981325397,
+            "rmse_linear": 0.040350220086820376,
+            "relative_rmse": 0.032473836621741727,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn250_max_abs_vs_blender": 1.0348105430603027,
+          "oidn250_sha256": "30ee3bfb206be317b128e73e1e282b6a02778302be5e9ae62ec6f5ab23159a42",
+          "oidn251_sha256": "f63160205d9bfa1a9142b9931a1e688f7a068e78cffbcbecaff659c0a5e27979",
+          "commands": [
+            {
+              "args": [
+                "-d",
+                "cpu",
+                "--alb",
+                "/tmp/e0038/out/5_2_4/albedo.pfm",
+                "-q",
+                "high",
+                "--threads",
+                "4",
+                "-o",
+                "/tmp/e0038/out/5_2_4/filtered_albedo.pfm"
+              ],
+              "wall_seconds": 0.08514115299999503,
+              "log_tail": "Initializing device\n  device=CPU, version=2.5.0, msec=2.75039\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=25.4475\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 17% \nDenoising 20% \nDenoising 24% \nDenoising 27% \nDenoising 31% \nDenoising 34% \nDenoising 37% \nDenoising 41% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 58% \nDenoising 62% \nDenoising 65% \nDenoising 68% \nDenoising 72% \nDenoising 75% \nDenoising 79% \nDenoising 82% \nDenoising 86% \nDenoising 89% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=50.6949\nSaving output\n\n"
+            },
+            {
+              "args": [
+                "-d",
+                "cpu",
+                "--nrm",
+                "/tmp/e0038/out/5_2_4/normal.pfm",
+                "-q",
+                "high",
+                "--threads",
+                "4",
+                "-o",
+                "/tmp/e0038/out/5_2_4/filtered_normal.pfm"
+              ],
+              "wall_seconds": 0.08076483300000348,
+              "log_tail": "Initializing device\n  device=CPU, version=2.5.0, msec=2.75034\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=24.163\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 17% \nDenoising 20% \nDenoising 24% \nDenoising 27% \nDenoising 31% \nDenoising 34% \nDenoising 37% \nDenoising 41% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 58% \nDenoising 62% \nDenoising 65% \nDenoising 68% \nDenoising 72% \nDenoising 75% \nDenoising 79% \nDenoising 82% \nDenoising 86% \nDenoising 89% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=47.1226\nSaving output\n\n"
+            },
+            {
+              "args": [
+                "-d",
+                "cpu",
+                "--hdr",
+                "/tmp/e0038/out/5_2_4/color.pfm",
+                "--alb",
+                "/tmp/e0038/out/5_2_4/filtered_albedo.pfm",
+                "--nrm",
+                "/tmp/e0038/out/5_2_4/filtered_normal.pfm",
+                "--clean_aux",
+                "-q",
+                "high",
+                "--threads",
+                "4",
+                "-o",
+                "/tmp/e0038/out/5_2_4/accurate_like.pfm"
+              ],
+              "wall_seconds": 0.08289656600000228,
+              "log_tail": "Initializing device\n  device=CPU, version=2.5.0, msec=2.82789\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=24.6538\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 16% \nDenoising 20% \nDenoising 23% \nDenoising 26% \nDenoising 30% \nDenoising 33% \nDenoising 36% \nDenoising 40% \nDenoising 43% \nDenoising 46% \nDenoising 50% \nDenoising 53% \nDenoising 56% \nDenoising 60% \nDenoising 63% \nDenoising 66% \nDenoising 70% \nDenoising 73% \nDenoising 76% \nDenoising 80% \nDenoising 83% \nDenoising 86% \nDenoising 90% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=47.2934\nSaving output\n\n"
+            }
+          ]
+        }
+      },
+      "same_pfm_verified": true
+    },
+    "5.3.0": {
+      "version": "5.3.0",
+      "original_blender": "5.3.0",
+      "modes": {
+        "raw_aux": {
+          "oidn250_vs_251": {
+            "log1p_luminance_rmse": 4.579823444271538e-07,
+            "pixel_rmse_p95": 4.030055697858904e-06,
+            "mae_linear": 8.722999559217392e-07,
+            "rmse_linear": 1.9671486262894335e-06,
+            "relative_rmse": 1.5919076601881421e-06,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn250_vs_blender_compositor": {
+            "log1p_luminance_rmse": 0.01699309795266193,
+            "pixel_rmse_p95": 0.07099779357834773,
+            "mae_linear": 0.019930093462234153,
+            "rmse_linear": 0.04645635375040914,
+            "relative_rmse": 0.03759463032500184,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn251_vs_blender_compositor": {
+            "log1p_luminance_rmse": 0.016993123510193057,
+            "pixel_rmse_p95": 0.07099841129151452,
+            "mae_linear": 0.019930141993528296,
+            "rmse_linear": 0.046456394638978896,
+            "relative_rmse": 0.03759466673783371,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn250_max_abs_vs_blender": 1.0917577743530273,
+          "oidn250_sha256": "2dfd8675eaf3d453dadf5605771a08ba769b5bca7bea08cda4353b8829e506bb",
+          "oidn251_sha256": "94cefa82982b57d95d6ba60c98dc28606b46f2e0bd8d05798a5bce48ab0c0644",
+          "commands": [
+            {
+              "args": [
+                "-d",
+                "cpu",
+                "--hdr",
+                "/tmp/e0038/out/5_3_0/color.pfm",
+                "--alb",
+                "/tmp/e0038/out/5_3_0/albedo.pfm",
+                "--nrm",
+                "/tmp/e0038/out/5_3_0/normal.pfm",
+                "-q",
+                "high",
+                "--threads",
+                "4",
+                "-o",
+                "/tmp/e0038/out/5_3_0/raw_aux.pfm"
+              ],
+              "wall_seconds": 0.04052144799999979,
+              "log_tail": "Initializing device\n  device=CPU, version=2.5.0, msec=3.31977\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=6.11985\n\nDenoising 0% \nDenoising 3% \nDenoising 7% \nDenoising 11% \nDenoising 14% \nDenoising 18% \nDenoising 22% \nDenoising 25% \nDenoising 29% \nDenoising 33% \nDenoising 37% \nDenoising 40% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 59% \nDenoising 62% \nDenoising 66% \nDenoising 70% \nDenoising 74% \nDenoising 77% \nDenoising 81% \nDenoising 85% \nDenoising 88% \nDenoising 92% \nDenoising 96% \nDenoising 100% \n  msec=23.9527\nSaving output\n\n"
+            }
+          ]
+        },
+        "accurate_like": {
+          "oidn250_vs_251": {
+            "log1p_luminance_rmse": 4.267257441556042e-07,
+            "pixel_rmse_p95": 4.159589899325278e-06,
+            "mae_linear": 9.314166820533703e-07,
+            "rmse_linear": 2.0556575387869508e-06,
+            "relative_rmse": 1.6545428987080037e-06,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn250_vs_blender_compositor": {
+            "log1p_luminance_rmse": 0.012006288724307087,
+            "pixel_rmse_p95": 0.04754877229325064,
+            "mae_linear": 0.0146950301482573,
+            "rmse_linear": 0.04038059124838643,
+            "relative_rmse": 0.03250124071496555,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn251_vs_blender_compositor": {
+            "log1p_luminance_rmse": 0.012006292537995953,
+            "pixel_rmse_p95": 0.047548795202656174,
+            "mae_linear": 0.01469501330297539,
+            "rmse_linear": 0.04038050074731541,
+            "relative_rmse": 0.03250116393175898,
+            "psnr_db": null,
+            "psnr_data_range": null,
+            "exact_match": false
+          },
+          "oidn250_max_abs_vs_blender": 1.0341153144836426,
+          "oidn250_sha256": "19ef4014fc30bda46256404034ea0e9411362424a7c29e70c3137c3387443b31",
+          "oidn251_sha256": "4f393afdccdcbab77bb0ebd24da46c8ba038ecfccee09785a9b60c5987ee40c0",
+          "commands": [
+            {
+              "args": [
+                "-d",
+                "cpu",
+                "--alb",
+                "/tmp/e0038/out/5_3_0/albedo.pfm",
+                "-q",
+                "high",
+                "--threads",
+                "4",
+                "-o",
+                "/tmp/e0038/out/5_3_0/filtered_albedo.pfm"
+              ],
+              "wall_seconds": 0.08772987800000465,
+              "log_tail": "Initializing device\n  device=CPU, version=2.5.0, msec=3.28398\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=24.404\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 17% \nDenoising 20% \nDenoising 24% \nDenoising 27% \nDenoising 31% \nDenoising 34% \nDenoising 37% \nDenoising 41% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 58% \nDenoising 62% \nDenoising 65% \nDenoising 68% \nDenoising 72% \nDenoising 75% \nDenoising 79% \nDenoising 82% \nDenoising 86% \nDenoising 89% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=53.0823\nSaving output\n\n"
+            },
+            {
+              "args": [
+                "-d",
+                "cpu",
+                "--nrm",
+                "/tmp/e0038/out/5_3_0/normal.pfm",
+                "-q",
+                "high",
+                "--threads",
+                "4",
+                "-o",
+                "/tmp/e0038/out/5_3_0/filtered_normal.pfm"
+              ],
+              "wall_seconds": 0.08037515599999523,
+              "log_tail": "Initializing device\n  device=CPU, version=2.5.0, msec=2.83511\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=24.6062\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 17% \nDenoising 20% \nDenoising 24% \nDenoising 27% \nDenoising 31% \nDenoising 34% \nDenoising 37% \nDenoising 41% \nDenoising 44% \nDenoising 48% \nDenoising 51% \nDenoising 55% \nDenoising 58% \nDenoising 62% \nDenoising 65% \nDenoising 68% \nDenoising 72% \nDenoising 75% \nDenoising 79% \nDenoising 82% \nDenoising 86% \nDenoising 89% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=45.9521\nSaving output\n\n"
+            },
+            {
+              "args": [
+                "-d",
+                "cpu",
+                "--hdr",
+                "/tmp/e0038/out/5_3_0/color.pfm",
+                "--alb",
+                "/tmp/e0038/out/5_3_0/filtered_albedo.pfm",
+                "--nrm",
+                "/tmp/e0038/out/5_3_0/filtered_normal.pfm",
+                "--clean_aux",
+                "-q",
+                "high",
+                "--threads",
+                "4",
+                "-o",
+                "/tmp/e0038/out/5_3_0/accurate_like.pfm"
+              ],
+              "wall_seconds": 0.08301345600000332,
+              "log_tail": "Initializing device\n  device=CPU, version=2.5.0, msec=2.80245\nLoading input\nResolution: 128x96\nInitializing filter\n  filter=RT, msec=24.4634\n\nDenoising 0% \nDenoising 3% \nDenoising 6% \nDenoising 10% \nDenoising 13% \nDenoising 16% \nDenoising 20% \nDenoising 23% \nDenoising 26% \nDenoising 30% \nDenoising 33% \nDenoising 36% \nDenoising 40% \nDenoising 43% \nDenoising 46% \nDenoising 50% \nDenoising 53% \nDenoising 56% \nDenoising 60% \nDenoising 63% \nDenoising 66% \nDenoising 70% \nDenoising 73% \nDenoising 76% \nDenoising 80% \nDenoising 83% \nDenoising 86% \nDenoising 90% \nDenoising 93% \nDenoising 96% \nDenoising 100% \n  msec=47.4568\nSaving output\n\n"
+            }
+          ]
+        }
+      },
+      "same_pfm_verified": true
+    }
+  },
+  "interpretation": "Fixed input/flags comparison across two official standalone OIDN versions. Both tested against Blender compositor output; no ground truth and no evidence of relative visual quality. Source Blender release build CMake pins OIDN 2.5.0, but runtime patch/ISA equivalence not assumed."
+}

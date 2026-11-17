@@ -1,0 +1,109 @@
+name: ACD V2 OIDN 2.5.1 vs Blender 5 same raw AOVs
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  identical-aov-comparison:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - scene: glass_lobby
+            width: 192
+            height: 144
+          - scene: interior_emissive
+            width: 192
+            height: 144
+          - scene: detail_target
+            width: 320
+            height: 240
+    env:
+      BLENDER_VERSION: "5.0.1"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      ACD_DEVICE: CPU
+      ACD_SCENE: ${{ matrix.scene }}
+      ACD_BENCH_DIR: /tmp/acd_v2_${{ matrix.scene }}
+      ACD_WIDTH: "${{ matrix.width }}"
+      ACD_HEIGHT: "${{ matrix.height }}"
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_EXTRA_SEEDS: "911,1337"
+      ACD_REFERENCE_SPP: "1024"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_METHODS: "STANDARD,HIGH,SUPER,NATIVE_COMP_OIDN"
+      ACD_CAPTURE_AOV: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Dependencies and format contract
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_pfm.py tests/test_detail.py tests/test_batch.py
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-5.0.1-linux-x64
+          key: official-blender-5.0.1-linux-x64-v2
+      - if: steps.blender-cache.outputs.cache-hit != 'true'
+        name: Get Blender 5.0.1
+        run: |
+          curl -fL --retry 3 https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz -o blender.tar.xz
+          tar -xf blender.tar.xz
+      - name: Get official OIDN 2.5.1, verify published SHA-256
+        run: |
+          curl -fL --retry 3 https://github.com/RenderKit/oidn/releases/download/v2.5.1/oidn-2.5.1.x86_64.linux.tar.gz -o oidn251.tar.gz
+          echo "743c3e2aff8c220d5d70fe6cb970fb3d36f2702d2693c61d1d148e404cf37cd6  oidn251.tar.gz" | sha256sum -c -
+          mkdir oidn-dist
+          tar -xzf oidn251.tar.gz -C oidn-dist
+          BIN="$(find "$PWD/oidn-dist" -type f -name oidnDenoise | head -n 1)"
+          test -n "$BIN" && test -x "$BIN"
+          echo "OIDN_BIN=$BIN" >> "$GITHUB_ENV"
+          "$BIN" --list_devices
+      - name: Get official OIDN 2.3.3 for version-isolated CPU comparison
+        run: |
+          curl -fL --retry 3 https://github.com/RenderKit/oidn/releases/download/v2.3.3/oidn-2.3.3.x86_64.linux.tar.gz -o oidn233.tar.gz
+          sha256sum oidn233.tar.gz
+          mkdir oidn233-dist
+          tar -xzf oidn233.tar.gz -C oidn233-dist
+          BIN233="$(find "$PWD/oidn233-dist" -type f -name oidnDenoise | head -n 1)"
+          test -n "$BIN233" && test -x "$BIN233"
+          echo "OIDN233_BIN=$BIN233" >> "$GITHUB_ENV"
+          "$BIN233" --list_devices
+      - name: Blender render same noisy beauty and AOV for every seed
+        run: |
+          ./blender-$BLENDER_VERSION-linux-x64/blender -b --factory-startup -noaudio \
+            --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Evaluate references, seeds and details
+        run: |
+          python -m acd_lab.cli compare-batch --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/metrics.json"
+          for seed_dir in "$ACD_BENCH_DIR"/seed_*; do
+            if [ -d "$seed_dir" ]; then
+              python -m acd_lab.cli compare-batch --directory "$seed_dir" --output "$seed_dir/metrics.json"
+            fi
+          done
+          python -m acd_lab.cli aggregate-seeds --directory "$ACD_BENCH_DIR" --output "$ACD_BENCH_DIR/seed_aggregate.json"
+      - name: Run OIDN 2.5.1 on identical inputs and compare to native
+        run: |
+          python -m scripts.oidn251_compare --directory "$ACD_BENCH_DIR" \
+            --oidn "$OIDN_BIN" --output "$ACD_BENCH_DIR/oidn251_comparison.json"
+      - name: Isolate OIDN 2.3.3 vs 2.5.1 with same PFM and flags
+        run: |
+          python -m scripts.oidn_versions_compare --directory "$ACD_BENCH_DIR" \
+            --oidn233 "$OIDN233_BIN" --oidn251 "$OIDN_BIN" \
+            --output "$ACD_BENCH_DIR/oidn_versions.json"
+      - name: Archive EXR, PFM, reports and SHA input provenance
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-v2-${{ matrix.scene }}-oidn251
+          if-no-files-found: warn
+          retention-days: 14
+          path: /tmp/acd_v2_${{ matrix.scene }}/

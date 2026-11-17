@@ -1,0 +1,133 @@
+name: ACD E0048 existing Cycles reflection guide causal same-Raw test
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0048-reflection-guides.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  same-noise-guide-switch:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ACD_SCENE: detail_target
+      ACD_DEVICE: CPU
+      ACD_BENCH_DIR: /tmp/acd-e0048
+      ACD_WIDTH: "1920"
+      ACD_HEIGHT: "1440"
+      ACD_E0046_CROP: slats
+      ACD_E0048_FOLLOW_REFLECTIONS: "0"
+      ACD_INPUT_SPP: "24"
+      ACD_INPUT_SEED: "539"
+      ACD_REFERENCE_SPP: "512"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_DOUBLE_REFERENCE: "0"
+      ACD_METHODS: NATIVE_COMP_OIDN
+      ACD_CAPTURE_AOV: "1"
+      ACD_E0044_ADAPTIVE_OFF: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "4"
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate fail-closed logic and EXR readers
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install "Pillow>=10,<13"
+          python -m pytest -q tests/test_reflections_e0048.py tests/test_glass_regions_e0047.py
+      - name: Recover original E0046 EXRs and both finite references
+        run: |
+          mkdir -p /tmp/acd-e0046-artifact /tmp/acd-e0046-flat
+          gh run download 43883209135 -R mxlzz/ACD -n acd-e0046-hires-density-crop-exr -D /tmp/acd-e0046-artifact
+          for name in metadata.json acd_compare_Raw.exr acd_compare_NATIVE_COMP_OIDN.exr raw_multilayer.exr reference.exr reference_check.exr; do
+            count="$(find /tmp/acd-e0046-artifact -type f -name "$name" | wc -l)"
+            test "$count" -eq 1 || { echo "Missing or duplicate $name: $count"; exit 1; }
+            find /tmp/acd-e0046-artifact -type f -name "$name" -exec cp -- '{}' /tmp/acd-e0046-flat/ ';'
+          done
+          echo "ACD_REFERENCE_FILE=/tmp/acd-e0046-flat/reference.exr" >> "$GITHUB_ENV"
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Download SHA checked official Blender if cache not available
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Install Blender EGL dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: One real 24spp crop with native follow-reflections off
+        run: |
+          ./blender-5.2.4-linux-x64/blender -b --factory-startup --python-exit-code 1 --python tests/blender_compare_smoke.py
+      - name: Require same Raw and changed AOV before comparing denoisers
+        run: |
+          python -m scripts.analyze_reflections_e0048 --original /tmp/acd-e0046-flat --switched /tmp/acd-e0048 --manifest docs/experiments/E0046_RESULTS.json --output /tmp/acd-e0048-report
+      - name: Archive reproducible numerical result and original 1:1 images
+        run: |
+          mkdir -p docs/experiments benchmarks/results/detail_reflections_e0048
+          cp /tmp/acd-e0048-report/E0048_RESULTS.json docs/experiments/E0048_RESULTS.json
+          cp /tmp/acd-e0048-report/E0048_comparison.png benchmarks/results/detail_reflections_e0048/
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("docs/experiments/E0048_RESULTS.json").read_text())
+          m=data["metrics"]
+          lines=[
+            "# E0048 — Existing Cycles follow-reflections option: controlled diagnostic",
+            "",
+            "Blender 5.2.4, procedural fine-detail scene, single 24spp new render with follow=False; reused original E0046 follow=True render and both 512spp references.",
+            "Same camera at virtual 1920x1440, original crop 512x512 and fixed E0047 glass/direct regions. Not a new algorithm.",
+            "",
+            "![Raw-matched OIDN comparison with finite references](../../benchmarks/results/detail_reflections_e0048/E0048_comparison.png)",
+            "",
+            "Raw maximum channel delta: "+str(m["raw_max_abs"])+". Same noisy input: "+str(m["raw_identical"])+".",
+            "Guide differences: "+str(m["guide_effect"])+".",
+            "Decision: "+m["decision"]]
+          if m["causal_interpretation_allowed"]:
+            lines.extend(["","| Region | Policy | RMSE ref1 | RMSE ref2 | Contrast ref1 | Contrast ref2 |",
+                          "|---|---|---:|---:|---:|---:|"])
+            for region in ("glass_overlap","uncovered_slats","interior"):
+              for method in ("follow_true","follow_false"):
+                r=m["scores"][method][region]
+                lines.append(f'| {region} | {method} | {r["ref1"]["linear"]["rmse_linear"]:.7f} | {r["ref2"]["linear"]["rmse_linear"]:.7f} | {r["ref1"]["detail"]["edge_contrast_ratio"]:.4f} | {r["ref2"]["detail"]["edge_contrast_ratio"]:.4f} |')
+          lines+=["","Two 512spp references remain nonconverged; no claim of general denoiser improvement. No addon modified.","[Raw numerical results](E0048_RESULTS.json)."]
+          Path("docs/experiments/E0048.md").write_text("\n".join(lines)+"\n")
+          note="\n## E0048 existing Cycles reflection-feature toggle (2026-11-16)\n\n"+m["decision"]+". Raw identical="+str(m["raw_identical"])+". See docs/experiments/E0048_RESULTS.json; no new model or algorithm.\n"
+          for p in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+            with Path(p).open("a",encoding="utf-8") as f:f.write(note)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0048.md docs/experiments/E0048_RESULTS.json
+          git add benchmarks/results/detail_reflections_e0048/ STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0048): compare native reflection denoising guides on same noisy input"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: EXRs expire in 14 days, diagnostic image and JSON permanent
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0048-native-reflections-exr
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd-e0048/

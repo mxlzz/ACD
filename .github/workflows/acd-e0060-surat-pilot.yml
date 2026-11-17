@@ -1,0 +1,119 @@
+name: ACD E0060 Surat Office 256px 8spp 64spp x2 CPU feasibility
+
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths:
+      - .github/workflows/acd-e0060-surat-pilot.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  internal-source-feasibility:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      ACD_SCENE: external
+      ACD_E0060_CAMERA: "CAM Office"
+      ACD_DEVICE: CPU
+      ACD_BENCH_DIR: /tmp/e0060
+      ACD_WIDTH: "256"
+      ACD_HEIGHT: "144"
+      ACD_INPUT_SPP: "8"
+      ACD_INPUT_SEED: "539"
+      ACD_REFERENCE_SPP: "64"
+      ACD_REFERENCE_SEED: "8819"
+      ACD_DOUBLE_REFERENCE: "1"
+      ACD_EXTRA_SEEDS: ""
+      ACD_METHODS: NATIVE_COMP_OIDN
+      ACD_CAPTURE_AOV: "1"
+      ACD_E0044_ADAPTIVE_OFF: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test exact source camera/sample contract
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_surat_pilot_e0060.py tests/test_surat_seed_e0058.py
+      - name: Download pinned source and record .blend SHA256
+        run: |
+          mkdir -p /tmp/e0060-src /tmp/e0060
+          gh release download v1.0.1 -R gitfalconhub/surat-diamond-bourse-gujarat-india -p surat-diamond-bourse-model-v1.0.1.zip -D /tmp
+          test "$(stat -c%s /tmp/surat-diamond-bourse-model-v1.0.1.zip)" -eq 166627773
+          echo "721e77b401fba0fa5c3b9df13b09279c6d05781af865f2b63945e7e032e991a8  /tmp/surat-diamond-bourse-model-v1.0.1.zip" | sha256sum -c -
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          root=Path("/tmp/e0060-src")
+          with ZipFile("/tmp/surat-diamond-bourse-model-v1.0.1.zip") as z:
+              for item in z.infolist():
+                  p=Path(item.filename)
+                  if p.is_absolute() or ".." in p.parts:raise RuntimeError("Unsafe ZIP path")
+              z.extractall(root)
+          matches=[x for x in root.rglob("Surat Diamond Bourse.blend") if x.is_file()]
+          if len(matches)!=1:raise RuntimeError("Expected one exact source file")
+          Path("/tmp/e0060-blend-path").write_text(str(matches[0]))
+          PY
+          sha256sum "$(cat /tmp/e0060-blend-path)" | cut -d' ' -f1 > /tmp/e0060-blend-sha
+      - uses: actions/cache@v4
+        id: blender
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Download SHA-verified Blender 5.2.4 if needed
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Install Blender EGL dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Render only small native source camera, 8spp + two finite64spp refs
+        run: |
+          start=$(date +%s)
+          ./blender-5.2.4-linux-x64/blender --disable-autoexec -b "$(cat /tmp/e0060-blend-path)" --python-exit-code 1 --python tests/blender_compare_smoke.py
+          echo "$(( $(date +%s) - start ))" > /tmp/e0060/wall_seconds.txt
+      - name: Validate source, AOV identity, finite references, benchmark disallowed
+        run: |
+          python -m scripts.analyze_surat_pilot_e0060 --directory /tmp/e0060 --source-zip /tmp/surat-diamond-bourse-model-v1.0.1.zip --source-sha256 "$(cat /tmp/e0060-blend-sha)" --output /tmp/e0060-report
+      - name: Archive only source hash, numeric feasibility, costs and limitations
+        run: |
+          cp /tmp/e0060-report/E0060.md docs/experiments/E0060.md
+          cp /tmp/e0060-report/E0060_RESULTS.json docs/experiments/E0060_RESULTS.json
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          d=json.loads(Path("docs/experiments/E0060_RESULTS.json").read_text())
+          msg=("E0060 Surat CAM Office tiny 256x144 8spp+2x64spp ref cost="+str(d["total_wall_seconds_including_load_and_write"])
+               +"s, rawAOV delta="+str(d["raw_beauty_AOV_max_abs"])
+               +", ref_ref_rmse="+str(d["reference_pair_rmse"])
+               +". No quality ranking or rights clearance. docs/experiments/E0060.md.")
+          for file in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(file).open("a",encoding="utf-8") as f:
+                  f.write("\n## E0060 internal architecture quality-reference cost pilot\n\n"+msg+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0060.md docs/experiments/E0060_RESULTS.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0060): archive small interior reference feasibility, no quality claims"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Never upload original model or derived EXR images
+        if: always()
+        run: echo "Source and rendered images remain ephemeral; only numerical report is published."

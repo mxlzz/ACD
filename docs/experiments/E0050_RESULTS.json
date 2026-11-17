@@ -1,0 +1,28 @@
+{
+  "experiment": "E0050",
+  "source_runs": [
+    43883209135,
+    43894800865
+  ],
+  "no_new_cycles_scene_render": true,
+  "reference_convergence_proven": false,
+  "new_denoiser": false,
+  "metrics": {
+    "raw_passthrough_max_abs": 0.0,
+    "baseline_native_replay_max_abs": 0.034577369689941406,
+    "raw_passthrough_verified": true,
+    "native_replay_verified": false,
+    "scores": {},
+    "decision": "STOP: offline native-guide replay not equivalent to original compositor",
+    "replay_vs_swap_rmse": {
+      "log1p_luminance_rmse": 0.00492376716060337,
+      "pixel_rmse_p95": 0.019448682221413688,
+      "mae_linear": 0.005479052306799422,
+      "rmse_linear": 0.010646725991827128,
+      "relative_rmse": 0.011279995158900224,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": false
+    }
+  }
+}

@@ -1,3 +1,621 @@
+## 2026-11-16 — E0051: revisión crítica y cierre de línea de guías nativas
+
+- [E0048](docs/experiments/E0048.md): Cycles follow-reflections predeterminado es mejor sobre el mismo Raw, pero ya existe upstream; no agrega ACD.
+- [E0049](docs/experiments/E0049.md): Raw cambia 0.077223; aborta causalidad. [E0050](docs/experiments/E0050.md): Raw replay exacto pero OIDN replay original difiere 0.034577, de modo que el swap de guías offline no replica el baseline; no se recomienda mejora.
+- La revisión concluye que continuar ajustando toggles/recombinaciones sería redundante. Siguiente [E0051_HANDOFF](docs/experiments/E0051_HANDOFF.md): fuente arquitectónica completa con defecto verificable, luego hipótesis de algoritmo nueva. `Prueba ACD.blend` no figura accesible en los archivos de este chat y no se inventa contenido. Addon estable intacto; PR#10 draft.
+
+---
+
+## 2026-11-16 — E0050 verificación offline de mismo Raw, compositor nativo
+
+- Workflow E0050 agregado: EXRs E0046/E0049 se recuperan por ID, Blender 5.2.4 carga Raw fijo y AOVs originales/alternativos como CompositorNodeImage, denoise High/Accurate/HDR. Dos controles estrictos: Raw passthrough max<=1e-5 y replay original vs OIDN nativo max<=1e-4. Si fallan, se archiva stop y NO se atribuye mejora a guías. Este ensayo no entrena ni cambia filtros.
+- Eliminada la inspección frágil de enum de colorspace en el script; se registra valor que Blender proporciona. Resultados pendientes.
+
+---
+
+## 2026-11-16 — E0050: reconstrucción del compositor con Raw idéntico y dos juegos de guías
+
+- E0049 no permitió inferencia: al desactivar albedo roughness weighting, Raw max delta0.077223. Nueva prueba [E0050_PLAN](docs/experiments/E0050_PLAN.md): **sin render Cycles** se leen EXRs E0046/E0049 SHA controlados, dos pares AOV y se aplica el nodo OIDN de Blender 5.2.4 a la misma beauty E0046. Primero verificar que paso Raw sea igual y replay de guías originales reproduzca OIDN original; si no, detener y documentar.
+- Solo si ambas igualdades pasan comparar las guías alternativas frente a refs512spp y ROI E0047. Método de combinación conocido, sin nuevo algoritmo, entrenamiento, referencias o cambios en addon. Scripts y tests de fail-closed añadidos; workflow de ejecución se agrega después. Sin conclusión numérica todavía.
+
+---
+
+## 2026-11-16 — E0049 corrección de ruta de disparo CI
+
+- El workflow E0049 se había creado como `acd-e0049-roughness-weighting.yml` mientras el filtro paths de su trigger apuntaba a `acd-e0049-roughness-guides.yml`. Corrección de un único literal de configuración para que el push dispare el workflow correspondiente, sin modificar modelo, imagen, seed, control de Raw ni método. Ejecución pendiente.
+
+---
+
+## 2026-11-16 — E0049 ponderación de albedo por rugosidad, último ensayo sobre guías nativas
+
+- E0048 validado: Raw exactamente igual; follow_reflections=True (default) mejora tras vidrio frente a False. No desarrollo de nuevo método. E0049 prueba una **segunda y última** opción de Cycles preexistente, albedo roughness weighting True→False con seguimiento de reflexiones mantenido True; mismo Raw/seed, crop, referencias y ROI congeladas E0046/E0047; una sola renderización24spp. Se aborta inferencia si Raw difiere; si default gana, detener por completo tuning de guías.
+- Protocolo [E0049_PLAN](docs/experiments/E0049_PLAN.md). Workflow enviado, resultados pendientes. Addon sin cambios.
+
+---
+
+## 2026-11-16 — E0048 workflow de intervención guiada
+
+- E0048 workflow recupera EXRs congelados E0046, ejecuta solo una renderización 24spp siguiendo=False, garantiza identidad Raw con seed539 o descarta, mide efecto real en guías/ROI. El workflow publica el JSON y la lámina 1:1 únicamente tras las validaciones. **Resultados pendientes de GitHub Actions**. No añade algoritmo ni cambia el addon.
+
+---
+
+## 2026-11-16 — E0048 diseño técnico preregistrado
+
+- En la revisión de E0044–E0047 se confirmó que E0045 corrigió la escala sub-Nyquist; E0047 mostró contraste tras vidrio ~0.50 frente a directo ~0.91, pero no causalidad ni convergencia. Fuente Cycles5.2.4 incorpora `denoising_pass_follow_reflections` (True por defecto) y OIDN ya documenta el mecanismo. No reinventar guías.
+- [E0048_PLAN](docs/experiments/E0048_PLAN.md), cambio de script opt-in, analizador fail-closed y tests agregados. **Aún sin resultados reales:** siguiente commit habilita un workflow de un solo render 24spp, contra EXR congelados E0046, con Raw idéntico como condición excluyente. Ningún addon modificado.
+
+---
+
+## 2026-11-16 — E0047 retry sin Cycles: escape de Bash en download
+
+- [Run 43885689112](https://github.com/mxlzz/ACD/actions/runs/43885689112) pasó 6 pruebas sintéticas y descargó E0046 original correctamente, pero falló antes de analizar imágenes: `test: ${#files[@]}: integer expression expected` porque workflow serializó literalmente `\${#files[@]}` (barra inversa antes de expansión de array Bash). Es **defecto de workflow**, no experimento ni método.
+- Se retiraron exactamente los dos escapes de expansión Bash en el paso de recuperación `files`; todos los hashes, ROI 80x160 y criterios previos se conservan sin modificación. El workflow se ejecuta de nuevo sin renderizar. Resultado científico pendiente.
+
+---
+
+## 2026-11-16 — E0047 ROI para distinguir lamas tras vidrio y sin vidrio, sin render adicional
+
+- E0046 [run 43883209135](https://github.com/mxlzz/ACD/actions/runs/43883209135) **success** en Blender5.2.4: crop512×512 sobre FOV1920×1440, zona320×320, 24spp seed539 y refs512 spp seed8819/8922. OIDN RMSE ref1/ref2 0.068401/0.068275 vs Raw 0.339882/0.340153; refs entre sí 0.079222 (mayor que RMSE OIDN: falta convergencia). OIDN ratio de contraste de borde ~0.665 en ambas refs. [Imagen 1:1](benchmarks/results/detail_crop_e0046/e0046_cropped_slats_1to1.png).
+- Observación visual tentativa: franjas tras vidrio aparentan más suavizadas que lamas directas. [E0047_PLAN](docs/experiments/E0047_PLAN.md) fija dos rectángulos antes de medir, utiliza EXR y guías de E0046 por SHA exacto, evalúa correlación gradiente entre refs y ratios OIDN; **sin nuevo render, sin filtro nuevo**. El resultado no prueba causalidad del vidrio ni validez estadística. Si no hay patrón apoyado, no insistir con este caso.
+
+---
+
+## 2026-11-16 — E0046: crop de lamas a densidad de píxel de producción
+
+- [E0045](docs/experiments/E0045.md) demostró que lamas a 320px están bajo Nyquist (paso mínimo1.304px) y juntas <0.4px. No continuar interpretando esa pérdida de contraste como fallo del denoiser.
+- [E0046_PLAN](docs/experiments/E0046_PLAN.md) especifica **único crop** 512×512 a resolución virtual1920×1440, camera/FOV intactos, un noisy24spp seed539, refs512spp x2. Evalúa solamente centro320×320 con margen96px. Nativo OIDN vs Raw, sin variante/entrenamiento.
+- Debe fallar si Blender devuelve imagen de tamaño inesperado o fuentes/guías no idénticas. Si pasa, examinar imagen 1:1 y diferencia en bordes; si no hay problema claro o referencias siguen inseguras, detener esta hipótesis. Addon intacto; **run pendiente** en este commit.
+
+---
+
+## 2026-11-16 — E0045: descubierto límite de resolución del fixture previo
+
+- [E0044](docs/experiments/E0044.md) pasó en Blender5.2.4 LTS [run 43880565752](https://github.com/mxlzz/ACD/actions/runs/43880565752): OIDN RMSE 0.053997/0.053490 (2 referencias1024), Raw RMSE 0.221769/0.221340, error de gradientes OIDN ~0.06957; ratio contraste borde OIDN ~0.686, 7/12 tiles con ratio <0.75. Referencias entre sí RMSE 0.040819. No convergencia probada.
+- Revisión de fuente y proyecto: [E0045](docs/experiments/E0045.md) prueba que 52 lamas tienen paso proyectado 1.304–1.678px a 320 de ancho y juntas de 1cm solo 0.362–0.401px. Relevante: la reducción de contraste puede ser antialiasing/ruido, no fracaso del denoiser; no entrenar ni mezclar filtros para perseguir detalles subpíxel.
+- Se cancela la evaluación de fidelidad de juntas/lamas finas a 320px y se propone un pequeño crop a densidad de 1920px de **la misma cámara** antes de cualquier 1080p completo o nueva arquitectura. Cálculo por proyección ideal (pendiente verificación en Blender), sin consumir nuevos renders en E0045.
+
+---
+
+## 2026-11-16 — E0044 prior-art gate: reevaluar detalle con Cycles 5.2.4
+
+- Blender integró PR [#154988](https://projects.blender.org/blender/blender/pulls/154988) en marzo 2026, suavizando transiciones en guías denoising; E0016 estaba en 5.0.1 y no justifica inventar una corrección para 5.2 LTS sin comprobar. Intel OIDN ya resuelve prefiltrado y hit especular en su API.
+- Decisión: [E0044_PLAN](docs/experiments/E0044_PLAN.md) **un solo** fixture procedural conocido (52 lamas, juntas, vidrio, bump), Blender 5.2.4, 24spp seed539, refs1024×2, sin High/Super ni variantes previas. 4×3 regiones 80² y métricas HDR/gradientes, galería PNG 1:1; sin nueva técnica. CI manual después del primer push del workflow.
+- No se usa Italian Flat porque tiene IES ausente. Si el defecto no supera ruido de referencias/criterio visual, descartar otra mejora por pases. Cualquier cambio real de algoritmo requiere prueba causal con escena retenida y evaluación de coste. El addon estable y PR draft permanecen sin integración.
+- **Estado en este commit:** implementación preparada, ejecución y métricas **todavía no verificadas**.
+
+---
+
+## 2026-11-13 — E0043 guía diagnóstica sin hallazgo + cuarentena IES de Italian Flat
+
+- [E0043 run 43511696293](https://github.com/mxlzz/ACD/actions/runs/43511696293) produjo cuatro salidas de un único render y falló en el postproceso por leer campos inexistentes en E0042_RESULTS.json. [Recovery run 43512797293](https://github.com/mxlzz/ACD/actions/runs/43512797293) reutilizó EXRs, **sin renderizar otra vez**, publicó [resultado E0043](docs/experiments/E0043_RESULTS.json) y [galería](benchmarks/results/italian_flat_e0043/README.md).
+- Raw RMSE ref1 ≈0.09171, OIDN RGB ≈0.04354, Albedo ≈0.04305 y Albedo+Normal ≈0.04230; segundo ref coincide en orden. Referencias 128spp entre sí RMSE ≈0.05549. **Cero regiones de 16** superaron criterio preregistrado de regresión por guías. Tampoco fue probado visualmente un mecanismo nuevo; la mejora por guías es comportamiento ya documentado por Intel.
+- Revisando logs se encontró **ERROR Could not read IES file .../IES_profiles/three-lobe-vee.ies** en todos los seis renders E0042 y E0043. Auditor B1 revisaba imágenes, no archivos IES: aceptación anterior incompleta. Italian Flat no puede considerarse fixture fiel/autosuficiente. Se corrigió el auditor para rechazar ShaderNodeTexIES externos faltantes **antes** del render. No sustituir por perfiles ajenos por igualdad de nombre.
+- **Decisión:** cerrar ablation de guías de Italian Flat sin más tuning ni nuevos spp. No integrar algoritmos ni modificar addon. Siguiente puerta científica: verificar dependencias de un caso representativo **sin render pesado**, identificar un defecto concreto respecto de OIDN y su anterioridad; si no aparece, solicitar un par concreto de imágenes Raw/OIDN o una escena completa que lo muestre antes de invertir más cómputo.
+
+---
+
+## 2026-11-13 — E0043: retorno al problema de calidad sin repetir anterioridad
+
+- **Decisión de enfoque:** tras E0042 (RMSE interseed 128spp ≈0,05549), NO prolongar la escalera de referencias y NO inventar un nuevo filtro. Intel OIDN y Blender ya conocen variaciones sin guía / albedo / albedo+normal y prefilter; las comparaciones se usan solo para detectar una falla reproducible que pueda justificar investigación causal.
+- [E0043_PLAN](docs/experiments/E0043_PLAN.md) congelado antes de ejecución: Italian Flat, 640x400, 32spp seed539, **un render nuevo** 3 nodos OIDN existentes con los mismos Raw y guías; dos referencias 128spp existentes recuperadas del run E0042, grilla fija 4x4 y controles de disparidad inter-referencia.  No se proclama mejora de algoritmo ni se modifica addon. Los resultados dependen de la ejecución del nuevo workflow.
+- **Regla de descarte:** si las tres rutas conocidas no muestran un fallo interpretable/consistente con ambas referencias y con margen respecto a incertidumbre de referencias, suspender esta ablation sin más tuning ni referencias a ciegas. En tal caso avanzar a auditoría de modo de fallo de reflejos/transmisión ya documentado por OIDN, sin volver a implementarlo de cero.
+
+---
+
+## 2026-11-13 — B2 E0042 640px reference pilot (run pending)
+
+- E0041 [run 43496312451](https://github.com/mxlzz/ACD/actions/runs/43496312451) **success**: Italian Flat Cam Kitchen Table (320×200, seeds8819/8922) interseed RMSE 8spp 0.24900, 16spp 0.17253, 32spp 0.11853, approx 1/sqrt(spp) behavior. CPU 30–34s/render with major fixed cost; 640x400 8spp 33.319s vs 320x200 8spp 30.166s. Process peak RSS ~10,968,480 KB. These references still noisy and not converged.
+- E0042 predeclares 640×400, 32/64/128 spp × two independent seeds, no denoiser, locked SHA/source/camera. Render costs, actual interseed RMSE and 1:1 reference gallery preserved. **Results not claimed before workflow success.** No 1080p or test-set overfitting.
+
+---
+
+## 2026-11-13 — B2 E0041 low-cost finite-reference and timing pilot
+
+- Source Italian Flat CC-BY already audited SHA256 `0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25`. E0040 7 cameras completed [run 43494967820](https://github.com/mxlzz/ACD/actions/runs/43494967820) and [gallery](benchmarks/results/italian_flat_e0040/README.md). Each 4 spp 320×200 render ~27s CPU; camera chosen **Cam Kitchen Table** on architectural content, before benchmark metrics.
+- E0041 pre-registered: two seeds 8819/8922 at 8,16,32 spp and 320×200; one 640×400 8spp cost check. No denoiser, no training, no high-res/costly reference, not proof of convergence. Source download SHA checked, only EXR in 14-day Actions artifact; numerical outputs permanent. Results pending execution.
+
+---
+
+## 2026-11-13 — E0040 galerías de cámaras reales Italian Flat
+
+- Italian Flat B1 pasó el smoke oficial [run 43494193120](https://github.com/mxlzz/ACD/actions/runs/43494193120), fuente SHA256 0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25, 476 mallas, 109 materiales, 81 imágenes, 7 cámaras, ningún asset faltante.
+- E0040 preinscrito: render 320×200 4 spp de las 7 cámaras con Cycles CPU, sin denoiser ni ground truth, para elegir una vista arquitectónica y registrar coste por render antes de piloto de referencia B2. PNG derivados bajo atribución CC-BY al artista, BLEND no publicado. Workflow de galerías en etapa de ejecución; ninguna comparación de calidad declarada.
+
+---
+
+## 2026-11-13 — B1 Barcelona descartada, Italian Flat preinscrito
+
+- Barcelona [run 43493720883](https://github.com/mxlzz/ACD/actions/runs/43493720883) (reintento): confirmados ZIP y .blend íntegros, pero la imagen llamada Mies-BCN_M11.jpg tiene ruta original water bump.jpg, **no presente** en los 24 paths ZIP. Reasignar el archivo de foto Mies a ese mapa de bump sería inventar un recurso; rechazo como fixture reproducible. No se renderizó.
+- Nuevo candidato: Italian Flat, Flavio Della Tommasa, CC-BY (versión no indicada), Blender demo Cycles fuente oficial https://download.blender.org/demo/cycles/flat-archiviz.blend (367,972,724 bytes publicados). Mayor tamaño que anteriores; solo smoke 192² 4spp, no referencia ni benchmark, y nunca subir original .blend. Workflow lanza check de dependencias, cámara, hash y Cycles CPU. Resultado **pendiente**.
+
+---
+
+
+## B1 Barcelona — fallo de textura y control de relink (2026-11-13)
+
+- [Run 43493237120](https://github.com/mxlzz/ACD/actions/runs/43493237120): ZIP 24,661,092 bytes, 24 entradas, SHA256 0a85bf512329f1780563069512b934d679a6c543eeb1a4ec4f60cddeab706697; BLEND 8,485,449 bytes SHA256 92162db8cabcd03641c53df95554b604b494ba74a76a099c7e06637e9379120a. Blender 5.2.4 lo abrió pero auditor rechazó antes de render por Mies-BCN_M11.jpg no resuelto; **no existe validación de render**.
+- Corrección de aceptación: registrar todos los paths ZIP y aplicar solo si hay **una única coincidencia por basename en la misma extracción verificada**, relink de textura temporal en memoria; el original .blend permanece intacto. Si no hay coincidencia exacta, sigue fallando el smoke y se descartará. Sin datos de calidad ni modificación del addon.
+
+---
+
+## 2026-11-13 — B0b: E0037–E0039 cerrados como diagnóstico, no como ranking
+
+- E0037: OIDN standalone 2.5.1 en Raw/AOV congelados de Blender 5.2.4 y 5.3.0 difiere del compositor, RMSE ~0.04647 sin prefiltrado y ~0.04035 con filtros RT de guías + cleanAux. Las salidas no son rankings de calidad.
+- E0038: OIDN oficial 2.5.0 vs 2.5.1 sobre los mismos PFM difiere ~0.0000020 RMSE, muy por debajo de la diferencia CLI vs Blender. Ambas releases de Blender compilan contra OIDN 2.5.0 según sus versions.cmake, pero equivalencia binaria/flags no garantizada.
+- E0039: [run 43492225086, attempt 2](https://github.com/mxlzz/ACD/actions/runs/43492225086) **success**. EXR multilayer y salidas FileOutput directamente de RLayers Image (Raw), Denoising Albedo y Denoising Normal son idénticos (RMSE y delta máximo 0 por cada pase). Primer attempt falló por ausencia de socket Noisy Image al tener denoising Cycles apagado, segundo attempt inicialmente sufrió HTTP 403 transitorio y funcionó tras rerun. No se inventaron guías ni se modificó OIDN.
+- **Decisión:** Blender 5.2.4 LTS compositor/Cycles ya es baseline funcional; mantener OIDN CLI como comparador distinto y la divergencia residual sin causalidad resuelta. No bloquear indefinidamente B1 por paridad de una interfaz externa en un fixture 128px; retomar solo si una hipótesis B3 necesita inferencia standalone. **No declarar B0b igualdad ni superioridad.**
+
+
+# B1 — Corpus: inventario y aceptación de una escena arquitectónica realista
+
+**Preinscrito 2026-11-13; primer candidato: Barcelona Pavilion.**
+
+- Fuente oficial: [Blender Demo Files](https://www.blender.org/download/demo-files/), sección Cycles, Barcelona Pavillion, **eMirage**, **CC-BY (versión no especificada en el catálogo)**. Descarga histórica publicada en Blender: https://download.blender.org/demo/test/pabellon_barcelona_v1.scene_.zip . Se conservará licencia y atribución por separado; NO redistribuir el .blend hasta verificar sus contenidos y condiciones.
+- Razonamiento: escena arquitectónica realista de autor distinto a Cozy Kitchen / Modern Hall / Island y Terraced Houses; candidata a observar juntas/reflejos, materiales y vidrio. El tamaño indicado en el catálogo es aprox. 24 MB, pero debe verificarse **contenido ZIP, recursos y cámara** antes de caracterizarla.
+- Clasificación **desarrollo/calibración**, no holdout. Al inspeccionarla deja de ser una escena ciega. Reservar futuras escenas de otro autor/estilo para test fuera de muestra.
+- [Workflow](../../.github/workflows/acd-b1-barcelona-smoke.yml): descargar ZIP sin publicarlo, registrar SHA256 y número/tamaño de entradas, controlar zip-slip, extraer en /tmp, localizar un .blend exacto, rechazar dependencias faltantes, abrir con Blender 5.2.4 --disable-autoexec, render Cycles CPU 192×192 **4 spp** sin denoising y conservar solo metadatos y PNG de smoke. No usar este smoke como medición de denoising ni compararlo con OIDN. Archivo fuente permanece fuera de Git y de los artifacts.
+- **Aceptación:** SHA ZIP, estructura documentada, dependencias resolubles, cámara/materiales, Cycles smoke exitoso. Si no, registrar rechazo y pasar a otro candidato sin inventar texturas ni alterar escena.
+- Si pasa, fijar SHA en un segundo commit y diseñar B2 piloto 512–960px con escalera de 128/256/512 spp antes de plantear 1920px y referencias múltiples. El coste de 1920 y muchas muestras solo se aprueba tras una estimación obtenida de render de prueba. Comparar coste temporal frente a aumentar spp.
+- Otras fuentes públicas **no inspeccionadas aún**: Blender Cycles Italian Flat (Flavio Della Tommasa, CC-BY, 368 MB), Fl
+---
+
+
+## 2026-11-13 — E0039 primera corrida: falta socket Noisy Image con Cycles denoising desactivado
+
+- [Run 43491904780](https://github.com/mxlzz/ACD/actions/runs/43491904780) abortó antes de renderizar al exigir RLayers Noisy Image; Blender5.2.4 expuso Image y los AOV Denoising Albedo/Normal, pero no Noisy Image al tener denoising de Cycles desactivado. El baseline usa Image en ese caso, no se debe inventar socket.
+- Corrección estrictamente de contrato E0039: capturar RLayers Image como ResolvedRaw (misma imagen de partida que usa compositor), Albedo y Normal sin modificar; comparar con multilayer EXR del mismo render. El pipeline estándar no cambia. Reintento activado por cambio de workflow.
+
+---
+
+## 2026-11-13 — E0039: identidad de guías comprobable
+
+- E0038 confirmó que la versión 2.5.0 vs 2.5.1 aporta RMSE ~2e-6, mientras CLI vs Blender sigue ~0.04035 en guías prefiltradas: divergencia sin explicar.
+- El código de Blender 5.2.4 node_composite_denoise.cc usa OIDN RT y filtros auxiliares separados; para comprobar si son idénticas las señales, E0039 exportará en el mismo render los sockets Noisy Image, Denoising Albedo y Denoising Normal y comparará contra EXR multilayer, sin usar referencias para ranking. También invalida un supuesto si esas guías no coinciden.
+- Cambio de blender_compare_smoke.py limitado a bandera opt-in ACD_E0039_CAPTURE_SOCKETS; flujo estándar intacto. Workflow E0039 dispara y publica reportes si pasa.
+
+---
+
+## 2026-11-13 — E0038 control versión OIDN 2.5.0 vs 2.5.1
+
+- Fuente Blender v5.2.4/v5.3.0 build_files/build_environment/cmake/versions.cmake establece OIDN_VERSION 2.5.0. E0037 usó standalone 2.5.1 y no igualó al compositor, incluso con guías prefiltradas. El release OIDN 2.5.0 x86_64 linux tiene digest SHA256 254a8355856f8cd433edb7dd832b5fb02e7157d073f7d22e331ce06533fb491f según GitHub release asset.
+- E0038 compara ambos binarios oficiales sobre PFM idénticos y misma configuración; verifica hashes de E0035/E0037, y separa distancia versión vs distancia Blender. **No mide calidad**. El workflow se inicia con este commit.
+
+---
+
+## 2026-11-13 — E0037 workflow ingresado
+
+- Archivo .github/workflows/acd-e0037-oidn-cli-guides.yml dispara un único run que recupera E0035 artifacts, verifica SHA256 fuente y release OIDN 2.5.1, evalúa variantes raw_aux / accurate_like y archiva métricas permanentes. No se hace render ni comparación perceptual. El reporte de calidad aún no existe al momento del commit.
+
+---
+
+## 2026-11-13 — E0037 preinscripción y método
+
+- Objetivo: comparar OIDN standalone 2.5.1 sobre los datos reales ya congelados de E0035 (16 spp, 128×96, dos versiones) sin re-renderizar ni atribuir calidad. Se exige SHA256 exacto de Raw, compositor y multilayer, verificación de PFM float32 e identidad de AOV.
+- Dos modos: raw_aux (OIDN RT high/HDR guías originales, cleanAux=false) vs accurate_like (OIDN RT high prefilter solo albedo, luego normal, luego beauty con cleanAux=true). La guía de OIDN indica este prefiltrado; no se asume paridad exacta con el compositor Blender y no se mide verdad de referencia.
+- A registrar: RMSE directo respecto a compositor por misma versión, mayor diferencia, SHA256, flags de CPU y walltime por subprocess con overhead. Resultado todavía no obtenido; workflow separado en próximo commit. No tocar addon.
+
+---
+
+## Checkpoint verificado 2026-11-13 — B0a terminado, B0b parcialmente resuelto
+
+- **E0035:** [run 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352), ambas versiones oficiales Blender 5.2.4 LTS y 5.3.0 verificadas por hash y con smoke real. En ambas, Raw/beauty de AOV delta máximo 0 y ACD Standard = OIDN compositor (RMSE=0, tiny fixture). [Resultado permanente](docs/experiments/E0035_RESULTS.json). Entre versiones, beauty Raw difiere RMSE **0.00616606**, albedo **0.00032205** y normal **0.00049133**: NO comparables como mismo input para atribuir cambios a filtro. [Archivo de contraste](https://github.com/mxlzz/ACD/actions/runs/43481617537) también completado.
+- **E0036:** [run 43482278177](https://github.com/mxlzz/ACD/actions/runs/43482278177) **success**: Blender 5.2.4, mismo RenderLayer seed539 16spp 128×96, Cycles-internal OIDN vs OIDN compositor con albedo/normal. Diferencia RMSE **1.44660981e-7**, máximo **1.90734863e-6**, no igualdad bit a bit; muy cercanos en este fixture. Sin referencia convergida y sin conclusión perceptual. [Informe](docs/experiments/E0036.md) y [JSON](docs/experiments/E0036_RESULTS.json).
+- **Siguiente dependencia B0b:** verificar OIDN CLI 2.5.1 sobre **idéntico Raw EXR y guías de E0036/E0035**, registrando prefilter, HDR, pesos/backend, CPU/ISA y tiempos normalizados; si las rutas difieren, aislar configuración antes de juzgar calidad. No volver a ejecutar automáticamente High/Super/Emission50 ni modificar addon.
+
+---
+
+## 2026-11-13 — B0b E0036 real smoke initiated (pending results)
+
+- Workflow [.github/workflows/acd-e0036-cycles-internal.yml](.github/workflows/acd-e0036-cycles-internal.yml) agregado y disparado: Blender oficial 5.2.4 LTS verificado, Cycles 16 spp, una sola ejecución, RLayers Noisy Image/Imagen denoised interna/CompositorOIDN, mismo albedo y normal. Métricas RMSE entre outputs, sin ground truth ni ranking. No requiere escena o intervención privada.
+- Si falla, conservar mensaje real y reparar causa; no interpretar como diferencia de calidad. Resultados pendientes en Actions.
+
+---
+
+## 2026-11-13 — B0b/E0036: estudio con idéntico RenderLayer diseñado
+
+- Implementados tests/blender_cycles_internal_e0036.py y scripts/analyze_cycles_internal_e0036.py. En una sola ejecución Cycles, se activa denoising integrado OIDN y se obtienen tres EXR del mismo nodo Render Layers: Raw/Noisy Image, CyclesInternal/Image y CompositorOIDN con Accurate/High/HDR + albedo/normal. Por tanto se eliminan diferencias entre seeds/renders al comparar ambas rutas. Fixtures procedurales 128×96, 16spp, sin ground truth; solo se informará **diferencia entre outputs**, no ranking de calidad.
+- Tests sintéticos comprueban identidad, detección de diferencias y rechazo de dimensión. Workflow por crear/ejecutar tras este commit. No modificar ni forzar expectativas de igualdad: diferentes preprocesamientos pueden dar imágenes distintas.
+
+---
+
+
+## 2026-11-13 — E0035 archive corrected: nested artifact layout
+
+- Run [43481397097](https://github.com/mxlzz/ACD/actions/runs/43481397097) retrieved both E0035 artifacts and validated report versions, then failed reading EXR because Actions upload preserved `acd-e0035-render/` subfolder rather than placing raw EXR at archive root. Not a rendering/algorithm error. Fix by locating exactly one file recursively per name and rejecting ambiguous artifacts. Re-run without Blender/denoiser.
+
+---
+
+## 2026-11-13 — E0035 real success; archival validation triggered
+
+- [Run 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352) dos jobs **success**. Blender oficiales 5.2.4 LTS (build cd5dc428cce1) y 5.3.0 (02f0899d78e3), verificación SHA256/tiny Cycles 128×96, 16 spp, misma beauty raw/AOV delta=0, Standard vs OIDN compositor delta=0 en cada versión. Ninguna de estas cifras indica calidad real.
+- Se agregó pipeline E0035 archive que recupera EXR/reportes **ya generados** y mide diferencias pixel/guías entre versiones, publica JSON pequeño en docs/experiments. **Su ejecución pendiente**. El denoiser integrado de Cycles todavía no fue evaluado; pasar a B0b después de registrar deltas.
+
+---
+
+## 2026-11-13 — E0035 primer smoke abortado por biblioteca faltante en runner
+
+- [Actions run 43480476666](https://github.com/mxlzz/ACD/actions/runs/43480476666): **ambos jobs fallaron** tras pasar tests, SHA256 oficial, Blender --version y enumeración API. En el paso de render se produjo abort 134 con mensaje **libEGL.so.1: cannot open shared object file**; Blender 5.3 además advirtió que el backend Vulkan no se inicializaba. Esto indica una dependencia runtime del runner, no prueba de defecto del denoiser ni de incompatibilidad del addon.
+- Corrección limitada a CI: instalar libegl1/libgl1-mesa-dri/libopengl0/libxkbcommon0 y verificar ldconfig antes de render; repetir igual fixture/configuración. No modificar el método, reference spp o addon. Resultado del segundo intento pendiente.
+
+---
+
+## 2026-11-13 — E0035 control de versiones iniciado
+
+- Workflow E0035 incorporado con matriz Blender 5.2.4 LTS y 5.3.0 de archivos oficiales + hash, API compositor/Cycles y render ligero con misma beauty y AOV dentro de cada job.
+- Push de workflow dispara primera corrida; siguientes solo manual o cambio explícito a este workflow. Resultado **pendiente de GitHub Actions**, no benchmark de calidad ni comprobación Cycles-internal. Addon estable intacto.
+
+---
+
+
+## 2026-11-13 — B0a/E0035: contrato reproducible implementado (ejecución pendiente)
+
+- Código nuevo: tests/blender_cycles_capabilities_e0035.py registra sockets/propiedades de denoise de la versión real, scripts/summarize_blender_compat_e0035.py comprueba fuente RAW igual al beauty AOV de la misma seed y compara Standard con OIDN compositor, tests/test_blender_compat_e0035.py rechaza mezclar informes de diferentes versiones. 
+- Clasificación: **tests de contrato**, no calidad visual. Resolución 128×96, noisy16spp, referencia64spp (no convergida). Cycles-internal todavía sin ejecutar. Próximo workflow E0035 matrices 5.2.4 LTS/5.3.0 y checksums oficiales.
+
+---
+
+## 2026-11-13 — Reorientación B0–B4 aprobada para implementación
+
+- Programa rector: [B0–B4](docs/ACD_V2_REORIENTATION_2026-11-13.md). Prioridad inmediata: B0a (compatibilidad Blender 5.2.4 LTS + 5.3.0 y auditoría de diferencias de rutas OIDN). Se conserva 5.0.1 como control histórico; las variantes High/Super/Emission50 no se siguen optimizando.
+- Los resultados reales y la ejecución de E0035 **todavía no están verificados** en este commit de decisión; el próximo commit implementa workflow y contrato. Addon estable y PR #10 draft sin merge.
+
+---
+
+## 2026-11-13 — Índice permanente de imágenes del laboratorio
+- E0034 [run 43451534590](https://github.com/mxlzz/ACD/actions/runs/43451534590) success; commit de archivo f20d2a854f61e0681ffd6a659f0565b15269c124; resultados E0033 exactos y PNG E0034 versionados. Nuevo índice benchmarks/results/README.md integra Modern Hall, Island, Cozy Kitchen E0020/E0021 y Terraced; enlaza licencias, full/crops y diferencia entre PNG permanentes y artifacts EXR temporales. README principal enlaza el índice. No hubo nuevo render ni cambio al addon.
+
+---
+
+
+## 2026-11-13 — E0034 publication staging correction
+- E0034 run 43451223536 generated the postprocessed PNG and verified original E0033 EXRs, but the git-add phase was blocked again by the broad nested-ignore rule for docs/experiments. No new render or scientific results. Fix the root ignore mismatch with an explicit documentation exception and force-stage both numeric JSON and tracked report, while retaining broad exclusions for .blend/.exr assets. This is a packaging fix, not algorithm adjustment.
+
+---
+
+
+## E0033 run completed — numerical result, Git archiving issue (2026-11-13)
+
+- Run: https://github.com/mxlzz/ACD/actions/runs/43416607737 . Blender 5.0.1 rendered all three 24-spp seeds, two 1024-spp references and the lab produced scores. The final git-add failed because the ignore rule experiments/ covers docs/experiments/, but 149 MB of EXRs/JSON were uploaded as artifact 14034252923, expiring 2026-11-27. This is a publication error, NOT a rendering/denoiser failure.
+- First/second ref global HDR RMSE OIDN 0.02223804 / 0.02215599; frozen Emission50 0.02230239 / 0.02221500, worse in both. ACD High 0.02371872 / 0.02366157; ACD Super 0.03184713 / 0.03176431. First-ref edge RMSE OIDN 0.03445690 vs Emission50 0.03455458 (regression); top 1% reference brightness RMSE OIDN 0.01197959 vs Emission50 0.00643289 (localized improvement).
+- Reference-to-reference RMSE 0.02153122 (similar scale to denoised error). No reference convergence proven, and no universal ranking should be inferred. Emission50 FAILED to improve global quality on an independent artist/scene and must not be promoted or tuned against this now-observed scene.
+- E0034 is a postprocess-only recovery workflow: exact JSON + EXRs from the existing run, source-only ROI selection and nonoverlapping crops, fixed display transfer, archive PNG in Git. Its run is not yet verified at this commit. Addon stable unchanged.
+
+---
+
+## 2026-11-13 — E0032 compatibilidad superada; E0033 benchmark congelado
+
+- [Run E0032 #43415697217](https://github.com/mxlzz/ACD/actions/runs/43415697217) **success**: Modern Hall cuteday source SHA256 b35b6694eb231d0d4d5d9ee9bbe63122218183fd519a05c7d5db0e62cbdaeca1, 5,793,896 B, 22 materiales, 32 mallas, 1 cámara, 3 imágenes empaquetadas / 4 imágenes, ningún archivo externo faltante, Cycles Blender5.0.1 192²×4spp completado; fuente externa efímera NO subida a ACD. Conversión y derechos de redistribución independientes aún sin resolver.
+- E0033 diseñado con mismos coeficientes E0027 y control de mezcla constante, 512px, 24spp×3 y refs1024×2, números y pruebas de borde/HDR guardables permanentemente. **No reportar números antes de ejecución.** Workflow autoiniciado por incorporación y CI Python.
+- E0031 continúa rechazado por texturas faltantes; ACD stable addon no modificado.
+
+---
+
+## 2026-11-13 — E0031 fuente rechazada, E0032 smoke independiente preparado
+
+- E0031 [GH Actions 43414866242](https://github.com/mxlzz/ACD/actions/runs/43414866242): hash, tamaño y licencia MIT pasaron; abrió Blender5.0.1 pero falló el control funcional por `lapajne.jpg` y `lapajne.jpg.001` ausentes (y advertencia de archivo pre-2.50). **Sin render ni .blend versionado**, sin mediciones ACD. Rechazado sin sustituir recursos.
+- E0032: nueva fuente arquitectónica de autor NewSee2l035, conversión Mitsuba→Blender de Modern Hall/Bitterli, GitHub `cuteday/scenes_blender` commit 4271a72, blob 6c60f72, 5,793,896 B. Origen CC BY 3.0, licencia de conversión a revisar antes de redistribuir. Workflow lee fuente externa sin incluirla en repo y exige hash, Blender5 cámara/materiales/texturas, render 192px 4spp; quality benchmark no iniciado. No cambia addon ni coeficientes Emission50.
+- La comprobación Python/trazabilidad del commit precedente [run 43414877028](https://github.com/mxlzz/ACD/actions/runs/43414877028) pasó. CI verde no mide calidad de denoise.
+
+---
+
+## 2026-11-13 — E0030 revisión visual y E0031 nueva fuente independiente
+
+- E0030: se inspeccionaron los 4 paneles archivados y sus métricas de dos referencias; la fusión Emission50 conserva una ganancia local HDR en luces intensas, pero no demuestra superioridad perceptual. **Limitación confirmada:** la ROI brightest solapa la detail_1 3354/6400 píxeles (52.4%), aunque las tres ROI de detalle son disjuntas entre sí. Se conserva E0030 sin reetiquetar cuatro vistas como cuatro regiones independientes. Ver informe E0030 revisado.
+- E0031: se seleccionó Living Room ©2014 Jure Sorn MIT, autor distinto, archivo .blend original 7,328,212 B en gto76/living-room, commit a36bac4 y blob 51374a6. Añadido workflow para verificar integridad/licencia, faltantes y render Cycles Blender5 de 192px 4spp antes de copiar binario a repo; **smoke pendiente al commit**. Si falla compatibilidad/dependencias, no incorporar el fichero. No se ejecutó aún prueba de calidad ni se tocó addon.
+- Puerta: 512px+ y 2 referencias sobre fuente nueva ya validada, con parámetros E0027 congelados y ROI disjuntas para un benchmark manual. No entrenar/forkear ni promover Emission50 mientras persistan regresiones de bordes y falta de diversidad profesional.
+
+---
+
+## E0030 visual diagnostics prepared (2026-11-12)
+
+- Reference-selected multi-panel crops with fixed diagnostic transfer and MIT attribution prepared from E0029 Island original EXRs (no rerender), 4 ROIs including brightest and gradients; computes local RMSE both references for Raw/OIDN/Emission50/Emission100/High/Super. Workflow publishes derived PNG and JSON under benchmarks/results/island_e0030 only after successful postprocess. Results pending. Do not infer perceptual superiority without inspecting images.
+
+---
+
+## E0029: nueva escena confirma disminución HDR con regresión de borde leve (2026-11-12)
+
+- GH run #43309302172 success y 21 tests; Low-Poly Island 320x272, 24 spp x3, refs512 spp x2, discrepancia refs RMSE 0.0112732 (~18% Raw). Parámetros Emission50 congelados desde E0027. OIDN nativo RMSE 0.065539 vs Emission50 0.053347 (**-18.6%**), pero edge error 0.039348 vs 0.039621 (+0.70%). Segunda ref confirma. No hubo tuning por esta escena ni se integró addon.
+- Informe numérico permanente [E0029](docs/experiments/E0029.md), workflow caro ahora manual. Island comparte autor/estilo low-poly con Terraced, referencias no convergidas demostrablemente. Próximo: inspectar crops 1:1 en zonas emisivas y buscar escena/autor verdaderamente independiente antes de declarar éxito general.
+
+---
+
+## E0029 — New-scene frozen Emission AOV test staged (2026-11-12)
+
+- E0028 GH Actions #43308643155 success; source Low-Poly Island SHA256 0fceb72489873a1ebbdf8210c435713e5fee1b3c58ffa4105187023f6896b701, MIT, 2.62MB, Blender5 smoke passed. Import workflow disabled after publication.
+- E0029 workflow prepared to apply identical E0027 emission blend scale .25 with max Raw weights .5/1 to the newly introduced island scene, 24spp x3 and 512spp refs x2. No quality result at commit. All references only used for scoring; original addon untouched.
+
+---
+
+## E0028 — tercera escena pública MIT seleccionada, sin resultados de denoiser (2026-11-12)
+
+- Encontrado `emrelab/blender-projects/low-poly-island/envanto-tutariol.blend` de Yunus Emre Karaman, MIT, 2,621,405 bytes, git blob `e540ffeae1f063393d644bd4af3a0a27f732fe5c`, source commit fijo `36c46d3b49ea872f6039e07a5e4769b5f9443654`. Escena distinta de Terraced y Cozy, cabin sobre isla con vidrio, lámparas y materiales; comparte autor de Terraced (no independiente de estilo).
+- E0028 crea workflow de importación que comprueba hash/mit/license, abre Blender5 sin autoexec, ejecuta smoke CPU de 4 spp y **solo si pasa** publica binario y SHA en GitHub; **ejecución pendiente al commit**. Parámetros E0027 (.25, maxMix 50/100) congelados antes de usar escena; ningún entrenamiento ni modificación del addon.
+
+---
+
+## E0027 observado — guiado por Emission AOV mejora RMSE, requiere prueba nueva (2026-11-12)
+
+- [Run #43307378645](https://github.com/mxlzz/ACD/actions/runs/43307378645) **success, 11 tests**, mismos EXR E0021/E0023, 3 seeds×2refs. [E0027](docs/experiments/E0027.md): AOV_EMISSION50 (mezcla Raw local máx .5) Cozy RMSE 0.083196 vs OIDN0.083393, edge0.089395 vs0.089698; Terraced RMSE0.122200 vs OIDN0.167785 y MAE0.01765 vs0.02107, pero edge sube 0.06795→0.07210. AOV_EMISSION100 mejora RMSE nocturno aún más (0.1130), pero empeora mucho edge (0.08098). Control mezcla global al peso medio no recupera esa mejora. Fuente emisiva: 0.0408% píxeles Cozy, 4.49% Terraced.
+- **Decisión:** candidata AOV es plausible pero no puede promoverse por error de bordes y falta de validación ciega. Probar exactamente mismos coeficientes/escala en una tercera escena pública sin observar previamente sus resultados. E0027 workflow a manual tras completar. No hay nuevo addon ni modificación del núcleo OIDN.
+
+---
+
+## E0027 — ablation específica Cycles Emission AOV preparada (2026-11-12)
+
+- E0026 descartó gating Raw por brillo como método general pese a buena mejora nocturna: degrada Cozy. E0027 prueba un indicador más específico disponible en el render **sin oracle:** `Emission` AOV de cada seed, peso suave de mezcla Raw/OIDN según energía de emisión, escala fija 0.25 y fracción máxima Raw .5/1.0; control mezcla uniforme del mismo peso medio y comparación con variante genérica E0026.
+- Código `acd_lab/emission_guide.py`, tests e informe predeclarado [E0027](docs/experiments/E0027.md). Workflow recupera EXR de Cozy E0021/Terraced E0023 sin rerender, dos referencias y tres seeds; documenta cobertura del pase y score HDR/gradientes. **CI y resultados pendientes al commit**. No toca addon ni fork OIDN.
+
+---
+
+## E0026 ejecutado — descartar gating Raw como solución general (2026-11-12)
+
+- [Run #43306559564](https://github.com/mxlzz/ACD/actions/runs/43306559564) **success, 16 tests**, reutiliza EXR E0021/E0023 sin render. [Informe E0026](docs/experiments/E0026.md) almacena dos refs x3 seeds: Cozy OIDN RMSE 0.08339 vs RAW_BRIGHT50 0.09781, RAW_BRIGHT100 0.13909; Terraced OIDN 0.16778 vs RAW_BRIGHT50 0.12253, RAW_BRIGHT100 0.10936. El algoritmo mejora claramente exterior nocturno pero degrada mucho interior: **no generaliza**. Errores de gradientes también se deterioran fuertemente en Cozy.
+- Decisión: **NO integrar** la variante y **NO optimizar post hoc** sus percentiles / pesos contra mismas escenas. E0026 workflow a manual; paquete experimental permanece disponible para investigación y casos negativos. Siguiente hipótesis: AOV Emission de Cycles como guía de clase física, no brillo crudo genérico, siempre con controles y sin referencia en inferencia. No hay ventaja general probada.
+
+---
+
+## E0026 — primer candidato adaptativo *input-only* preparado, sin tocar Blender (2026-11-12)
+
+- [E0025](docs/experiments/E0025.md) reportó que OIDN reduce ligeramente la media energética en highlights (-0.85% aprox), pero produce error absoluto espacial mucho mayor que Raw. Para explorar preservación de extremos sin oracle se creó `acd_lab/highlight_blend.py` y tests: selección únicamente por percentiles de luminancia **Raw**, smoothstep 97%–99.5%, fusión local máxima 50% o 100% con OIDN; controles fijos 10% y 50% Raw globales.
+- Comparación E0026 planeada en **dos escenas ya observadas**, Cozy Kitchen E0021 y Terraced Houses E0023, usando sus EXR originales (sin rerender), 3 semillas ×2 referencias; métricas RMSE lineal, MAE, gradientes, errores dentro/fuera de highlights definidos solo por referencia para scoring. No se han ajustado parámetros contra referencias ni liberado addon. **CI/workflow pendientes al commit; ningún resultado todavía**.
+- Los resultados no equivalen a test held-out, ni demuestran superioridad hasta disponer de tercera escena nueva. Si falla se descarta el método sin retocar selectivamente percentiles.
+
+---
+
+## E0025 verificado — OIDN sesgo mixto en highlights (2026-11-12)
+
+- [Run 43305700278](https://github.com/mxlzz/ACD/actions/runs/43305700278) **success**, 10 tests. [E0025](docs/experiments/E0025.md): en top1% brillo de referencia, OIDN promedio ratio energía 0.99147 y delta lum -0.19294 (ref2 ratio 0.99088), pero 56% de píxeles sobre ref, abs error 0.799 vs Raw 0.338. High ratio 1.00395/abs0.728 y Super 1.00542/abs0.746. Error espacial mixto, no basta reajustar exposición global, no prueba causalidad de emisión. Prueba sin rerender a partir de E0023, tres seeds y dos referencias finitas.
+- Siguiente: ablation **postproceso sin guías de referencia** usando solo luminosidad de Raw para mezcla localizada frente a mezcla constante, evaluar exactamente mismos parámetros en Cozy Kitchen y exterior nocturno. E0025 workflow pasa a manual tras éxito. Aún sin algoritmo validado ni mejora publicable.
+
+---
+
+## E0025 — sesgo HDR firmado, preparación sin nuevo render (2026-11-12)
+
+- E0024 confirmó gran SSE en top1% luminosidad de referencia, pero no dirección. Se añadió `highlight_signed_bias` y pruebas para detectar atenuación o amplificación de energía en máscaras SOLO de referencia; contiene ratio de suma de luminancias, delta firmado, fracción sobre/bajo ref para mismos píxeles/métodos. Workflow nuevo consume artifacts E0023 y escribe JSON 3 semillas ×2 refs. **CI y ejecución pendientes**, no se ha concluido ninguna causa; aun sin datos para entrenar/cambiar algoritmo.
+- E0024 pasó 7 tests, run #43305087148, reporte permanente [E0024](docs/experiments/E0024.md). E0021 y E0023 permanecen líneas de base de calidad.
+
+---
+
+## E0024 verificado — error HDR concentrado en luces, no causalidad (2026-11-12)
+
+- [Run #43305087148](https://github.com/mxlzz/ACD/actions/runs/43305087148) **success**, 7 tests; mismo EXR E0023 3 seeds ×2 refs. [E0024](docs/experiments/E0024.md): en top1% píxeles de mayor luminancia (solo referencia), RMSE medio Raw=0.7151 vs OIDN nativo=1.4207, High=1.2794, Super=1.2843. Fuera del 1%, OIDN=0.08967 mejora Raw=0.09701 y High=0.09479. Top luminosidad concentra ~71.7% del SSE nativo vs 35.5% Raw. Segunda referencia ratifica patrón. No confirma si OIDN atenúa o aumenta iluminación, ni efecto exclusivamente emisión; 512 spp no son convergencia probada.
+- E0020 320px se archivó como redundante frente a E0021 512px y dejó workflow **manual**, así como E0024 que ya completó. Siguiente diagnóstico E0025 de sesgo de luminancia firmado sin nuevos renders; F5 todavía sin base suficiente. No se tocó addon ni el motor del denoiser.
+
+---
+
+## E0024 — reejecución tras fix de prueba (2026-11-12)
+
+- Se amplió el trigger **únicamente** del workflow E0024 a test/analizador específicos para ejecutar la versión corregida sin rehacer renders; se mantiene manual y no dispara por docs. Se conserva evidencia del fallo original y aserción ya corregida. Nuevo run pendiente.
+
+---
+
+## E0024 — corrección de aserción de test (2026-11-12)
+
+- [Run #43304804793](https://github.com/mxlzz/ACD/actions/runs/43304804793) falló en **un único regex de test**, no en fórmula: `acd_lab.core.rgb` rechaza NaN antes del validador local con mensaje `raw: found NaN or infinite values`, mientras el test esperaba literalmente `Nonfinite`. Se ajustó la expresión del test al mensaje efectivo (sin reducir validación). 6/7 tests E0024 pasaron; script sobre EXR todavía no corrió. Nuevo run pendiente.
+
+---
+
+## E0024 — diagnóstico sobre EXR existentes, no repetir E0020 (2026-11-12)
+
+- Al recuperar la historia completa de la rama, se constató que **E0020 fue seguido por E0021** (Cozy Kitchen 512×482, tres seeds, dos referencias 1024 spp; OIDN nativo supera High/Super en RMSE y gradientes) y **E0023** (Terraced Houses exterior nocturno, RMSE nativo mayor que Raw pero menor MAE y error de bordes). No tomar el piloto 320px añadido nuevamente como experimento nuevo; su workflow se pasa a **manual** y se conserva por reproducibilidad.
+- Nuevo instrumento E0024 `acd_lab/hdr_tail.py` + tests sintéticos: máscaras comunes de píxeles HDR más luminosos según referencia y de errores raw más altos; SSE/RMSE/MAE dentro/fuera; selección *reference-only* y *raw-reference* explícita con advertencia de sesgo. Workflow consume artifacts reales E0023 (sin render) y compara tres seeds/dos refs. **Pendiente de ejecución al commit**.
+- Aún no se ha desarrollado algoritmo nuevo ni habilitado F5. Se requiere diagnosticar si errores HDR localizados justifican estudiar preservación de emisión/varianza con método reproducible y sin sobreajuste a escena examinada.
+
+---
+
+## E0020 — benchmark real sobre Cozy Kitchen preparado (2026-11-12)
+
+- `acd-v2-cozy-pilot.yml` crea piloto de Cycles Blender5.0.1 en la escena pública E0019 a 320px ancho, 24 spp x3 seeds, dos refs independientes 512 spp, mismos inputs nativos/ACD Standard/High/Super, EXR/AOV raw por seed; informe en [E0020](docs/experiments/E0020.md).
+- **Al registrar este commit el workflow aún no ha corrido**. No hay evidencia de que nuestras métricas de detalle ganen o de convergencia de 512 spp. Se conserva la escena original, sin tocar addon estable; outputs temporales, números esenciales a registrar permanentemente.
+- Prueba de integración real previa [E0019](docs/experiments/E0019.md) pasó con render smoke a 4 spp. Si este piloto falla, corregir bug real y conservar fallo; no iniciar F5 sin evidencia.
+
+---
+
+## E0023 postproceso cuantitativo preparado sin nuevos renders (2026-11-12)
+
+- Nuevo script analyze_terraced_e0023.py reusa métricas de 3 semillas/2 referencias del laboratorio, añade distribución de error HDR en peor 1%, ROI de AOV emisión/glossy/transmission/environment y tres recortes seleccionados solo por referencias. Se compara nativo, Raw y High/Super. Licencia y crédito MIT del fixture preservados.
+- Workflow acd-e0023-analyze-exr.yml recuperará EXR del run 43291659387 y publicará E0023.md, previews y JSON **solo después de superar tests y cálculos**. En este commit no se dispone de diagnóstico final del origen de RMSE. La escena nocturna ya observada no es test ciego para ajustes posteriores.
+
+---
+
+## E0023 — Instrumento de concentración de errores HDR añadido (2026-11-12)
+
+- Resultados verificados E0023 [run 43291659387](https://github.com/mxlzz/ACD/actions/runs/43291659387): Raw RMSE 0.1201359 frente OIDN comp 0.1677849; pero Raw MAE 0.0281466 frente OIDN 0.0210728 y error de bordes Raw 0.1210943 vs OIDN 0.0679478. Ref spread/raw 17.01%; multiseed heurística aprobó, no independencia científica.
+- Nuevo `acd_lab.error_concentration` cuantifica qué proporción del error cuadrático HDR aportan el peor 1 % de píxeles, más valor máximo/p99, con tests de outlier y error uniforme. **Implementado pero no corrido sobre E0023 al commit**. Permite investigar la discrepancia RMSE/MAE sin afirmar causa antes de medir.
+- E0021 Cozy Kitchen a 512×482 con dos refs de 1024 spp está archivado con ROI/crops en [E0021](docs/experiments/E0021.md). No mejora ACD High/Super.
+- Precaución: E0023 ya se observó y por ello pierde pureza como test completamente ciego para futuros candidatos; requiere otra escena no observada en F5.
+
+---
+
+## E0021 — Post-análisis de mayor resolución preparado (2026-11-12)
+
+- [Run real #43289852695](https://github.com/mxlzz/ACD/actions/runs/43289852695) **success**: Blender5.0.1 Cozy Kitchen 512×482, 24spp ×3, 1024spp refs ×2, mismo RenderLayer/AOV. Nativo/Standard RMSE media 0.0833928, High 0.0860779, Super 0.0971167; error bordes 0.0896975/0.0902929/0.0962214. Las referencias entre sí difieren 0.0355077 RMSE o 13.5268% del error raw, menor que E0020 24.51%; rankings entre refs coherentes.
+- Workflow `acd-e0021-cozy-analyze.yml` recuperará estos EXR exactos y computará medias contra ambas refs para 3 semillas + ROI nativo corregido y tres recortes. Publicará E0021 y derived CC BY-SA en GitHub. **Al registrar este commit el análisis y su publicación aún no están verificados.**
+- E0023 sobre segunda escena retenida sigue separado. Protocolo: seguir sin tocar algoritmo hasta cotejar resultados con referencias y escena retenida.
+
+---
+
+## Ahorro de CI real — Runtime Blender manual (2026-11-12)
+
+- Se constató que `.github/workflows/acd-blender-runtime-bundle.yml` se reejecutaba en cada cambio del PR #10 aunque el código de Blender no cambiaba, generando ~374 MB de artifact de duración 1 día por commit. **Se reemplazó el trigger pull_request por workflow_dispatch manual**, preservando el workflow para descargar Blender cuando haga falta. El quality gate Python permanece automático.
+- E0021 Cozy Kitchen mayor resolución/ref 1024 spp y E0023 exterior retenido continúan ejecutándose en GitHub Actions; este commit no interrumpe ni duplica ambos tests, pues usan workflows distintos.
+- Cambio en configuración CI, no denoiser. Quality del commit pendiente.
+
+---
+
+## E0022 verificado y E0023 prueba retenida preparada (2026-11-12)
+
+- [E0022 run #43291261400](https://github.com/mxlzz/ACD/actions/runs/43291261400) **success**, `terraced_houses.blend` 3,044,256 bytes, SHA256 `37b39be2ae1fc8624110f57bf5dd38f77a0420139b4c9a89946a2db35dffab84`, MIT de Yunus Emre Karaman, fijado commit fuente. Abrió y renderizó Blender5.0.1 Cycles CPU 192²×4 spp sin activos faltantes. [E0022](docs/experiments/E0022.md).
+- Se creó workflow E0023 de **test retenido**, 320 de ancho con relación de aspecto original, 24spp×3 seeds, refs 512spp×2; métodos OIDN comp, ACD Standard/High/Super. Compara sin modificar el algoritmo. Añadida prueba de SHA/licencia y reporte genérico reutilizado para distinta escena.
+- **Estado al commit:** prueba de calidad E0023 aún pendiente, mientras E0021 Cozy Kitchen refs mejoradas sigue en ejecución. No incluir resultados de held-out en desarrollo ni tomar decisiones hasta verificar su calidad de referencias.
+
+---
+
+## E0022 — Segunda fuente pública MIT seleccionada como test retenido (2026-11-12)
+
+- Fuente candidata: [Terraced Houses](https://github.com/emrelab/blender-projects/tree/36c46d3b49ea872f6039e07a5e4769b5f9443654/terraced-houses) de Yunus Emre Karaman, licencia MIT explicita para .blend, 3,044,256 bytes, commit fuente fijado, git blob SHA1 conocido. Exterior nocturno con emisión en ventanas y farolas, diferencia sustantiva respecto de Cozy Kitchen. Autor declara tutoriales no registrados, se conserva caveat.
+- Workflow `acd-import-terraced-houses.yml` verifica fuente/integridad/Blender5 Cycles 192px 4 spp antes de publicar; `scripts/audit_public_scene.py` parametrizado por variables de entorno sin alterar auditoría anterior. **Estado en commit:** importación y render todavía sin verificar.
+- Objetivo: fixture retenido para evaluación de generalización, no optimización. No equivale a una escena profesional de texturas finas. E0021 continúa en ejecución por separado.
+
+---
+
+## E0021 — Postprocesamiento de dos referencias preparado sin nuevos renders (2026-11-12)
+
+- Se añadió `scripts/analyze_cozy_exr.py` para E0020/E0021: 3 ROI elegidas por gradiente de ambas refs solamente; JPG/PNG comparativos con curva común; informe de métricas **promediadas sobre las tres seeds respecto de ambas referencias** (no solo seed539), incluyendo OIDN nativo en máscaras AOV; captura resolución original y de ensayo. No interfiere con la corrida E0021 que ya está ejecutándose.
+- Este commit deja el script y tests; ejecución E0021 aún pendiente. No se ejecutará un segundo Cycles render para generar crops. `scripts/analyze_cozy_e0020.py` permanece como historial de E0020.
+
+---
+
+## E0021 — Control de mayor resolución y convergencia de referencias (2026-11-12)
+
+- E0020 se verificó y sus [ROI/3 crops + informe](docs/experiments/E0020.md) se versionaron efectivamente en commit `4825a4afc57991e7c4be42a044925d38f67fc5e1`, [run de postproceso #43289259037](https://github.com/mxlzz/ACD/actions/runs/43289259037) success; no rerender. F3 `NATIVE_COMP_OIDN` presente en ROI.
+- Nuevo ensayo E0021: Blender5.0.1 Cozy Kitchen a **ancho máximo 512, alto derivado de aspecto original**, 24spp ×3 seeds y referencias 1024spp ×2; ACD Standard/High/Super frente a nativo. Introduce `--max-width` sin mutar el original, guarda `source_original_resolution` y pixel aspect en metadata. Un solo job manual/push-path, no rerenders innecesarios.
+- **Estado al commit:** código y tests, nuevo workflow y resultados aún no verificados. Prioridad: comprobar nueva discrepancia entre refs, comparación global y detalles y revisar si los beneficios perceptuales ameritan hipótesis F5. No inferir convergencia por spp altos solamente.
+
+---
+
+## E0020 post-proceso completó cálculos, publicación bloqueada por gitignore (2026-11-12)
+
+- [Run #43288965340](https://github.com/mxlzz/ACD/actions/runs/43288965340) generó recortes y reporte regional desde los EXR originales **sin rerender**: tres ROI 80×80 seleccionadas solo de referencias; `NATIVE_COMP_OIDN` recuperado en reporte de regiones. Comparación de cinco métodos contra cada referencia arroja mismo orden sustantivo en la seed primaria (Standard/OIDN idénticos, después High, Super, Raw).
+- El paso de publicación falló por `.gitignore` que omite `docs/experiments` para archivos nuevos (como había ocurrido con .blend). Los análisis existen en [artifact #13975528472](https://github.com/mxlzz/ACD/actions/runs/43288965340/artifacts/13975528472); se corrige `git add -f` **solo para E0020.md y tres PNG/JSON concretos**, preservando reglas generales. Nuevo run pendiente; no declarar permanencia de reportes aún.
+
+---
+
+## E0020 post-análisis sin rerender — preparación (2026-11-12)
+
+- [Benchmark #43287450449](https://github.com/mxlzz/ACD/actions/runs/43287450449) **success**: Cozy Kitchen 320×240, 24 spp ×3 semillas y referencias 512 spp ×2. Heurística diversidad seeds pasó; refs discrepan RMSE 0.0610477, 24.51 % del error raw, **casi** el umbral exploratorio 25 %; ranking con ref2 no fue exactamente igual. Global RMSE media Native/Standard 0.1058435, High 0.1072723, Super 0.1286238. Borde: Native/Standard 0.1252201, High 0.1272333, Super 0.1324044. Son solo medidas contra refs finitas.
+- F3 defecto corregido aparte: ROI antes omitía NATIVE_COMP_OIDN. Workflow nuevo descargará EXR originales de este run, reanalizará (sin rerender) con nativo en regiones, seleccionará crops en base a ambas referencias y archivará informe permanente E0020+3 imágenes+coordenadas/JSON en GitHub **solo si passes**. Última validación del workflow todavía pendiente.
+- No iniciar F5; primero identificar naturaleza de discrepancia entre referencias y evaluar visualmente crops; posteriormente considerar 1024–2048 spp referencias/escena de prueba a mayor resolución.
+
+---
+
+## F3 — Corrección del comparador de regiones nativo (2026-11-12)
+
+- Hallazgo durante E0020: `acd_lab.region_cli.compare_regions_from_files` filtraba método `NATIVE_COMP_OIDN` del diagnóstico espacial aunque se incluía en batch global. Se incorporó baseline nativo y SID4 cuando estén presentes, además de test sobre lectura real EXR.
+- El [run E0020](https://github.com/mxlzz/ACD/actions/runs/43287450449) arrancó en commit anterior (3cda34e); sus métricas regionales **no** incluirán OIDN nativo hasta reprocesarlas. Global batch sí lo mide. **No se desencadena un segundo render costoso por este cambio.**
+- El fix y nuevos tests quedan pendientes de CI. Reanalizar los EXR E0020 de forma independiente solo si los artifacts pueden recuperarse sin alterar inputs.
+
+---
+
+## E0020 — Benchmark Cozy Kitchen con referencias y semillas preparado (2026-11-12)
+
+- Se agregó `acd-e0020-cozy-pilot.yml` como job único: fixture público SHA fijo, Blender5.0.1 CPU, 320×240, **24 spp ×3 semillas (539, 911, 1337)**, **512 spp ×2 refs** (8819 y 8922), Standard/High/Super/comp-OIDN (además Raw), EXR con AOV y diagnóstico por región. Workflow automático solo cuando cambie su propio fichero; posterior desactivar disparo por push para no gastar minutos repetidos.
+- Añadido `scripts/summarize_e0020.py` para emitir métricas compactas legibles (RMSE, MAE, gradientes, ratio contraste), control de diversidad y discrepancia de refs; no afirma mejora por métrica única. Validación de `tests/test_e0020_summary.py` pendiente CI.
+- Runner de escena externa invoca Blender con `--disable-autoexec` (archivo de terceros), sin modificar el original. Tests del comando actualizados.
+- **La ejecución real en este commit todavía no está confirmada.** Si falla, registrar causa. Tras piloto juzgar validez de refs; ampliar resolución/spp solo con hipótesis y cuota disponibles. No fusionar addon estable.
+
+---
+
+## E0019 completado — Cozy Kitchen pública e íntegra en GitHub (2026-11-12)
+
+- **Hecho verificado:** [workflow #43285518302](https://github.com/mxlzz/ACD/actions/runs/43285518302) success y commit automático `b63204749a95109eb5e913d6f4a1c4607cb7ddac`; [archivo .blend](benchmarks/scenes/cozy_kitchen.blend) **realmente versionado** con 7,685,702 bytes, SHA256 `5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395`, fuente oficial Blender 3.5 splash *Cozy Kitchen*, Nicole Morena, CC BY-SA. [E0019](docs/experiments/E0019.md) y manifest auditado.
+- **Validación Blender real:** 5.0.1 CPU, cámara `CAM-wide`, 2 cámaras, 1077 objetos, 175 materiales, 0 imágenes externas faltantes y 0 bibliotecas .blend enlazadas; Cycles 192x192 ×4 spp sin denoising renderizado exitosamente. Esto no demuestra fidelidad OIDN ni vence referencias.
+- **Seguridad/permisos:** el workflow de importación ahora es una comprobación manual de solo lectura, sin permisos write; SHA del fixture pasa a test Python automático. La escena privada del usuario no se distribuyó.
+- **Siguiente paso:** corrida controlada a 512², 3 seeds ×2 refs, ACD Standard/High/Super vs OIDN compositor, graduar resolución y crops; mantener referencia convergente. No entrenar o fork antes de defecto reproducible.
+
+---
+
+## E0019 — Cozy Kitchen validada, bloqueo de gitignore en publicación (2026-11-12)
+
+- [Workflow 43285264648](https://github.com/mxlzz/ACD/actions/runs/43285264648) ejecutó Blender5.0.1 **con éxito**: escena `Main`, cámara activa `CAM-wide`, 2 cámaras, 1077 objetos, 1058 meshes, 175 materiales, 6 imágenes (4 packed), 0 texturas faltantes, 0 librerías externas, render de prueba Cycles CPU 192×192 ×4 spp OK. Fuente oficial 7,685,702 B. El original permaneció sin cambios.
+- Publicación posterior falló porque `.gitignore` omite `*.blend`; se corrigió la etapa de `git add` con **`-f` únicamente en `benchmarks/scenes/cozy_kitchen.blend`**. No eliminar el ignore global ni permitir otros .blend por accidente. Reintento pendiente. Este commit todavía no contiene el binario.
+
+---
+
+## E0019 — Validación de fuente: corrección de premisa de cabecera (2026-11-12)
+
+- Primer intento [workflow 43285007004](https://github.com/mxlzz/ACD/actions/runs/43285007004) **failure en paso de descarga**, probablemente por comprobación inadecuada de magic uncomprimido `BLENDER` en .blend (puede estar comprimido); descarga HTTP 200 de ~7.3 MiB. No se abrió Blender ni se publicó archivo. Se corrigió el protocolo: conservar validación de tamaño y documentar bytes iniciales, después dejar a Blender verificar el archivo realmente. Nuevo run pendiente; no inferir defecto de la escena.
+
+---
+
+## E0019 — Fuente pública compacta seleccionada (2026-11-12)
+
+- Se seleccionó **Cozy Kitchen**, Blender 3.5 splash by Nicole Morena, **7,685,702 bytes**, licencia declarada **CC BY-SA**, fuente Blender Foundation, archiviz/interior con objetos y materiales. Documentado en [E0019](docs/experiments/E0019.md) y [benchmarks/scenes/README.md](benchmarks/scenes/README.md).
+- Se agregó workflow controlado de importación: descarga oficial, verificación de tamaño/cabecera, apertura Blender 5.0.1 sin autoexec, revisión cámara/texturas/libraries y render funcional CPU 192x192 4 spp. **Este commit solo crea el workflow; ejecución y publicación de binario quedan pendientes de comprobar**. Si pasa, el workflow crea un commit binario con SHA256 y también actualiza los tres archivos de trazabilidad por protocolo. `Prueba ACD.blend` del usuario sigue privado.
+- Siguiente: comprobar ejecución, SHA, CI y que archivo .blend está efectivamente en GitHub; correr luego benchmark real de detalle solo con referencia validada, no inferir calidad del smoke.
+
+---
+
+## E0018 — Escena real recibida (2026-11-12)
+
+- Archivo Prueba ACD.blend recibido y auditado estáticamente. Cycles 1920×1080, 137 objetos, 86 materiales, cinco cámaras (activa Camera.003), 121/122 imágenes empaquetadas. SHA256 e inventario en [E0018](docs/experiments/E0018.md).
+- Usuario autoriza pruebas. **No se publica el archivo original:** contiene paths de red de trabajo y referencias a assets BlenderKit sujetos a licencias individuales; además excede el límite habitual GitHub de 100 MB. Compartir solo código y resultados sin rutas sensibles.
+- La lectura de DNA y bloques completó; **Blender no se abrió ni renderizó** en esta etapa. Se prepara runtime Blender5.0.1 portable para ejecutar en entorno local sin descarga directa; el workflow todavía no está verificado.
+- Próximo: inspección bpy sin autoexec, smoke Cycles, regiones y multi-seed con dos referencias, sin alterar original.
+
+---
+## E0017 validado — cierre del ciclo automático actual (2026-11-12)
+
+- [ISA fixed-input run #43237525190](https://github.com/mxlzz/ACD/actions/runs/43237525190) **success dos jobs**, [E0017](docs/experiments/E0017.md): mismo PFM por SHA en AMD EPYC 7763 AVX2 vs EPYC9V45 AVX-512; los dos OIDN CLI v2.3.3/v2.5.1 son idénticos *dentro* de cada CPU, pero entre CPUs su output difiere RGB RMSE 7.41e-7 (max abs 3.48e-5). La causa de discrepancias mayores E0015 no está aislada. No atribuir diferencias a AMX sin medición.
+- F1 gobernanza/documentación completa en PR #10 draft e Issue #9. F2 runtime CLI/versión verificadas, quedando control estricto prefilter/compositor e ISA. F3 tests de detalle y escena sintética verificados E0016, pero no hay escena profesional 1080p con referencia adecuada. F4 revisión repos ProDen/StatMC/StatER hecha, sin port. F5/F6 sin habilitación científica.
+- **Decisión de eficiencia de CI:** el workflow pesado histórico M3.9, piloto independiente OIDN y diagnostico ISA pasan a `workflow_dispatch` manual; solo quality gate permanece automático en cada PR. Razón: cualquier push a PR #10 reejecutaba todos los workflows a pesar de no modificar su código, consumiendo minutos y repitiendo datos ya verificados. Se mantienen disponibles y reproducibles, sin borrar scripts ni artifacts existentes.
+- **Pendiente que requiere escena externa:** una escena .blend arquitectónica autorizada y con recursos empaquetados (o dataset público realmente representativo), idealmente detalles finos, vidrio, reflejos, vegetación, iluminación artificial. No incorporar escena propietaria al repo público. Hasta entonces, no diseñar un 'denoiser mejor' basándose solo en fixture sintético.
+- En este commit calidad CI **aún pendiente**; confirmar antes de dar estado final.
+
+---
+
+## E0016 verificado / CPU ISA bajo investigación (2026-11-12)
+
+- [Run #43235485653](https://github.com/mxlzz/ACD/actions/runs/43235485653) **3 jobs success** incluyendo `detail_target` 320×240; [quality #43235484414](https://github.com/mxlzz/ACD/actions/runs/43235484414) **90 tests**. [E0016](docs/experiments/E0016.md) almacena comparación y caveats. En detail_target OIDN nativo RGB RMSE medio 0.0608849 y error gradiente 0.0721193, frente ACD High 0.0613499/0.0721533 y Super 0.0632406/0.0726432. Super eleva contraste y mejora MAE pero empeora fidelidad de gradiente y RMSE: aparente nitidez no equivale a detalle verdadero.
+- Comparación de artifacts E0015/E0016 revela variación de imagen entrada entre workflows aun con mismos seeds y binarios (RGB PFM RMSE 4.96e-5 seed539). La salida OIDN2.5 cambió más entre jobs que OIDN2.3; tiempos e [OIDN changelog AMX-FP16](https://github.com/RenderKit/oidn/blob/v2.5.1/CHANGELOG.md) sugieren **posible dependencia del ISA** (no probada). E0015 se actualiza para no afirmar ventaja v2.3.3 estable.
+- Nuevo **ensayo específico de ISA**, SIN Blender, sobre entradas sintéticas idénticas en GH runners 22.04/24.04 con CPU/ISA verboso, hashes de binarios, inputs y outputs. CI/piloto pendientes en este commit; no atribuir diferencias a ISA hasta observar ambas ejecuciones.
+- F5/F6 no autorizadas por resultados actuales. Próxima puerta de calidad real: escena arquitectónica autorizada 1080p+ con texturas finas/reflejos y referencias de calidad; alternativa pública bajo licencia verificada. Ningún cambio al addon estable.
+
+---
+
+## E0015 y F3/F4 — Aislamiento de versiones terminado, fixture de detalle preparado (2026-11-12)
+
+- [Run #43234478588](https://github.com/mxlzz/ACD/actions/runs/43234478588) **success, 2 jobs**; [E0015](docs/experiments/E0015.md) archiva resultados por seed: OIDN CLI 2.3.3 y 2.5.1 obtienen salidas idénticas Glass Lobby (RMSE mutuo 0 en 3/3); en interior emisivo cambian ligeramente (RMSE mutuo ~0.00221) y 2.3.3 tiene RMSE global menor en las 3 semillas. Misma PFM/flags/CPU; no implica ranking general ni diferencia de calidad perceptual.
+- [F4 fuentes y dependencias](docs/EXTERNAL_DENOISER_PRIOR_ART.md) auditadas por README: ProDen requiere SURE/modelo/pesos, StatMC/StatER modifican pbrt-v3 y recogen estadísticas por muestra; no son filtros drop-in para EXR de Blender. No se ha portado código.
+- **F3 candidato pendiente de CI real:** `tests/scene_detail_target.py` con 52 lamas, juntas de 26 filas/13 columnas, vidrio, metal y microbump; Blender generator acepta `ACD_SCENE=detail_target`. Matrix de workflow incluye 320×240 para este caso con refs 1024 spp ×2 y tres noisy seeds; medición de gradiente debe validarse en este fixture.
+- Se eliminó duplicación temporal de OIDN CLI en workflow histórico M3.9: el workflow V2 autónomo ya se ejecuta correctamente, evitar rerender innecesario. Nueva CI y benchmark **pendientes al commit**, no afirmar que fixture corre.
+
+---
+
+## E0014 — OIDN standalone 2.5.1 comprobado, siguiente aislamiento 2.3.3 vs 2.5.1 (2026-11-12)
+
+- [Run #43233365334](https://github.com/mxlzz/ACD/actions/runs/43233365334) **success ambos jobs**. Informe permanente [E0014](docs/experiments/E0014.md) y artifacts [Glass #13951826448](https://github.com/mxlzz/ACD/actions/runs/43233365334/artifacts/13951826448), [interior #13950773895](https://github.com/mxlzz/ACD/actions/runs/43233365334/artifacts/13950773895).
+- RMSE medio 3 seeds: Glass OIDN compositor 0.15562493 vs CLI 2.5.1 0.15612150; Interior compositor 0.07563019 vs CLI 2.5.1 0.08564105. Error gradiente bordes Glass 0.09138522 vs 0.09695046; interior 0.06909926 vs 0.07730485. **Sin ganancia demostrada** en estos fixtures para OIDN 2.5.1 CLI; configuraciones potencialmente distintas, no atribuir a versiones.
+- **Ahora preparado:** `oidn_versions_compare.py` compara dos binarios oficiales 2.3.3/2.5.1 sobre mismos PFMs y flags CPU HDR High, prueba repetición 2.5.1; workflow de F2 actualizado. Ejecución nueva pendiente.
+
+---
+
+## F2 — Implementación conectada al workflow existente (2026-11-12)
+
+- [CI Python #43233365339](https://github.com/mxlzz/ACD/actions/runs/43233365339) **success: 89 tests**, incluida conversión PFM y métricas de detalle; comprobador de trazabilidad aprobó. Esto **no** es ejecución de Blender/OIDN standalone.
+- El nuevo workflow `acd-v2-oidn-251-pilot.yml` no apareció en la lista de runs automáticamente durante el PR; para no depender de un disparo manual imposible de garantizar, se agregó el paso OIDN 2.5.1 al workflow M3.9 existente, que ya está activado por cambios en su archivo. Conserva los ensayos y añade mediciones de la versión externa sobre iguales beauty/AOV.
+- **Nueva ejecución pendiente al commit.** Inspeccionar si se descargó binario con SHA oficial, si cada seed generó su multilayer y si PFM/native comparten beauty sin delta; abortar si no. No inferir superioridad.
+
+---
+
+## F2 — OIDN 2.5.1 standalone, ejecución experimental preparada (2026-11-12)
+
+- Código nuevo: PFM RGB32 little-endian sin color management, test de roundtrip HDR/orden de filas; `scripts/oidn251_compare.py` ejecuta el binario oficial CPU sobre beauty/albedo/normal exactamente de cada seed y compara frente a compositor OIDN en dos referencias. Export multilayer por semilla activado cuando AOV capture.
+- El workflow descarga un binario oficial SHA-256 fijado (digest de GitHub Releases API) y registra SHA de PFM/output, log de proceso, error global y gradiente. Escenas piloto Glass Lobby/interior emisivo a 192×144, 24 spp ×3 y 1024 spp ×2 referencias. Es **nueva comparación de versión**, no repetición de ranking SID.
+- **Pendiente en este commit:** CI real y piloto, sin resultados numéricos todavía; no implica equivalencia de políticas de prefilter en Blender y CLI.
+- Siguiente: inspeccionar resultados y conservar informe permanente E0014, después aumentar dificultad de escena de detalle.
+
+---
+
+## F3 — Implementación de medición de gradientes (2026-11-12)
+
+- Añadido `acd_lab/detail.py`: gradientes RGB con compresión `asinh`, máscaras de borde definidas exclusivamente por referencia y error en regiones planas. Los métodos no pueden elegir sus propias máscaras. ROI se mide en cuadrícula original, con parejas contiguas válidas, evitando un artefacto previo de vecinos ficticios al aplanar máscaras.
+- Integrado en `evaluate_batch`, `assess_regions` y agregado descriptivo de semillas. `edge_contrast_ratio` **no es ranking autónomo**; puede premiar halos. Referencias finitas pueden introducir errores en la máscara.
+- Pruebas sintéticas nuevas para fidelidad exacta, blur, oversharpen, ruido plano, región discontinua, borde cromático, HDR negativo y entrada inválida. **CI pendiente al commit; no hay benchmarks de escenas ejecutados en esta etapa.**
+- Siguiente: comprobar quality CI y corregir cualquier fallo; usar EXR/Blender reales y comprobar distinción de métodos sobre detalle antes de inferir superioridad.
+
+---
+
+# ACD V2 — OIDN y conservación de detalle
+
+**2026-11-12, F1 — cambio de estrategia iniciado.** Branch `dev/acd-v2-oidn-detail-eval` creada desde commit `9a70736d88af` de PR #4. Issue #9 abierto. Este commit registra [plan V2](docs/ACD_V2_PLAN.md), auditoría estática de OIDN [v2.5.1](docs/OIDN_SOURCE_AUDIT.md), actualización del protocolo y prioridades. **No hay código, tests ni nuevos renders en este commit**; CI aún pendiente. El addon estable y reconstrucción SID no se alteran.
+
+**Evidencia que motiva F1:** [E0013](docs/experiments/E0013.md): Blender5.0.1 Glass Lobby e interior emisivo, Standard y OIDN compositor nativo mismo RMSE medio (~0.14833 y 0.08236), High/Super peor promedio; no mide fidelidad de texturas finas. SID comercial 5.x no está incluido. Classroom multiseed excluido por E0007. No aseverar superioridad general ni descartar recuerdos de conservación de detalle en SID 5.x.
+
+**Siguiente acción:** F3 métricas de detalle *reference-driven* con pruebas sintéticas y conexión al pipeline, junto a F2 comparación de OIDN independiente; disponer luego de escenas mayores. Consulta de PR draft y workflow CI tras commit.
+
+---
+
 # M2 — External .blend scene benchmark and regional analysis
 
 **Project plan:** [docs/ROADMAP.md](docs/ROADMAP.md). **Scientific foundations and hypotheses:** [docs/research_foundations.md](docs/research_foundations.md). These are reference documents; the status below records actual implementation and evidence.
@@ -327,3 +945,318 @@ M1 development: PR #3, branch dev/acd-m1-exr-evaluation. Related issue #2.
 
 ## Policy
 No merge of experimental M1 as a production denoiser unless empirical and API tests substantiate it. Keep the source research and licensing record in GitHub.
+
+## E0019 — Cozy Kitchen CC-BY-SA vendored and Blender validated
+
+- Source: Blender official 3.5 splash by Nicole Morena, ~7.3 MiB; permission CC BY-SA.
+- Validation: original SHA and metadata in benchmarks/scenes/cozy_kitchen.audit.json. Blender 5.0.1 Cycles CPU smoke 192x192 4 spp succeeded (not quality).
+- Asset is public; keep license and attribution. Existing user scene remains unpublished.
+
+## E0020 — Cozy Kitchen real benchmark and ROI post-analysis (2026-11-12)
+- Run [43287450449](https://github.com/mxlzz/ACD/actions/runs/43287450449) success; 320×240, 24 spp ×3, reference 512 spp ×2. Details in [E0020](docs/experiments/E0020.md).
+- Crops and ROI selection from references only: [benchmarks/results/cozy_e0020](benchmarks/results/cozy_e0020). Original EXRs remain Actions artifacts for 7 days; key numbers and previews permanently tracked.
+- Interpretation restricted by finite-spp reference disagreement and no convergence proof; no denoiser improvement established.
+
+## E0022 — Held-out nighttime architecture source incorporated (2026-11-12)
+- Terraced Houses, Yunus Emre Karaman, MIT source pinned upstream commit 36c46d3; source 3,044,256 B and SHA256 in benchmarks/scenes/terraced_houses.audit.json. Renderer Blender5.0.1 Cycles 192px 4spp passed. Original source unmodified.
+- Scene assigned held-out generalization benchmark: do not tune denoiser against it. No quality comparison performed by this smoke. The user's project remains unpublished.
+
+## E0021 — Cozy Kitchen higher-reference quality archived (2026-11-12)
+- Blender5.0.1 [run 43289852695](https://github.com/mxlzz/ACD/actions/runs/43289852695), 512x482, 24spp x3 and refs1024spp x2; refs spread/raw-error 13.53%, vs E0020 24.51%. OIDN compositor/Standard RMSE mean 0.0833928, High 0.0860779, Super 0.0971167; native best gradients. Two-ref + 3-seed detail table and crops [E0021](docs/experiments/E0021.md).
+- Reused EXR original, no rerender; 3 reference-only ROIs and previews under benchmarks/results/cozy_e0021, derivatives of Nicole Morena Cozy Kitchen CC BY-SA. No perceputal superiority claim.
+
+## E0023 — Exterior nocturno, discrepancia entre errores, diagnóstico archivado
+- Run 43291659387 valida 320×240 24spp x3 y 512spp refs x2, nativo OIDN RMSE más alto que Raw pero MAE y gradiente menores. Informe E0023 y comparativas: docs/experiments/E0023.md, benchmarks/results/terraced_e0023. EXR fuente conservados temporalmente en Actions.
+- Se midió concentración SSE peor 1% y errores por AOV emission/glossy sobre primera seed, contra mismas refs sin alterar algoritmos. Esta escena fue observada: requiere otra escena final ciega para evaluar un candidato entrenado.
+
+## E0028 — Low-Poly Island third-scene source validated and versioned
+- Official MIT source emrelab/blender-projects at immutable 36c46d3; SHA from benchmarks/scenes/low_poly_island.audit.json. Blender5 Cycles smoke 4spp passed, no assets missing. The previously examined Terraced scene shares its author; test is a new scene but NOT independent artist/style. Results quality still pending.
+
+## E0030 — Low-Poly Island E0029 visual crops from saved EXRs
+- Reference-selected diagnostic ROIs, same display curve and unmodified E0027 Emission50/100 parameters, derived MIT eight-panel crops in benchmarks/results/island_e0030/. No rerender, no claim of perceptual quality until inspected.
+
+## E0034 result archive (2026-11-13)
+
+- Recovered E0033 run 43416607737 exact JSON and existing EXR, generated no new Cycles renders. Fixed gitignore staging failure; numerical JSON and tracked report staged explicitly. Published 1:1 full image and disjoint reference-selected ROI PNG in benchmarks/results/hall_e0034/README.md; kept original .blend out. Frozen Emission50 worse global RMSE/border than OIDN in Modern Hall; no integration.
+
+## E0035 completed — B0a contracts verified (2026-11-13)
+
+## E0035 — Blender 5.2.4 LTS vs 5.3.0: API + mismo input (2026-11-13)
+
+- [Successful workflow 43480823352](https://github.com/mxlzz/ACD/actions/runs/43480823352), initial EGL runtime failure in [43480476666](https://github.com/mxlzz/ACD/actions/runs/43480476666) corrected by installing libegl1. Both official Blender archives passed published SHA256.
+- Procedural detail_target, 128x96, 16 spp noisy seed 539, 64 spp reference seed 8819. This is an API/smoke contract; reference NOT converged and no visual superiority claim.
+- 5.2.4 (build cd5dc428cce1): Raw/AOV delta 0.0, Standard/OIDN delta 0.0.
+- 5.3.0 (build 02f0899d78e3): Raw/AOV delta 0.0, Standard/OIDN delta 0.0.
+- Cross-version **Raw beauty** RMSE 0.006166062714630608. Denoising Albedo RMSE 0.00032205058212830514, Denoising Normal RMSE 0.0004913281671895542. Changes across Blender versions combine renderer/guide/backend effects; must use fixed EXR to isolate denoiser.
+- Cycles-internal denoising is configured/available in API, but **not measured**; 5.3.0 reports compositor API deprecation slated for Blender6.0; add compatibility planning, not algorithm tuning.
+- [Exact JSON](E0035_RESULTS.json). Original EXRs/actions artifacts expire after 14 days. Addon stable untouched.
+
+## E0036 — Cycles internal vs compositor OIDN actual (2026-11-13)
+
+# E0036 — Denoising interno de Cycles vs nodo OIDN de compositor (mismo render)
+
+- [Workflow E0036](https://github.com/mxlzz/ACD/actions/workflows/acd-e0036-cycles-internal.yml), Blender 5.2.4 LTS, scene procedural detail_target 128×96, 16spp, seed539, GPU none. Source: same RenderLayer Noisy Image, Image denoised and Denoising Albedo/Normal. Compositor OIDN Accurate/High/HDR. No reference converged or claim of quality winner.
+- RMSE RGB entre salida interna y de compositor: 1.4466098094000755e-07; delta máximo 1.9073486328125e-06. Coincidencia exacta: False.
+- Raw→OIDN integrado RMSE 0.2544771700358048; Raw→OIDN compositor 0.25447716631777373. Estos números miden diferencia entre salidas, NO si una es mejor.
+- [JSON exacto](E0036_RESULTS.json). EXR/AOV en artifacts del run solo 14 días. Próxima puerta: misma entrada de forma verificable frente a OIDN standalone y controles de guías; luego referencias convergentes antes de ranking.
+
+## E0037: OIDN 2.5.1 standalone on frozen E0035 source (2026-11-13)
+
+[Protocolo preinscrito](E0037_PLAN.md). [E0035 fuente](E0035_RESULTS.json).
+Raw/AOV originales y hashes de las dos versiones verificados. Solo CPU, 4 threads; sin nuevos renders ni verdad de referencia convergente.
+
+| Blender fuente | Sin filtrar guías RMSE | Prefiltrado RT + cleanAux RMSE |
+|---|---:|---:|
+| 5.2.4 | 0.046473111 | 0.040350220 |
+| 5.3.0 | 0.046456395 | 0.040380501 |
+
+La comparación mide distancia de salida respecto al nodo compositor, no calidad. La variante de guías prefiltradas se aproxima al prefiltrado Accurate, pero no asegura idéntica versión/ponderación/preprocesamiento de Blender.
+Los tiempos incorporan tres procesos y overhead de archivo, no comparables directamente con el denoising integrado.
+
+[JSON exacto con flags, hashes y tiempos](E0037_RESULTS.json).
+
+## E0038 — comparación OIDN 2.5.0/2.5.1 sobre los mismos PFM
+
+Blender 5.2.4/5.3.0 CMake version pins OIDN 2.5.0. Ambos binarios standalone oficiales usados con mismos PFM, flags, CPU 4 threads. Entradas verificadas frente a E0035/E0037. Sin nuevos renders.
+
+| Blender fuente | Variante | OIDN 2.5.0 vs 2.5.1 | OIDN 2.5.0 vs compositor Blender |
+|---|---|---:|---:|
+| 5.2.4 | raw_aux | 0.000001955 | 0.046473076 |
+| 5.2.4 | accurate_like | 0.000002026 | 0.040350198 |
+| 5.3.0 | raw_aux | 0.000001967 | 0.046456354 |
+| 5.3.0 | accurate_like | 0.000002056 | 0.040380591 |
+
+La cercanía entre outputs no demuestra calidad superior. Si persisten diferencias con Blender con OIDN 2.5.0, revisar la identidad del socket de guía y la ruta de prefiltrado antes de atribuirlas al motor.
+Resultados numéricos, hashes y flags: [E0038_RESULTS.json](E0038_RESULTS.json).
+
+## E0039 socket/AOV contract result (2026-11-13)
+
+Blender 5.2.4 LTS, 128×96, 16 spp, una ejecución Cycles. Exports de sockets del compositor y AOV de mismo render. No ranking de calidad.
+
+| Señal | RMSE socket vs AOV | Max absoluto |
+|---|---:|---:|
+| ResolvedRaw | 0.000000000 | 0.000000000 |
+| Albedo | 0.000000000 | 0.000000000 |
+| Normal | 0.000000000 | 0.000000000 |
+
+Si las guías no coinciden, el EXR archivado no reproduce exactamente los inputs del nodo. Si coinciden, revisar otros estados de filtro/buffer/versiones. Sin ground truth convergente.
+[JSON completo](E0039_RESULTS.json).
+
+## B1 Italian Flat functional smoke passed (2026-11-13)
+
+Source official Cycles demo, Flavio Della Tommasa, CC-BY (version unspecified). Original 367,972,724-byte BLEND not redistributed.
+SHA256 0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25
+Scene Scene; camera Cam Pouf Details 
+Meshes 476, materials 109, images 81
+Missing resources 0, linked libraries 0
+Cycles CPU, 192×192, 4spp functional smoke passed; NOT a denoising quality result.
+Next: pin hash; convergence/cost pilot before large renders.
+
+## E0040 original Italian Flat camera gallery, four-spp previews
+
+Gallery: benchmarks/results/italian_flat_e0040/README.md. 7 author cameras, Blender5.2.4, render-time measured; only 4spp, no convergence/denoiser ranking. Original 368MB .blend excluded.
+
+## E0041 completed — Italian Flat CPU cost and finite-spp reference spread
+
+Fuente original eMirage no; **Italian Flat © Flavio Della Tommasa, CC-BY**, Blender oficial. Cámara elegida antes de medir: Cam Kitchen Table.
+Blender 5.2.4 LTS. Cuatro pasos: 320×200, 8/16/32 spp, seeds8819 y 8922; y 640×400 8spp en seed8819.
+
+| spp (320×200) | RMSE entre semillas |
+|---|---:|
+| 8 | 0.24900164 |
+| 16 | 0.17253318 |
+| 32 | 0.11853154 |
+
+Ratio de tiempos al cuadruplicar píxeles (640×400, 8spp vs 320×200, 8spp): 1.105.
+Tiempo CPU total de los 7 renders (incluye escritura y costes de escena tras carga): 223.0 segundos.
+No hay denoiser ni ground truth en esta prueba. Menor error entre semillas no garantiza referencia convergida; independencia estadística no acreditada. No extrapolar linealmente a 1080p sin otro piloto.
+
+[JSON completo](E0041_RESULTS.json).
+
+## E0042 Italian Flat 640px reference comparison (2026-11-13)
+
+Six Cycles CPU scene-linear renders, no denoising, Blender 5.2.4 LTS; camera Cam Kitchen Table. Original .blend not published.
+Two seeds 8819 and 8922 at 32, 64 and 128 spp each. Source CC-BY © Flavio Della Tommasa.
+
+![Reference pair ladder, same diagnostic tone map](italian_reference_ladder.png)
+
+| Samples | Interseed RMSE |
+|---|---:|
+| 32 | 0.11710424 |
+| 64 | 0.08073157 |
+| 128 | 0.05549192 |
+
+Combined actual rendering+write wall seconds: 456.1. Peak process RSS (Linux KB): 11002956.
+This comparison evaluates remaining Monte Carlo sample noise, NOT denoising quality. Two finite references are not converged ground truth and may have correlated random streams. Preview transfer not Blender OCIO/AgX.
+Analysis JSON: [E0042_RESULTS.json](../../../docs/experiments/E0042_RESULTS.json).
+
+## E0043 recovered existing EXRs — scene quarantine (2026-11-13)
+
+No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.
+
+## E0043 recovered existing EXRs — scene quarantine (2026-11-13)
+
+No rerender. Diagnostic JSON docs/experiments/E0043_RESULTS.json; gallery benchmarks/results/italian_flat_e0043/README.md. Unresolved external IES makes Italian Flat unfit to claim faithful source lighting. No algorithm advancement/merge.
+
+## E0044 current Blender 5.2.4 detail diagnosis
+
+ Blender 5.2.4 LTS, 320x240, 24 spp seed539, 2 refs 1024 spp seeds8819/8922. Sin assets externos, sin nuevos métodos. El fixture contiene 52 lamas, juntas de azulejos, vidrio, metal y bump procedural. Compositor OIDN High/Accurate/HDR con guías albedo/normal. Metrics in docs/experiments/E0044_RESULTS.json and gallery benchmarks/results/detail_current_e0044/. No algorithm change, interpret tile screen as descriptive only.
+
+## E0046 completed — actual same-FOV 1920px-density 512px crop, no new filter
+
+Source: tests/scene_detail_target.py. Native OIDN vs Raw; 2 finite512spp references. Result docs/experiments/E0046_RESULTS.json, preview benchmarks/results/detail_crop_e0046/. No quality or addon promotion. Receptive-field border caveat.\n
+## E0047 original-source glass/direct detail diagnosis (2026-11-16)
+
+Existing E0046 EXRs reused; no Cycles render and no new denoiser. ROI/guide report docs/experiments/E0047_RESULTS.json; visual benchmarks/results/detail_glass_e0047/. Check whether reference edge correlations are high before causal experiment. No addon promotion.
+
+## E0048 existing Cycles reflection-feature toggle (2026-11-16)
+
+DIAGNOSTIC only: native guide setting changed output, inspect against both finite references. Raw identical=True. See docs/experiments/E0048_RESULTS.json; no new model or algorithm.
+
+## E0049 existing Cycles roughness-feature toggle (2026-11-16)
+
+STOP: Raw changed; no same-input causal inference. Raw identical=False. See docs/experiments/E0049_RESULTS.json; no new model or algorithm.
+
+## E0050 frozen Raw offline OIDN replay (2026-11-16)
+
+STOP: offline native-guide replay not equivalent to original compositor; native replay verified=False. No new denoiser/merge. See docs/experiments/E0050_RESULTS.json.
+
+## 2026-11-16 — Explicit historical trace repair before E0052
+
+Commits \`d6edc548bf6996c053e7b2e465cfca9a9a902e9a\` and \`204cc9d71cffca1e359e09fcc0cc21fccc6d0200\` updated only experiment documentation and violated the per-commit obligation to update STATUS.md / ROADMAP.md / DECISION_LOG.md. To preserve referenced commit hashes, check_development_trace.py now allows only these two exact immutable hashes when their complete changed-file sets match documented expected paths. All later commits still require all three files in the same commit. This is a transparent repair, not evidence of experiment validity.
+
+## 2026-11-16 — E0052 preinscrito: diagnóstico de bordes coherentes en Cozy Kitchen
+
+Se registró la hipótesis, límites, contrato Raw/AOV, ROIs congeladas E0021, umbrales de descarte y la acción offline a ejecutar sobre los EXR originales antes de su vencimiento. Experimento sin renders nuevos ni cambios al addon. Ver docs/experiments/E0052_PLAN.md y scripts/analyze_cozy_consensus_e0052.py. Tras la ejecución solo una señal persistente justificaría estudiar un fallo real a mayor resolución/escena retenida; no afirmar superioridad por contraste de borde.
+
+## E0052 test fixture fix (2026-11-16)
+
+Initial CI run 43927671962 and experiment run 43927659885 stopped at a defective *unit test*: step(3) sets the signal level, not the image height, so it could not raise the expected candidate shape error. Fixed fixture to explicit 39x48 array; the scientific analysis had not run and there were no measurements to invalidate. Workflow path updated only to rerun the existing preregistered protocol.
+
+## E0052 original EXR analysis completed
+
+E0052 frozen Cozy reference-consensus screen: ['detail_2', 'whole_image']. No new render, no denoiser change, refs unconverged; docs/experiments/E0052.md.
+
+## E0053 planned — Cozy high-density single-crop functional/cost pilot (2026-11-16)
+
+Follows E0052 consistent OIDN attenuation screen in ROI detail_2 (gain 0.726-0.755), but no quality winner. Source-pinned CC BY-SA Cozy Kitchen, Blender5.2.4, virtual1920x1808 with exact512px crop and center360px ROI, CPU8spp + two32spp references. Strict camera, scene, SHA, AOV and elapsed-wall controls. This phase measures feasibility, *not* image quality. Original scene and addon stable unchanged. See docs/experiments/E0053_PLAN.md.
+
+## E0053 real-Cozy high-density pixel crop pilot
+
+E0053 source-pinned Cozy crop 512 at virtual1920, 8spp+two32spp refs, wall=66s, AOV delta=0.0. Diagnostic only; references not converged. docs/experiments/E0053.md.
+
+## 2026-11-16 — E0054 preregistered: real high-density Cozy references
+
+E0053 cost/contract pilot passed with 66s for 8spp + two 32spp references, but reference RMSE 0.332715 is too noisy for fidelity. E0054 now compares 24spp x3 and 512spp refs x2 in identical frozen original source/crop (real Blender 5.2.4). ROI only reference-derived, original addon unchanged. The run must stop on input mismatch, and no benchmark ranks a new denoiser. See docs/experiments/E0054_PLAN.md.
+
+## E0054 Cozy high-density reference result
+
+E0054 Cozy 512px render crop at virtual1920, 24spp x3, refs512spp x2, wall=699s, reference_ref_rmse=0.077947, OIDN_rmse=0.092270, ref_disagreement/oidn=0.845, edge_screen=True. No new algorithm or perceptual validation. docs/experiments/E0054.md.
+
+## 2026-11-16 — B1 independent living-room-3 preregistered
+
+E0054 Cozy: raw edge gain 0.780-0.792, OIDN gain 0.741-0.753, 512spp ref discrepancy RMSE 0.077947 vs native RMSE 0.092270. A full 25% OIDN-only loss is not established; no new algorithm justified. Start read-only small-source acceptance of independently authored cuteday living-room-3, sha1 pinned, original author/converted license NOT verified; no holdout or denoiser ranking. Plan docs/experiments/B1_LIVING_ROOM3_PLAN.md.
+
+## B1 living-room-3 audited
+
+B1 living-room-3 pinned candidate functional smoke: FAIL; scene origin/conversion license UNVERIFIED; no holdout, model or denoiser comparison. docs/experiments/B1_LIVING_ROOM3_AUDIT.md.
+
+## E0056 planned — Classroom CC0 original seed anomaly in current Blender
+
+Independent converted living-room-3 in B1 failed (three missing textures: _unnamed_14, _unnamed_7, _unnamed_9; conversion identity/license unverified), so do not use as holdout or invent replacement resources. New targeted gate reuses existing E0007 Blender Classroom CC0 exact source and 96x54/16spp TABULATED_SOBOL 539/911 independent-process test, but on Blender5.2.4. A pass only establishes changed samples, not statistical independence or OIDN quality. No new denoiser. docs/experiments/E0056_PLAN.md.
+
+## 2026-11-16 — E0056 source retrieval correction, not a new scientific run
+
+First E0056 attempt run 43934413187 stopped before any Blender render because https://download.blender.org/demo/test/classroom.zip returned HTTP 403. Only the download host changes to Blender's officially linked mirror.blender.org; ZIP size 70,279,690 bytes and SHA256 0f0ecc58... remain exact. No alteration of samples, seeds, renderer, hypothesis or quality criteria. If mirror unavailable, stop this source gate instead of arbitrary retries.
+
+## 2026-11-16 — E0056 checksum transcription defect corrected
+
+The mirror.blender.org download step in run 43934663447 returned an archive, but sha256sum rejected the provided checksum line as malformed: its typed digest was 62 hex characters, not 64. Corrected to 0f0ecc58d45f12b2f4272a53e2d8e69135518e16e956b118f10c20d8dcfdf5e6 (64 hex) from external Classroom CC0 source catalog; added explicit checksum-length unit test. Re-run is still source acquisition validation, not sample/render result. Do not treat the two failed attempts as denoiser failures.
+
+## 2026-11-16 — E0056 linked library audit false rejection corrected
+
+Run 43934933318 downloaded hash-verified official Classroom and loaded 11 linked libraries from extracted /tmp/e0056-source/classroom/assets, but general audit_public_scene.py rejected all linked libraries by name. Corrected this validation bug with opt-in ACD_AUDIT_LIBRARY_ROOT: only real existing files within verified archive root allowed; symlink escaping/missing external files rejected. Added pure-Python unit tests and documented precondition. No sample/render result was produced yet, no relaxation for unverified archives or other scene audits.
+
+## E0056 Classroom seed diagnosis
+
+E0056 Classroom CC0 old E0007 seed anomaly on Blender5.2.4, separate Cycles 96x54/16spp processes 539/911 TABULATED_SOBOL, RMSE=1.3351280257644384e-06, relative=3.278046123412548e-06, measurable=False. No reference or denoiser; not proof of independence. docs/experiments/E0056.md.
+
+## 2026-11-16 — E0057 source-only architecture audit preregistered
+
+Previous E0056 Classroom on Blender5.2.4 still yields only 4/5184 pixel differences, RMSE1.335e-6 /relative3.278e-6 across seeds539/911; cannot be used as independent multiseed holdout. E0057 evaluates a published modern architectural scene Surat Diamond Bourse model contributor's CC0 release v1.0.1 SHA256 721e77..., without redistributing the underlying building model or derived render (architectural design rights explicitly unresolved). Hash and packed resources first; only tiny 192px4spp read-only Cycles smoke. No denoiser or quality comparison; plan docs/experiments/E0057_PLAN.md.
+
+## E0057 public architectural scene source acceptance
+
+E0057 architectural source acceptance PASS; no OIDN or quality benchmark; architecture rights unresolved. docs/experiments/E0057.md.
+
+## 2026-11-16 — E0058 Surat CAM Office original source seed diversity gate
+
+E0057 source and smoke passed 18 cameras, 105 materials, missing assets 0. E0058 preregistered to verify interior CAM Office native TABULATED_SOBOL Cycles5.2.4 16spp seed539/911 from separate processes, with rights constraint: no image or model published. No denoiser tested; if identical, stop, if distinct, candidate only pending reference convergence and legal/representative holdout acceptance. See docs/experiments/E0058_PLAN.md.
+
+## E0058 independent source interior camera noise gate
+
+E0058 Surat CAM Office, 96x54 16spp 539/911 same configuration, relative RMSE 0.24478499048792587, changed 5148/5184, measurable=True. No denoiser or converged reference. Architectural rights unresolved. docs/experiments/E0058.md.
+
+## 2026-11-16 — E0059 cross-reference heldout edge scoring prepared
+
+After E0054 Raw gain ~0.78-0.79 and OIDN gain ~0.74-0.75 while source ref pair diverges (RMSE0.077947), no trustworthy OIDN-specific 25% detail loss. E0058 new internal CAM Office source shows measurable raw variation but not rights or statistical independence. E0059 reuses exact E0054 EXRs before expiry, refA selects edge mask refB evaluates Raw/OIDN gradients then swap, 3 noisy seeds, same input and hashes; no render, filter, training, or new quality ranking. If no consistent Raw-relative heldout gradient regression, do not pursue sharpening. See docs/experiments/E0059_PLAN.md.
+
+## E0059 cross-reference reference-selection isolation
+
+E0059 cross-reference scored Cozy E0054 frozen EXRs, OIDN gradient regression in both ref directions and all 3 seeds? False. No new renderer/denoiser, finite references uncertain. docs/experiments/E0059.md.
+
+## 2026-11-16 — E0060 preregistered internal source cost/reference pilot
+
+E0059 Cozy held-out-reference crossfit failed to find a broad OIDN Raw-relative edge error regression; avoid ungrounded sharpening. E0058 CAM Office source produced substantial seed variation; still not independent or public legal holdout. E0060 tiny 256x144 8spp + two64spp refs on original CAM Office measures real CPU wall and reference disagreement before expensive test, keeps no previews due underlying building rights. No new denoiser / no quality ranking. See docs/experiments/E0060_PLAN.md.
+
+## E0060 internal architecture quality-reference cost pilot
+
+E0060 Surat CAM Office tiny 256x144 8spp+2x64spp ref cost=35s, rawAOV delta=0.0, ref_ref_rmse=0.11039902667585488. No quality ranking or rights clearance. docs/experiments/E0060.md.
+
+## 2026-11-16 — B1 / E0061 keep-on-track audit (decision, no render)
+
+E0059 no encuentra regresión global Raw-relativa del gradiente bajo su test, pero no demuestra ausencia de pérdida física local. E0060 Surat 256x144 / 8spp / refs64 x2 validó Raw/AOV (max0), tiempo35s y ref-ref RMSE0.110399, insuficiente para fidelidad arquitectónica. Continuar pequeños pilotos por inercia sería desalineado. Se descartó House of Chores (Grease Pencil/EEVEE) y Room Replica como dataset redistribuible bajo licencias ambiguas de texturas; Blender3DArchitect anuncia CC0 pero requiere registro y no hay URL directa verificada. Próxima etapa = corpus arquitectónico Cycles independiente + medición fiable de error residual OIDN antes de cualquier método nuevo. Fuente y decisión: docs/experiments/B1_E0061_KEEP_ON_TRACK.md. Sin nuevo render, sin addon/PR merge.
+
+## 2026-11-16 — E0062 official Blender Cycles architectural source acceptance preregistered
+
+After E0059/60 stopped any speculative OIDN sharpness tuning, chose original *Lone Monk* Romanesque architectural interior, Carlo Bergonzini / Monorender CC BY, from Blender's official Cycles demo 33,452,252 bytes. Audit CPU Blender5.2.4 192px 4spp with strict camera/materials/image/IES/linked-library gates and source SHA256. Either PASS or FAIL permanently archived; no quality conclusion, no addon change, no original binary redistributed. Plan docs/experiments/E0062_PLAN.md. Next if PASS = actual seed-diversity screen, not another denoiser algorithm.
+
+## 2026-11-16 — E0062 adquisición oficial: control de tamaño de índice rechazado, sin abrir Blender
+
+Run 43947290538 descargó ~31.9 MiB del host oficial pero abortó en tamaño exacto del catálogo 33.452.252 bytes; por lo tanto no se ejecutó el smoke ni existe aceptación. El tamaño de índice no autentica el archivo. Se corrige la etapa de identificación para leer la cabecera BLENDER, controlar un rango de tamaño y registrar SHA256 del archivo oficial, luego aplicar la misma auditoría estricta de recursos, cámara, IES, Cycles sin guardar. El SHA se fija en manifest si pasa y se comprobará inmutable en tests posteriores. No se modificó el addon ni se reemplazaron recursos.
+
+## 2026-11-16 — E0062 root cause: valid Zstandard-compressed Blender source
+
+Correcting earlier misdiagnosis: official source is **exactly** 33,452,252 bytes (not a size mismatch). Two runs 43947290538 and 43947639039 stopped at overly restrictive BLENDER uncompressed-magic checks before any Cycles run. Second log reveals first4 28B52FFD = Blender's native Zstandard compressed .blend format, documented since Blender3.0. Fixed to accept BLENDER/ZSTD/gzip source header while retaining exact byte check and requiring Blender5.2.4 to decode and pass strict camera/resource/IES/render checks. No scene modifications, no quality results from those failed runs. Source remains unaccepted pending true smoke.
+
+## E0062 independent-source acceptance
+
+E0062 official Lone Monk source SHA=eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b, smoke=PASS. Strict resources/camera/IES audit; no denoiser quality or addon change. See docs/experiments/E0062.md.
+
+## 2026-11-16 — E0063 pinned Lone Monk raw seed variation pre-registered
+
+E0062 official arch Cycles scene functional audit PASS: original 33,452,252-byte file SHA256 eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b, Blender5.2.4 original daylight/cam.001, 1368 objects, 35 materials, no missing images/IES, 192px4spp smoke. E0063 now screens source-pinned separate-process 96x54 16spp seeds539/911 TABULATED_SOBOL, saves only numeric input-variation metrics, not renders. Independent samples/quality/convergence NOT proven by that smoke. No addon change; next after pass = architecture ROI at delivery scale and uncertain references, not another low-res render. docs/experiments/E0063_PLAN.md.
+
+## E0063 independent arch Cycles seed gate
+
+E0063 pinned official Lone Monk source, two fresh Cycles processes 16spp seeds539/911: measurably_distinct=True, relative_RMSE=0.37215735; no denoiser or reference; no quality ranking. Source SHA pinned in benchmarks/scenes/lone_monk.source.json; docs/experiments/E0063.md.
+
+## 2026-11-16 — E0064 Lone Monk framing gate preregistered (ROI planning; not a quality experiment)
+
+E0062 official Cycles Lone Monk passed 192px smoke resources, E0063 verified Raw seed variation (not independent estimates or quality). E0064 deliberately renders just one original-camera unfiltered 960px 8spp view preserving aspect and measures CPU time, to locate real architectural features before choosing fixed render-border ROI at 1920px density. Scene SHA pinned (eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b), CC BY / Carlo Bergonzini/Monorender. No OIDN quality score, references, sharpening or addon changes. Any future ROI is frozen from *source geometry* before inspecting denoiser outputs, per docs/experiments/E0064_PLAN.md. Any invalid/no-architectural-detail preview is a STOP. Experimental PR#10 remains draft.
+
+## E0064 official Lone Monk camera-preview source framing
+
+E0064 Lone Monk original camera framing: 8spp width960, original source aspect, RGB preview SHA256=22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7, CPU render 16.73s, usable=True. Only source/ROI reconnaissance, no OIDN, Raw HDR reference or ACD algorithm. Next pre-register physically meaningful ROI without measuring denoiser; docs/experiments/E0064.md.
+
+## 2026-11-16 — E0064 preview retrieval for scientific ROI annotation (no render)
+
+E0064 completed: official Lone Monk 960x720 original camera preview at8spp/seed539, CPU render 16.73s, source original1440x1080; sha256 image 22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7. To inspect existing real image without rerendering, a read-only workflow encodes an authenticated 760px JPEG preview into short GitHub Actions log chunks. This adds no benchmark, filters, references, image processing claims or new scene inputs. Scientific next step remains visually anchoring architecture ROI before denoiser outputs; see docs/experiments/E0064_PLAN.md.
+
+## 2026-11-16 — E0065 preregistered genuine original-camera architectural detail (no new filter)
+
+E0064 read-only preview of official Lone Monk (scene daylight/cam.001, original FOV4:3, view960x720 @8spp) visually shows recognizable central cloister stone portal, pediment/cornice, two columns and arches. Freeze full virtual1920x1440, crop top-left (700,430,512,512), interior ROI (64,64,384,384), sub-ROIs for cornice and columns. Source SHA256 eea2bbfb... frozen, selected solely from the unfiltered source preview SHA256 22ab1cf8..., before any E0065 OIDN/ref images. E0065 compares same-Raw native compositor OIDN to 3 noisy24spp seeds and two finite512spp refs with HDR/gradient errors/reference spread and actual CPU cost. This tests baseline fidelity uncertainty, **not a new algorithm nor a holdout**. Must compare any plausible residual to more Cycles spp and current techniques before inventing filter. See docs/experiments/E0065_PLAN.md; stable addon unchanged and PR#10 draft.
+
+## E0065 original physical architectural portal baseline and finite references
+
+E0065 source-locked Lone Monk true1920px-density stone portal, 3x24spp Raw+native OIDN, two512spp refs, wall=617s; ref/ref RMSE=0.074901, native/ref RMSE=0.163106, ref spread/error=0.459. No convergence demonstrated, no algorithm/new product/holdout. See docs/experiments/E0065.md.

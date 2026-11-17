@@ -1,0 +1,23 @@
+{
+  "source": "Blender Foundation official Blender 3.5 splash / Cozy Kitchen / Nicole Morena",
+  "blender_used": "5.0.1",
+  "scene": "Main",
+  "saved_file_untouched": true,
+  "active_camera": "CAM-wide",
+  "cameras": 2,
+  "objects": 1077,
+  "meshes": 1058,
+  "materials": 175,
+  "images": 6,
+  "packed_images": 4,
+  "unbundled_missing_images": 0,
+  "external_blend_libraries": 0,
+  "smoke_render": "192x192; 4 spp; Cycles CPU; no denoising; only functional validation",
+  "smoke_render_success": true,
+  "not_a_quality_benchmark": true,
+  "source_url": "https://download.blender.org/demo/splash/blender-3.5-splash.blend",
+  "licence": "CC BY-SA (specific version not specified by Blender demo page)",
+  "author": "Nicole Morena",
+  "sha256": "5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395",
+  "size_bytes": 7685702
+}

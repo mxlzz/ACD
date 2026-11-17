@@ -1,0 +1,33 @@
+{
+  "experiment": "B1_ITALIAN_SMOKE",
+  "source": {
+    "source_url": "https://download.blender.org/demo/cycles/flat-archiviz.blend",
+    "author": "Flavio Della Tommasa",
+    "license_catalog": "CC-BY, version not specified",
+    "source_size": 367972724,
+    "source_sha256": "0027fcbd73411cce7f49b3d86c22c03d18980e22641083da9d8ba82d9fc94e25",
+    "original_republished": false,
+    "quality_benchmark_performed": false
+  },
+  "audit": {
+    "source": "Italian Flat, Flavio Della Tommasa, official Blender Cycles demo, CC-BY (version unspecified)",
+    "blender_used": "5.2.4 LTS",
+    "scene": "Scene",
+    "saved_file_untouched": true,
+    "active_camera": "Cam Pouf Details ",
+    "cameras": 7,
+    "objects": 525,
+    "meshes": 476,
+    "materials": 109,
+    "images": 81,
+    "packed_images": 79,
+    "asset_path_remaps": [],
+    "unbundled_missing_images": 0,
+    "external_blend_libraries": 0,
+    "smoke_render": "192x192; 4 spp; Cycles CPU; no denoising; only functional validation",
+    "smoke_render_success": true,
+    "not_a_quality_benchmark": true
+  },
+  "not_quality_benchmark": true,
+  "next": "pin hash for repeatability; separately profile render costs and reference convergence"
+}

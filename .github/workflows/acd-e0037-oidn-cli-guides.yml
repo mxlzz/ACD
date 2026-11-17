@@ -1,0 +1,110 @@
+name: ACD E0037 official OIDN CLI guide prefilter versus same input Blender OIDN
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0037-oidn-cli-guides.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  controlled-oidn251-cli:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install EXR reader and verify guide/PFM contracts
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pytest -q tests/test_oidn_standalone_e0037.py tests/test_pfm.py tests/test_exr.py
+      - name: Recover exactly E0035 existing original EXRs, no rerender
+        run: |
+          mkdir -p /tmp/e0037/52 /tmp/e0037/53 /tmp/e0037/out
+          gh run download 43480823352 -R mxlzz/ACD \
+            -n acd-e0035-blender-5.2.4 -D /tmp/e0037/52
+          gh run download 43480823352 -R mxlzz/ACD \
+            -n acd-e0035-blender-5.3.0 -D /tmp/e0037/53
+          test -f /tmp/e0037/52/acd-e0035-report.json
+          test -f /tmp/e0037/53/acd-e0035-report.json
+          test -f docs/experiments/E0035_RESULTS.json
+      - name: Install official OIDN 2.5.1 and verify pinned release SHA256
+        run: |
+          curl -fL --retry 3 --connect-timeout 30 \
+            https://github.com/RenderKit/oidn/releases/download/v2.5.1/oidn-2.5.1.x86_64.linux.tar.gz \
+            -o /tmp/e0037/oidn251.tar.gz
+          echo "743c3e2aff8c220d5d70fe6cb970fb3d36f2702d2693c61d1d148e404cf37cd6  /tmp/e0037/oidn251.tar.gz" | sha256sum -c -
+          mkdir -p /tmp/e0037/oidn
+          tar -xzf /tmp/e0037/oidn251.tar.gz -C /tmp/e0037/oidn
+          BIN="$(find /tmp/e0037/oidn -type f -name oidnDenoise | head -n 1)"
+          test -n "$BIN" && test -x "$BIN"
+          echo "OIDN251_BIN=$BIN" >> "$GITHUB_ENV"
+          "$BIN" --list_devices
+      - name: Compare raw guides vs explicit OIDN RT-prefiltered cleanAux guides
+        run: |
+          python -m scripts.analyze_oidn_standalone_e0037 \
+            --oidn "$OIDN251_BIN" \
+            --archive docs/experiments/E0035_RESULTS.json \
+            --source52 /tmp/e0037/52 --source53 /tmp/e0037/53 \
+            --output /tmp/e0037/out
+      - name: Permanently archive numerical results and limitations in branch
+        run: |
+          cp /tmp/e0037/out/e0037_results.json docs/experiments/E0037_RESULTS.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("docs/experiments/E0037_RESULTS.json").read_text())
+          rows=[
+            "# E0037 — OIDN standalone 2.5.1 vs Blender compositor, mismo EXR",
+            "",
+            "[Protocolo preinscrito](E0037_PLAN.md). [E0035 fuente](E0035_RESULTS.json).",
+            "Raw/AOV originales y hashes de las dos versiones verificados. Solo CPU, 4 threads; sin nuevos renders ni verdad de referencia convergente.",
+            "",
+            "| Blender fuente | Sin filtrar guías RMSE | Prefiltrado RT + cleanAux RMSE |",
+            "|---|---:|---:|",
+          ]
+          for version in ("5.2.4","5.3.0"):
+            case=data["cases"][version]
+            value=lambda mode:case[mode]["difference_from_native_compositor"]["rmse_linear"]
+            rows.append(f'| {version} | {value("raw_aux"):.9f} | {value("accurate_like"):.9f} |')
+          rows += [
+            "",
+            "La comparación mide distancia de salida respecto al nodo compositor, no calidad. La variante de guías prefiltradas se aproxima al prefiltrado Accurate, pero no asegura idéntica versión/ponderación/preprocesamiento de Blender.",
+            "Los tiempos incorporan tres procesos y overhead de archivo, no comparables directamente con el denoising integrado.",
+            "",
+            "[JSON exacto con flags, hashes y tiempos](E0037_RESULTS.json)."
+          ]
+          Path("docs/experiments/E0037.md").write_text("\n".join(rows)+"\n", encoding="utf-8")
+          note="\n## E0037: OIDN 2.5.1 standalone on frozen E0035 source (2026-11-13)\n\n"+"\n".join(rows[2:])+"\n"
+          for path in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+            with Path(path).open("a",encoding="utf-8") as f:f.write(note)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0037_RESULTS.json docs/experiments/E0037.md
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0037): archive OIDN 2.5.1 fixed EXR guide-prefilter comparison"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Keep PFM derived arrays temporarily for diagnostic reproducibility
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0037-standalone-oidn-pfm
+          retention-days: 14
+          if-no-files-found: warn
+          compression-level: 1
+          path: /tmp/e0037/out/

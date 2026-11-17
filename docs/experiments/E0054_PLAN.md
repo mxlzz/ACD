@@ -1,0 +1,13 @@
+# E0054 — Cozy high-pixel-density finite-reference fidelity (preinscribed 2026-11-16)
+
+**Prior results:** E0052 flagged repeatable OIDN attenuation in E0021 reference-selected detail_2, but only at 512px frame width in Blender5.0.1. E0053 verified source-pinned Blender5.2.4 exact512 crop in virtual1920x1808 FOV, original AOV/raw identity, 66s for 8spp noisy+two32spp references. E0053 inter-reference RMSE0.332715 (not a credible quality reference).
+
+**Hypothesis/criterion:** the detail attenuation screen may persist at true delivery pixel density when judged against two higher-spp references. Detect only; there is no new denoiser candidate. Selection and thresholds frozen from E0052, not tuned after results.
+
+**Data:** Original CC BY-SA Cozy Kitchen by Nicole Morena, SHA256 5f27c41cf828ca15ffd06fc3ad3d971343f6af4a29828c834252229a26dce395, Main/CAM-wide, Blender5.2.4. Virtual1920x1808, actual crop top-left (1124,644,512,512), central 360x360 margin76. No change in camera, geometry, material, lights. Same Raw and guides for STANDARD and native compositor OIDN; 24spp seeds539,911,1337, two separate reference renders 512spp seeds8819,8922, CPU/adaptiveOFF, full float EXR linear.
+
+**Hard gates:** source/blender/crop/sampling/SHA; exact512² pixels; same-seed Raw equals EXR beauty <=1e-5, Standard equals native OIDN <=1e-5, AOV all present, input seeds different, refs nonidentical, finite arrays, elapsed wall >0. Fail closed and preserve logs if any break. Run time bounded to 45min by Actions. EXRs temporary 7days; JSON and 1:1 diagnostic PNG permanent with Nicole Morena attribution.
+
+**Metrics fixed before execution:** center 360² and complete crop H/V asinh linear-luminance gradient consensus based only on two references (same-sign, top20% magnitude, shared gradient >2x reference difference); projected OIDN gradient gain for all three noisy seeds; scene-linear HDR RMSE for OIDN vs each 512spp reference; reference-to-reference RMSE and its ratio to mean OIDN error, source/AOV hashes. Preserve negative screens. PNG Raw24/OIDN24/ref512A/ref512B with shared non-OCIO display only. Contrast/gain is not fidelity proof and any finite-reference correlation can be misleading.
+
+**Stopping/decision:** If reference pair disagreement is substantial relative to native error, do not promote a quality claim; improve convergence or pivot to another independent author/scene. Even if screen positive at 1920 density, this scene has been observed and is stylized, not a blind professional archviz holdout. No ACD filter/fork/training/new product before representative independent test. PR #10 draft, stable main intact.

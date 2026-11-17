@@ -1,0 +1,57 @@
+{
+  "experiment": "E0045",
+  "source_fixture": "tests/scene_detail_target.py + tests/scene_factory.py",
+  "source_blender_result": "E0044 5.2.4 output, same camera and geometry",
+  "method": "pinhole lens 32mm, sensor width 36mm, camera looks at (0,0,1.2) from (3,-5.8,2.15); zero shift, 4:3 aspect; project world-space slat/grout centerline and physical width",
+  "sample_resolution": [
+    320,
+    240
+  ],
+  "camera_position": [
+    3,
+    -5.8,
+    2.15
+  ],
+  "look_at": [
+    0,
+    0,
+    1.2
+  ],
+  "num_slats": 52,
+  "num_vertical_grout_lines": 13,
+  "measures": {
+    "slat_pitch_px_320": {
+      "min": 1.3041247938594438,
+      "median": 1.4735529705402257,
+      "max": 1.678278258790101
+    },
+    "slat_width_px_320": {
+      "min": 0.8721025561077624,
+      "median": 0.9877448134646727,
+      "max": 1.1280001645704658
+    },
+    "grout_pitch_px_320": {
+      "min": 2.6829838365936496,
+      "median": 2.811106574395126,
+      "max": 2.9485475353740185
+    },
+    "grout_width_px_320": {
+      "min": 0.3618014561269547,
+      "median": 0.3806637103531898,
+      "max": 0.40104040861007206
+    }
+  },
+  "minimum_full_frame_widths": {
+    "slat_pitch_at_least_2px": 491,
+    "slat_pitch_at_least_4px": 982,
+    "grout_line_at_least_1px": 885,
+    "grout_line_at_least_2px": 1769
+  },
+  "at_1920px": {
+    "min_slat_pitch_px": 7.824748763156663,
+    "min_grout_width_px": 2.170808736761728
+  },
+  "interpretation": "Slat pitch <2px at 320-wide, below ideal periodic Nyquist sampling. Grout line subpixel. This does not mean features are always invisible: pixel anti-aliasing can encode fractional coverage. However 320px cannot support strong fidelity claims about recoverable geometric detail or justify a novel denoiser.",
+  "limitations": "No Blender rasterizer, pixel filter, depth-of-field, anti-aliasing or visibility/occlusion modeled; geometry idealizations match fixture definitions. Resolution target alone does not prove denoiser quality.",
+  "next_gate": "Test a small crop at >=1920-wide full-frame pixel density with complete geometry and original field of view; verify crop registration and actual detail before expensive references; use separate held-out scene before integrating algorithm."
+}

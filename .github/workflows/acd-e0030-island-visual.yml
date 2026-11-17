@@ -1,0 +1,76 @@
+name: ACD E0030 inspect island emissive detail without rerender
+
+on:
+  push:
+    branches:
+      - dev/acd-v2-oidn-detail-eval
+    paths:
+      - .github/workflows/acd-e0030-island-visual.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  postprocess:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Dependencies and preexisting E0027 controls
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install Pillow
+          python -m pytest -q tests/test_emission_guide.py tests/test_detail.py
+      - name: Restore original new-scene E0029 EXRs
+        run: |
+          mkdir -p /tmp/acd-e0030
+          gh run download 43309302172 -R mxlzz/ACD -n acd-e0029-island-quality -D /tmp/acd-e0030
+          test -f /tmp/acd-e0030/reference_check.exr
+          test -f /tmp/acd-e0030/raw_multilayer.exr
+      - name: Reference-selected identical-display eight-panel crops
+        run: |
+          python -m scripts.visual_island_e0030 \
+            --directory /tmp/acd-e0030 --output /tmp/acd-e0030/analysis
+      - name: Publish reproducible MIT diagnostic comparisons
+        run: |
+          mkdir -p benchmarks/results/island_e0030
+          cp /tmp/acd-e0030/analysis/*.png benchmarks/results/island_e0030/
+          cp /tmp/acd-e0030/analysis/analysis.json benchmarks/results/island_e0030/
+          {
+            echo
+            echo "## E0030 — Low-Poly Island E0029 visual crops from saved EXRs"
+            echo "- Reference-selected diagnostic ROIs, same display curve and unmodified E0027 Emission50/100 parameters, derived MIT eight-panel crops in benchmarks/results/island_e0030/. No rerender, no claim of perceptual quality until inspected."
+          } >> STATUS.md
+          {
+            echo
+            echo "> E0030 reference-controlled Island MIT eight-panel emission diagnostics stored in benchmarks/results/island_e0030; numerical regional checks and ROI in analysis.json; no OCIO or perceptual claim."
+          } >> docs/ROADMAP.md
+          {
+            echo
+            echo "## 2026-11-12 — E0030 reference-only diagnostic crops for Island"
+            echo "- Reused EXR E0029 run 43309302172, selected a high-HDR ROI and gradient ROIs exclusively from two finite references, rendered same transfer to Raw/OIDN/Emission50/100/High/Super. Derived MIT images and local metrics permanently stored. No readjustment of candidate parameters or rerender."
+          } >> docs/DECISION_LOG.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f benchmarks/results/island_e0030/*
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0030): archive reference-selected island emission comparison crops"
+          git push origin "HEAD:dev/acd-v2-oidn-detail-eval"
+      - name: Preserve derived evidence temporarily
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acd-e0030-island-visual
+          retention-days: 14
+          if-no-files-found: warn
+          path: /tmp/acd-e0030/analysis/

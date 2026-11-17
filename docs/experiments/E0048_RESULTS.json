@@ -1,0 +1,416 @@
+{
+  "experiment": "E0048",
+  "source_run": 43883209135,
+  "algorithm_new": false,
+  "intervention": "native Cycles denoising_pass_follow_reflections True to False",
+  "reference_converged": false,
+  "metrics": {
+    "raw_max_abs": 0.0,
+    "raw_identical": true,
+    "causal_interpretation_allowed": true,
+    "guide_effect": {
+      "albedo": {
+        "log1p_luminance_rmse": 0.19612407368485985,
+        "pixel_rmse_p95": 0.5325880925176862,
+        "mae_linear": 0.13014015296940107,
+        "rmse_linear": 0.2887678173680421,
+        "relative_rmse": 0.5324407626358856,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      },
+      "normal": {
+        "log1p_luminance_rmse": 0.0518234420507721,
+        "pixel_rmse_p95": 0.6701676008509396,
+        "mae_linear": 0.148502710050426,
+        "rmse_linear": 0.3274889988900306,
+        "relative_rmse": 0.6840872437415704,
+        "psnr_db": null,
+        "psnr_data_range": null,
+        "exact_match": false
+      }
+    },
+    "scores": {
+      "follow_true": {
+        "glass_overlap": {
+          "ref1": {
+            "linear": {
+              "log1p_luminance_rmse": 0.041126331889530694,
+              "pixel_rmse_p95": 0.13714338956473782,
+              "mae_linear": 0.053768142487000056,
+              "rmse_linear": 0.07039990542615933,
+              "relative_rmse": 0.10976008035384445,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 25360,
+              "edge_pair_count": 5072,
+              "flat_pair_count": 12680,
+              "edge_threshold": 0.11737716643774193,
+              "flat_threshold": 0.05911486161798138,
+              "edge_gradient_rmse": 0.11645594974818883,
+              "edge_gradient_mae": 0.09831985247334221,
+              "edge_contrast_ratio": 0.500986608262253,
+              "flat_gradient_rmse": 0.040725112135309785,
+              "flat_gradient_mae": 0.03229029555239445,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          },
+          "ref2": {
+            "linear": {
+              "log1p_luminance_rmse": 0.0409797839119295,
+              "pixel_rmse_p95": 0.1362169734820961,
+              "mae_linear": 0.05353340533367979,
+              "rmse_linear": 0.07008350335404002,
+              "relative_rmse": 0.10935753467742,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 25360,
+              "edge_pair_count": 5072,
+              "flat_pair_count": 12680,
+              "edge_threshold": 0.11707717001970402,
+              "flat_threshold": 0.05897385679855541,
+              "edge_gradient_rmse": 0.11528650002210099,
+              "edge_gradient_mae": 0.09769367746838446,
+              "edge_contrast_ratio": 0.5071792051134909,
+              "flat_gradient_rmse": 0.04142024032625467,
+              "flat_gradient_mae": 0.03278429493950962,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          }
+        },
+        "uncovered_slats": {
+          "ref1": {
+            "linear": {
+              "log1p_luminance_rmse": 0.03572273329085248,
+              "pixel_rmse_p95": 0.12420039381591863,
+              "mae_linear": 0.04223445619969425,
+              "rmse_linear": 0.0601490974019054,
+              "relative_rmse": 0.0884989546843951,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 25360,
+              "edge_pair_count": 5072,
+              "flat_pair_count": 12680,
+              "edge_threshold": 0.13141899090462433,
+              "flat_threshold": 0.04285822792508685,
+              "edge_gradient_rmse": 0.08491669459789751,
+              "edge_gradient_mae": 0.06337563231748353,
+              "edge_contrast_ratio": 0.9073427226016131,
+              "flat_gradient_rmse": 0.03117436805333881,
+              "flat_gradient_mae": 0.022474279501113453,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          },
+          "ref2": {
+            "linear": {
+              "log1p_luminance_rmse": 0.03584775930848376,
+              "pixel_rmse_p95": 0.12607187054335897,
+              "mae_linear": 0.04248157276638873,
+              "rmse_linear": 0.060217630755838476,
+              "relative_rmse": 0.08867339295622889,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 25360,
+              "edge_pair_count": 5072,
+              "flat_pair_count": 12680,
+              "edge_threshold": 0.13099108953214722,
+              "flat_threshold": 0.04297384544055666,
+              "edge_gradient_rmse": 0.08575358510301484,
+              "edge_gradient_mae": 0.06437594772746662,
+              "edge_contrast_ratio": 0.9060222116936569,
+              "flat_gradient_rmse": 0.031333554853358404,
+              "flat_gradient_mae": 0.022559381156846657,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          }
+        },
+        "interior": {
+          "ref1": {
+            "linear": {
+              "log1p_luminance_rmse": 0.03769154791676249,
+              "pixel_rmse_p95": 0.13734426935585545,
+              "mae_linear": 0.04778162677835212,
+              "rmse_linear": 0.06840104352873161,
+              "relative_rmse": 0.08809006161339333,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 204160,
+              "edge_pair_count": 40832,
+              "flat_pair_count": 102080,
+              "edge_threshold": 0.10208039311364414,
+              "flat_threshold": 0.044138606510169875,
+              "edge_gradient_rmse": 0.10922771341566162,
+              "edge_gradient_mae": 0.09076575466159108,
+              "edge_contrast_ratio": 0.6654586867396581,
+              "flat_gradient_rmse": 0.03061369097407245,
+              "flat_gradient_mae": 0.022859849430251062,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          },
+          "ref2": {
+            "linear": {
+              "log1p_luminance_rmse": 0.03766786609616232,
+              "pixel_rmse_p95": 0.13651617522763,
+              "mae_linear": 0.04775306314215224,
+              "rmse_linear": 0.0682745233720745,
+              "relative_rmse": 0.08794065675633661,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 204160,
+              "edge_pair_count": 40832,
+              "flat_pair_count": 102080,
+              "edge_threshold": 0.1016162889026501,
+              "flat_threshold": 0.044009910748674524,
+              "edge_gradient_rmse": 0.10869302186354429,
+              "edge_gradient_mae": 0.09049639191703139,
+              "edge_contrast_ratio": 0.6658305167158504,
+              "flat_gradient_rmse": 0.03067901505812329,
+              "flat_gradient_mae": 0.02287442495762739,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          }
+        }
+      },
+      "follow_false": {
+        "glass_overlap": {
+          "ref1": {
+            "linear": {
+              "log1p_luminance_rmse": 0.044611646031071484,
+              "pixel_rmse_p95": 0.14592827878601797,
+              "mae_linear": 0.05809735418491376,
+              "rmse_linear": 0.07579604604176375,
+              "relative_rmse": 0.11817317159287478,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 25360,
+              "edge_pair_count": 5072,
+              "flat_pair_count": 12680,
+              "edge_threshold": 0.11737716643774193,
+              "flat_threshold": 0.05911486161798138,
+              "edge_gradient_rmse": 0.12404455614627664,
+              "edge_gradient_mae": 0.10687156920429704,
+              "edge_contrast_ratio": 0.4485285680994061,
+              "flat_gradient_rmse": 0.04309768471764711,
+              "flat_gradient_mae": 0.033855676637741645,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          },
+          "ref2": {
+            "linear": {
+              "log1p_luminance_rmse": 0.04433949626793926,
+              "pixel_rmse_p95": 0.143908547247055,
+              "mae_linear": 0.05776930285268463,
+              "rmse_linear": 0.0752893483715004,
+              "relative_rmse": 0.11748067849553478,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 25360,
+              "edge_pair_count": 5072,
+              "flat_pair_count": 12680,
+              "edge_threshold": 0.11707717001970402,
+              "flat_threshold": 0.05897385679855541,
+              "edge_gradient_rmse": 0.12294432062273845,
+              "edge_gradient_mae": 0.1062430232312241,
+              "edge_contrast_ratio": 0.45441503316015674,
+              "flat_gradient_rmse": 0.04357514833369327,
+              "flat_gradient_mae": 0.0340624706033288,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          }
+        },
+        "uncovered_slats": {
+          "ref1": {
+            "linear": {
+              "log1p_luminance_rmse": 0.03615875831745152,
+              "pixel_rmse_p95": 0.12793691968154847,
+              "mae_linear": 0.04261635531174155,
+              "rmse_linear": 0.06122572424127826,
+              "relative_rmse": 0.09008302417147346,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 25360,
+              "edge_pair_count": 5072,
+              "flat_pair_count": 12680,
+              "edge_threshold": 0.13141899090462433,
+              "flat_threshold": 0.04285822792508685,
+              "edge_gradient_rmse": 0.08535386809131738,
+              "edge_gradient_mae": 0.06335195626181926,
+              "edge_contrast_ratio": 0.9222300391245762,
+              "flat_gradient_rmse": 0.03132939002120955,
+              "flat_gradient_mae": 0.022608828852188376,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          },
+          "ref2": {
+            "linear": {
+              "log1p_luminance_rmse": 0.03638272228970932,
+              "pixel_rmse_p95": 0.1285996533968821,
+              "mae_linear": 0.04292432946169053,
+              "rmse_linear": 0.0614471822103549,
+              "relative_rmse": 0.09048396733316362,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 25360,
+              "edge_pair_count": 5072,
+              "flat_pair_count": 12680,
+              "edge_threshold": 0.13099108953214722,
+              "flat_threshold": 0.04297384544055666,
+              "edge_gradient_rmse": 0.08633898656131585,
+              "edge_gradient_mae": 0.06427532265881973,
+              "edge_contrast_ratio": 0.9210315458424672,
+              "flat_gradient_rmse": 0.031603118520171454,
+              "flat_gradient_mae": 0.02273099783228825,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          }
+        },
+        "interior": {
+          "ref1": {
+            "linear": {
+              "log1p_luminance_rmse": 0.04071064462012387,
+              "pixel_rmse_p95": 0.1518992944838303,
+              "mae_linear": 0.05199943923768198,
+              "rmse_linear": 0.07744271502437883,
+              "relative_rmse": 0.09973434886472841,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 204160,
+              "edge_pair_count": 40832,
+              "flat_pair_count": 102080,
+              "edge_threshold": 0.10208039311364414,
+              "flat_threshold": 0.044138606510169875,
+              "edge_gradient_rmse": 0.11301411074013248,
+              "edge_gradient_mae": 0.09468768785302537,
+              "edge_contrast_ratio": 0.6546432331890987,
+              "flat_gradient_rmse": 0.03050729049835789,
+              "flat_gradient_mae": 0.022763905054167834,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          },
+          "ref2": {
+            "linear": {
+              "log1p_luminance_rmse": 0.04060179201914778,
+              "pixel_rmse_p95": 0.15126806252050723,
+              "mae_linear": 0.05190988961890033,
+              "rmse_linear": 0.07698446155688048,
+              "relative_rmse": 0.09915944886865506,
+              "psnr_db": null,
+              "psnr_data_range": null,
+              "exact_match": false
+            },
+            "detail": {
+              "transform": "per-channel asinh(scene_linear_RGB), gradient H/V",
+              "selection": "reference-only; top 20% of positive gradient strengths unless configured",
+              "edge_fraction": 0.2,
+              "flat_fraction": 0.5,
+              "eligible_pair_count": 204160,
+              "edge_pair_count": 40832,
+              "flat_pair_count": 102080,
+              "edge_threshold": 0.1016162889026501,
+              "flat_threshold": 0.044009910748674524,
+              "edge_gradient_rmse": 0.11226800260571976,
+              "edge_gradient_mae": 0.09426371386763557,
+              "edge_contrast_ratio": 0.6554734522825991,
+              "flat_gradient_rmse": 0.03052145044616442,
+              "flat_gradient_mae": 0.022759329247683164,
+              "warning": "Reference-derived gradients include reference sampling noise; contrast ratio alone does not measure fidelity. Selected pairs may tie at quantile thresholds; not a perceptual metric."
+            }
+          }
+        }
+      }
+    },
+    "oidn_output_difference": {
+      "log1p_luminance_rmse": 0.014263674159522014,
+      "pixel_rmse_p95": 0.0521746315892692,
+      "mae_linear": 0.012627902690391046,
+      "rmse_linear": 0.034703054075847076,
+      "relative_rmse": 0.036766719089951744,
+      "psnr_db": null,
+      "psnr_data_range": null,
+      "exact_match": false
+    },
+    "decision": "DIAGNOSTIC only: native guide setting changed output, inspect against both finite references"
+  },
+  "new_sha256": {
+    "raw": "8726aa0a10c14688befcc41a5243a445bed0aa0789eecb8711ac4e942948f46b",
+    "oidn": "ec72c73f2fb4cce0a0be635ef6f9b6a66b185abef31c510e172b628d7f549ba8",
+    "aov": "e281f4077514c803c21fa6c068bc673a265879c8e01007421aa094ef7ebdd3fb"
+  }
+}

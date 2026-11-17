@@ -32,6 +32,7 @@ def compare_regions_from_files(
         "HIGH_component_no_guides", "SUPER_component_no_guides",
         "HIGH_component_albedo", "SUPER_component_albedo",
         "HIGH_component_normal", "SUPER_component_normal",
+        "NATIVE_COMP_OIDN", "SID4_STANDARD", "SID4_HIGH", "SID4_SUPER",
     )
     candidates = {}
     for method in methods:
