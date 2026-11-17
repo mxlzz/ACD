@@ -180,6 +180,34 @@ try:
     elif os.environ.get("ACD_E0053_CROP"):
         raise RuntimeError("Unsupported E0053 crop variant")
 
+    # E0065: original Lone Monk portal, ROI fixed from unfiltered E0064 preview.
+    # Research-only opt-in; no addons, geometry or source .blend changes.
+    e0065_crop = None
+    if os.environ.get("ACD_E0065_CROP") == "monk_portal":
+        if scene_variant != "external" or e0046_crop is not None or e0053_crop is not None:
+            raise RuntimeError("E0065 source/crop mode must be exclusive")
+        if scene.name != "daylight" or scene.camera is None or scene.camera.name != "cam.001":
+            raise RuntimeError("E0065 requires original daylight / cam.001")
+        crop_spec = importlib.util.spec_from_file_location(
+            "e0065_contract", root / "scripts" / "lone_monk_crop_e0065.py")
+        crop_module = importlib.util.module_from_spec(crop_spec)
+        crop_spec.loader.exec_module(crop_module)
+        if hashlib.sha256(Path(bpy.data.filepath).read_bytes()).hexdigest() != crop_module.SOURCE_SHA:
+            raise RuntimeError("E0065 wrong source binary SHA256")
+        if tuple(source_resolution) != crop_module.SOURCE_RES:
+            raise RuntimeError("E0065 original camera source resolution changed")
+        e0065_crop = crop_module.contract(width, height)
+        bounds = e0065_crop["normalized_border"]
+        scene.render.use_border = True
+        scene.render.use_crop_to_border = True
+        scene.render.border_min_x = bounds["min_x"]
+        scene.render.border_max_x = bounds["max_x"]
+        scene.render.border_min_y = bounds["min_y"]
+        scene.render.border_max_y = bounds["max_y"]
+        print("ACD_E0065_LOCKED_ARCHITECTURE_PORTAL", e0065_crop, flush=True)
+    elif os.environ.get("ACD_E0065_CROP"):
+        raise RuntimeError("Unsupported E0065 crop request")
+
     capture_aov = os.environ.get("ACD_CAPTURE_AOV", "0") == "1"
     if capture_aov:
         scene.render.image_settings.media_type = "MULTI_LAYER_IMAGE"
@@ -528,6 +556,7 @@ try:
         "resolution": [scene.render.resolution_x, scene.render.resolution_y],
         "e0046_crop": e0046_crop,
         "e0053_crop": e0053_crop,
+        "e0065_crop": e0065_crop,
         "e0048_follow_reflections": bool(view_layer.cycles.denoising_pass_follow_reflections),
         "e0049_roughness_weighting": bool(view_layer.cycles.denoising_pass_use_albedo_roughness_weighting),
         "source_original_resolution": source_resolution if scene_variant == "external" else None,
