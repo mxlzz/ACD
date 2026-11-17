@@ -584,3 +584,7 @@ E0062 official arch Cycles scene functional audit PASS: original 33,452,252-byte
 ## E0063 independent arch Cycles seed gate
 
 E0063 pinned official Lone Monk source, two fresh Cycles processes 16spp seeds539/911: measurably_distinct=True, relative_RMSE=0.37215735; no denoiser or reference; no quality ranking. Source SHA pinned in benchmarks/scenes/lone_monk.source.json; docs/experiments/E0063.md.
+
+## 2026-11-16 — E0064 Lone Monk framing gate preregistered (ROI planning; not a quality experiment)
+
+E0062 official Cycles Lone Monk passed 192px smoke resources, E0063 verified Raw seed variation (not independent estimates or quality). E0064 deliberately renders just one original-camera unfiltered 960px 8spp view preserving aspect and measures CPU time, to locate real architectural features before choosing fixed render-border ROI at 1920px density. Scene SHA pinned (eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b), CC BY / Carlo Bergonzini/Monorender. No OIDN quality score, references, sharpening or addon changes. Any future ROI is frozen from *source geometry* before inspecting denoiser outputs, per docs/experiments/E0064_PLAN.md. Any invalid/no-architectural-detail preview is a STOP. Experimental PR#10 remains draft.

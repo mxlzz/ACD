@@ -1,0 +1,108 @@
+name: ACD E0064 Lone Monk original Cycles camera framing for architecture ROI selection
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths: [.github/workflows/acd-e0064-lone-monk-framing.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  camera-framing-not-quality:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      EGL_PLATFORM: surfaceless
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+      ACD_E0064_DIRECTORY: /tmp/e0064
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate preregistered source and image-analyzer contracts
+        run: |
+          python -m pip install -e ".[dev,exr]"
+          python -m pip install "Pillow>=10,<13"
+          python -m pytest -q tests/test_lone_monk_framing_e0064.py tests/test_lone_monk_seeds_e0063.py
+      - name: Download SHA256-pinned official Blender Cycles demo
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/e0064
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 \
+            https://mirror.blender.org/demo/cycles/lone-monk_cycles_and_exposure-node_demo.blend \
+            -o /tmp/lone-monk.blend
+          test "$(stat -c%s /tmp/lone-monk.blend)" -eq 33452252
+          echo "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b  /tmp/lone-monk.blend" | sha256sum -c -
+      - uses: actions/cache@v4
+        id: blender
+        with:
+          path: blender-5.2.4-linux-x64
+          key: acd-verified-blender-5.2.4-linux-x64-a1
+      - name: Download checksum-verified Blender if cache misses
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          B=blender-5.2.4-linux-x64.tar.xz
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/$B -o "$B"
+          curl -fL --retry 4 --retry-all-errors --retry-delay 5 https://download.blender.org/release/Blender5.2/blender-5.2.4.sha256 -o official.sha256
+          grep -F "$B" official.sha256 | sha256sum -c -
+          tar -xf "$B"
+      - name: Install Blender headless runtime
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 libxkbcommon0
+      - name: Render real original-camera 960px preview without OIDN
+        run: |
+          ./blender-5.2.4-linux-x64/blender \
+            -b --disable-autoexec /tmp/lone-monk.blend \
+            --python-exit-code 1 --python scripts/blender_lone_monk_framing_e0064.py
+      - name: Verify PNG and framing provenance, no denoiser score
+        run: |
+          python -m scripts.analyze_lone_monk_framing_e0064 \
+            --directory /tmp/e0064 --output /tmp/e0064-analysis
+      - name: Archive source preview, attribution, and decision in Git
+        run: |
+          mkdir -p benchmarks/results/lone_monk_e0064
+          cp /tmp/e0064-analysis/E0064.md docs/experiments/E0064.md
+          cp /tmp/e0064-analysis/E0064_RESULTS.json docs/experiments/E0064_RESULTS.json
+          cp /tmp/e0064/framing.png benchmarks/results/lone_monk_e0064/framing.png
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          source=Path("benchmarks/scenes/lone_monk.source.json")
+          manifest=json.loads(source.read_text())
+          r=json.loads(Path("docs/experiments/E0064_RESULTS.json").read_text())
+          if manifest["source_sha256"]!=r["source_sha256"]:
+              raise RuntimeError("Scene manifest source identity changed")
+          manifest["framing_e0064_sha256"]=r["preview_sha256"]
+          manifest["framing_resolution_e0064"]=r["preview_resolution"]
+          manifest["framing_usable_e0064"]=r["usable_framing_preview"]
+          manifest["quality_holdout"]=False
+          manifest["denoiser_quality_benchmark_ready"]=False
+          source.write_text(json.dumps(manifest,indent=2)+"\n")
+          note=(f"E0064 Lone Monk original camera framing: 8spp width960, "
+                f"original source aspect, RGB preview SHA256={r['preview_sha256']}, "
+                f"CPU render {r['preview_render_wall_seconds']}s, "
+                f"usable={r['usable_framing_preview']}. Only source/ROI reconnaissance, "
+                "no OIDN, Raw HDR reference or ACD algorithm. "
+                "Next pre-register physically meaningful ROI without measuring denoiser; "
+                "docs/experiments/E0064.md.")
+          for name in ("STATUS.md","docs/ROADMAP.md","docs/DECISION_LOG.md"):
+              with Path(name).open("a",encoding="utf-8") as f:
+                  f.write("\n## E0064 official Lone Monk camera-preview source framing\n\n"+note+"\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/experiments/E0064.md docs/experiments/E0064_RESULTS.json
+          git add benchmarks/results/lone_monk_e0064/framing.png benchmarks/scenes/lone_monk.source.json
+          git add STATUS.md docs/ROADMAP.md docs/DECISION_LOG.md
+          git commit -m "research(E0064): archive original Lone Monk camera framing and development ROI provenance"
+          git push origin HEAD:dev/acd-v2-oidn-detail-eval
+      - name: Keep only authorized CC BY preview; original .blend remains unredistributed
+        if: always()
+        run: |
+          echo "No BLEND or EXR source copied to repository or artifact; CC BY attribution retained with camera preview."
