@@ -1,0 +1,43 @@
+name: ACD E0064 inspect already-rendered framing preview without another Cycles render
+on:
+  push:
+    branches: [dev/acd-v2-oidn-detail-eval]
+    paths: [.github/workflows/acd-e0064-preview-review.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-existing-preview:
+    if: github.repository == 'mxlzz/ACD'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Encode already-published frame as JPEG chunks for authenticated review
+        run: |
+          python -m pip install "Pillow>=10,<13"
+          python - <<'PY'
+          import io
+          import base64
+          import hashlib
+          from pathlib import Path
+          from PIL import Image
+          p=Path("benchmarks/results/lone_monk_e0064/framing.png")
+          h=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert h=="22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7"
+          with Image.open(p) as original:
+              original.load()
+              assert original.size==(960,720)
+              new=original.convert("RGB")
+              new.thumbnail((760,570))
+              mem=io.BytesIO()
+              new.save(mem,format="JPEG",quality=78,optimize=True)
+          b64=base64.b64encode(mem.getvalue()).decode("ascii")
+          print("ACD_E0064_JPEG_BEGIN",new.size,"chunks",len(b64)//2048+1)
+          for pos in range(0,len(b64),2048):
+              print("ACD_E0064_JPEG_CHUNK",pos//2048,b64[pos:pos+2048])
+          print("ACD_E0064_JPEG_END")
+          PY

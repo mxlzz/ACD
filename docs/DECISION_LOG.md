@@ -1093,3 +1093,7 @@ E0062 official Cycles Lone Monk passed 192px smoke resources, E0063 verified Raw
 ## E0064 official Lone Monk camera-preview source framing
 
 E0064 Lone Monk original camera framing: 8spp width960, original source aspect, RGB preview SHA256=22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7, CPU render 16.73s, usable=True. Only source/ROI reconnaissance, no OIDN, Raw HDR reference or ACD algorithm. Next pre-register physically meaningful ROI without measuring denoiser; docs/experiments/E0064.md.
+
+## 2026-11-16 — E0064 preview retrieval for scientific ROI annotation (no render)
+
+E0064 completed: official Lone Monk 960x720 original camera preview at8spp/seed539, CPU render 16.73s, source original1440x1080; sha256 image 22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7. To inspect existing real image without rerendering, a read-only workflow encodes an authenticated 760px JPEG preview into short GitHub Actions log chunks. This adds no benchmark, filters, references, image processing claims or new scene inputs. Scientific next step remains visually anchoring architecture ROI before denoiser outputs; see docs/experiments/E0064_PLAN.md.
