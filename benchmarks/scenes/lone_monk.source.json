@@ -11,5 +11,11 @@
   "seed_variation_screen_e0063": "PASS",
   "seed_variation_source_run": "E0063",
   "seed_statistical_independence_proven": false,
-  "denoiser_quality_benchmark_ready": false
+  "denoiser_quality_benchmark_ready": false,
+  "framing_e0064_sha256": "22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7",
+  "framing_resolution_e0064": [
+    960,
+    720
+  ],
+  "framing_usable_e0064": true
 }

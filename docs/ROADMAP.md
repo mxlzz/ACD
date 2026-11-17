@@ -588,3 +588,7 @@ E0063 pinned official Lone Monk source, two fresh Cycles processes 16spp seeds53
 ## 2026-11-16 — E0064 Lone Monk framing gate preregistered (ROI planning; not a quality experiment)
 
 E0062 official Cycles Lone Monk passed 192px smoke resources, E0063 verified Raw seed variation (not independent estimates or quality). E0064 deliberately renders just one original-camera unfiltered 960px 8spp view preserving aspect and measures CPU time, to locate real architectural features before choosing fixed render-border ROI at 1920px density. Scene SHA pinned (eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b), CC BY / Carlo Bergonzini/Monorender. No OIDN quality score, references, sharpening or addon changes. Any future ROI is frozen from *source geometry* before inspecting denoiser outputs, per docs/experiments/E0064_PLAN.md. Any invalid/no-architectural-detail preview is a STOP. Experimental PR#10 remains draft.
+
+## E0064 official Lone Monk camera-preview source framing
+
+E0064 Lone Monk original camera framing: 8spp width960, original source aspect, RGB preview SHA256=22ab1cf8ebfd76078d5bd3f1e84ebe8ac9e812c1797eb1e0216a342cfb1a16b7, CPU render 16.73s, usable=True. Only source/ROI reconnaissance, no OIDN, Raw HDR reference or ACD algorithm. Next pre-register physically meaningful ROI without measuring denoiser; docs/experiments/E0064.md.
