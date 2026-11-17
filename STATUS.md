@@ -1256,3 +1256,7 @@ E0064 completed: official Lone Monk 960x720 original camera preview at8spp/seed5
 ## 2026-11-16 — E0065 preregistered genuine original-camera architectural detail (no new filter)
 
 E0064 read-only preview of official Lone Monk (scene daylight/cam.001, original FOV4:3, view960x720 @8spp) visually shows recognizable central cloister stone portal, pediment/cornice, two columns and arches. Freeze full virtual1920x1440, crop top-left (700,430,512,512), interior ROI (64,64,384,384), sub-ROIs for cornice and columns. Source SHA256 eea2bbfb... frozen, selected solely from the unfiltered source preview SHA256 22ab1cf8..., before any E0065 OIDN/ref images. E0065 compares same-Raw native compositor OIDN to 3 noisy24spp seeds and two finite512spp refs with HDR/gradient errors/reference spread and actual CPU cost. This tests baseline fidelity uncertainty, **not a new algorithm nor a holdout**. Must compare any plausible residual to more Cycles spp and current techniques before inventing filter. See docs/experiments/E0065_PLAN.md; stable addon unchanged and PR#10 draft.
+
+## E0065 original physical architectural portal baseline and finite references
+
+E0065 source-locked Lone Monk true1920px-density stone portal, 3x24spp Raw+native OIDN, two512spp refs, wall=617s; ref/ref RMSE=0.074901, native/ref RMSE=0.163106, ref spread/error=0.459. No convergence demonstrated, no algorithm/new product/holdout. See docs/experiments/E0065.md.

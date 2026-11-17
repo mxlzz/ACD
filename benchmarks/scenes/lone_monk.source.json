@@ -17,5 +17,12 @@
     960,
     720
   ],
-  "framing_usable_e0064": true
+  "framing_usable_e0064": true,
+  "physical_portal_roi_e0065": [
+    700,
+    430,
+    512,
+    512
+  ],
+  "physical_portal_context_margin_e0065": 64
 }
